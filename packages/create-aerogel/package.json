@@ -4,6 +4,11 @@
     "bin": {
         "create-aerogel": "bin/create-aerogel.js"
     },
+    "files": [
+        "bin",
+        "dist",
+        "template"
+    ],
     "scripts": {
         "build": "noeldemartin-build-javascript"
     },
