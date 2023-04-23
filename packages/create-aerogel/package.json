@@ -2,7 +2,7 @@
     "name": "create-aerogel",
     "version": "0.0.0",
     "bin": {
-        "create-aerogel": "bin/index.js"
+        "create-aerogel": "bin/create-aerogel.js"
     },
     "scripts": {
         "build": "noeldemartin-build-javascript"
