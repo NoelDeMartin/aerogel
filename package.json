@@ -1,0 +1,16 @@
+{
+    "name": "aerogel",
+    "private": "true",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "npm run build -ws --if-present",
+        "dev": "npm run dev -ws --if-present"
+    },
+    "devDependencies": {
+        "@noeldemartin/scripts": "next",
+        "typescript": "^5.0.4",
+        "vite": "^4.3.1"
+    }
+}

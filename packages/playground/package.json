@@ -1,0 +1,13 @@
+{
+    "name": "playground",
+    "private": true,
+    "scripts": {
+        "dev": "vite"
+    },
+    "dependencies": {
+        "@aerogel/core": "*"
+    },
+    "devDependencies": {
+        "@aerogel/vite": "*"
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "name": "@aerogel/core",
+    "description": "The Lightest Solid",
+    "version": "0.0.0",
+    "main": "dist/aerogel-core.cjs.js",
+    "module": "dist/aerogel-core.esm.js",
+    "browser": "dist/aerogel-core.umd.js",
+    "types": "dist/aerogel-core.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "rm dist -rf && npm run build:js && npm run build:types",
+        "build:js": "noeldemartin-build-javascript",
+        "build:types": "noeldemartin-build-types"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "keywords": [
+        "javascript",
+        "framework",
+        "solid"
+    ],
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "peerDependencies": {
+        "vue": "^3.2.0"
+    },
+    "devDependencies": {
+        "vue": "^3.2.47"
+    }
+}

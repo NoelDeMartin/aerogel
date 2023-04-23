@@ -1,0 +1,33 @@
+{
+    "name": "@aerogel/vite",
+    "description": "Vite Plugin to build Aerogel apps",
+    "version": "0.0.0",
+    "main": "dist/aerogel-vite.cjs.js",
+    "module": "dist/aerogel-vite.esm.js",
+    "types": "dist/aerogel-vite.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "rm dist -rf && npm run build:js && npm run build:types",
+        "build:js": "noeldemartin-build-javascript",
+        "build:types": "noeldemartin-build-types"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "keywords": [
+        "aerogel",
+        "vite"
+    ],
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "dependencies": {
+        "@vitejs/plugin-vue": "^4.1.0"
+    }
+}
