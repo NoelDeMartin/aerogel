@@ -1,0 +1,14 @@
+{
+    "name": "{{config.name}}",
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "vite"
+    },
+    "dependencies": {
+        "@aerogel/core": "next"
+    },
+    "devDependencies": {
+        "@aerogel/vite": "next",
+        "vite": "^4.3.0"
+    }
+}

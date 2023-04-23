@@ -1,0 +1,28 @@
+{
+    "name": "create-aerogel",
+    "version": "0.0.0",
+    "bin": {
+        "create-aerogel": "bin/index.js"
+    },
+    "scripts": {
+        "build": "noeldemartin-build-javascript"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "dependencies": {
+        "mustache": "^4.2.0"
+    },
+    "devDependencies": {
+        "@types/mustache": "^4.2.2"
+    }
+}
