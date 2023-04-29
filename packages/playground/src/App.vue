@@ -1,3 +1,4 @@
 <template>
-    <h1>Hello World!</h1>
+    <h1>Aerogel Playground</h1>
+    <DataManagementIndex />
 </template>

@@ -5,10 +5,13 @@
         "dev": "vite"
     },
     "dependencies": {
-        "@aerogel/core": "next"
+        "@aerogel/core": "next",
+        "soukai": "^0.5.1",
+        "vue": "^3.2.0"
     },
     "devDependencies": {
         "@aerogel/vite": "next",
+        "unplugin-vue-components": "^0.24.1",
         "vite": "^4.3.0"
     }
 }

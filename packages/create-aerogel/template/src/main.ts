@@ -2,4 +2,6 @@ import { bootstrapApplication } from '@aerogel/core';
 
 import App from './App.vue';
 
-bootstrapApplication(App);
+bootstrapApplication(App, {
+    models: import.meta.glob('@/models', { eager: true }),
+});

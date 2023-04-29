@@ -8,6 +8,7 @@
         "@aerogel/core": "*"
     },
     "devDependencies": {
-        "@aerogel/vite": "*"
+        "@aerogel/vite": "*",
+        "unplugin-vue-components": "^0.24.1"
     }
 }
