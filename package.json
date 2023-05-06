@@ -2,7 +2,10 @@
     "name": "aerogel",
     "private": "true",
     "workspaces": [
-        "packages/*"
+        "packages/core",
+        "packages/vite",
+        "packages/playground",
+        "packages/create-aerogel"
     ],
     "scripts": {
         "build": "npm run build -ws --if-present",
