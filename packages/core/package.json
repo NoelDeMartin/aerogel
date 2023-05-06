@@ -10,7 +10,8 @@
     "scripts": {
         "build": "rm dist -rf && npm run build:js && npm run build:types",
         "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types"
+        "build:types": "noeldemartin-build-types",
+        "test": "vitest --run"
     },
     "engines": {
         "node": ">=18.x"
@@ -32,5 +33,8 @@
     "peerDependencies": {
         "soukai": "^0.5.1",
         "vue": "^3.2.0"
+    },
+    "dependencies": {
+        "@noeldemartin/utils": "^0.4.0"
     }
 }

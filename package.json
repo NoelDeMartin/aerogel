@@ -6,13 +6,15 @@
     ],
     "scripts": {
         "build": "npm run build -ws --if-present",
-        "dev": "npm run dev -ws --if-present"
+        "dev": "npm run dev -ws --if-present",
+        "test": "npm run test -ws --if-present"
     },
     "devDependencies": {
         "@noeldemartin/scripts": "next",
         "soukai": "^0.5.1",
         "typescript": "^5.0.4",
         "vite": "^4.3.1",
+        "vitest": "^0.31.0",
         "vue": "^3.2.47"
     }
 }
