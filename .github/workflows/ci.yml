@@ -3,8 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-
-  linting:
+  ci:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -12,14 +11,6 @@ jobs:
       with:
         node-version-file: '.nvmrc'
     - run: npm ci
+    - run: npm run build
     - run: npm run lint
-
-  unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version-file: '.nvmrc'
-    - run: npm ci
     - run: npm test
