@@ -9,7 +9,8 @@
     "scripts": {
         "build": "rm dist -rf && npm run build:js && npm run build:types",
         "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types"
+        "build:types": "noeldemartin-build-types",
+        "lint": "noeldemartin-lint src"
     },
     "engines": {
         "node": ">=18.x"

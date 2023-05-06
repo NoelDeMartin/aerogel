@@ -7,10 +7,13 @@
     "scripts": {
         "build": "npm run build -ws --if-present",
         "dev": "npm run dev -ws --if-present",
+        "lint": "npm run lint -ws --if-present",
         "test": "npm run test -ws --if-present"
     },
     "devDependencies": {
+        "@noeldemartin/eslint-config-typescript": "^0.1.1",
         "@noeldemartin/scripts": "next",
+        "eslint": "^8.40.0",
         "soukai": "^0.5.1",
         "typescript": "^5.0.4",
         "vite": "^4.3.1",

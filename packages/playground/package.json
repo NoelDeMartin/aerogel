@@ -2,13 +2,16 @@
     "name": "playground",
     "private": true,
     "scripts": {
-        "dev": "vite"
+        "dev": "vite",
+        "lint": "noeldemartin-lint src"
     },
     "dependencies": {
         "@aerogel/core": "*"
     },
     "devDependencies": {
         "@aerogel/vite": "*",
+        "@noeldemartin/eslint-config-vue": "^0.1.1",
+        "eslint-plugin-vue": "^9.11.0",
         "unplugin-vue-components": "^0.24.1"
     }
 }

@@ -1,5 +1,6 @@
-import { Component, createApp } from 'vue';
+import { createApp } from 'vue';
 import { IndexedDBEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
+import type { Component } from 'vue';
 
 function bootModels(models: Record<string, Record<string, unknown>>) {
     setEngine(new IndexedDBEngine());
@@ -7,7 +8,7 @@ function bootModels(models: Record<string, Record<string, unknown>>) {
 }
 
 export interface BootstrapOptions {
-    models?: Record<string, Record<string, unknown>>,
+    models?: Record<string, Record<string, unknown>>;
 }
 
 export function bootstrapApplication(rootComponent: Component, options: BootstrapOptions = {}): void {

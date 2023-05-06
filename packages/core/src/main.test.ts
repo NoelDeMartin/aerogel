@@ -1,7 +1,8 @@
-import { Component, createApp } from 'vue';
-import { it, describe, expect, vi, beforeEach } from 'vitest';
-import { mock } from '@noeldemartin/utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createApp } from 'vue';
 import { IndexedDBEngine, requireBootedModel, requireEngine } from 'soukai';
+import { mock } from '@noeldemartin/utils';
+import type { Component } from 'vue';
 
 import User from '@/testing/stubs/models/User';
 
@@ -31,7 +32,7 @@ describe('Aerogel', () => {
 
         // Act
         bootstrapApplication(rootComponent, {
-            models: import.meta.glob('@/testing/stubs/models/*', { eager: true })
+            models: import.meta.glob('@/testing/stubs/models/*', { eager: true }),
         });
 
         // Assert
