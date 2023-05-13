@@ -9,12 +9,13 @@
     ],
     "scripts": {
         "build": "npm run build -ws --if-present",
+        "cy:test": "npm run cy:test -ws --if-present",
         "dev": "npm run dev -ws --if-present",
         "lint": "npm run lint -ws --if-present",
         "test": "npm run test -ws --if-present"
     },
     "devDependencies": {
-        "@noeldemartin/eslint-config-typescript": "0.1.1-next.25fd693220678ab354a85a243c402e42ae4c5db6",
+        "@noeldemartin/eslint-config-typescript": "0.1.1-next.5c601d39eb6a2b0357cfccb01a92e8d0a524d535",
         "@noeldemartin/scripts": "0.1.2-next.a94324d78500b65e72ea7d15beb751a6773aaba8",
         "eslint": "^8.40.0",
         "prettier": "^2.8.8",

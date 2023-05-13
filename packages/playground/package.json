@@ -2,8 +2,13 @@
     "name": "playground",
     "private": true,
     "scripts": {
+        "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run cy:open\"",
+        "cy:open": "cypress open --e2e --browser chromium",
+        "cy:run": "cypress run",
+        "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 cy:run",
         "dev": "vite",
-        "lint": "noeldemartin-lint src"
+        "lint": "noeldemartin-lint src",
+        "test:serve-app": "vite --port 5001"
     },
     "dependencies": {
         "@aerogel/core": "*",
@@ -13,10 +18,13 @@
     },
     "devDependencies": {
         "@aerogel/vite": "*",
-        "@noeldemartin/eslint-config-vue": "^0.1.1",
+        "@noeldemartin/eslint-config-vue": "0.1.1-next.0394333a70ddc8eadc60347dffe1e86825e9b7e7",
         "autoprefixer": "^10.4.14",
+        "concurrently": "^8.0.1",
+        "cypress": "^12.12.0",
         "eslint-plugin-vue": "^9.11.0",
         "postcss": "^8.4.23",
+        "start-server-and-test": "^2.0.0",
         "unplugin-vue-components": "^0.24.1"
     }
 }
