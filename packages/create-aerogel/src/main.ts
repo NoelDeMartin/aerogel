@@ -1,5 +1,5 @@
-import { mkdirSync, writeFileSync, readdirSync, readFileSync, existsSync } from 'fs';
-import { resolve, dirname, basename } from 'path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'fs';
+import { basename, dirname, resolve } from 'path';
 import { render } from 'mustache';
 
 interface AppConfig {
@@ -23,7 +23,7 @@ function readConfig(): AppConfig {
 
     return {
         name: basename(name),
-        path: `${process.cwd()}/${name}/`
+        path: `${process.cwd()}/${name}/`,
     };
 }
 

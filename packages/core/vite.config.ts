@@ -6,4 +6,4 @@ export default {
             '@': resolve(__dirname, './src'),
         },
     },
-}
+};

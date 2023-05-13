@@ -10,7 +10,8 @@
         "template"
     ],
     "scripts": {
-        "build": "noeldemartin-build-javascript"
+        "build": "noeldemartin-build-javascript",
+        "lint": "noeldemartin-lint src"
     },
     "engines": {
         "node": ">=18.x"
