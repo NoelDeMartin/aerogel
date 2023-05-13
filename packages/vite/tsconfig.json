@@ -4,6 +4,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "strict": true,
+        "types": [],
         "noUncheckedIndexedAccess": true,
         "esModuleInterop": true,
         "skipLibCheck": true,

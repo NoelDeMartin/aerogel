@@ -4,6 +4,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "strict": true,
+        "types": [],
         "jsx": "preserve",
         "noUncheckedIndexedAccess": true,
         "sourceMap": true,
