@@ -18,10 +18,12 @@
         "@noeldemartin/scripts": "0.1.2-next.a94324d78500b65e72ea7d15beb751a6773aaba8",
         "eslint": "^8.40.0",
         "prettier": "^2.8.8",
+        "prettier-eslint-cli": "^7.1.0",
+        "prettier-plugin-tailwindcss": "^0.2.8",
         "soukai": "^0.5.1",
         "typescript": "^5.0.4",
         "vite": "^4.3.1",
         "vitest": "^0.31.0",
-        "vue": "^3.2.47"
+        "vue": "^3.3.2"
     }
 }

@@ -6,12 +6,17 @@
         "lint": "noeldemartin-lint src"
     },
     "dependencies": {
-        "@aerogel/core": "*"
+        "@aerogel/core": "*",
+        "@noeldemartin/utils": "^0.4.0",
+        "@tailwindcss/forms": "^0.5.3",
+        "tailwindcss": "^3.3.2"
     },
     "devDependencies": {
         "@aerogel/vite": "*",
         "@noeldemartin/eslint-config-vue": "^0.1.1",
+        "autoprefixer": "^10.4.14",
         "eslint-plugin-vue": "^9.11.0",
+        "postcss": "^8.4.23",
         "unplugin-vue-components": "^0.24.1"
     }
 }

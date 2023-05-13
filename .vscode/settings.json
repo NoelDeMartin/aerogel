@@ -1,4 +1,10 @@
 {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-    "editor.formatOnSave": true
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": ".*",
+                "cmd": "npx prettier-eslint ${file} --write"
+            }
+        ]
+    }
 }

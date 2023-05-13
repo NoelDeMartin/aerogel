@@ -6,7 +6,7 @@ export default {
     plugins: [
         Aerogel(),
         Components({
-            dirs: ['src/pages'],
+            dirs: ['src/pages', 'src/components'],
             dts: false,
         }),
     ],
