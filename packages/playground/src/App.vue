@@ -1,5 +1,5 @@
 <template>
-    <AppLayout>
+    <AGLayout>
         <header class="border-b bg-blue-100 p-8">
             <div class="m-auto max-w-screen-lg">
                 <h1 class="text-2xl font-medium">
@@ -12,5 +12,5 @@
                 <DataManagementIndex />
             </div>
         </main>
-    </AppLayout>
+    </AGLayout>
 </template>

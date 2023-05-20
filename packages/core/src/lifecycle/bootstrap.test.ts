@@ -6,7 +6,7 @@ import type { Component } from 'vue';
 
 import User from '@/testing/stubs/models/User';
 
-import { bootstrapApplication } from './main';
+import { bootstrapApplication } from './bootstrap';
 
 describe('Aerogel', () => {
 
