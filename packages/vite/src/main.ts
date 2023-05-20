@@ -1,3 +1,4 @@
+import '@total-typescript/ts-reset';
 import Vue from '@vitejs/plugin-vue';
 import type { Plugin } from 'vite';
 

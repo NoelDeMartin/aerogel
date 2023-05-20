@@ -1,3 +1,5 @@
+import '@total-typescript/ts-reset';
+
 import { createApp } from 'vue';
 import { IndexedDBEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
 import type { Component } from 'vue';

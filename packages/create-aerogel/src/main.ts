@@ -1,3 +1,5 @@
+import '@total-typescript/ts-reset';
+
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'fs';
 import { basename, dirname, resolve } from 'path';
 import { render } from 'mustache';
