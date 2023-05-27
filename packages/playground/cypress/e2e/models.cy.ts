@@ -1,6 +1,6 @@
-describe('Data Management', () => {
+describe('Models', () => {
 
-    beforeEach(() => cy.visit('/'));
+    beforeEach(() => cy.visit('/models'));
 
     it('Creates tasks', () => {
         cy.ariaInput('Task name').type('Hello World!{enter}');

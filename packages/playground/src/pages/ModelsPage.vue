@@ -1,6 +1,6 @@
 <template>
     <h2 class="text-xl">
-        Data Management
+        Models
     </h2>
     <ul role="list" class="mt-4 space-y-3">
         <li
