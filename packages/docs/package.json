@@ -1,7 +1,8 @@
 {
     "scripts": {
-        "dev": "vitepress dev",
         "build": "vitepress build",
+        "deploy": "noeldemartin-deploy-app noeldemartin/aerogel aerogel.js.org",
+        "dev": "vitepress dev",
         "preview": "vitepress preview"
     },
     "dependencies": {

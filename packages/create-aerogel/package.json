@@ -11,7 +11,8 @@
     ],
     "scripts": {
         "build": "noeldemartin-build-javascript",
-        "lint": "noeldemartin-lint src"
+        "lint": "noeldemartin-lint src",
+        "publish-next": "noeldemartin-publish-next"
     },
     "engines": {
         "node": ">=18.x"
