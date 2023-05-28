@@ -46,7 +46,10 @@ function createApp(config: AppConfig): void {
         writeFile(config.path + relativePath, render(fileContents, { config }));
     }
 
-    console.log('Done!');
+    console.log('That\'s it! You can start running your app with the following commands:');
+    console.log(`cd ${config.name}`);
+    console.log('npm install');
+    console.log('npm run dev');
 }
 
 function writeFile(path: string, contents: string): void {
