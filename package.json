@@ -5,7 +5,8 @@
         "packages/core",
         "packages/vite",
         "packages/playground",
-        "packages/create-aerogel"
+        "packages/create-aerogel",
+        "packages/docs"
     ],
     "scripts": {
         "build": "npm run build -ws --if-present",
