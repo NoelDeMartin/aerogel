@@ -1,17 +1,17 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import HomePage from './HomePage.vue';
-import ModelsPage from './ModelsPage.vue';
+import Home from './Home.vue';
+import Persistence from './Persistence.vue';
 
 export const routes: RouteRecordRaw[] = [
     {
         name: 'home',
         path: '/',
-        component: HomePage,
+        component: Home,
     },
     {
-        name: 'models',
-        path: '/models',
-        component: ModelsPage,
+        name: 'persistence',
+        path: '/persistence',
+        component: Persistence,
     },
 ];

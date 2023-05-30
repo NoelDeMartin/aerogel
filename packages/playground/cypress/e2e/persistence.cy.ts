@@ -1,6 +1,6 @@
-describe('Models', () => {
+describe('Persistence', () => {
 
-    beforeEach(() => cy.visit('/models'));
+    beforeEach(() => cy.visit('/persistence'));
 
     it('Creates tasks', () => {
         cy.ariaInput('Task name').type('Hello World!{enter}');

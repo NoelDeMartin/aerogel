@@ -18,7 +18,6 @@
     },
     "devDependencies": {
         "@aerogel/vite": "*",
-        "@noeldemartin/eslint-config-vue": "0.1.1-next.0394333a70ddc8eadc60347dffe1e86825e9b7e7",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "cypress": "^12.12.0",
