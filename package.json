@@ -19,7 +19,7 @@
         "@intlify/unplugin-vue-i18n": "^0.11.0",
         "@noeldemartin/eslint-config-typescript": "0.1.1-next.5c601d39eb6a2b0357cfccb01a92e8d0a524d535",
         "@noeldemartin/eslint-config-vue": "0.1.1-next.a3efe42a345345150962c001ef888fbac175ecbe",
-        "@noeldemartin/scripts": "0.1.2-next.fd49395a861d002366858a9cfea2fae8c7e4a8b7",
+        "@noeldemartin/scripts": "0.1.2-next.0de94455a7f32ab382049f570d12be214f27d873",
         "@total-typescript/ts-reset": "^0.4.2",
         "eslint": "^8.40.0",
         "prettier": "^2.8.8",
@@ -31,7 +31,8 @@
         "vite": "^4.3.1",
         "vitest": "^0.31.0",
         "vue": "^3.3.2",
-        "vue-i18n": "^9.3.0-beta.19",
-        "vue-router": "^4.2.1"
+        "vue-i18n": "9.3.0-beta.19",
+        "vue-router": "^4.2.1",
+        "vue-tsc": "^1.6.5"
     }
 }
