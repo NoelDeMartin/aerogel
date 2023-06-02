@@ -16,6 +16,7 @@
         "test": "npm run test -ws --if-present"
     },
     "devDependencies": {
+        "@intlify/unplugin-vue-i18n": "^0.11.0",
         "@noeldemartin/eslint-config-typescript": "0.1.1-next.5c601d39eb6a2b0357cfccb01a92e8d0a524d535",
         "@noeldemartin/eslint-config-vue": "0.1.1-next.a3efe42a345345150962c001ef888fbac175ecbe",
         "@noeldemartin/scripts": "0.1.2-next.97807d3521b7144c8024934e6644f97eb1549236",
@@ -30,6 +31,7 @@
         "vite": "^4.3.1",
         "vitest": "^0.31.0",
         "vue": "^3.3.2",
+        "vue-i18n": "^9.2.2",
         "vue-router": "^4.2.1"
     }
 }

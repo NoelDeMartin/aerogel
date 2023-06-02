@@ -1,10 +1,10 @@
 <template>
     <h2 class="text-xl">
-        Welcome to Aerogel!
+        {{ $t('home.title') }}
     </h2>
 
     <p class="mt-4">
-        Here's some things to you can do:
+        {{ $t('home.description') }}
     </p>
 
     <ul class="mt-2">
@@ -13,7 +13,7 @@
                 :to="{ name: 'persistence' }"
                 class="flex h-32 w-32 items-center justify-center rounded-lg bg-blue-200 font-semibold hover:bg-blue-300"
             >
-                Persistence
+                {{ $t('home.persistence') }}
             </RouterLink>
         </li>
     </ul>

@@ -4,7 +4,7 @@
             <div class="m-auto max-w-screen-lg">
                 <h1 class="text-2xl font-medium">
                     <RouterLink :to="{ name: 'home' }">
-                        🧪 Aerogel Playground
+                        🧪 {{ $t('app.title') }}
                     </RouterLink>
                 </h1>
             </div>

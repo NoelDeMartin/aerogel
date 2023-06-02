@@ -8,5 +8,6 @@ import { routes } from './pages';
 
 bootstrapApplication(App, {
     routes,
+    langMessages: import.meta.glob('@/lang/*.yaml'),
     models: import.meta.glob('@/models/*', { eager: true }),
 });

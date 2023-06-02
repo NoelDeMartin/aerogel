@@ -1,0 +1,15 @@
+app:
+    title: Aerogel Playground
+
+home:
+    title: Welcome to Aerogel!
+    description: "Here's some things to you can do:"
+    persistence: Persistence
+
+persistence:
+    title: Persistence
+    taskName: Task name
+    newTask: New task
+    submit: Add
+    deleteTask: delete
+    deleteTask_a11y: Delete '{task}'
