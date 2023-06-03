@@ -30,6 +30,7 @@
         "mustache": "^4.2.0"
     },
     "devDependencies": {
-        "@types/mustache": "^4.2.2"
+        "@types/mustache": "^4.2.2",
+        "@types/node": "^20.2.5"
     }
 }
