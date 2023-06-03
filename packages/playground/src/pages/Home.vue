@@ -1,20 +1,32 @@
 <template>
-    <h2 class="text-xl">
-        {{ $t('home.title') }}
-    </h2>
-
-    <p class="mt-4">
-        {{ $t('home.description') }}
-    </p>
-
-    <ul class="mt-2">
-        <li>
+    <SectionTitle>{{ $t('home.title') }}</SectionTitle>
+    <AGMarkdown lang-key="home.description" />
+    <ul class="mt-2 flex flex-row gap-3">
+        <li v-for="section of sections" :key="section.route">
             <RouterLink
-                :to="{ name: 'persistence' }"
-                class="flex h-32 w-32 items-center justify-center rounded-lg bg-blue-200 font-semibold hover:bg-blue-300"
+                :to="{ name: section.route }"
+                class="flex h-32 w-32 items-center justify-center rounded-lg bg-blue-200 text-center font-semibold hover:bg-blue-300"
             >
-                {{ $t('home.persistence') }}
+                {{ $t(section.langKey) }}
             </RouterLink>
         </li>
     </ul>
 </template>
+
+<script setup lang="ts">
+interface Section {
+    langKey: string;
+    route: string;
+}
+
+const sections: Section[] = [
+    {
+        langKey: 'home.content',
+        route: 'content',
+    },
+    {
+        langKey: 'home.storage',
+        route: 'storage',
+    },
+];
+</script>

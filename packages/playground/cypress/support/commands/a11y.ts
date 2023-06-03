@@ -34,3 +34,7 @@ export function see(
         ? cy.contains(selectorOrOptions, text, options).scrollIntoView().should('be.visible')
         : cy.a11yGet(text, selectorOrOptions).scrollIntoView().should('be.visible');
 }
+
+export function seeImage(text: string): Cypress.Chainable {
+    return cy.get(`img[alt="${text}"]`).scrollIntoView().should('be.visible');
+}

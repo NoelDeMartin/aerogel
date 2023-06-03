@@ -19,7 +19,7 @@
         "@intlify/unplugin-vue-i18n": "^0.11.0",
         "@noeldemartin/eslint-config-typescript": "0.1.1-next.5c601d39eb6a2b0357cfccb01a92e8d0a524d535",
         "@noeldemartin/eslint-config-vue": "0.1.1-next.a3efe42a345345150962c001ef888fbac175ecbe",
-        "@noeldemartin/scripts": "0.1.2-next.0de94455a7f32ab382049f570d12be214f27d873",
+        "@noeldemartin/scripts": "0.1.2-next.886e3741428fcb78bec5e128d78543cbf3db9c66",
         "@total-typescript/ts-reset": "^0.4.2",
         "eslint": "^8.40.0",
         "prettier": "^2.8.8",

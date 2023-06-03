@@ -1,7 +1,8 @@
 import type { RouteRecordRaw } from 'vue-router';
 
+import Content from './Content.vue';
 import Home from './Home.vue';
-import Persistence from './Persistence.vue';
+import Storage from './Storage.vue';
 
 export const routes: RouteRecordRaw[] = [
     {
@@ -10,8 +11,13 @@ export const routes: RouteRecordRaw[] = [
         component: Home,
     },
     {
-        name: 'persistence',
-        path: '/persistence',
-        component: Persistence,
+        name: 'content',
+        path: '/content',
+        component: Content,
+    },
+    {
+        name: 'storage',
+        path: '/storage',
+        component: Storage,
     },
 ];

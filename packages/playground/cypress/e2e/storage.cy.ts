@@ -1,6 +1,6 @@
-describe('Persistence', () => {
+describe('Storage', () => {
 
-    beforeEach(() => cy.visit('/persistence'));
+    beforeEach(() => cy.visit('/storage'));
 
     it('Creates tasks', () => {
         cy.ariaInput('Task name').type('Hello World!{enter}');
