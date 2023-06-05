@@ -4,16 +4,21 @@ app:
 home:
     title: Welcome to Aerogel!
     description: 'Explore these features:'
-    storage: Storage
     content: Formatted Content
+    modals: Modals
+    storage: Storage
 
-storage:
-    title: Storage
-    taskName: Task name
-    newTask: New task
-    submit: Add
-    deleteTask: delete
-    deleteTask_a11y: Delete '{task}'
+modals:
+    title: Modals
+    showDefault: Default Modal
+    showCustom: Custom Modal
+
+    defaultModalContent: Default modals are quite modest.
+
+    customModal:
+        title: Custom Modal
+        content: Custom modals can get as fancy as you want!
+        button: Cool!
 
 content:
     title: Formatted Content
@@ -33,3 +38,14 @@ content:
         ### Images
 
         ![A cute kitten](http://placekitten.com/300/300)
+
+storage:
+    title: Storage
+    taskName: Task name
+    newTask: New task
+    submit: Add
+    deleteTask: delete
+    deleteTask_a11y: Delete '{task}'
+
+ui:
+    close: Close

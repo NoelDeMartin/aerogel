@@ -1,10 +1,13 @@
 import { Events } from './Events';
+import { UI } from './UI';
 
 export * from './Events';
 export * from './Service';
+export * from './UI';
 
 const services = {
     $events: Events,
+    $ui: UI,
 };
 
 type BaseServices = typeof services;

@@ -37,6 +37,10 @@ export function enumProp<Enum extends Record<string, unknown>>(
     };
 }
 
+export function injectOrFail<T>(key: InjectionKey<T> | string, errorMessage?: string): T {
+    return inject(key) ?? fail(errorMessage ?? `Could not resolve '${key}' injection key`);
+}
+
 export function mixedProp<T>(type: PropType<T>): OptionalProp<T | null> {
     return {
         type,

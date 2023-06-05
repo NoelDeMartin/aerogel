@@ -13,6 +13,7 @@
         "cy:test": "npm run cy:test -ws --if-present",
         "dev": "npm run dev -ws --if-present",
         "lint": "npm run lint -ws --if-present",
+        "postinstall": "patch-package",
         "test": "npm run test -ws --if-present"
     },
     "devDependencies": {
@@ -22,6 +23,7 @@
         "@noeldemartin/scripts": "0.1.2-next.886e3741428fcb78bec5e128d78543cbf3db9c66",
         "@total-typescript/ts-reset": "^0.4.2",
         "eslint": "^8.40.0",
+        "patch-package": "^7.0.0",
         "prettier": "^2.8.8",
         "prettier-eslint-cli": "^7.1.0",
         "prettier-plugin-tailwindcss": "^0.2.8",
