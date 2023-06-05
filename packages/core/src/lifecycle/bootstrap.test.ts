@@ -6,6 +6,7 @@ import { mock } from '@noeldemartin/utils';
 import type { Component } from 'vue';
 
 import User from '@/testing/stubs/models/User';
+import { Events } from '@/services/Events';
 
 import { bootstrapApplication } from './bootstrap';
 
@@ -16,7 +17,9 @@ describe('Aerogel', () => {
             createApp: vi.fn(() => ({
                 mount: vi.fn(),
                 use: vi.fn(),
+                config: { globalProperties: {} },
             })),
+            reactive: vi.fn((data) => data),
         }));
     });
 
@@ -83,6 +86,20 @@ describe('Aerogel', () => {
         expect(mockedCreateI18n.mock.calls[0]?.[0].messages).key('en').to.exist;
         expect(mockedCreateI18n.mock.calls[0]?.[0].messages?.['en']).key('foo').to.exist;
         expect(mockedCreateApp.mock.results[0]?.value.use).toHaveBeenCalledWith({ i18nMock: true });
+    });
+
+    it('Boots services', async () => {
+        // Arrange
+        const rootComponent = mock<Component>();
+
+        // Act
+        await bootstrapApplication(rootComponent);
+
+        // Assert
+        const globals = vi.mocked(createApp).mock.results[0]?.value.config.globalProperties;
+
+        expect(globals).property('$events').to.exist;
+        expect(globals.$events).toBe(Events);
     });
 
 });

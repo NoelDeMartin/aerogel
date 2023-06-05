@@ -2,7 +2,7 @@ import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 
 export function renderMarkdown(markdown: string): string {
-    return safeHtml(marked(markdown));
+    return safeHtml(marked(markdown, { mangle: false, headerIds: false }));
 }
 
 export function safeHtml(html: string): string {

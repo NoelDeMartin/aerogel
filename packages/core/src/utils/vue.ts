@@ -1,18 +1,23 @@
-import type { PropType } from 'vue';
+import { fail } from '@noeldemartin/utils';
+import { inject } from 'vue';
+import type { InjectionKey, PropType } from 'vue';
 
-type Prop<T> = {
+type BaseProp<T> = {
     type: PropType<T>;
     validator?(value: unknown): boolean;
-} & ({ required: true } | { default: T | (() => T) | null });
+};
 
-export function arrayProp<T>(defaultValue?: () => T[]): Prop<T[]> {
+type RequiredProp<T> = BaseProp<T> & { required: true };
+type OptionalProp<T> = BaseProp<T> & { default: T | (() => T) | null };
+
+export function arrayProp<T>(defaultValue?: () => T[]): OptionalProp<T[]> {
     return {
         type: Array as PropType<T[]>,
         default: defaultValue ?? (() => []),
     };
 }
 
-export function booleanProp(defaultValue: boolean = false): Prop<boolean> {
+export function booleanProp(defaultValue: boolean = false): OptionalProp<boolean> {
     return {
         type: Boolean,
         default: defaultValue,
@@ -22,7 +27,7 @@ export function booleanProp(defaultValue: boolean = false): Prop<boolean> {
 export function enumProp<Enum extends Record<string, unknown>>(
     enumeration: Enum,
     defaultValue?: Enum[keyof Enum],
-): Prop<Enum[keyof Enum]> {
+): OptionalProp<Enum[keyof Enum]> {
     const values = Object.values(enumeration) as Enum[keyof Enum][];
 
     return {
@@ -32,39 +37,41 @@ export function enumProp<Enum extends Record<string, unknown>>(
     };
 }
 
-export function mixedProp<T>(type: PropType<T>): Prop<T | null> {
+export function mixedProp<T>(type: PropType<T>): OptionalProp<T | null> {
     return {
         type,
         default: null,
     };
 }
 
-export function numberProp(): Prop<number | null>;
-export function numberProp(defaultValue: number): Prop<number>;
-export function numberProp(defaultValue: number | null = null): Prop<number | null> {
+export function numberProp(): OptionalProp<number | null>;
+export function numberProp(defaultValue: number): OptionalProp<number>;
+export function numberProp(defaultValue: number | null = null): OptionalProp<number | null> {
     return {
         type: Number,
         default: defaultValue,
     };
 }
 
-export function objectProp<T = Object>(): Prop<T | null>;
-export function objectProp<T>(defaultValue: () => T): Prop<T>;
-export function objectProp<T = Object>(defaultValue: (() => T) | null = null): Prop<T | null> {
+export function objectProp<T = Object>(): OptionalProp<T | null>;
+export function objectProp<T>(defaultValue: () => T): OptionalProp<T>;
+export function objectProp<T = Object>(defaultValue: (() => T) | null = null): OptionalProp<T | null> {
     return {
         type: Object,
         default: defaultValue,
     };
 }
 
-export function requiredArrayProp<T>(): Prop<T[]> {
+export function requiredArrayProp<T>(): RequiredProp<T[]> {
     return {
         type: Array as PropType<T[]>,
         required: true,
     };
 }
 
-export function requiredEnumProp<Enum extends Record<string, unknown>>(enumeration: Enum): Prop<Enum[keyof Enum]> {
+export function requiredEnumProp<Enum extends Record<string, unknown>>(
+    enumeration: Enum,
+): RequiredProp<Enum[keyof Enum]> {
     const values = Object.values(enumeration);
 
     return {
@@ -74,37 +81,37 @@ export function requiredEnumProp<Enum extends Record<string, unknown>>(enumerati
     };
 }
 
-export function requiredMixedProp<T>(type: PropType<T>): Prop<T> {
+export function requiredMixedProp<T>(type: PropType<T>): RequiredProp<T> {
     return {
         type,
         required: true,
     };
 }
 
-export function requiredNumberProp(): Prop<number> {
+export function requiredNumberProp(): RequiredProp<number> {
     return {
         type: Number,
         required: true,
     };
 }
 
-export function requiredObjectProp<T = Object>(): Prop<T> {
+export function requiredObjectProp<T = Object>(): RequiredProp<T> {
     return {
         type: Object,
         required: true,
     };
 }
 
-export function requiredStringProp(): Prop<string> {
+export function requiredStringProp(): RequiredProp<string> {
     return {
         type: String,
         required: true,
     };
 }
 
-export function stringProp(): Prop<string | null>;
-export function stringProp(defaultValue: string): Prop<string>;
-export function stringProp(defaultValue: string | null = null): Prop<string | null> {
+export function stringProp(): OptionalProp<string | null>;
+export function stringProp(defaultValue: string): OptionalProp<string>;
+export function stringProp(defaultValue: string | null = null): OptionalProp<string | null> {
     return {
         type: String,
         default: defaultValue,
