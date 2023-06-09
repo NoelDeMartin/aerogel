@@ -12,7 +12,8 @@
     "scripts": {
         "build": "noeldemartin-build-javascript",
         "lint": "noeldemartin-lint src",
-        "publish-next": "noeldemartin-publish-next"
+        "publish-next": "noeldemartin-publish-next",
+        "test": "vitest --run"
     },
     "engines": {
         "node": ">=18.x"
@@ -27,9 +28,12 @@
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
     "dependencies": {
+        "@noeldemartin/utils": "^0.4.0",
+        "minimist": "^1.2.8",
         "mustache": "^4.2.0"
     },
     "devDependencies": {
+        "@types/minimist": "^1.2.2",
         "@types/mustache": "^4.2.2",
         "@types/node": "^20.2.5"
     }

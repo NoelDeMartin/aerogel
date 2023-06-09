@@ -1,1 +1,1 @@
-export default ['packages/core'];
+export default ['packages/core', 'packages/create-aerogel'];
