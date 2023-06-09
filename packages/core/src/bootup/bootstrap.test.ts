@@ -5,6 +5,7 @@ import { IndexedDBEngine, requireBootedModel, requireEngine } from 'soukai';
 import { mock } from '@noeldemartin/utils';
 import type { Component } from 'vue';
 
+import initialFocus from '@/directives/initial-focus';
 import User from '@/testing/stubs/models/User';
 import { Events } from '@/services/Events';
 
@@ -17,6 +18,7 @@ describe('Aerogel', () => {
             createApp: vi.fn(() => ({
                 mount: vi.fn(),
                 use: vi.fn(),
+                directive: vi.fn(),
                 config: { globalProperties: {} },
             })),
             reactive: vi.fn((data) => data),
@@ -100,6 +102,20 @@ describe('Aerogel', () => {
 
         expect(globals).property('$events').to.exist;
         expect(globals.$events).toBe(Events);
+    });
+
+    it('Registers directives', async () => {
+        // Arrange
+        const rootComponent = mock<Component>();
+
+        // Act
+        await bootstrapApplication(rootComponent);
+
+        // Assert
+        expect(vi.mocked(createApp).mock.results[0]?.value.directive).toHaveBeenCalledWith(
+            'initial-focus',
+            initialFocus,
+        );
     });
 
 });
