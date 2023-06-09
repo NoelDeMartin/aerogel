@@ -3,6 +3,7 @@ import { IndexedDBEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
 import type { Component } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 
+import directives from '@/directives';
 import { bootServices } from '@/services';
 import { createAppI18n } from '@/lang';
 import { createAppRouter } from '@/routing';
@@ -38,6 +39,7 @@ export async function bootstrapApplication(rootComponent: Component, options: Bo
     const services = await bootServices();
 
     Object.assign(app.config.globalProperties, services);
+    Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
     langOptions && app.use(await createAppI18n(langOptions));
     options.routes && app.use(createAppRouter({ routes: options.routes }));
     options.models && bootModels(options.models);

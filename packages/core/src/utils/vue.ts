@@ -1,6 +1,6 @@
 import { fail } from '@noeldemartin/utils';
 import { inject } from 'vue';
-import type { InjectionKey, PropType } from 'vue';
+import type { Directive, InjectionKey, PropType } from 'vue';
 
 type BaseProp<T> = {
     type: PropType<T>;
@@ -22,6 +22,10 @@ export function booleanProp(defaultValue: boolean = false): OptionalProp<boolean
         type: Boolean,
         default: defaultValue,
     };
+}
+
+export function defineDirective(directive: Directive): Directive {
+    return directive;
 }
 
 export function enumProp<Enum extends Record<string, unknown>>(
