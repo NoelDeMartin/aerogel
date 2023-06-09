@@ -2,7 +2,7 @@ describe('Modals', () => {
 
     beforeEach(() => cy.visit('/modals'));
 
-    it('Shows formatted content', () => {
+    it('Uses modals', () => {
         cy.press('Default Modal');
         cy.see('Default modals are quite modest');
         cy.get('body').type('{esc}');
