@@ -9,10 +9,10 @@ import { ref, toRef } from 'vue';
 import { Dialog } from '@headlessui/vue';
 import type { VNode } from 'vue';
 
-import { Events } from '@/services/Events';
+import Events from '@/services/Events';
 import { useEvent } from '@/utils/composition/events';
 import { booleanProp, injectOrFail } from '@/utils/vue';
-import type { IAGModalContext } from '@/components/AGModalContext';
+import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
 import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from './AGHeadlessModal';
 

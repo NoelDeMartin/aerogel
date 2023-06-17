@@ -1,7 +1,5 @@
-import { useI18n } from 'vue-i18n';
+import Lang from '@/lang/Lang';
 
-export function lang(key: string): string {
-    const { t } = useI18n();
-
-    return t(key);
+export function lang(key: string, parameters: Record<string, unknown> = {}): string {
+    return Lang.translate(key, parameters);
 }

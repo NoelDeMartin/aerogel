@@ -16,7 +16,7 @@ export type EventWithPayload = {
     [K in keyof EventsPayload]: EventsPayload[K] extends void ? never : K;
 }[keyof EventsPayload];
 
-export default class EventsService extends Service {
+export class EventsService extends Service {
 
     private listeners: Record<string, FluentArray<EventListener>> = {};
 
@@ -82,4 +82,4 @@ export default class EventsService extends Service {
 
 }
 
-export const Events = facade(new EventsService());
+export default facade(new EventsService());

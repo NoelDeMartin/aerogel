@@ -5,24 +5,28 @@ import { IndexedDBEngine, requireBootedModel, requireEngine } from 'soukai';
 import { mock } from '@noeldemartin/utils';
 import type { Component } from 'vue';
 
+import Events from '@/services/Events';
 import initialFocus from '@/directives/initial-focus';
 import User from '@/testing/stubs/models/User';
-import { Events } from '@/services/Events';
 
 import { bootstrapApplication } from './bootstrap';
 
 describe('Aerogel', () => {
 
     beforeEach(() => {
-        vi.mock('vue', () => ({
-            createApp: vi.fn(() => ({
-                mount: vi.fn(),
-                use: vi.fn(),
-                directive: vi.fn(),
-                config: { globalProperties: {} },
-            })),
-            reactive: vi.fn((data) => data),
-        }));
+        vi.mock('vue', async () => {
+            const vue = (await vi.importActual('vue')) as Object;
+
+            return {
+                ...vue,
+                createApp: vi.fn(() => ({
+                    mount: vi.fn(),
+                    use: vi.fn(),
+                    directive: vi.fn(),
+                    config: { globalProperties: {} },
+                })),
+            };
+        });
     });
 
     it('Mounts the Vue application', async () => {

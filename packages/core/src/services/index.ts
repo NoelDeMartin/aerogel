@@ -1,9 +1,12 @@
-import { Events } from './Events';
-import { UI } from './UI';
+import Events from './Events';
+import Service from './Service';
+import UI from './UI';
 
 export * from './Events';
 export * from './Service';
 export * from './UI';
+
+export { Events, Service, UI };
 
 const services = {
     $events: Events,

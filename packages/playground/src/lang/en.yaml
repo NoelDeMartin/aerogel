@@ -5,20 +5,9 @@ home:
     title: Welcome to Aerogel!
     description: 'Explore these features:'
     content: Formatted Content
+    forms: Forms
     modals: Modals
     storage: Storage
-
-modals:
-    title: Modals
-    showDefault: Default Modal
-    showCustom: Custom Modal
-
-    defaultModalContent: Default modals are quite modest.
-
-    customModal:
-        title: Custom Modal
-        content: Custom modals can get as fancy as you want!
-        button: Cool!
 
 content:
     title: Formatted Content
@@ -38,6 +27,25 @@ content:
         ### Images
 
         ![A cute kitten](http://placekitten.com/300/300)
+
+forms:
+    title: Forms
+    name_label: Name
+    name_placeholder: Name
+    submit: Say My Name
+    greeting: Hello, {name}!
+
+modals:
+    title: Modals
+    showDefault: Default Modal
+    showCustom: Custom Modal
+
+    defaultModalContent: Default modals are quite modest.
+
+    customModal:
+        title: Custom Modal
+        content: Custom modals can get as fancy as you want!
+        button: Cool!
 
 storage:
     title: Storage

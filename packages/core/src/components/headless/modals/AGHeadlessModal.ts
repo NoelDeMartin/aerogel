@@ -1,4 +1,4 @@
-import type { IAGModal } from '@/components/AGModal';
+import type { IAGModal } from '@/components/modals/AGModal';
 
 export interface IAGHeadlessModal extends IAGModal {}
 

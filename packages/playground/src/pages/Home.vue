@@ -25,6 +25,10 @@ const sections: Section[] = [
         route: 'content',
     },
     {
+        langKey: 'home.forms',
+        route: 'forms',
+    },
+    {
         langKey: 'home.modals',
         route: 'modals',
     },

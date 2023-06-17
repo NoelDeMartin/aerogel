@@ -8,10 +8,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { UI } from '@/services/UI';
+import UI from '@/services/UI';
 import { useEvent } from '@/utils/composition/events';
 
-import AGModalContext from './AGModalContext.vue';
+import AGModalContext from './modals/AGModalContext.vue';
 
 const $backdrop = ref<HTMLElement | null>(null);
 const backdropHidden = ref(true);

@@ -1,6 +1,6 @@
 import { onUnmounted } from 'vue';
 
-import { Events } from '@/services/Events';
+import Events from '@/services/Events';
 import type {
     EventListener,
     EventWithPayload,

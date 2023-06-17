@@ -9,11 +9,11 @@
 import { computed } from 'vue';
 import { DialogPanel } from '@headlessui/vue';
 
+import UI from '@/services/UI';
 import { injectOrFail } from '@/utils/vue';
-import { UI } from '@/services';
-import type { IAGModalContext } from '@/components/AGModalContext';
+import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
-import AGModalContext from '../AGModalContext.vue';
+import AGModalContext from '../../modals/AGModalContext.vue';
 
 const { childIndex } = injectOrFail<IAGModalContext>('modal');
 const childModal = computed(() => UI.modals[childIndex.value] ?? null);

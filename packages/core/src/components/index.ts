@@ -1,9 +1,8 @@
 import AGAppLayout from './AGAppLayout.vue';
-import AGMarkdown from './AGMarkdown.vue';
-import AGModal from './AGModal.vue';
-import AGModalContext from './AGModalContext.vue';
-import { IAGModal } from './AGModal';
 
-export { AGAppLayout, AGMarkdown, AGModal, AGModalContext, IAGModal };
+export { AGAppLayout };
 
+export * from './basic';
+export * from './forms';
 export * from './headless';
+export * from './modals';

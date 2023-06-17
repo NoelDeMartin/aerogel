@@ -11,7 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import AGHeadlessModal from './headless/AGHeadlessModal.vue';
-import AGHeadlessModalPanel from './headless/AGHeadlessModalPanel.vue';
-import type { IAGHeadlessModalDefaultSlotProps } from './headless/AGHeadlessModal';
+import type { IAGHeadlessModalDefaultSlotProps } from '@/components/headless/modals/AGHeadlessModal';
+
+import AGHeadlessModal from '../headless/modals/AGHeadlessModal.vue';
+import AGHeadlessModalPanel from '../headless/modals/AGHeadlessModalPanel.vue';
 </script>

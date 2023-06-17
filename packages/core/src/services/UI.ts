@@ -1,7 +1,9 @@
-import { facade, uuid } from '@noeldemartin/utils';
+import { facade, fail, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
+import type { Component } from 'vue';
+import type { ObjectValues } from '@noeldemartin/utils';
 
-import { Events } from '@/services/Events';
+import Events from '@/services/Events';
 
 import Service from './UI.state';
 import type { Modal, ModalComponent } from './UI.state';
@@ -16,9 +18,24 @@ type ModalResult<TComponent> = TComponent extends ModalComponent<Record<string, 
     ? TResult
     : never;
 
-export default class UIService extends Service {
+export const UIComponents = {
+    AlertModal: 'alert-modal',
+} as const;
+
+export type UIComponent = ObjectValues<typeof UIComponents>;
+
+export class UIService extends Service {
 
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
+    private components: Partial<Record<UIComponent, Component>> = {};
+
+    public alert(message: string): void {
+        this.openModal(this.requireComponent(UIComponents.AlertModal), { message });
+    }
+
+    public registerComponent(name: UIComponent, component: Component): void {
+        this.components[name] = component;
+    }
 
     public async openModal<TModalComponent extends ModalComponent>(
         component: TModalComponent,
@@ -60,6 +77,10 @@ export default class UIService extends Service {
         this.watchModalEvents();
     }
 
+    private requireComponent(name: UIComponent): Component {
+        return this.components[name] ?? fail(`UI Component '${name}' is not defined!`);
+    }
+
     private watchModalEvents(): void {
         Events.on('modal-will-close', ({ modal, result }) => {
             this.modalCallbacks[modal.id]?.willClose?.(result);
@@ -84,7 +105,7 @@ export default class UIService extends Service {
 
 }
 
-export const UI = facade(new UIService());
+export default facade(new UIService());
 
 declare module '@/services/Events' {
     export interface EventsPayload {
