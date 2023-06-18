@@ -1,23 +1,23 @@
+import type { App } from 'vue';
+
 import Events from './Events';
 import Service from './Service';
-import UI from './UI';
+import { defineBootstrapHook } from '@/bootstrap/hooks';
 
 export * from './Events';
 export * from './Service';
-export * from './UI';
 
-export { Events, Service, UI };
+export { Events, Service };
 
-const services = {
+const defaultServices = {
     $events: Events,
-    $ui: UI,
 };
 
-type BaseServices = typeof services;
+export type DefaultServices = typeof defaultServices;
 
-export interface Services extends BaseServices {}
+export interface Services extends DefaultServices {}
 
-export async function bootServices(): Promise<Services> {
+export async function bootServices(app: App, services: Record<string, Service>): Promise<void> {
     await Promise.all(
         Object.entries(services).map(async ([name, service]) => {
             // eslint-disable-next-line no-console
@@ -25,9 +25,11 @@ export async function bootServices(): Promise<Services> {
         }),
     );
 
-    return services;
+    Object.assign(app.config.globalProperties, services);
 }
 
+export default defineBootstrapHook((app) => bootServices(app, defaultServices));
+
 declare module '@vue/runtime-core' {
-    export interface ComponentCustomProperties extends Services {}
+    interface ComponentCustomProperties extends Services {}
 }

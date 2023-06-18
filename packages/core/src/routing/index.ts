@@ -1,14 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { Plugin } from 'vue';
-import type { RouteRecordRaw } from 'vue-router';
 
-interface RouteOptions {
-    routes: RouteRecordRaw[];
-}
+import { defineBootstrapHook } from '@/bootstrap/hooks';
 
-export function createAppRouter(options: RouteOptions): Plugin {
+function createAppRouter(routes: RouteRecordRaw[]): Plugin {
     return createRouter({
         history: createWebHistory(),
-        routes: options.routes,
+        routes,
     });
 }
+
+export default defineBootstrapHook(async (app, options) => {
+    if (!options.routes) {
+        return;
+    }
+
+    const plugin = createAppRouter(options.routes);
+
+    app.use(plugin);
+});
+
+declare module '@/bootstrap/options' {
+    interface BootstrapOptions {
+        routes?: RouteRecordRaw[];
+    }
+}
+
+import type { RouteRecordRaw } from 'vue-router';

@@ -9,7 +9,7 @@ import Events from '@/services/Events';
 import initialFocus from '@/directives/initial-focus';
 import User from '@/testing/stubs/models/User';
 
-import { bootstrapApplication } from './bootstrap';
+import { bootstrapApplication } from './index';
 
 describe('Aerogel', () => {
 
@@ -27,18 +27,6 @@ describe('Aerogel', () => {
                 })),
             };
         });
-    });
-
-    it('Mounts the Vue application', async () => {
-        // Arrange
-        const rootComponent = mock<Component>();
-
-        // Act
-        await bootstrapApplication(rootComponent);
-
-        // Assert
-        expect(createApp).toHaveBeenCalledWith(rootComponent);
-        expect(vi.mocked(createApp).mock.results[0]?.value.mount).toHaveBeenCalled();
     });
 
     it('Initializes Soukai', async () => {

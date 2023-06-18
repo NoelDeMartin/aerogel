@@ -6,7 +6,7 @@
 import { provide, toRef } from 'vue';
 
 import { requiredNumberProp, requiredObjectProp } from '@/utils/vue';
-import type { Modal } from '@/services/UI.state';
+import type { Modal } from '@/ui/UI.state';
 
 import type { IAGModalContext } from './AGModalContext';
 

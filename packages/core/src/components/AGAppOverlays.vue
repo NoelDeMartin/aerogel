@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import UI from '@/services/UI';
+import UI from '@/ui/UI';
 import { useEvent } from '@/utils/composition/events';
 
 import AGModalContext from './modals/AGModalContext.vue';

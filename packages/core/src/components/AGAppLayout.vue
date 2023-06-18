@@ -7,9 +7,5 @@
 </template>
 
 <script setup lang="ts">
-import Lang from '@/lang/Lang';
-
 import AGAppOverlays from './AGAppOverlays.vue';
-
-Lang.setup();
 </script>

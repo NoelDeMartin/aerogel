@@ -1,8 +1,9 @@
 import '@total-typescript/ts-reset';
 
-export * from './bootup';
+export * from './bootstrap';
 export * from './components';
 export * from './forms';
-export * from './lang/helpers';
+export * from './lang';
 export * from './services';
-export * from './utils/vue';
+export * from './ui';
+export * from './utils';

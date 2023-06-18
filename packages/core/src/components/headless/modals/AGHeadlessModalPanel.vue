@@ -9,7 +9,7 @@
 import { computed } from 'vue';
 import { DialogPanel } from '@headlessui/vue';
 
-import UI from '@/services/UI';
+import UI from '@/ui/UI';
 import { injectOrFail } from '@/utils/vue';
 import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
