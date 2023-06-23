@@ -3,9 +3,14 @@ import Components from 'unplugin-vue-components/vite';
 import I18n from '@intlify/unplugin-vue-i18n/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
+import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
-export default {
+const isProduction = process.env.NODE_ENV === 'production';
+const basePath = isProduction ? '/playground/' : undefined;
+
+export default defineConfig({
+    base: basePath,
     plugins: [
         Aerogel(),
         Icons(),
@@ -21,4 +26,4 @@ export default {
             '@': resolve(__dirname, './src'),
         },
     },
-};
+});

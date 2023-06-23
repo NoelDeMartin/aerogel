@@ -11,6 +11,7 @@
     "scripts": {
         "build": "npm run build -ws --if-present",
         "cy:test": "npm run cy:test -ws --if-present",
+        "deploy": "./scripts/deploy.sh",
         "dev": "npm run dev -ws --if-present",
         "lint": "npm run lint -ws --if-present",
         "postinstall": "patch-package",

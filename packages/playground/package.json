@@ -2,6 +2,7 @@
     "name": "playground",
     "private": true,
     "scripts": {
+        "build": "vite build",
         "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run cy:open\"",
         "cy:open": "cypress open --e2e --browser chromium",
         "cy:run": "cypress run",

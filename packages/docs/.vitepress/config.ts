@@ -6,8 +6,8 @@ export default defineConfig({
     outDir: './dist',
     themeConfig: {
         nav: [
-            { text: 'Home', link: '/' },
             { text: 'Guide', link: '/guide/' },
+            { text: 'Playground', link: 'https://aerogel.js.org/playground/' },
         ],
         socialLinks: [{ icon: 'github', link: 'https://github.com/noeldemartin/aerogel' }],
     },

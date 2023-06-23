@@ -17,5 +17,18 @@ export function AerogelResolver(): ComponentResolver {
 }
 
 export default function Aerogel(): Plugin[] {
-    return [Vue()];
+    return [
+        Vue(),
+        {
+            name: 'vite:aerogel',
+            config: (config) => {
+                config.define = {
+                    ...config.define,
+                    __AG_BASE_PATH: config.base ? JSON.stringify(config.base) : 'undefined',
+                };
+
+                return config;
+            },
+        },
+    ];
 }

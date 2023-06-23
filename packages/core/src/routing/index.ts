@@ -3,10 +3,10 @@ import type { Plugin } from 'vue';
 
 import { defineBootstrapHook } from '@/bootstrap/hooks';
 
-function createAppRouter(routes: RouteRecordRaw[]): Plugin {
+function createAppRouter(options: { routes: RouteRecordRaw[]; basePath?: string }): Plugin {
     return createRouter({
-        history: createWebHistory(),
-        routes,
+        history: createWebHistory(options.basePath),
+        routes: options.routes,
     });
 }
 
@@ -15,7 +15,10 @@ export default defineBootstrapHook(async (app, options) => {
         return;
     }
 
-    const plugin = createAppRouter(options.routes);
+    const plugin = createAppRouter({
+        routes: options.routes,
+        basePath: options.basePath ?? __AG_BASE_PATH,
+    });
 
     app.use(plugin);
 });
@@ -23,6 +26,7 @@ export default defineBootstrapHook(async (app, options) => {
 declare module '@/bootstrap/options' {
     interface BootstrapOptions {
         routes?: RouteRecordRaw[];
+        basePath?: string;
     }
 }
 
