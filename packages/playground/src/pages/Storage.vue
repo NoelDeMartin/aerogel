@@ -1,5 +1,7 @@
 <template>
-    <SectionTitle>{{ $t('storage.title') }}</SectionTitle>
+    <PageTitle source="src/pages/Storage.vue">
+        {{ $t('storage.title') }}
+    </PageTitle>
     <ul role="list" class="mt-4 space-y-3">
         <li
             v-for="task of tasks"
@@ -20,9 +22,7 @@
     </ul>
     <form class="mt-5 sm:flex sm:items-center" @submit.prevent="addTask">
         <div class="w-full sm:max-w-xs">
-            <label for="draft" class="sr-only">{{
-                $t('storage.taskName')
-            }}</label>
+            <label for="draft" class="sr-only">{{ $t('storage.taskName') }}</label>
             <input
                 id="draft"
                 v-model="draft"

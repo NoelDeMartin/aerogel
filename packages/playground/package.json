@@ -19,11 +19,13 @@
     },
     "devDependencies": {
         "@aerogel/vite": "*",
+        "@iconify/json": "^2.2.80",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "cypress": "^12.12.0",
         "eslint-plugin-vue": "^9.11.0",
         "postcss": "^8.4.23",
-        "start-server-and-test": "^2.0.0"
+        "start-server-and-test": "^2.0.0",
+        "unplugin-icons": "^0.16.3"
     }
 }

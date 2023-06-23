@@ -1,5 +1,7 @@
 <template>
-    <SectionTitle>{{ $t('forms.title') }}</SectionTitle>
+    <PageTitle source="src/pages/Forms.vue">
+        {{ $t('forms.title') }}
+    </PageTitle>
     <AGForm :form="form" @submit="submit()">
         <div class="flex flex-row">
             <AGInput

@@ -1,5 +1,5 @@
 <template>
-    <SectionTitle>{{ $t('home.title') }}</SectionTitle>
+    <PageTitle>{{ $t('home.title') }}</PageTitle>
     <AGMarkdown lang-key="home.description" />
     <ul class="mt-2 flex flex-row gap-3">
         <li v-for="section of sections" :key="section.route">

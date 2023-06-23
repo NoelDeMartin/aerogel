@@ -1,4 +1,6 @@
 <template>
-    <SectionTitle>{{ $t('content.title') }}</SectionTitle>
+    <PageTitle source="src/pages/Content.vue">
+        {{ $t('content.title') }}
+    </PageTitle>
     <AGMarkdown lang-key="content.body" />
 </template>
