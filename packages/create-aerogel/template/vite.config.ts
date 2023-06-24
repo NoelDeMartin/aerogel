@@ -1,4 +1,4 @@
-import Aerogel from '@aerogel/vite';
+import Aerogel, { AerogelResolver } from '@aerogel/vite';
 import Components from 'unplugin-vue-components/vite';
 import { resolve } from 'path';
 
@@ -8,6 +8,7 @@ export default {
         Components({
             dirs: ['src/pages'],
             dts: false,
+            resolvers: [AerogelResolver()],
         }),
     ],
     resolve: {

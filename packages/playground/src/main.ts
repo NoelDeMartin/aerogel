@@ -2,7 +2,7 @@ import '@total-typescript/ts-reset';
 
 import { bootstrapApplication } from '@aerogel/core';
 
-import './assets/styles/main.css';
+import './assets/styles.css';
 import App from './App.vue';
 import { routes } from './pages';
 

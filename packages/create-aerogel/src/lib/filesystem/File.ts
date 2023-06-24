@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'fs';
+import { existsSync, lstatSync, mkdirSync, readdirSync, writeFileSync } from 'fs';
 import { facade } from '@noeldemartin/utils';
 import { dirname, resolve } from 'path';
 
@@ -23,6 +23,18 @@ export class FileService {
         }
 
         return files;
+    }
+
+    public isDirectory(path: string): boolean {
+        return lstatSync(path).isDirectory();
+    }
+
+    public isEmptyDirectory(path: string): boolean {
+        if (!this.isDirectory(path)) {
+            return false;
+        }
+
+        return this.getFiles(path).length === 0;
     }
 
     public write(path: string, contents: string): void {
