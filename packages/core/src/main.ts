@@ -1,5 +1,3 @@
-import '@total-typescript/ts-reset';
-
 export * from './bootstrap';
 export * from './components';
 export * from './forms';
