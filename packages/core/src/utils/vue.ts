@@ -1,6 +1,6 @@
 import { fail } from '@noeldemartin/utils';
-import { inject } from 'vue';
-import type { Directive, InjectionKey, PropType } from 'vue';
+import { inject, reactive, ref } from 'vue';
+import type { Directive, InjectionKey, PropType, Ref, UnwrapNestedRefs } from 'vue';
 
 type BaseProp<T> = {
     type: PropType<T>;
@@ -24,6 +24,10 @@ export function booleanProp(defaultValue: boolean = false): OptionalProp<boolean
     };
 }
 
+export function componentRef<T>(): Ref<UnwrapNestedRefs<T> | undefined> {
+    return ref<UnwrapNestedRefs<T>>();
+}
+
 export function defineDirective(directive: Directive): Directive {
     return directive;
 }
@@ -39,6 +43,19 @@ export function enumProp<Enum extends Record<string, unknown>>(
         default: defaultValue ?? values[0] ?? null,
         validator: (value) => values.includes(value as Enum[keyof Enum]),
     };
+}
+
+export function injectReactive<T extends object>(key: InjectionKey<T> | string): UnwrapNestedRefs<T> | undefined {
+    const value = inject(key);
+
+    return value ? reactive<T>(value) : undefined;
+}
+
+export function injectReactiveOrFail<T extends object>(
+    key: InjectionKey<T> | string,
+    errorMessage?: string,
+): UnwrapNestedRefs<T> {
+    return injectReactive(key) ?? fail(errorMessage ?? `Could not resolve '${key}' injection key`);
 }
 
 export function injectOrFail<T>(key: InjectionKey<T> | string, errorMessage?: string): T {

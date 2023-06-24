@@ -11,7 +11,7 @@ import type { VNode } from 'vue';
 
 import Events from '@/services/Events';
 import { useEvent } from '@/utils/composition/events';
-import { booleanProp, injectOrFail } from '@/utils/vue';
+import { booleanProp, injectReactiveOrFail } from '@/utils/vue';
 import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
 import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from './AGHeadlessModal';
@@ -23,7 +23,7 @@ const props = defineProps({
 const $root = ref<{ $el?: HTMLElement } | null>(null);
 const hidden = ref(true);
 const closed = ref(false);
-const { modal } = injectOrFail<IAGModalContext>('modal');
+const { modal } = injectReactiveOrFail<IAGModalContext>('modal');
 
 async function hide(): Promise<void> {
     if (!$root.value?.$el) {
@@ -46,17 +46,17 @@ async function close(result?: unknown) {
         return;
     }
 
-    Events.emit('modal-will-close', { modal: modal.value, result });
+    Events.emit('modal-will-close', { modal, result });
 
     await hide();
 
     closed.value = true;
 
-    Events.emit('modal-closed', { modal: modal.value, result });
+    Events.emit('modal-closed', { modal, result });
 }
 
 useEvent('close-modal', async ({ id, result }) => {
-    if (id !== modal.value.id) {
+    if (id !== modal.id) {
         return;
     }
 
@@ -64,7 +64,7 @@ useEvent('close-modal', async ({ id, result }) => {
 });
 
 useEvent('hide-modal', async ({ id }) => {
-    if (id !== modal.value.id) {
+    if (id !== modal.id) {
         return;
     }
 
@@ -72,7 +72,7 @@ useEvent('hide-modal', async ({ id }) => {
 });
 
 useEvent('show-modal', async ({ id }) => {
-    if (id !== modal.value.id) {
+    if (id !== modal.id) {
         return;
     }
 

@@ -1,7 +1,7 @@
 <template>
     <DialogPanel>
         <slot />
-        <AGModalContext v-if="childModal" :child-index="childIndex + 1" :modal="childModal" />
+        <AGModalContext v-if="childModal" :child-index="modal.childIndex + 1" :modal="childModal" />
     </DialogPanel>
 </template>
 
@@ -10,11 +10,11 @@ import { computed } from 'vue';
 import { DialogPanel } from '@headlessui/vue';
 
 import UI from '@/ui/UI';
-import { injectOrFail } from '@/utils/vue';
+import { injectReactiveOrFail } from '@/utils/vue';
 import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
 import AGModalContext from '../../modals/AGModalContext.vue';
 
-const { childIndex } = injectOrFail<IAGModalContext>('modal');
-const childModal = computed(() => UI.modals[childIndex.value] ?? null);
+const modal = injectReactiveOrFail<IAGModalContext>('modal');
+const childModal = computed(() => UI.modals[modal.childIndex] ?? null);
 </script>

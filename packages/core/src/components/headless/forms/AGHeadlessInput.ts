@@ -1,7 +1,8 @@
-import type { ObjectValues } from '@noeldemartin/utils';
+import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 
-export const AGHeadlessInputTypes = {
-    Text: 'text',
-} as const;
-
-export type AGHeadlessInputType = ObjectValues<typeof AGHeadlessInputTypes>;
+export interface IAGHeadlessInput {
+    id: string;
+    value: ComputedRef<string | number | null>;
+    errors: DeepReadonly<Ref<string[] | null>>;
+    update(value: string | number | null): void;
+}

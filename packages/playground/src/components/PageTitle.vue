@@ -1,5 +1,5 @@
 <template>
-    <div class="mb-4 flex flex-row items-center justify-between">
+    <div class="mb-4 flex flex-row items-center justify-between" :class="{ 'w-full': source }">
         <h2 class="text-xl">
             <slot />
         </h2>

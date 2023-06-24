@@ -1,47 +1,54 @@
 <template>
-    <input
-        ref="$input"
-        :value="value"
-        :type="type"
-        @input="update"
-    >
+    <component :is="as" v-if="as">
+        <slot />
+    </component>
+    <slot v-else />
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { computed, inject, provide, readonly } from 'vue';
+import { uuid } from '@noeldemartin/utils';
 
-import { enumProp, stringProp } from '@/utils/vue';
+import { stringProp } from '@/utils/vue';
 import type Form from '@/forms/Form';
 
-import { AGHeadlessInputTypes } from './AGHeadlessInput';
+import type { IAGHeadlessInput } from './AGHeadlessInput';
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
+    as: stringProp(),
     name: stringProp(),
-    type: enumProp(AGHeadlessInputTypes, AGHeadlessInputTypes.Text),
     modelValue: stringProp(),
 });
-const $input = ref<HTMLInputElement>();
-const form = inject<Form>('form');
-const value = computed(() => {
-    if (form && props.name) {
-        return form.getFieldValue(props.name);
+const errors = computed(() => {
+    if (!form || !props.name) {
+        return null;
     }
 
-    return props.modelValue;
+    return form.errors[props.name] ?? null;
 });
+const form = inject<Form>('form');
+const publicApi: IAGHeadlessInput = {
+    id: uuid(),
+    value: computed(() => {
+        if (form && props.name) {
+            return form.getFieldValue(props.name);
+        }
 
-function update() {
-    if (!$input.value) {
-        return;
-    }
+        return props.modelValue;
+    }),
+    errors: readonly(errors),
+    update(value) {
+        if (form && props.name) {
+            form.setFieldValue(props.name, value);
 
-    if (form && props.name) {
-        form.setFieldValue(props.name, $input.value.value);
+            return;
+        }
 
-        return;
-    }
+        emit('update:modelValue', value);
+    },
+};
 
-    emit('update:modelValue', $input.value.value);
-}
+provide<IAGHeadlessInput>('input', publicApi);
+defineExpose<IAGHeadlessInput>(publicApi);
 </script>

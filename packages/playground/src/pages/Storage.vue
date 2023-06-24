@@ -20,7 +20,7 @@
             </button>
         </li>
     </ul>
-    <form class="mt-5 sm:flex sm:items-center" @submit.prevent="addTask">
+    <form class="mt-5 flex justify-center" @submit.prevent="addTask">
         <div class="w-full sm:max-w-xs">
             <label for="draft" class="sr-only">{{ $t('storage.taskName') }}</label>
             <input

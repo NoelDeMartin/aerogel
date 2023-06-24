@@ -1,7 +1,7 @@
 <template>
     <AGAppLayout>
         <header class="border-b bg-blue-100 p-8">
-            <div class="m-auto max-w-screen-lg">
+            <div class="m-auto max-w-screen-lg text-center">
                 <h1 class="text-2xl font-medium">
                     <RouterLink :to="{ name: 'home' }">
                         🧪 {{ $t('app.title') }}
@@ -9,8 +9,8 @@
                 </h1>
             </div>
         </header>
-        <main class="flex-grow bg-gray-100 p-4">
-            <div class="m-auto max-w-screen-lg">
+        <main class="flex flex-grow bg-gray-100 p-4">
+            <div class="mx-auto flex max-w-screen-lg flex-grow flex-col">
                 <RouterView />
             </div>
         </main>

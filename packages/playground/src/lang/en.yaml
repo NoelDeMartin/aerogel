@@ -62,3 +62,6 @@ storage:
 
 ui:
     close: Close
+
+errors:
+    required: This is required

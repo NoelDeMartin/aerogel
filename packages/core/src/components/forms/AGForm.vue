@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="$emit('submit')">
+    <form @submit.prevent="submit">
         <slot />
     </form>
 </template>
@@ -8,10 +8,19 @@
 import { provide } from 'vue';
 
 import { objectProp } from '@/utils/vue';
+import type Form from '@/forms/Form';
 
-const { form } = defineProps({ form: objectProp() });
+const props = defineProps({ form: objectProp<Form>() });
 
-defineEmits<{ submit: [] }>();
+const emit = defineEmits<{ submit: [] }>();
 
-provide('form', form);
+provide('form', props.form);
+
+function submit() {
+    if (props.form && !props.form.submit()) {
+        return;
+    }
+
+    emit('submit');
+}
 </script>

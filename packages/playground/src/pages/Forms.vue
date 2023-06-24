@@ -2,27 +2,25 @@
     <PageTitle source="src/pages/Forms.vue">
         {{ $t('forms.title') }}
     </PageTitle>
-    <AGForm :form="form" @submit="submit()">
-        <div class="flex flex-row">
-            <AGInput
-                v-initial-focus
-                name="name"
-                :aria-label="$t('forms.name_label')"
-                :placeholder="$t('forms.name_placeholder')"
-            />
-            <AGButton submit class="ml-2 flex-shrink-0">
-                {{ $t('forms.submit') }}
-            </AGButton>
-        </div>
+    <AGForm :form="form" class="flex flex-col items-center" @submit="submit()">
+        <AGInput
+            v-initial-focus
+            name="name"
+            :aria-label="$t('forms.name_label')"
+            :placeholder="$t('forms.name_placeholder')"
+        />
+        <AGButton submit class="mt-2 flex-shrink-0">
+            {{ $t('forms.submit') }}
+        </AGButton>
     </AGForm>
 </template>
 
 <script setup lang="ts">
-import { FormFieldTypes, UI, lang, useForm } from '@aerogel/core';
+import { UI, lang, requiredStringInput, useForm } from '@aerogel/core';
 import { stringToSlug } from '@noeldemartin/utils';
 
 const form = useForm({
-    name: { type: FormFieldTypes.String },
+    name: requiredStringInput(),
 });
 
 function submit() {
