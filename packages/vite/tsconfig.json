@@ -1,16 +1,9 @@
 {
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "target": "esnext",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "strict": true,
-        "types": [],
-        "noUncheckedIndexedAccess": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "baseUrl": "./src",
+        "baseUrl": ".",
         "paths": {
-            "@/*": ["./*"]
+            "@/*": ["./src/*"]
         }
     },
     "include": ["src/**/*.ts"]
