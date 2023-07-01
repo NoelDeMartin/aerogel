@@ -4,20 +4,21 @@ import type { Component } from 'vue';
 import directives from '@/directives';
 import lang from '@/lang';
 import models from '@/models';
-import routing from '@/routing';
 import services from '@/services';
 import ui from '@/ui';
 import { runAppMountedHooks } from '@/bootstrap/hooks';
 import type { BootstrapOptions } from '@/bootstrap/options';
 
 export async function bootstrapApplication(rootComponent: Component, options: BootstrapOptions = {}): Promise<void> {
-    const hooks = [directives, lang, models, routing, services, ui];
+    const hooks = [directives, lang, models, services, ui];
     const app = createApp({
         data: () => ({
             ready: false,
         }),
-        mounted() {
+        async mounted() {
             runAppMountedHooks();
+
+            await Promise.all(options.plugins?.map((plugin) => plugin.onAppMounted?.()) ?? []);
 
             this.ready = true;
         },
@@ -31,6 +32,7 @@ export async function bootstrapApplication(rootComponent: Component, options: Bo
     });
 
     await Promise.all(hooks.map((hook) => hook(app, options)));
+    await Promise.all(options.plugins?.map((plugin) => plugin.install(app)) ?? []);
 
     app.mount('#app');
 }

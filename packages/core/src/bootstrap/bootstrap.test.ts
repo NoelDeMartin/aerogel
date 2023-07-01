@@ -43,24 +43,6 @@ describe('Aerogel', () => {
         expect(requireEngine()).toBeInstanceOf(IndexedDBEngine);
     });
 
-    it('Initializes routes', async () => {
-        // Arrange
-        vi.mock('vue-router', () => ({
-            createRouter: vi.fn(() => ({ routerMock: true })),
-            createWebHistory: vi.fn(),
-        }));
-
-        const rootComponent = mock<Component>();
-
-        // Act
-        await bootstrapApplication(rootComponent, {
-            routes: [],
-        });
-
-        // Assert
-        expect(vi.mocked(createApp).mock.results[0]?.value.use).toHaveBeenCalledWith({ routerMock: true });
-    });
-
     it('Initializes lang', async () => {
         // Arrange
         vi.mock('vue-i18n', () => ({ createI18n: vi.fn(() => ({ i18nMock: true })) }));

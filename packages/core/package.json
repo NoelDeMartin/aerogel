@@ -38,12 +38,11 @@
         "marked": "^5.0.4",
         "soukai": "^0.5.1",
         "vue": "^3.3.0",
-        "vue-i18n": "9.3.0-beta.19",
-        "vue-router": "^4.2.1"
+        "vue-i18n": "9.3.0-beta.19"
     },
     "devDependencies": {
+        "@aerogel/vite": "*",
         "@types/dompurify": "^3.0.2",
-        "@types/marked": "^5.0.0",
-        "@vitejs/plugin-vue": "^4.2.3"
+        "@types/marked": "^5.0.0"
     }
 }
