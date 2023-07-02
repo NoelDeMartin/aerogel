@@ -41,8 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
 import { arrayRemove } from '@noeldemartin/utils';
+import { onCleanMounted } from '@aerogel/core';
+import { onMounted, ref } from 'vue';
 
 import Task from '@/models/Task';
 
@@ -61,7 +62,7 @@ async function addTask() {
     draft.value = '';
 }
 
-onMounted(() => Task.on('deleted', (task) => arrayRemove(tasks.value, task)));
+onCleanMounted(() => Task.on('deleted', (task) => arrayRemove(tasks.value, task)));
 onMounted(async () => {
     const persistentTasks = await Task.all();
 

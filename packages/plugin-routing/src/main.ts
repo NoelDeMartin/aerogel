@@ -1,17 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router';
 import type { Plugin } from '@aerogel/core';
 import type { RouteRecordRaw } from 'vue-router';
+
+import { createAppRouter } from './router';
 
 interface Options {
     routes: RouteRecordRaw[];
     basePath?: string;
-}
-
-function createAppRouter(options: { routes: RouteRecordRaw[]; basePath?: string }): Plugin {
-    return createRouter({
-        history: createWebHistory(options.basePath),
-        routes: options.routes,
-    });
 }
 
 export default function routing(options: Options): Plugin {

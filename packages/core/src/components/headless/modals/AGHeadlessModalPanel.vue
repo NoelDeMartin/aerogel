@@ -15,6 +15,10 @@ import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
 import AGModalContext from '../../modals/AGModalContext.vue';
 
-const modal = injectReactiveOrFail<IAGModalContext>('modal');
+const modal = injectReactiveOrFail<IAGModalContext>(
+    'modal',
+    'could not obtain modal reference from <AGHeadlessModalPanel>, ' +
+        'did you render this component manually? Show it using $ui.openModal() instead',
+);
 const childModal = computed(() => UI.modals[modal.childIndex] ?? null);
 </script>

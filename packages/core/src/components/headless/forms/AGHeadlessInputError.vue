@@ -12,7 +12,10 @@ import { translate } from '@/utils/lang';
 
 import type { IAGHeadlessInput } from './AGHeadlessInput';
 
-const input = injectReactiveOrFail<IAGHeadlessInput>('input');
+const input = injectReactiveOrFail<IAGHeadlessInput>(
+    'input',
+    '<AGHeadlessInputError> must be a child of a <AGHeadlessInput>',
+);
 const errorMessage = computed(() => {
     if (!input.errors) {
         return null;

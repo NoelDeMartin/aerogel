@@ -16,7 +16,10 @@ import { injectReactiveOrFail } from '@/utils';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
 
 const $input = ref<HTMLInputElement>();
-const input = injectReactiveOrFail<IAGHeadlessInput>('input');
+const input = injectReactiveOrFail<IAGHeadlessInput>(
+    'input',
+    '<AGHeadlessInputInput> must be a child of a <AGHeadlessInput>',
+);
 const value = computed(() => input.value);
 
 function update() {

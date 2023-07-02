@@ -23,7 +23,11 @@ const props = defineProps({
 const $root = ref<{ $el?: HTMLElement } | null>(null);
 const hidden = ref(true);
 const closed = ref(false);
-const { modal } = injectReactiveOrFail<IAGModalContext>('modal');
+const { modal } = injectReactiveOrFail<IAGModalContext>(
+    'modal',
+    'could not obtain modal reference from <AGHeadlessModal>, ' +
+        'did you render this component manually? Show it using $ui.openModal() instead',
+);
 
 async function hide(): Promise<void> {
     if (!$root.value?.$el) {
