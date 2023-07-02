@@ -1,5 +1,5 @@
 import type { Plugin } from '@/plugins';
 
-export interface BootstrapOptions {
+export interface AerogelOptions {
     plugins?: Plugin[];
 }

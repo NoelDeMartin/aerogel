@@ -1,10 +1,11 @@
 import type { App as VueApp } from 'vue';
 
+import { definePlugin } from '@/plugins';
+
 import App from './App';
 import Events from './Events';
 import Lang from './Lang';
 import Service from './Service';
-import { defineBootstrapHook } from '@/bootstrap/hooks';
 
 export * from './App';
 export * from './Events';
@@ -34,7 +35,11 @@ export async function bootServices(app: VueApp, services: Record<string, Service
     Object.assign(app.config.globalProperties, services);
 }
 
-export default defineBootstrapHook((app) => bootServices(app, defaultServices));
+export default definePlugin({
+    async install(app) {
+        await bootServices(app, defaultServices);
+    },
+});
 
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties extends Services {}

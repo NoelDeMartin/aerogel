@@ -1,6 +1,6 @@
 import type { Directive } from 'vue';
 
-import { defineBootstrapHook } from '@/bootstrap/hooks';
+import { definePlugin } from '@/plugins';
 
 import initialFocus from './initial-focus';
 
@@ -8,6 +8,8 @@ const directives: Record<string, Directive> = {
     'initial-focus': initialFocus,
 };
 
-export default defineBootstrapHook(async (app) => {
-    Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
+export default definePlugin({
+    install(app) {
+        Object.entries(directives).forEach(([name, directive]) => app.directive(name, directive));
+    },
 });

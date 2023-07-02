@@ -1,7 +1,7 @@
 import type { Component } from 'vue';
 
 import { bootServices } from '@/services';
-import { defineBootstrapHook } from '@/bootstrap/hooks';
+import { definePlugin } from '@/plugins';
 
 import UI, { UIComponents } from './UI';
 import AGAlertModal from '../components/modals/AGAlertModal.vue';
@@ -13,21 +13,23 @@ const services = { $ui: UI };
 
 export type UIServices = typeof services;
 
-export default defineBootstrapHook(async (app, options) => {
-    const defaultComponents = {
-        [UIComponents.AlertModal]: AGAlertModal,
-    };
+export default definePlugin({
+    async install(app, options) {
+        const defaultComponents = {
+            [UIComponents.AlertModal]: AGAlertModal,
+        };
 
-    Object.entries({
-        ...defaultComponents,
-        ...options.components,
-    }).forEach(([name, component]) => UI.registerComponent(name as UIComponent, component));
+        Object.entries({
+            ...defaultComponents,
+            ...options.components,
+        }).forEach(([name, component]) => UI.registerComponent(name as UIComponent, component));
 
-    await bootServices(app, services);
+        await bootServices(app, services);
+    },
 });
 
 declare module '@/bootstrap/options' {
-    interface BootstrapOptions {
+    interface AerogelOptions {
         components?: Partial<Record<UIComponent, Component>>;
     }
 }
