@@ -30,8 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import { lang, stringProp } from '@aerogel/core';
 import { computed } from 'vue';
+import { stringProp, translate } from '@aerogel/core';
 
 const props = defineProps({
     title: stringProp(),
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const renderedTitle = computed(() => {
     if (props.titleLangKey) {
-        return lang(props.titleLangKey);
+        return translate(props.titleLangKey);
     }
 
     if (props.title) {

@@ -1,23 +1,29 @@
-import type { App } from 'vue';
+import type { App as VueApp } from 'vue';
 
+import App from './App';
 import Events from './Events';
+import Lang from './Lang';
 import Service from './Service';
 import { defineBootstrapHook } from '@/bootstrap/hooks';
 
+export * from './App';
 export * from './Events';
+export * from './Lang';
 export * from './Service';
 
-export { Events, Service };
+export { App, Events, Lang, Service };
 
 const defaultServices = {
+    $app: App,
     $events: Events,
+    $lang: Lang,
 };
 
 export type DefaultServices = typeof defaultServices;
 
 export interface Services extends DefaultServices {}
 
-export async function bootServices(app: App, services: Record<string, Service>): Promise<void> {
+export async function bootServices(app: VueApp, services: Record<string, Service>): Promise<void> {
     await Promise.all(
         Object.entries(services).map(async ([name, service]) => {
             // eslint-disable-next-line no-console

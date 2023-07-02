@@ -1,0 +1,38 @@
+{
+    "name": "@aerogel/plugin-i18n",
+    "description": "Aerogel Internationalization plugin",
+    "version": "0.0.0",
+    "main": "dist/aerogel-plugin-i18n.cjs.js",
+    "module": "dist/aerogel-plugin-i18n.esm.js",
+    "types": "dist/aerogel-plugin-i18n.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "rm dist -rf && npm run build:js && npm run build:types",
+        "build:js": "noeldemartin-build-javascript",
+        "build:types": "noeldemartin-build-types",
+        "lint": "noeldemartin-lint src"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "keywords": [
+        "javascript",
+        "aerogel"
+    ],
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "peerDependencies": {
+        "@aerogel/core": "*"
+    },
+    "dependencies": {
+        "@noeldemartin/utils": "^0.4.0",
+        "vue-i18n": "9.3.0-beta.19"
+    }
+}

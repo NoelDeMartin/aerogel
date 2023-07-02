@@ -24,6 +24,7 @@ export default function Aerogel(): Plugin[] {
                 config.define = {
                     ...config.define,
                     __AG_BASE_PATH: config.base ? JSON.stringify(config.base) : 'undefined',
+                    __AG_ENV: JSON.stringify(process.env.NODE_ENV ?? 'development'),
                 };
 
                 return config;

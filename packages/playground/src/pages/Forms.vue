@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { UI, lang, requiredStringInput, useForm } from '@aerogel/core';
+import { UI, requiredStringInput, translate, useForm } from '@aerogel/core';
 import { stringToSlug } from '@noeldemartin/utils';
 
 const form = useForm({
@@ -34,6 +34,6 @@ function submit() {
         return;
     }
 
-    UI.alert(lang('forms.greeting', { name: form.name }));
+    UI.alert(translate('forms.greeting', { name: form.name }));
 }
 </script>

@@ -5,11 +5,12 @@
 </template>
 
 <script setup lang="ts">
-import { injectReactiveOrFail } from '@/utils';
+import { computed } from 'vue';
+
+import { injectReactiveOrFail } from '@/utils/vue';
+import { translate } from '@/utils/lang';
 
 import type { IAGHeadlessInput } from './AGHeadlessInput';
-import { computed } from 'vue';
-import { lang } from '@/lang';
 
 const input = injectReactiveOrFail<IAGHeadlessInput>('input');
 const errorMessage = computed(() => {
@@ -17,6 +18,6 @@ const errorMessage = computed(() => {
         return null;
     }
 
-    return lang(`errors.${input.errors[0]}`);
+    return translate(`errors.${input.errors[0]}`);
 });
 </script>
