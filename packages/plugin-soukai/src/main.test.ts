@@ -12,6 +12,7 @@ describe('Soukai', () => {
         // Act
         soukai({ models: import.meta.glob('@/testing/stubs/models/*', { eager: true }) }).install(
             null as unknown as App,
+            {},
         );
 
         // Assert
