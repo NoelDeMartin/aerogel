@@ -1,0 +1,37 @@
+{
+    "name": "@aerogel/plugin-soukai",
+    "description": "Aerogel soukai plugin",
+    "version": "0.0.0",
+    "main": "dist/aerogel-plugin-soukai.cjs.js",
+    "module": "dist/aerogel-plugin-soukai.esm.js",
+    "types": "dist/aerogel-plugin-soukai.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "rm dist -rf && npm run build:js && npm run build:types",
+        "build:js": "noeldemartin-build-javascript",
+        "build:types": "noeldemartin-build-types",
+        "lint": "noeldemartin-lint src"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "keywords": [
+        "javascript",
+        "aerogel"
+    ],
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "peerDependencies": {
+        "@aerogel/core": "*"
+    },
+    "dependencies": {
+        "soukai": "^0.5.1"
+    }
+}

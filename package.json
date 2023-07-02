@@ -6,6 +6,7 @@
         "packages/core",
         "packages/plugin-i18n",
         "packages/plugin-routing",
+        "packages/plugin-soukai",
         "packages/playground",
         "packages/create-aerogel",
         "packages/docs"

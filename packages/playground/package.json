@@ -15,6 +15,7 @@
         "@aerogel/core": "*",
         "@aerogel/plugin-i18n": "*",
         "@aerogel/plugin-routing": "*",
+        "@aerogel/plugin-soukai": "*",
         "@noeldemartin/utils": "0.4.0-next.5e18a9419d156e5d4d70d42a91438e5f294ca2d1",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
