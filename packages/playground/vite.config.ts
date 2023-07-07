@@ -12,7 +12,7 @@ const basePath = isProduction ? '/playground/' : undefined;
 export default defineConfig({
     base: basePath,
     plugins: [
-        Aerogel(),
+        Aerogel({ name: 'Aerogel Playground', static404Redirect: isProduction }),
         Icons(),
         I18n({ include: resolve(__dirname, './src/lang/**/*.yaml') }),
         Components({

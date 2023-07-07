@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ app.name }}</title>
+        <script>
+            (function () {
+                const url = new URL(location.href);
+                const queryParameters = {};
+
+                url.searchParams.forEach((value, key) => (queryParameters[key] = value));
+
+                localStorage.setItem(
+                    'static-404-redirect',
+                    JSON.stringify({
+                        path: url.pathname,
+                        hash: url.hash,
+                        query: queryParameters,
+                    })
+                );
+
+                location.href = '{{{ app.basePath }}}';
+            })();
+        </script>
+    </head>
+    <body></body>
+</html>
