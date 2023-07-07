@@ -17,6 +17,7 @@ mv packages/playground/dist dist/playground
 
 # prepare github pages
 cd dist
+mv playground/404.html 404.html
 echo $domain > CNAME
 touch .nojekyll
 
