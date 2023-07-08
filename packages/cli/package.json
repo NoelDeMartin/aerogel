@@ -13,7 +13,8 @@
         "build": "rm dist -rf && npm run build:js && npm run build:types",
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types",
-        "lint": "noeldemartin-lint src"
+        "lint": "noeldemartin-lint src",
+        "test": "vitest --run"
     },
     "engines": {
         "node": ">=18.x"
@@ -33,7 +34,7 @@
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.4.0-next.14577443d8e7ad49b0fef7e8d330f63a4450d891",
+        "@noeldemartin/utils": "0.4.0-next.9302d2fed81835ecfe2f1624cc4ccfc3fe7c426b",
         "commander": "^11.0.0",
         "mustache": "^4.2.0"
     },
