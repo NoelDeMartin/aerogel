@@ -47,4 +47,4 @@ export class FileService {
 
 }
 
-export const File = facade(new FileService());
+export default facade(new FileService());

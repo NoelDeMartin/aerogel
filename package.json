@@ -2,6 +2,7 @@
     "name": "aerogel",
     "private": "true",
     "workspaces": [
+        "packages/cli",
         "packages/vite",
         "packages/core",
         "packages/plugin-i18n",

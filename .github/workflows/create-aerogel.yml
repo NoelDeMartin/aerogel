@@ -1,0 +1,27 @@
+name: Create Aerogel
+
+on: [push, pull_request]
+
+jobs:
+    ci:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+            - run: npm ci
+            - name: Build packages
+              run: |
+                  npm run build -w packages/cli
+                  npm run build -w packages/vite
+                  npm run build -w packages/core
+            - name: Create app
+              run: |
+                  ./packages/create-aerogel/create-aerogel.js app
+                  sed -i "s/\"@aerogel\\/core\": \"next\"/\"@aerogel\\/core\": \"file:..\/packages\/core\"/" app/package.json
+                  sed -i "s/\"@aerogel\\/vite\": \"next\"/\"@aerogel\\/vite\": \"file:..\/packages\/vite\"/" app/package.json
+            - run: npm install
+              working-directory: app
+            - run: npm run build
+              working-directory: app

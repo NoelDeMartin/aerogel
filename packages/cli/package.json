@@ -1,0 +1,43 @@
+{
+    "name": "@aerogel/cli",
+    "description": "Aerogel CLI",
+    "version": "0.0.0",
+    "main": "dist/aerogel-cli.cjs.js",
+    "module": "dist/aerogel-cli.esm.js",
+    "types": "dist/aerogel-cli.d.ts",
+    "sideEffects": false,
+    "bin": {
+        "ag": "bin/ag"
+    },
+    "scripts": {
+        "build": "rm dist -rf && npm run build:js && npm run build:types",
+        "build:js": "noeldemartin-build-javascript",
+        "build:types": "noeldemartin-build-types",
+        "lint": "noeldemartin-lint src"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "keywords": [
+        "javascript",
+        "aerogel",
+        "cli"
+    ],
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "dependencies": {
+        "@noeldemartin/utils": "0.4.0-next.14577443d8e7ad49b0fef7e8d330f63a4450d891",
+        "commander": "^11.0.0",
+        "mustache": "^4.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.4.0"
+    }
+}

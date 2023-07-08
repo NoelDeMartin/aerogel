@@ -1,7 +1,9 @@
 {
-    "name": "{{config.name}}",
+    "name": "{{ app.slug }}",
     "version": "0.0.0",
+    "private": true,
     "scripts": {
+        "build": "vite build",
         "dev": "vite"
     },
     "dependencies": {

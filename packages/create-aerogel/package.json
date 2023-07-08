@@ -2,7 +2,7 @@
     "name": "create-aerogel",
     "version": "0.0.0",
     "bin": {
-        "create-aerogel": "bin/create-aerogel.js"
+        "create-aerogel": "create-aerogel.js"
     },
     "files": [
         "bin",
@@ -10,10 +10,7 @@
         "template"
     ],
     "scripts": {
-        "build": "noeldemartin-build-javascript",
-        "lint": "noeldemartin-lint src",
-        "publish-next": "noeldemartin-publish-next",
-        "test": "vitest --run"
+        "publish-next": "noeldemartin-publish-next"
     },
     "engines": {
         "node": ">=18.x"
@@ -28,12 +25,6 @@
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.4.0-next.65c07a35cd02a0aa1ed9e742f72036354eba5fa8",
-        "minimist": "^1.2.8",
-        "mustache": "^4.2.0"
-    },
-    "devDependencies": {
-        "@types/minimist": "^1.2.2",
-        "@types/node": "^20.2.5"
+        "@aerogel/cli": "*"
     }
 }

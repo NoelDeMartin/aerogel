@@ -1,6 +1,6 @@
 import { FileService } from './File';
 
-export class FileMock extends FileService {
+export default class FileMock extends FileService {
 
     public exists(): boolean {
         return false;
