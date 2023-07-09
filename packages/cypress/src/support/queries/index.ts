@@ -2,11 +2,11 @@ import type { ClosureResult } from '@noeldemartin/utils';
 
 import * as allyQueries from './a11y';
 
-const queries = {
+export const queries = {
     ...allyQueries,
 };
 
-type CustomQueries<T = typeof queries> = {
+export type CustomQueries<T = typeof queries> = {
     [K in keyof T]: T[K] extends (...args: infer TArgs) => ClosureResult
         ? (...args: TArgs) => Cypress.Chainable
         : never;
@@ -14,7 +14,10 @@ type CustomQueries<T = typeof queries> = {
 
 export default function installCustomQueries(): void {
     for (const [name, implementation] of Object.entries(queries)) {
-        Cypress.Commands.addQuery(name as unknown as keyof Cypress.Chainable, implementation);
+        Cypress.Commands.addQuery(
+            name as unknown as keyof Cypress.Chainable,
+            implementation as Cypress.QueryFn<keyof Cypress.Chainable>,
+        );
     }
 }
 

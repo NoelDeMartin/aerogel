@@ -1,7 +1,9 @@
-/// <reference types="cypress" />
+import install from '@aerogel/cypress';
+import { IndexedDBEngine } from 'soukai';
 
-import installCustomCommands from '@cy/support/commands';
-import installCustomQueries from '@cy/support/queries';
+beforeEach(() => {
+    // Reset storage
+    new IndexedDBEngine().purgeDatabase();
+});
 
-installCustomCommands();
-installCustomQueries();
+install();

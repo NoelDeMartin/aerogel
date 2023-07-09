@@ -1,0 +1,38 @@
+{
+    "name": "@aerogel/cypress",
+    "description": "Aerogel Cypress plugin",
+    "version": "0.0.0",
+    "main": "dist/aerogel-cypress.cjs.js",
+    "module": "dist/aerogel-cypress.esm.js",
+    "types": "dist/aerogel-cypress.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "rm dist -rf && npm run build:js && npm run build:types",
+        "build:js": "noeldemartin-build-javascript",
+        "build:types": "noeldemartin-build-types",
+        "lint": "noeldemartin-lint src"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "keywords": [
+        "javascript",
+        "aerogel",
+        "cypress"
+    ],
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "peerDependencies": {
+        "cypress": "*"
+    },
+    "dependencies": {
+        "@noeldemartin/utils": "0.4.0-next.9302d2fed81835ecfe2f1624cc4ccfc3fe7c426b"
+    }
+}

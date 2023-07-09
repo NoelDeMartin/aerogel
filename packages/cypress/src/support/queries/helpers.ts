@@ -28,17 +28,17 @@ export function prepareQuery(command: Cypress.Command, options: QueryOptions = {
         }
 
         log.set({
-            $el: $element,
+            $el: $element ?? undefined,
             consoleProps: () => {
                 return {
-                    Yielded: $element[0] ?? '--nothing--',
+                    Yielded: $element?.[0] ?? '--nothing--',
                     Elements: $element?.length ?? 0,
                 };
             },
         });
     };
 
-    command.set('timeout', options.timeout);
+    options.timeout && command.set('timeout', options.timeout);
 
     return {
         execute: (subject, ...subqueries) => {
@@ -46,7 +46,7 @@ export function prepareQuery(command: Cypress.Command, options: QueryOptions = {
 
             logElement($element);
 
-            return $element ?? cy.$$(null);
+            return $element ?? cy.$$(null as unknown as string);
         },
         subquery: <T>(...args: [string, ...ClosureArgs]) =>
             cy.now(...args, { log: false, timeout: options.timeout }) as Query<T>,

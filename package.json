@@ -8,6 +8,7 @@
         "packages/plugin-i18n",
         "packages/plugin-routing",
         "packages/plugin-soukai",
+        "packages/cypress",
         "packages/playground",
         "packages/create-aerogel",
         "packages/docs"
@@ -28,6 +29,7 @@
         "@noeldemartin/scripts": "0.1.2-next.c5fed8ff1c58f51e758a5e589b7191f993296b7b",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/mustache": "^4.2.2",
+        "cypress": "^12.17.0",
         "eslint": "^8.40.0",
         "patch-package": "^7.0.0",
         "prettier": "^2.8.8",
