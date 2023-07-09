@@ -18,9 +18,11 @@ describe('Create', () => {
         // Assert
         expect(File.getFiles).toHaveBeenCalledWith(basePath('template'));
 
-        FileMock.expectCreated('./app/package.json', (contents) => {
-            expect(contents).toContain('"name": "my-app"');
-        });
+        FileMock.expectCreated('./app/package.json').toContain('"name": "my-app"');
+        FileMock.expectCreated('./app/index.html').toContain('My App');
+        FileMock.expectCreated('./app/src/App.vue').toContain(
+            '<h1 class="text-4xl font-semibold">{{ $t(\'home.title\') }}</h1>',
+        );
     });
 
 });

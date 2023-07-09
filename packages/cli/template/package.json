@@ -1,13 +1,23 @@
 {
-    "name": "{{ app.slug }}",
+    "name": "<% app.slug %>",
     "version": "0.0.0",
     "private": true,
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run cy:open\"",
+        "cy:open": "cypress open --e2e --browser chromium",
+        "cy:run": "cypress run",
+        "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 cy:run",
+        "dev": "vite",
+        "lint": "noeldemartin-lint src",
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose",
+        "test:serve-app": "vite --port 5001"
     },
     "dependencies": {
         "@aerogel/core": "next",
+        "@aerogel/plugin-i18n": "next",
+        "@intlify/unplugin-vue-i18n": "^0.12.2",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
         "soukai": "^0.5.1",
@@ -17,11 +27,17 @@
         "vue-router": "^4.2.1"
     },
     "devDependencies": {
+        "@aerogel/cypress": "next",
         "@aerogel/vite": "next",
+        "@noeldemartin/utils": "0.4.0-next.9302d2fed81835ecfe2f1624cc4ccfc3fe7c426b",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/node": "^20.3.1",
         "autoprefixer": "^10.4.14",
+        "concurrently": "^8.2.0",
+        "cypress": "^12.17.0",
+        "start-server-and-test": "^2.0.0",
         "unplugin-vue-components": "^0.24.1",
-        "vite": "^4.3.0"
+        "vite": "^4.3.0",
+        "vitest": "^0.33.0"
     }
 }

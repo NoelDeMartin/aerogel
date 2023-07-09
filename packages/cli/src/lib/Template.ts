@@ -14,7 +14,7 @@ export default class Template {
             const relativePath = file.substring(this.path.length + 1);
             const fileContents = readFileSync(file).toString();
 
-            File.write(destination + relativePath, render(fileContents, replacements));
+            File.write(destination + relativePath, render(fileContents, replacements, undefined, ['<%', '%>']));
         }
     }
 

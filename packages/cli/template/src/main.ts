@@ -1,9 +1,9 @@
-import '@total-typescript/ts-reset';
+import i18n from '@aerogel/plugin-i18n';
 import { bootstrapApplication } from '@aerogel/core';
 
 import './assets/styles.css';
 import App from './App.vue';
 
 bootstrapApplication(App, {
-    models: import.meta.glob('@/models/*', { eager: true }),
+    plugins: [i18n({ messages: import.meta.glob('@/lang/*.yaml') })],
 });

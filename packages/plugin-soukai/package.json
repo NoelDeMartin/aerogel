@@ -33,5 +33,8 @@
     },
     "dependencies": {
         "soukai": "^0.5.1"
+    },
+    "devDependencies": {
+        "@aerogel/core": "*"
     }
 }
