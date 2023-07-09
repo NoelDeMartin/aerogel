@@ -20,18 +20,16 @@ jobs:
                   npm run build -w packages/plugin-i18n
             - name: Create app
               run: |
+                  sed -i "s/\"@aerogel\\/core\": \"next\"/\"@aerogel\\/core\": \"file:..\/packages\/core\"/" packages/cli/template/package.json
+                  sed -i "s/\"@aerogel\\/vite\": \"next\"/\"@aerogel\\/vite\": \"file:..\/packages\/vite\"/" packages/cli/template/package.json
+                  sed -i "s/\"@aerogel\\/cypress\": \"next\"/\"@aerogel\\/cypress\": \"file:..\/packages\/cypress\"/" packages/cli/template/package.json
+                  sed -i "s/\"@aerogel\\/plugin-i18n\": \"next\"/\"@aerogel\\/plugin-i18n\": \"file:..\/packages\/plugin-i18n\"/" packages/cli/template/package.json
                   ./packages/create-aerogel/create-aerogel.js app
-                  sed -i "s/\"@aerogel\\/core\": \"next\"/\"@aerogel\\/core\": \"file:..\/packages\/core\"/" app/package.json
-                  sed -i "s/\"@aerogel\\/vite\": \"next\"/\"@aerogel\\/vite\": \"file:..\/packages\/vite\"/" app/package.json
-                  sed -i "s/\"@aerogel\\/cypress\": \"next\"/\"@aerogel\\/cypress\": \"file:..\/packages\/cypress\"/" app/package.json
-                  sed -i "s/\"@aerogel\\/plugin-i18n\": \"next\"/\"@aerogel\\/plugin-i18n\": \"file:..\/packages\/plugin-i18n\"/" app/package.json
-            - run: npm install
-              working-directory: app
             - run: npm run lint
               working-directory: app
             - run: npm run build
               working-directory: app
-            - run: npm test:ci
+            - run: npm run test:ci
               working-directory: app
-            - run: npm cy:test
+            - run: npm run cy:test
               working-directory: app

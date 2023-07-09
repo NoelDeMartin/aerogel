@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { render } from 'mustache';
 
-import File from '@/lib/filesystem/File';
+import File from '@/lib/File';
 
 export default class Template {
 

@@ -1,17 +1,21 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
-import File from '@/lib/filesystem/File';
-import FileMock from '@/lib/filesystem/File.mock';
+import File from '@/lib/File';
+import FileMock from '@/lib/File.mock';
+import Shell from '@/lib/Shell';
+import ShellMock from '@/lib/Shell.mock';
 import { basePath } from '@/lib/utils';
 
 import { CreateCommand } from './create';
 
 describe('Create', () => {
 
-    it('works', () => {
-        // Arrange
+    beforeEach(() => {
         File.mock();
+        Shell.mock();
+    });
 
+    it('works', () => {
         // Act
         new CreateCommand('./app', { name: 'My App' }).run();
 
@@ -23,6 +27,9 @@ describe('Create', () => {
         FileMock.expectCreated('./app/src/App.vue').toContain(
             '<h1 class="text-4xl font-semibold">{{ $t(\'home.title\') }}</h1>',
         );
+
+        ShellMock.expectRan('npm install');
+        ShellMock.expectRan('git init');
     });
 
 });

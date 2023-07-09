@@ -2,12 +2,15 @@ import { resolve } from 'path';
 import { setTestingNamespace } from '@noeldemartin/utils';
 import { vi } from 'vitest';
 
-import File from '@/lib/filesystem/File';
-import FileMock from '@/lib/filesystem/File.mock';
+import File from '@/lib/File';
+import FileMock from '@/lib/File.mock';
+import Shell from '@/lib/Shell';
+import ShellMock from '@/lib/Shell.mock';
 
 setTestingNamespace(vi);
 
 File.setMockInstance(FileMock);
+Shell.setMockInstance(ShellMock);
 
 // TODO find out why these need to be mocked
 
