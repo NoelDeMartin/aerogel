@@ -20,6 +20,8 @@ jobs:
                   npm run build -w packages/plugin-i18n
             - name: Create app
               run: |
+                  git config --global user.email "john@example.com"
+                  git config --global user.name "John Doe"
                   sed -i "s/\"@aerogel\\/core\": \"next\"/\"@aerogel\\/core\": \"file:..\/packages\/core\"/" packages/cli/template/package.json
                   sed -i "s/\"@aerogel\\/vite\": \"next\"/\"@aerogel\\/vite\": \"file:..\/packages\/vite\"/" packages/cli/template/package.json
                   sed -i "s/\"@aerogel\\/cypress\": \"next\"/\"@aerogel\\/cypress\": \"file:..\/packages\/cypress\"/" packages/cli/template/package.json
