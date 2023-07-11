@@ -1,5 +1,6 @@
 import { arrayFrom, facade, stringMatchAll } from '@noeldemartin/utils';
 import { bold, hex } from 'chalk';
+import { clearLine, cursorTo } from 'readline';
 
 export class LogService {
 
@@ -54,8 +55,9 @@ export class LogService {
     }
 
     protected stdout(message: string): void {
-        process.stdout.cursorTo(0);
-        process.stdout.clearLine(0);
+        cursorTo(process.stdout, 0);
+        clearLine(process.stdout, 0);
+
         process.stdout.write(message);
     }
 
