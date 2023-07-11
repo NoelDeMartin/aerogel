@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import File from '@/lib/File';
 import FileMock from '@/lib/File.mock';
-import Shell from '@/lib/Shell';
 import ShellMock from '@/lib/Shell.mock';
 import { basePath } from '@/lib/utils';
 
@@ -10,14 +9,9 @@ import { CreateCommand } from './create';
 
 describe('Create', () => {
 
-    beforeEach(() => {
-        File.mock();
-        Shell.mock();
-    });
-
-    it('works', () => {
+    it('works', async () => {
         // Act
-        new CreateCommand('./app', { name: 'My App' }).run();
+        await new CreateCommand('./app', { name: 'My App' }).run();
 
         // Assert
         expect(File.getFiles).toHaveBeenCalledWith(basePath('template'));

@@ -16,28 +16,44 @@ export class CreateCommand {
         this.options = options;
     }
 
-    public run(): void {
+    public async run(): Promise<void> {
         const path = this.path;
         const name = this.options.name ?? 'Aerogel App';
 
-        Log.info(`Creating app ${name}...`);
-        const app = new App(name);
+        Shell.setWorkingDirectory(path);
 
-        app.create(path);
+        await this.createApp(name, path);
+        await this.installDependencies();
+        await this.initializeGit();
 
-        Log.info('Installing dependencies...');
-        Shell.run('npm install', { path });
-
-        Log.info('Initializing git...');
-        Shell.run('git init', { path });
-        Shell.run('git add .', { path });
-        Shell.run('git commit -m "Start"', { path });
-
-        Log.info([
-            'That\'s it! You can start running your app with the following commands:',
-            `cd ${path}`,
-            'npm run dev',
+        Log.success([
+            '',
+            `That's it! You can start working on **${name}** doing the following:`,
+            `    cd ${path}`,
+            '    npm run dev',
+            '',
+            'Have fun!',
         ]);
+    }
+
+    protected async createApp(name: string, path: string): Promise<void> {
+        Log.info(`Creating **${name}**...`);
+
+        new App(name).create(path);
+    }
+
+    protected async installDependencies(): Promise<void> {
+        await Log.animate('Installing dependencies', async () => {
+            await Shell.run('npm install');
+        });
+    }
+
+    protected async initializeGit(): Promise<void> {
+        await Log.animate('Initializing git', async () => {
+            await Shell.run('git init');
+            await Shell.run('git add .');
+            await Shell.run('git commit -m "Start"');
+        });
     }
 
 }

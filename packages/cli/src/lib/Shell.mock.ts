@@ -7,10 +7,8 @@ export class ShellServiceMock extends ShellService {
 
     private history: string[] = [];
 
-    public run(command: string): string {
+    public async run(command: string): Promise<void> {
         this.history.push(command);
-
-        return '';
     }
 
     public expectRan(command: string): void {

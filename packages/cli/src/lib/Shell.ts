@@ -1,14 +1,26 @@
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
 import { facade } from '@noeldemartin/utils';
-
-export interface ExecOptions {
-    path?: string;
-}
 
 export class ShellService {
 
-    public run(command: string, options: ExecOptions = {}): string {
-        return execSync(command, { cwd: options.path }).toString();
+    private cwd: string | null = null;
+
+    public setWorkingDirectory(cwd: string): void {
+        this.cwd = cwd;
+    }
+
+    public async run(command: string): Promise<void> {
+        await new Promise<void>((resolve, reject) => {
+            exec(command, { cwd: this.cwd ?? undefined }, (error) => {
+                if (error) {
+                    reject(error);
+
+                    return;
+                }
+
+                resolve();
+            });
+        });
     }
 
 }
