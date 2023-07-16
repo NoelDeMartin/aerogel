@@ -7,7 +7,7 @@ domain=aerogel.js.org
 set -e
 rm -rf dist
 
-# # build projects
+# build projects
 npm run build -w docs
 npm run build -w playground
 
