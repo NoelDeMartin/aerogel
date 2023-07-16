@@ -2,10 +2,6 @@ import type { Component } from 'vue';
 
 import { defineServiceState } from '@/services/Service';
 
-export interface State {
-    modals: Modal[];
-}
-
 export interface Modal<T = unknown> {
     id: string;
     properties: Record<string, unknown>;
@@ -21,6 +17,6 @@ export interface ModalComponent<
     Result = unknown
 > {}
 
-export default defineServiceState<State>({
-    initialState: { modals: [] },
+export default defineServiceState({
+    initialState: { modals: [] as Modal[] },
 });
