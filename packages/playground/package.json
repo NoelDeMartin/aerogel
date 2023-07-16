@@ -8,6 +8,8 @@
         "cy:run": "cypress run",
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 cy:run",
         "dev": "vite",
+        "histoire:dev": "histoire dev",
+        "histoire:prod": "histoire build",
         "lint": "noeldemartin-lint src",
         "test:serve-app": "vite --port 5001"
     },
@@ -24,10 +26,12 @@
     "devDependencies": {
         "@aerogel/cypress": "*",
         "@aerogel/vite": "*",
+        "@histoire/plugin-vue": "^0.16.1",
         "@iconify/json": "^2.2.80",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "eslint-plugin-vue": "^9.11.0",
+        "histoire": "^0.16.2",
         "postcss": "^8.4.23",
         "start-server-and-test": "^2.0.0",
         "unplugin-icons": "^0.16.3"
