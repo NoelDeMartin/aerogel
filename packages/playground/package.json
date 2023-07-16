@@ -9,6 +9,7 @@
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 cy:run",
         "dev": "vite",
         "lint": "noeldemartin-lint src",
+        "storybook": "storybook dev -p 6006",
         "test:serve-app": "vite --port 5001"
     },
     "dependencies": {
@@ -25,11 +26,18 @@
         "@aerogel/cypress": "*",
         "@aerogel/vite": "*",
         "@iconify/json": "^2.2.80",
+        "@storybook/addon-essentials": "^7.0.27",
+        "@storybook/addon-styling": "^1.3.2",
+        "@storybook/vue3": "^7.0.27",
+        "@storybook/vue3-vite": "^7.0.27",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "eslint-plugin-vue": "^9.11.0",
         "postcss": "^8.4.23",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "start-server-and-test": "^2.0.0",
+        "storybook": "^7.0.27",
         "unplugin-icons": "^0.16.3"
     }
 }

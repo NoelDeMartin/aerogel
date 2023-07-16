@@ -6,6 +6,8 @@ import I18nLangProvider from './I18nLangProvider';
 import { createAppI18n } from './i18n';
 import type { Options } from './options';
 
+export * from './storybook';
+
 export default function i18n(options: Options): Plugin {
     return {
         async install(app) {
