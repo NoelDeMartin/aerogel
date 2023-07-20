@@ -6,10 +6,14 @@ import { FileService } from './File';
 
 export class FileMockService extends FileService {
 
-    private virtualFilesystem: Record<string, string> = {};
+    private virtualFilesystem: Record<string, string | { directory: true }> = {};
 
     public exists(path: string): boolean {
         return super.exists(path) || path in this.virtualFilesystem;
+    }
+
+    public makeDirectory(path: string): void {
+        this.virtualFilesystem[path] = { directory: true };
     }
 
     public write(path: string, contents: string): void {
@@ -17,9 +21,11 @@ export class FileMockService extends FileService {
     }
 
     public expectCreated(path: string, expectContent?: (contents: string) => void): Assertion<string> {
-        expect(path in this.virtualFilesystem, `expected '${path}' file to have been created`).toBe(true);
+        expect(typeof this.virtualFilesystem[path] === 'string', `expected '${path}' file to have been created`).toBe(
+            true,
+        );
 
-        const contents = this.virtualFilesystem[path] ?? '';
+        const contents = (this.virtualFilesystem[path] as string) ?? '';
 
         expectContent?.(contents);
 

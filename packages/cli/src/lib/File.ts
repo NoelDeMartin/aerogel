@@ -37,6 +37,10 @@ export class FileService {
         return this.getFiles(path).length === 0;
     }
 
+    public makeDirectory(path: string): void {
+        mkdirSync(path, { recursive: true });
+    }
+
     public write(path: string, contents: string): void {
         if (!existsSync(dirname(path))) {
             mkdirSync(dirname(path), { recursive: true });

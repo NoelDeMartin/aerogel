@@ -11,11 +11,10 @@ export default class App {
 
     public create(path: string): void {
         if (File.exists(path) && (!File.isDirectory(path) || !File.isEmptyDirectory(path))) {
-            Log.info(`Folder at '${path}' already exists!`);
-            process.exit(1);
+            Log.fail(`Folder at '${path}' already exists!`);
         }
 
-        new Template(basePath('template')).instantiate(path, {
+        Template.instantiate(basePath('templates/app'), path, {
             app: {
                 name: this.name,
                 slug: stringToSlug(this.name),

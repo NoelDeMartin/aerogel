@@ -27,6 +27,7 @@
         "vue-router": "^4.2.1"
     },
     "devDependencies": {
+        "@aerogel/cli": "next",
         "@aerogel/cypress": "next",
         "@aerogel/vite": "next",
         "@noeldemartin/utils": "0.4.0-next.9302d2fed81835ecfe2f1624cc4ccfc3fe7c426b",

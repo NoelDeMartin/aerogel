@@ -6,6 +6,7 @@ export class LogService {
 
     protected renderInfo = hex('#00ffff');
     protected renderSuccess = hex('#00ff00');
+    protected renderError = hex('#ff0000');
 
     public async animate<T>(message: string, operation: () => Promise<T>): Promise<T> {
         const updateStdout = (end: string = '') => {
@@ -31,6 +32,18 @@ export class LogService {
         arrayFrom(messages).forEach((message) => {
             this.log(this.renderInfo(this.renderMarkdown(message)));
         });
+    }
+
+    public error(messages: string | string[]): void {
+        arrayFrom(messages).forEach((message) => {
+            this.log(this.renderError(this.renderMarkdown(message)));
+        });
+    }
+
+    public fail(messages: string | string[]): void {
+        this.error(messages);
+
+        process.exit(1);
     }
 
     public success(messages: string | string[]): void {
