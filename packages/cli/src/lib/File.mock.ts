@@ -12,8 +12,29 @@ export class FileMockService extends FileService {
         return super.exists(path) || path in this.virtualFilesystem;
     }
 
+    public isDirectory(path: string): boolean {
+        return (
+            super.isDirectory(path) ||
+            (path in this.virtualFilesystem && typeof this.virtualFilesystem[path] === 'object')
+        );
+    }
+
+    public isFile(path: string): boolean {
+        return (
+            super.isFile(path) || (path in this.virtualFilesystem && typeof this.virtualFilesystem[path] === 'string')
+        );
+    }
+
     public makeDirectory(path: string): void {
         this.virtualFilesystem[path] = { directory: true };
+    }
+
+    public read(path: string): string | null {
+        if (path in this.virtualFilesystem && typeof this.virtualFilesystem[path] === 'string') {
+            return this.virtualFilesystem[path] as string;
+        }
+
+        return super.read(path);
     }
 
     public write(path: string, contents: string): void {
@@ -30,6 +51,10 @@ export class FileMockService extends FileService {
         expectContent?.(contents);
 
         return expect(contents);
+    }
+
+    public stub(path: string, contents: string = ''): void {
+        this.virtualFilesystem[path] = contents;
     }
 
 }

@@ -5,11 +5,11 @@ import ShellMock from '@/lib/Shell.mock';
 
 import { CreateCommand } from './create';
 
-describe('Create', () => {
+describe('Create command', () => {
 
     it('works', async () => {
         // Act
-        await new CreateCommand('./app', { name: 'My App' }).run();
+        await CreateCommand.run('./app', { name: 'My App' });
 
         // Assert
         FileMock.expectCreated('./app/package.json').toContain('"name": "my-app"');

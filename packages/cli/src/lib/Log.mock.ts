@@ -15,6 +15,10 @@ export class LogServiceMock extends LogService {
         this.logs.push(...arrayFrom(messages));
     }
 
+    public fail(message: string): void {
+        throw new Error(`Fail: ${message}`);
+    }
+
     protected stdout(): void {
         //
     }

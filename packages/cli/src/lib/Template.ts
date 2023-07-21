@@ -6,16 +6,17 @@ import File from '@/lib/File';
 
 export default class Template {
 
-    public static instantiate(path: string, destination: string, replacements: Record<string, unknown>): void {
+    public static instantiate(path: string, destination: string, replacements: Record<string, unknown>): string[] {
         const template = new Template(path);
 
-        template.instantiate(destination, replacements);
+        return template.instantiate(destination, replacements);
     }
 
     constructor(public path: string) {}
 
-    public instantiate(destination: string, replacements: Record<string, unknown> = {}): void {
+    public instantiate(destination: string, replacements: Record<string, unknown> = {}): string[] {
         const filenameReplacements = this.getFilenameReplacements(replacements);
+        const files: string[] = [];
         destination = `${destination}/`.replace(/\/\//, '/');
 
         for (const file of File.getFiles(this.path)) {
@@ -26,7 +27,11 @@ export default class Template {
             const fileContents = readFileSync(file).toString();
 
             File.write(destination + relativePath, render(fileContents, replacements, undefined, ['<%', '%>']));
+
+            files.push(destination + relativePath);
         }
+
+        return files;
     }
 
     protected getFilenameReplacements(

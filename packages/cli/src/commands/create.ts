@@ -1,4 +1,5 @@
 import App from '@/lib/App';
+import Command from '@/commands/Command';
 import Log from '@/lib/Log';
 import Shell from '@/lib/Shell';
 
@@ -6,12 +7,21 @@ export interface Options {
     name?: string;
 }
 
-export class CreateCommand {
+export class CreateCommand extends Command {
+
+    public static command: string = 'create';
+    public static description: string = 'Create AerogelJS app';
+    public static parameters: [string, string][] = [['path', 'Application path']];
+    public static options: Record<string, string> = {
+        name: 'Application name',
+    };
 
     private path: string;
     private options: Options;
 
     constructor(path: string, options: Options) {
+        super();
+
         this.path = path;
         this.options = options;
     }
