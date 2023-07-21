@@ -53,7 +53,7 @@ export class GenerateComponentCommand extends Command {
 
         const filesList = files.map((file) => `- ${file}`).join('\n');
 
-        Log.info(`${this.name} component created successfully! The following files were created: ${filesList}`);
+        Log.info(`${this.name} component created successfully! The following files were created:\n\n${filesList}`);
     }
 
     protected assertHistoireInstalled(): void {
