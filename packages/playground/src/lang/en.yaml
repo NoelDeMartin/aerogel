@@ -9,10 +9,22 @@ footer:
 home:
     title: Welcome to Aerogel!
     description: 'Explore these features:'
+    components: Components
     content: Formatted Content
     forms: Forms
     modals: Modals
     storage: Storage
+
+components:
+    title: Components
+    buttons: Buttons
+    buttons_custom: Custom
+    buttons_default: Default
+    inputs: Inputs
+    inputs_customLabel: Custom
+    inputs_customPlaceholder: Type here...
+    inputs_defaultLabel: Default
+    inputs_defaultPlaceholder: Type here...
 
 content:
     title: Formatted Content

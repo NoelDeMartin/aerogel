@@ -1,5 +1,6 @@
 <template>
     <input
+        :id="input.id"
         ref="$input"
         type="text"
         :value="value"

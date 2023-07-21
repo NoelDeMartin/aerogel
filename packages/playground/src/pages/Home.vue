@@ -23,6 +23,10 @@ interface Section {
 
 const sections: Section[] = [
     {
+        langKey: 'home.components',
+        route: 'components',
+    },
+    {
         langKey: 'home.content',
         route: 'content',
     },

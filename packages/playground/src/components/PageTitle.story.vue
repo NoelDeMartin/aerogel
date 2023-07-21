@@ -17,5 +17,5 @@
 import { ref } from 'vue';
 
 const content = ref('Your awesome title');
-const viewSource = ref(false);
+const viewSource = ref(true);
 </script>

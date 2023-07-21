@@ -3,15 +3,15 @@
         {{ $t('forms.title') }}
     </PageTitle>
     <AGForm :form="form" class="flex flex-col items-center" @submit="submit()">
-        <AGInput
+        <CoreInput
             v-initial-focus
             name="name"
             :aria-label="$t('forms.name_label')"
             :placeholder="$t('forms.name_placeholder')"
         />
-        <AGButton submit class="mt-2 flex-shrink-0">
+        <CoreButton submit class="mt-2 flex-shrink-0">
             {{ $t('forms.submit') }}
-        </AGButton>
+        </CoreButton>
     </AGForm>
 </template>
 
