@@ -1,9 +1,14 @@
 <template>
-    <AGHeadlessInput ref="$input" :name="name" as="div">
+    <AGHeadlessInput
+        ref="$input"
+        as="div"
+        :name="name"
+        :class="hostClass"
+    >
         <AGHeadlessInputLabel v-if="label" class="block text-sm font-medium leading-6 text-gray-900">
             {{ label }}
         </AGHeadlessInputLabel>
-        <div class="relative mt-2 rounded-md shadow-sm">
+        <div class="relative rounded-md shadow-sm" :class="{ 'mt-2': label, [wrapperClass]: true }">
             <AGHeadlessInputInput
                 v-bind="$attrs"
                 class="block w-full rounded-md border-0 py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
@@ -29,6 +34,8 @@ defineOptions({ inheritAttrs: false });
 defineProps({
     name: stringProp(),
     label: stringProp(),
+    hostClass: stringProp(),
+    wrapperClass: stringProp(''),
 });
 
 const $input = componentRef<IAGHeadlessInput>();

@@ -4,20 +4,20 @@
             <div class="prose">
                 <h2>Valid</h2>
                 <StateVariants level="3">
-                    <CoreInput :label="label" :placeholder="placeholder" />
+                    <AppInput :label="label" :placeholder="placeholder" />
                     <template #focus>
-                        <CoreInput class=":focus :focus-visible" :label="label" :placeholder="placeholder" />
+                        <AppInput class=":focus :focus-visible" :label="label" :placeholder="placeholder" />
                     </template>
                 </StateVariants>
 
                 <h2>Error</h2>
                 <StateVariants level="3">
                     <AGForm :form="form">
-                        <CoreInput name="food" :label="label" :placeholder="placeholder" />
+                        <AppInput name="food" :label="label" :placeholder="placeholder" />
                     </AGForm>
                     <template #focus>
                         <AGForm :form="form">
-                            <CoreInput
+                            <AppInput
                                 name="food"
                                 class=":focus :focus-visible"
                                 :label="label"
