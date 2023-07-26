@@ -1,13 +1,38 @@
 import i18n from '@aerogel/plugin-i18n';
+import { monkeyPatch, stringToSlug } from '@noeldemartin/utils';
 import { defineSetupVue3 } from '@histoire/plugin-vue';
 
-import './assets/styles.css';
-import StateVariants from '@/histoire/StateVariants.vue';
+import StoryPage from './histoire/components/StoryPage.vue';
+import StoryPlaceholder from './histoire/components/StoryPlaceholder.vue';
 
-export const setupVue3 = defineSetupVue3(async ({ app }) => {
+import './assets/styles.css';
+
+export const setupVue3 = defineSetupVue3(async ({ app, story, variant }) => {
     const plugin = i18n({ messages: import.meta.glob('@/lang/*.yaml') });
 
     await plugin.install(app, {});
 
-    app.component('StateVariants', StateVariants);
+    app.component('StoryPage', StoryPage);
+    app.component('StoryPlaceholder', StoryPlaceholder);
+
+    monkeyPatch(app, 'mount', (el: HTMLElement) => {
+        const variantEl = el.parentElement?.parentElement?.parentElement?.parentElement;
+        const storyEl = variantEl?.parentElement;
+
+        if (story && storyEl) {
+            Array.from(storyEl.classList)
+                .filter((className) => className.startsWith('story-'))
+                .forEach((className) => storyEl.classList.remove(className));
+
+            storyEl.classList.add(`story-${stringToSlug(story.title)}`);
+        }
+
+        if (variant && variantEl) {
+            Array.from(variantEl.classList)
+                .filter((className) => className.startsWith('variant-'))
+                .forEach((className) => variantEl.classList.remove(className));
+
+            variantEl.classList.add(`variant-${stringToSlug(variant.title)}`);
+        }
+    });
 });

@@ -1,9 +1,12 @@
 <template>
-    <Story>
+    <Story :layout="{ type: 'grid' }">
         <Variant title="Primary">
-            <PageTitle :source="viewSource ? '#' : undefined">
-                {{ content }}
-            </PageTitle>
+            <StoryPage>
+                <PageTitle :source="viewSource ? '#' : undefined">
+                    {{ content }}
+                </PageTitle>
+                <StoryPlaceholder class="h-96" />
+            </StoryPage>
 
             <template #controls>
                 <HstText v-model="content" title="Content" />
@@ -19,3 +22,9 @@ import { ref } from 'vue';
 const content = ref('Your awesome title');
 const viewSource = ref(true);
 </script>
+
+<style>
+.story-pagetitle {
+    grid-template-columns: auto !important;
+}
+</style>

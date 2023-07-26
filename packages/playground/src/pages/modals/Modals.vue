@@ -3,12 +3,12 @@
         {{ $t('modals.title') }}
     </PageTitle>
     <div class="flex flex-row justify-center gap-3">
-        <AppButton @click="$ui.openModal(HelloDefaultModal)">
+        <BaseButton @click="$ui.openModal(HelloDefaultModal)">
             {{ $t('modals.showDefault') }}
-        </AppButton>
-        <AppButton @click="$ui.openModal(HelloCustomModal)">
+        </BaseButton>
+        <BaseButton @click="$ui.openModal(HelloCustomModal)">
             {{ $t('modals.showCustom') }}
-        </AppButton>
+        </BaseButton>
     </div>
 </template>
 

@@ -30,7 +30,7 @@
         "@aerogel/cli": "next",
         "@aerogel/cypress": "next",
         "@aerogel/vite": "next",
-        "@noeldemartin/utils": "0.4.0-next.9302d2fed81835ecfe2f1624cc4ccfc3fe7c426b",
+        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/node": "^20.3.1",
         "autoprefixer": "^10.4.14",

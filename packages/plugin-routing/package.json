@@ -32,7 +32,7 @@
         "@aerogel/core": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.4.0-next.65c07a35cd02a0aa1ed9e742f72036354eba5fa8",
+        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
         "vue-router": "^4.2.1"
     },
     "devDependencies": {

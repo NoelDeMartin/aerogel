@@ -27,7 +27,7 @@ const errors = computed(() => {
 
     return form.errors[props.name] ?? null;
 });
-const form = inject<Form>('form');
+const form = inject<Form | null>('form', null);
 const publicApi: IAGHeadlessInput = {
     id: `input-${uuid()}`,
     value: computed(() => {

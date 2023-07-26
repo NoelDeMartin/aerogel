@@ -10,18 +10,18 @@
         >
             <span>{{ task.name }}</span>
 
-            <AppButton
+            <BaseButton
                 small
                 color="danger"
                 :aria-label="$t('storage.deleteTask_a11y', { task: task.name })"
                 @click="task.delete()"
             >
                 {{ $t('storage.deleteTask') }}
-            </AppButton>
+            </BaseButton>
         </li>
     </ul>
     <AGForm class="mt-5 flex justify-center" :form="form" @submit="addTask">
-        <AppInput
+        <BaseInput
             name="draft"
             class="h-full"
             wrapper-class="h-full"
@@ -29,9 +29,9 @@
             :aria-label="$t('storage.taskName')"
             :placeholder="$t('storage.newTask')"
         />
-        <AppButton submit>
+        <BaseButton submit>
             {{ $t('storage.submit') }}
-        </AppButton>
+        </BaseButton>
     </AGForm>
 </template>
 

@@ -1,7 +1,7 @@
 import { MagicObject } from '@noeldemartin/utils';
-import { reactive, readonly, ref } from 'vue';
+import { computed, reactive, readonly, ref } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
-import type { DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
+import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 
 export const FormFieldTypes = {
     String: 'string',
@@ -41,7 +41,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
 
     private _fields: Fields;
     private _data: FormData<Fields>;
-    private _valid: Ref<boolean>;
+    private _valid: ComputedRef<boolean>;
     private _submitted: Ref<boolean>;
     private _errors: FormErrors<Fields>;
 
@@ -50,9 +50,9 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
 
         this._fields = fields;
         this._submitted = ref(false);
-        this._valid = ref(true);
         this._data = this.getInitialData(fields);
         this._errors = this.getInitialErrors(fields);
+        this._valid = computed(() => Object.values(this._errors).some((error) => error !== null));
 
         this.errors = readonly(this._errors);
     }
@@ -84,9 +84,15 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
             return errors;
         }, {} as Record<string, string[] | null>);
 
-        Object.assign(this._errors, errors);
+        this.resetErrors(errors);
 
-        return (this._valid.value = !Object.values(errors).some((error) => error !== null));
+        return this.valid;
+    }
+
+    public reset(): void {
+        this._submitted.value = false;
+
+        this.resetErrors();
     }
 
     public submit(): boolean {
@@ -149,6 +155,12 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         }, {} as FormErrors<Fields>);
 
         return reactive(errors) as FormErrors<Fields>;
+    }
+
+    private resetErrors(errors?: Record<string, string[] | null>): void {
+        Object.keys(this._errors).forEach((key) => delete this._errors[key as keyof Fields]);
+
+        errors && Object.assign(this._errors, errors);
     }
 
 }
