@@ -1,6 +1,6 @@
 import i18n from '@aerogel/plugin-i18n';
-import { monkeyPatch, stringToSlug } from '@noeldemartin/utils';
 import { defineSetupVue3 } from '@histoire/plugin-vue';
+import { monkeyPatch, stringToSlug } from '@noeldemartin/utils';
 
 import StoryPage from './histoire/components/StoryPage.vue';
 import StoryPlaceholder from './histoire/components/StoryPlaceholder.vue';
@@ -8,12 +8,12 @@ import StoryPlaceholder from './histoire/components/StoryPlaceholder.vue';
 import './assets/styles.css';
 
 export const setupVue3 = defineSetupVue3(async ({ app, story, variant }) => {
-    const plugin = i18n({ messages: import.meta.glob('@/lang/*.yaml') });
+    const plugins = [i18n({ messages: import.meta.glob('@/lang/*.yaml') })];
+    const components = { StoryPage, StoryPlaceholder };
 
-    await plugin.install(app, {});
+    await Promise.all(plugins.map((plugin) => plugin.install(app, {})));
 
-    app.component('StoryPage', StoryPage);
-    app.component('StoryPlaceholder', StoryPlaceholder);
+    Object.entries(components).forEach(([name, component]) => app.component(name, component));
 
     monkeyPatch(app, 'mount', (el: HTMLElement) => {
         const variantEl = el.parentElement?.parentElement?.parentElement?.parentElement;

@@ -1,7 +1,6 @@
 import { createI18n } from 'vue-i18n';
 import { fail, stringMatch } from '@noeldemartin/utils';
-import type { I18nOptions } from 'vue-i18n';
-import type { Plugin } from 'vue';
+import type { I18n, I18nOptions, Locale } from 'vue-i18n';
 
 import type { Options } from './options';
 
@@ -22,12 +21,12 @@ function getMessageLoaders(messageLoaders: Record<string, unknown>): Record<stri
     }, {} as Record<string, LazyMessages>);
 }
 
-export async function createAppI18n(options: Options): Promise<Plugin> {
+export async function createAppI18n(options: Options): Promise<I18n<{}, {}, {}, Locale, false>> {
     const locale = options.defaultLocale ?? 'en';
     const fallbackLocale = options.fallbackLocale ?? 'en';
     const messageLoaders = getMessageLoaders(options.messages);
     const lazyMessages = messageLoaders[locale] ?? fail<LazyMessages>(`Missing messages for '${locale}' locale`);
     const messages = { [locale]: await lazyMessages() } as I18nOptions['messages'];
 
-    return createI18n({ locale, fallbackLocale, messages });
+    return createI18n({ legacy: false, locale, fallbackLocale, messages });
 }

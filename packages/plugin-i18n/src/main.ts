@@ -1,5 +1,4 @@
 import { Lang } from '@aerogel/core';
-import { useI18n } from 'vue-i18n';
 import type { Plugin } from '@aerogel/core';
 
 import I18nLangProvider from './I18nLangProvider';
@@ -12,9 +11,8 @@ export default function i18n(options: Options): Plugin {
             const plugin = await createAppI18n(options);
 
             app.use(plugin);
-        },
-        onAppMounted() {
-            Lang.setProvider(new I18nLangProvider(useI18n()));
+
+            Lang.setProvider(new I18nLangProvider(plugin.global));
         },
     };
 }
