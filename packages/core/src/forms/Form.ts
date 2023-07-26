@@ -52,7 +52,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         this._submitted = ref(false);
         this._data = this.getInitialData(fields);
         this._errors = this.getInitialErrors(fields);
-        this._valid = computed(() => Object.values(this._errors).some((error) => error !== null));
+        this._valid = computed(() => !Object.values(this._errors).some((error) => error !== null));
 
         this.errors = readonly(this._errors);
     }
