@@ -1,9 +1,9 @@
 import { bootServices } from '@/services';
 import { definePlugin } from '@/plugins';
 
-import Lang from './Lang';
+import Lang, { LangProvider } from './Lang';
 
-export { Lang };
+export { Lang, LangProvider };
 
 const services = { $lang: Lang };
 
