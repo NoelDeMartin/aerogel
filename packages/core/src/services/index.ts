@@ -4,20 +4,17 @@ import { definePlugin } from '@/plugins';
 
 import App from './App';
 import Events from './Events';
-import Lang from './Lang';
 import Service from './Service';
 
 export * from './App';
 export * from './Events';
-export * from './Lang';
 export * from './Service';
 
-export { App, Events, Lang, Service };
+export { App, Events, Service };
 
 const defaultServices = {
     $app: App,
     $events: Events,
-    $lang: Lang,
 };
 
 export type DefaultServices = typeof defaultServices;

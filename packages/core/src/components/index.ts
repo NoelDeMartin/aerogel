@@ -1,6 +1,7 @@
 import AGAppLayout from './AGAppLayout.vue';
+import AGAppOverlays from './AGAppOverlays.vue';
 
-export { AGAppLayout };
+export { AGAppLayout, AGAppOverlays };
 
 export * from './basic';
 export * from './forms';

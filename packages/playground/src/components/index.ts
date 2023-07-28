@@ -1,6 +1,9 @@
-export const Colors = {
-    Primary: 'primary',
-    Danger: 'danger',
-} as const;
+import { UIComponents } from '@aerogel/core';
 
-export type Color = (typeof Colors)[keyof typeof Colors];
+import AlertModal from './modals/AlertModal.vue';
+import ConfirmModal from './modals/ConfirmModal.vue';
+
+export const components = {
+    [UIComponents.AlertModal]: AlertModal,
+    [UIComponents.ConfirmModal]: ConfirmModal,
+};

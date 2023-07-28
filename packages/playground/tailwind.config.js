@@ -2,4 +2,14 @@
 module.exports = {
     content: ['./index.html', './src/**/*.{vue,ts}', '../core/src/**/*.{vue,ts}'],
     plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+    theme: {
+        extend: {
+            width: {
+                clickable: '42px',
+            },
+            height: {
+                clickable: '42px',
+            },
+        },
+    },
 };

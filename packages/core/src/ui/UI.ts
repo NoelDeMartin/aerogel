@@ -20,6 +20,7 @@ type ModalResult<TComponent> = TComponent extends ModalComponent<Record<string, 
 
 export const UIComponents = {
     AlertModal: 'alert-modal',
+    ConfirmModal: 'confirm-modal',
 } as const;
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
@@ -29,8 +30,25 @@ export class UIService extends Service {
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Partial<Record<UIComponent, Component>> = {};
 
-    public alert(message: string): void {
-        this.openModal(this.requireComponent(UIComponents.AlertModal), { message });
+    public alert(message: string): void;
+    public alert(title: string, message: string): void;
+    public alert(messageOrTitle: string, message?: string): void {
+        const options = typeof message === 'string' ? { title: messageOrTitle, message } : { message: messageOrTitle };
+
+        this.openModal(this.requireComponent(UIComponents.AlertModal), options);
+    }
+
+    public async confirm(message: string): Promise<boolean>;
+    public async confirm(title: string, message: string): Promise<boolean>;
+    public async confirm(messageOrTitle: string, message?: string): Promise<boolean> {
+        const options = typeof message === 'string' ? { title: messageOrTitle, message } : { message: messageOrTitle };
+        const modal = await this.openModal<ModalComponent<{ message: string }, boolean>>(
+            this.requireComponent(UIComponents.ConfirmModal),
+            options,
+        );
+        const result = await modal.beforeClose;
+
+        return result ?? false;
     }
 
     public registerComponent(name: UIComponent, component: Component): void {

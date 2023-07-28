@@ -4,3 +4,7 @@ export interface IAGModal {
     cancellable: Ref<boolean>;
     close(): Promise<void>;
 }
+
+export interface IAGModalDefaultSlotProps {
+    close(result?: unknown): Promise<void>;
+}

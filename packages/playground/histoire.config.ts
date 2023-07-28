@@ -11,6 +11,10 @@ export default defineConfig({
                 title: 'Base',
             },
             {
+                id: 'modals',
+                title: 'Modals',
+            },
+            {
                 title: 'Others',
                 include: () => true,
             },

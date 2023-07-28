@@ -5,6 +5,7 @@ import { definePlugin } from '@/plugins';
 
 import UI, { UIComponents } from './UI';
 import AGAlertModal from '../components/modals/AGAlertModal.vue';
+import AGConfirmModal from '../components/modals/AGConfirmModal.vue';
 import type { UIComponent } from './UI';
 
 export { UI, UIComponents, UIComponent };
@@ -17,6 +18,7 @@ export default definePlugin({
     async install(app, options) {
         const defaultComponents = {
             [UIComponents.AlertModal]: AGAlertModal,
+            [UIComponents.ConfirmModal]: AGConfirmModal,
         };
 
         Object.entries({

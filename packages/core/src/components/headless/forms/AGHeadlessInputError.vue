@@ -8,7 +8,7 @@
 import { computed } from 'vue';
 
 import { injectReactiveOrFail } from '@/utils/vue';
-import { translate } from '@/utils/lang';
+import { translateWithDefault } from '@/lang';
 
 import type { IAGHeadlessInput } from './AGHeadlessInput';
 
@@ -21,6 +21,6 @@ const errorMessage = computed(() => {
         return null;
     }
 
-    return translate(`errors.${input.errors[0]}`);
+    return translateWithDefault(`errors.${input.errors[0]}`, `Error: ${input.errors[0]}`);
 });
 </script>

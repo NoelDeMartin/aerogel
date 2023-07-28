@@ -2,16 +2,22 @@ import i18n from '@aerogel/plugin-i18n';
 import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { monkeyPatch, stringToSlug } from '@noeldemartin/utils';
 
+import AlertModal from './components/modals/AlertModal.vue';
 import StoryPage from './histoire/components/StoryPage.vue';
 import StoryPlaceholder from './histoire/components/StoryPlaceholder.vue';
 
 import './assets/styles.css';
+import { UI, UIComponents } from '@aerogel/core';
 
 export const setupVue3 = defineSetupVue3(async ({ app, story, variant }) => {
     const plugins = [i18n({ messages: import.meta.glob('@/lang/*.yaml') })];
+    const services = [UI];
     const components = { StoryPage, StoryPlaceholder };
 
+    await Promise.all(services.map((service) => service.launch()));
     await Promise.all(plugins.map((plugin) => plugin.install(app, {})));
+
+    UI.registerComponent(UIComponents.AlertModal, AlertModal);
 
     Object.entries(components).forEach(([name, component]) => app.component(name, component));
 

@@ -3,16 +3,26 @@
         {{ $t('modals.title') }}
     </PageTitle>
     <div class="flex flex-row justify-center gap-3">
-        <BaseButton @click="$ui.openModal(HelloDefaultModal)">
-            {{ $t('modals.showDefault') }}
+        <BaseButton @click="$ui.alert($t('modals.alertTitle'), $t('modals.alertMessage'))">
+            {{ $t('modals.alert') }}
         </BaseButton>
-        <BaseButton @click="$ui.openModal(HelloCustomModal)">
-            {{ $t('modals.showCustom') }}
+        <BaseButton @click="showConfirmModal()">
+            {{ $t('modals.confirm') }}
+        </BaseButton>
+        <BaseButton @click="$ui.openModal(CustomModal)">
+            {{ $t('modals.custom') }}
         </BaseButton>
     </div>
 </template>
 
 <script setup lang="ts">
-import HelloCustomModal from './components/HelloCustomModal.vue';
-import HelloDefaultModal from './components/HelloDefaultModal.vue';
+import { UI, translate } from '@aerogel/core';
+
+import CustomModal from './components/CustomModal.vue';
+
+async function showConfirmModal() {
+    const confirmed = await UI.confirm(translate('modals.confirmMessage'));
+
+    UI.alert(confirmed ? translate('modals.confirmConfirmed') : translate('modals.confirmCancelled'));
+}
 </script>
