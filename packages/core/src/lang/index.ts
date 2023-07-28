@@ -27,7 +27,6 @@ declare module '@/services' {
 
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {
-        $t: typeof translate;
         $td: typeof translateWithDefault;
     }
 }
