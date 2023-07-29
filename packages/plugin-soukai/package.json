@@ -10,6 +10,7 @@
         "build": "rm dist -rf && npm run build:js && npm run build:types",
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types",
+        "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src"
     },
     "engines": {

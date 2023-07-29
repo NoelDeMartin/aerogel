@@ -14,6 +14,7 @@
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types",
         "lint": "noeldemartin-lint src",
+        "publish-next": "noeldemartin-publish-next",
         "test": "vitest --run"
     },
     "engines": {
