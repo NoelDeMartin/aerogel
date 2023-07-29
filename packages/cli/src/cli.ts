@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { CreateCommand } from '@/commands/create';
 import { facade } from '@noeldemartin/utils';
 import { GenerateComponentCommand } from '@/commands/generate-component';
+import { GenerateModelCommand } from '@/commands/generate-model';
 
 export class CLIService {
 
@@ -12,6 +13,7 @@ export class CLIService {
 
         CreateCommand.define(program);
         GenerateComponentCommand.define(program);
+        GenerateModelCommand.define(program);
 
         program.parse(argv);
     }
