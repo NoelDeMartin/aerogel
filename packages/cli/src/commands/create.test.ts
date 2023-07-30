@@ -12,6 +12,7 @@ describe('Create command', () => {
         await CreateCommand.run('./app', { name: 'My App' });
 
         // Assert
+        FileMock.expectCreated('./app/.gitignore').toContain('node_modules');
         FileMock.expectCreated('./app/package.json').toContain('"name": "my-app"');
         FileMock.expectCreated('./app/index.html').toContain('My App');
         FileMock.expectCreated('./app/src/App.vue').toContain(

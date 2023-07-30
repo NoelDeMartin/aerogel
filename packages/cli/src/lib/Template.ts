@@ -25,10 +25,11 @@ export default class Template {
                 file.substring(this.path.length + 1),
             );
             const fileContents = readFileSync(file).toString();
+            const filePath =
+                destination + (relativePath.endsWith('.template') ? relativePath.slice(0, -9) : relativePath);
 
-            File.write(destination + relativePath, render(fileContents, replacements, undefined, ['<%', '%>']));
-
-            files.push(destination + relativePath);
+            File.write(filePath, render(fileContents, replacements, undefined, ['<%', '%>']));
+            files.push(filePath);
         }
 
         return files;
