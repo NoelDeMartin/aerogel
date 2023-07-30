@@ -4,6 +4,10 @@ import { dirname, resolve } from 'path';
 
 export class FileService {
 
+    public contains(path: string, contents: string): boolean {
+        return !!this.read(path)?.includes(contents);
+    }
+
     public exists(path: string): boolean {
         return existsSync(path);
     }

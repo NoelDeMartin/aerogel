@@ -37,6 +37,8 @@ export class GenerateModelCommand extends Command {
             Log.fail(`${this.name} model already exists!`);
         }
 
+        this.assertSoukaiInstalled();
+
         const files = Template.instantiate(basePath('templates/model'), 'src/models', {
             model: {
                 name: this.name,
@@ -68,6 +70,12 @@ export class GenerateModelCommand extends Command {
             .reduce((definition, field) => definition + `\n${field.name}: FieldType.${field.type},`, '');
 
         return formatCodeBlock(code, { indent: 8 });
+    }
+
+    protected assertSoukaiInstalled(): void {
+        if (!File.contains('package.json', '"soukai"')) {
+            Log.fail('Soukai is not installed yet!');
+        }
     }
 
 }

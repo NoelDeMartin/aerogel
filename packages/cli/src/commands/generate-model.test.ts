@@ -9,7 +9,15 @@ describe('Generate model command', () => {
 
     it('generates models', async () => {
         // Arrange
-        FileMock.stub('package.json', '@aerogel/core');
+        FileMock.stub(
+            'package.json',
+            `
+            "dependencies": {
+                "@aerogel/core": "next",
+                "soukai": "next"
+            }
+        `,
+        );
 
         // Act
         await GenerateModelCommand.run('FooBar', {
