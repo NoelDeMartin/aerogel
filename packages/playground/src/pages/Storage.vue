@@ -20,7 +20,7 @@
             </BaseButton>
         </li>
     </ul>
-    <AGForm class="mt-5 flex justify-center" :form="form" @submit="addTask">
+    <AGForm class="mt-5 flex justify-center" :form="form" @submit="addTask()">
         <BaseInput
             name="draft"
             class="h-full"
