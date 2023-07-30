@@ -36,28 +36,17 @@
 </template>
 
 <script setup lang="ts">
-import { arrayRemove } from '@noeldemartin/utils';
-import { onCleanMounted, requiredStringInput, useForm } from '@aerogel/core';
-import { onMounted, ref } from 'vue';
+import { useModelCollection } from '@aerogel/plugin-soukai';
+import { requiredStringInput, useForm } from '@aerogel/core';
 
 import Task from '@/models/Task';
 
-const form = useForm({
-    draft: requiredStringInput(),
-});
-const tasks = ref<Task[]>([]);
+const tasks = useModelCollection(Task);
+const form = useForm({ draft: requiredStringInput() });
 
 async function addTask() {
-    const task = await Task.create({ name: form.draft });
+    await Task.create({ name: form.draft });
 
-    tasks.value.push(task);
-    form.setFieldValue('draft', '');
+    form.reset();
 }
-
-onCleanMounted(() => Task.on('deleted', (task) => arrayRemove(tasks.value, task)));
-onMounted(async () => {
-    const persistentTasks = await Task.all();
-
-    tasks.value.push(...persistentTasks);
-});
 </script>

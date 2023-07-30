@@ -33,7 +33,9 @@
         "@aerogel/core": "*"
     },
     "dependencies": {
-        "soukai": "^0.5.1"
+        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
+        "soukai": "^0.5.1",
+        "vue": "^3.3.4"
     },
     "devDependencies": {
         "@aerogel/core": "*"

@@ -2,6 +2,8 @@ import { IndexedDBEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
 
 import type { Plugin } from '@aerogel/core';
 
+export * from './utils';
+
 interface Options {
     models: Record<string, Record<string, unknown>>;
 }

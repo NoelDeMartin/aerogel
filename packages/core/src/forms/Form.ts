@@ -18,7 +18,7 @@ export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
 export type FormFieldType = ObjectValues<typeof FormFieldTypes>;
 
 export type FormData<T> = {
-    [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules>
+    -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules>
         ? TRules extends 'required'
             ? GetFormFieldValue<TType>
             : GetFormFieldValue<TType> | null
@@ -92,6 +92,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     public reset(): void {
         this._submitted.value = false;
 
+        this.resetData();
         this.resetErrors();
     }
 
@@ -155,6 +156,12 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         }, {} as FormErrors<Fields>);
 
         return reactive(errors) as FormErrors<Fields>;
+    }
+
+    private resetData(): void {
+        for (const [name, field] of Object.entries(this._fields)) {
+            this._data[name as keyof Fields] = (field.default ?? null) as FormData<Fields>[keyof Fields];
+        }
     }
 
     private resetErrors(errors?: Record<string, string[] | null>): void {

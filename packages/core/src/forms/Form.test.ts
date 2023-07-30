@@ -34,4 +34,25 @@ describe('Form', () => {
         expect(form.errors.name).toEqual(['required']);
     });
 
+    it('resets form', () => {
+        // Arrange
+        const form = useForm({
+            name: {
+                type: FormFieldTypes.String,
+                rules: 'required',
+            },
+        });
+
+        form.name = 'Foo bar';
+        form.submit();
+
+        // Act
+        form.reset();
+
+        // Assert
+        expect(form.valid).toBe(true);
+        expect(form.submitted).toBe(false);
+        expect(form.name).toBeNull();
+    });
+
 });
