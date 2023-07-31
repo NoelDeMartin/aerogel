@@ -78,9 +78,9 @@ export class GenerateModelCommand extends Command {
                 Soukai is not installed yet! You can install it doing the following:
 
                 1. Run the following command:
-                    npm install soukai @aerogel/plugin-soukai"
+                    npm install soukai @aerogel/plugin-soukai@next
 
-                2. Add this to your plugins array:
+                2. Add this to your plugins array in src/main.ts:
                     soukai({ models: import.meta.glob('@/models/*', { eager: true }) })
             `);
         }
