@@ -17,6 +17,8 @@ Shell.setMockInstance(ShellMock);
 
 beforeEach(() => {
     FileMock.reset();
+    LogMock.reset();
+
     File.mock();
     Log.mock();
     Shell.mock();

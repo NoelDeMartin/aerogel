@@ -36,14 +36,15 @@ export class CreateCommand extends Command {
         await this.installDependencies();
         await this.initializeGit();
 
-        Log.success([
-            '',
-            `That's it! You can start working on **${name}** doing the following:`,
-            `    cd ${path}`,
-            '    npm run dev',
-            '',
-            'Have fun!',
-        ]);
+        Log.success(`
+
+            That's it! You can start working on **${name}** doing the following:
+
+                cd ${path}
+                npm run dev
+
+            Have fun!
+        `);
     }
 
     protected async createApp(name: string, path: string): Promise<void> {

@@ -1,4 +1,4 @@
-import { arrayFrom, facade, stringMatchAll } from '@noeldemartin/utils';
+import { facade, stringMatchAll } from '@noeldemartin/utils';
 import { bold, hex } from 'chalk';
 import { clearLine, cursorTo } from 'readline';
 
@@ -28,28 +28,22 @@ export class LogService {
         return result;
     }
 
-    public info(messages: string | string[]): void {
-        arrayFrom(messages).forEach((message) => {
-            this.log(this.renderInfo(this.renderMarkdown(message)));
-        });
+    public info(message: string): void {
+        this.log(this.renderMarkdown(message), this.renderInfo);
     }
 
-    public error(messages: string | string[]): void {
-        arrayFrom(messages).forEach((message) => {
-            this.log(this.renderError(this.renderMarkdown(message)));
-        });
+    public error(message: string): void {
+        this.log(this.renderMarkdown(message), this.renderError);
     }
 
-    public fail(messages: string | string[]): void {
-        this.error(messages);
+    public fail(message: string): void {
+        this.error(message);
 
         process.exit(1);
     }
 
-    public success(messages: string | string[]): void {
-        arrayFrom(messages).forEach((message) => {
-            this.log(this.renderSuccess(this.renderMarkdown(message)));
-        });
+    public success(message: string): void {
+        this.log(this.renderMarkdown(message), this.renderSuccess);
     }
 
     protected renderMarkdown(message: string): string {
@@ -62,9 +56,29 @@ export class LogService {
         return message;
     }
 
-    protected log(messages: string | string[]): void {
+    protected log(message: string, formatMessage?: (message: string) => string): void {
+        this.formatMessage(message).forEach((line) => {
+            this.logLine(formatMessage ? formatMessage(line) : line);
+        });
+    }
+
+    protected formatMessage(message: string): string[] {
+        if (message[0] === '\n') {
+            message = message.slice(1).trimEnd();
+
+            const lines = message.split('\n');
+            const firstLetter = message.trim()[0] ?? '';
+            const indentation = lines.find((line) => line.trim().length > 0)?.indexOf(firstLetter) ?? 0;
+
+            return lines.map((line) => line.slice(indentation));
+        }
+
+        return [message];
+    }
+
+    protected logLine(line: string): void {
         // eslint-disable-next-line no-console
-        arrayFrom(messages).forEach((message) => console.log(message));
+        console.log(line);
     }
 
     protected stdout(message: string): void {
