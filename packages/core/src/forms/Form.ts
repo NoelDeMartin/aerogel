@@ -6,6 +6,7 @@ import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 export const FormFieldTypes = {
     String: 'string',
     Number: 'number',
+    Boolean: 'boolean',
 } as const;
 
 export interface FormFieldDefinition<TType extends FormFieldType = FormFieldType, TRules extends string = string> {
@@ -33,6 +34,8 @@ export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.Strin
     ? string
     : TType extends typeof FormFieldTypes.Number
     ? number
+    : TType extends typeof FormFieldTypes.Boolean
+    ? boolean
     : never;
 
 export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {

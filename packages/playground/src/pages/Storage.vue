@@ -23,9 +23,9 @@
     <AGForm class="mt-5 flex justify-center" :form="form" @submit="addTask()">
         <BaseInput
             name="draft"
-            class="h-full"
+            class="mr-2 h-full w-full sm:max-w-xs"
+            input-class="h-full"
             wrapper-class="h-full"
-            host-class="mr-2 h-full w-full sm:max-w-xs"
             :aria-label="$t('storage.taskName')"
             :placeholder="$t('storage.newTask')"
         />

@@ -2,25 +2,37 @@
     <PageTitle source="src/pages/Forms.vue">
         {{ $t('forms.title') }}
     </PageTitle>
-    <AGForm :form="form" class="flex flex-col items-center" @submit="submit()">
-        <BaseInput
-            v-initial-focus
-            name="name"
-            :aria-label="$t('forms.name_label')"
-            :placeholder="$t('forms.name_placeholder')"
-        />
-        <BaseButton submit class="mt-2 flex-shrink-0">
-            {{ $t('forms.submit') }}
-        </BaseButton>
+    <AGForm :form="form" class="flex flex-grow flex-col items-center" @submit="submit()">
+        <div class="mt-8 flex flex-col items-center rounded-lg bg-white/60 p-8 pb-4 shadow-sm">
+            <div class="flex">
+                <BaseInput
+                    v-initial-focus
+                    name="name"
+                    class="h-full"
+                    input-class="h-full"
+                    wrapper-class="h-full"
+                    :aria-label="$t('forms.name_label')"
+                    :placeholder="$t('forms.name_placeholder')"
+                />
+                <BaseButton submit class="ml-2 flex-shrink-0">
+                    {{ $t('forms.submit') }}
+                </BaseButton>
+            </div>
+
+            <BaseCheckbox name="accept" class="mt-4">
+                {{ $t('forms.conditions') }}
+            </BaseCheckbox>
+        </div>
     </AGForm>
 </template>
 
 <script setup lang="ts">
-import { UI, requiredStringInput, translate, useForm } from '@aerogel/core';
+import { UI, requiredBooleanInput, requiredStringInput, translate, useForm } from '@aerogel/core';
 import { stringToSlug } from '@noeldemartin/utils';
 
 const form = useForm({
     name: requiredStringInput(),
+    accept: requiredBooleanInput(true),
 });
 
 function submit() {
@@ -35,5 +47,7 @@ function submit() {
     }
 
     UI.alert(translate('forms.greeting', { name: form.name }));
+
+    form.reset();
 }
 </script>

@@ -1,12 +1,12 @@
 <template>
     <AGHeadlessInput
         ref="$input"
-        as="div"
         class="flex flex-col items-center"
+        :class="className"
         :name="name"
     >
         <AGHeadlessInputInput
-            v-bind="$attrs"
+            v-bind="attrs"
             class="block w-full border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
             :class="{
                 'ring-1 ring-red-500': $input?.errors,
@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { componentRef, stringProp } from '@/utils/vue';
 
+import { useInputAttrs } from '@/utils';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
 
 import AGHeadlessInput from '../headless/forms/AGHeadlessInput.vue';
@@ -29,4 +30,5 @@ defineProps({ name: stringProp() });
 defineOptions({ inheritAttrs: false });
 
 const $input = componentRef<IAGHeadlessInput>();
+const [attrs, className] = useInputAttrs();
 </script>

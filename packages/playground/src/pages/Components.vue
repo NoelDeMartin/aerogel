@@ -22,9 +22,13 @@
             />
             <label>
                 {{ $t('components.inputs_defaultLabel') }}
-                <AGInput :placeholder="$t('components.inputs_defaultPlaceholder')" />
+                <AGInput :placeholder="$t('components.inputs_defaultPlaceholder')" class="mt-1" />
             </label>
         </div>
+
+        <h2>{{ $t('components.checkboxes') }}</h2>
+        <BaseCheckbox>{{ $t('components.checkboxes_custom') }}</BaseCheckbox>
+        <AGCheckbox>{{ $t('components.checkboxes_default') }}</AGCheckbox>
 
         <h2>{{ $t('components.modals') }}</h2>
         <div class="mt-4 flex gap-2">

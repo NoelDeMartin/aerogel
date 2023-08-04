@@ -18,13 +18,16 @@ home:
 components:
     title: Components
     buttons: Buttons
-    buttons_custom: Custom
-    buttons_default: Default
+    buttons_custom: Custom button
+    buttons_default: Default button
     inputs: Inputs
     inputs_customLabel: Custom
     inputs_customPlaceholder: Type here...
     inputs_defaultLabel: Default
     inputs_defaultPlaceholder: Type here...
+    checkboxes: Checkboxes
+    checkboxes_custom: This is a custom checkbox.
+    checkboxes_default: This is the default checkbox.
     modals: Modals
     modals_alertTitle: Hi there!
     modals_alertMessage: How's your day going? I hope you're having fun :)
@@ -56,7 +59,8 @@ content:
 forms:
     title: Forms
     name_label: Name
-    name_placeholder: Name
+    name_placeholder: I am...
+    conditions: Accept Terms & Conditions
     submit: Say My Name
     greeting: Hello, {name}!
 

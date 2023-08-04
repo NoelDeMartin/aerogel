@@ -17,11 +17,11 @@
         </Variant>
 
         <Variant title="Hover">
-            <BaseInput label="What's the best food?" placeholder="Ramen" class=":hover" />
+            <BaseInput label="What's the best food?" placeholder="Ramen" input-class=":hover" />
         </Variant>
 
         <Variant title="Focus">
-            <BaseInput label="What's the best food?" placeholder="Ramen" class=":focus :focus-visible" />
+            <BaseInput label="What's the best food?" placeholder="Ramen" input-class=":focus :focus-visible" />
         </Variant>
 
         <Variant title="Error">

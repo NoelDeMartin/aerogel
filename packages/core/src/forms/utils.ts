@@ -1,6 +1,23 @@
 import { FormFieldTypes } from './Form';
 import type { FormFieldDefinition } from './Form';
 
+export function booleanInput(defaultValue?: boolean): FormFieldDefinition<typeof FormFieldTypes.Boolean> {
+    return {
+        default: defaultValue,
+        type: FormFieldTypes.Boolean,
+    };
+}
+
+export function requiredBooleanInput(
+    defaultValue?: boolean,
+): FormFieldDefinition<typeof FormFieldTypes.Boolean, 'required'> {
+    return {
+        default: defaultValue,
+        type: FormFieldTypes.Boolean,
+        rules: 'required',
+    };
+}
+
 export function requiredNumberInput(
     defaultValue?: number,
 ): FormFieldDefinition<typeof FormFieldTypes.Number, 'required'> {
