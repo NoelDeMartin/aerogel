@@ -27,6 +27,7 @@ jobs:
                   sed -i "s/\"@aerogel\\/cli\": \"next\"/\"@aerogel\\/cli\": \"file:..\/packages\/cli\"/" packages/cli/templates/app/package.json
                   sed -i "s/\"@aerogel\\/cypress\": \"next\"/\"@aerogel\\/cypress\": \"file:..\/packages\/cypress\"/" packages/cli/templates/app/package.json
                   sed -i "s/\"@aerogel\\/plugin-i18n\": \"next\"/\"@aerogel\\/plugin-i18n\": \"file:..\/packages\/plugin-i18n\"/" packages/cli/templates/app/package.json
+                  sed -i "s/\"@aerogel\\/plugin-soukai\": \"next\"/\"@aerogel\\/plugin-soukai\": \"file:..\/packages\/plugin-soukai\"/" packages/cli/templates/app/package.json
                   ./packages/create-aerogel/create-aerogel.js app
             - run: npm run lint
               working-directory: app
