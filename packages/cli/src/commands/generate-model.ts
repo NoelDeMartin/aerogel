@@ -73,7 +73,7 @@ export class GenerateModelCommand extends Command {
     }
 
     protected assertSoukaiInstalled(): void {
-        if (!File.contains('package.json', '"soukai"')) {
+        if (!File.contains('package.json', '"soukai"') && !File.contains('package.json', '"@aerogel/plugin-soukai"')) {
             Log.fail(`
                 Soukai is not installed yet! You can install it doing the following:
 
