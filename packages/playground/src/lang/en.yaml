@@ -18,8 +18,10 @@ home:
 components:
     title: Components
     buttons: Buttons
-    buttons_custom: Custom button
-    buttons_default: Default button
+    buttons_clickMe: Click me!
+    buttons_custom: Custom
+    buttons_customWithIcons: Custom with icons
+    buttons_default: Default
     inputs: Inputs
     inputs_customLabel: Custom
     inputs_customPlaceholder: Type here...

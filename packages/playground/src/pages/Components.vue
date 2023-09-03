@@ -5,12 +5,40 @@
 
     <div class="prose-sm">
         <h2>{{ $t('components.buttons') }}</h2>
-        <div class="mt-4 flex gap-2">
+        <div class="mt-4 flex items-center gap-2">
+            <span>{{ $t('components.buttons_custom') }}:</span>
             <BaseButton>
-                {{ $t('components.buttons_custom') }}
+                {{ $t('components.buttons_clickMe') }}
             </BaseButton>
+            <BaseButton color="danger">
+                {{ $t('components.buttons_clickMe') }}
+            </BaseButton>
+            <BaseButton color="clear">
+                {{ $t('components.buttons_clickMe') }}
+            </BaseButton>
+        </div>
+        <div class="mt-4 flex items-center gap-2">
+            <span>{{ $t('components.buttons_customWithIcons') }}:</span>
+            <BaseButton icon>
+                <i-mdi-check class="h-6 w-6" aria-hidden="true" />
+            </BaseButton>
+            <BaseButton icon color="danger">
+                <i-mdi-close class="h-6 w-6" aria-hidden="true" />
+            </BaseButton>
+            <BaseButton icon color="clear">
+                <i-mdi-help-circle-outline class="h-6 w-6" aria-hidden="true" />
+            </BaseButton>
+        </div>
+        <div class="mt-4 flex items-center gap-2">
+            <span>{{ $t('components.buttons_default') }}:</span>
             <AGButton>
-                {{ $t('components.buttons_default') }}
+                {{ $t('components.buttons_clickMe') }}
+            </AGButton>
+            <AGButton secondary>
+                {{ $t('components.buttons_clickMe') }}
+            </AGButton>
+            <AGButton clear>
+                <i-mdi-help-circle-outline class="h-6 w-6" aria-hidden="true" />
             </AGButton>
         </div>
 
