@@ -5,9 +5,13 @@ import Log from '@/lib/Log';
 import Template from '@/lib/Template';
 import { basePath } from '@/lib/utils';
 
+export interface Options {
+    local?: boolean;
+}
+
 export default class App {
 
-    constructor(public name: string) {}
+    constructor(protected name: string, protected options: Options = {}) {}
 
     public create(path: string): void {
         if (File.exists(path) && (!File.isDirectory(path) || !File.isEmptyDirectory(path))) {
@@ -18,6 +22,9 @@ export default class App {
             app: {
                 name: this.name,
                 slug: stringToSlug(this.name),
+            },
+            local: this.options.local && {
+                aerogelPath: basePath('../'),
             },
         });
     }

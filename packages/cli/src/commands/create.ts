@@ -2,9 +2,11 @@ import App from '@/lib/App';
 import Command from '@/commands/Command';
 import Log from '@/lib/Log';
 import Shell from '@/lib/Shell';
+import type { CommandOptions } from '@/commands/Command';
 
 export interface Options {
     name?: string;
+    local?: boolean;
 }
 
 export class CreateCommand extends Command {
@@ -12,8 +14,12 @@ export class CreateCommand extends Command {
     public static command: string = 'create';
     public static description: string = 'Create AerogelJS app';
     public static parameters: [string, string][] = [['path', 'Application path']];
-    public static options: Record<string, string> = {
+    public static options: CommandOptions = {
         name: 'Application name',
+        local: {
+            type: 'boolean',
+            description: 'Whether to create an app linked to local Aerogel packages (used for core development)',
+        },
     };
 
     private path: string;
@@ -50,7 +56,7 @@ export class CreateCommand extends Command {
     protected async createApp(name: string, path: string): Promise<void> {
         Log.info(`Creating **${name}**...`);
 
-        new App(name).create(path);
+        new App(name, { local: this.options.local }).create(path);
     }
 
     protected async installDependencies(): Promise<void> {

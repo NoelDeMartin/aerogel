@@ -15,9 +15,9 @@
         "test:serve-app": "vite --port 5001"
     },
     "dependencies": {
-        "@aerogel/core": "next",
-        "@aerogel/plugin-i18n": "next",
-        "@aerogel/plugin-soukai": "next",
+        "@aerogel/core": "<% #local %>file:<% &local.aerogelPath %>/core<% /local %><% ^local %>next<% /local %>",
+        "@aerogel/plugin-i18n": "<% #local %>file:<% &local.aerogelPath %>/plugin-i18n<% /local %><% ^local %>next<% /local %>",
+        "@aerogel/plugin-soukai": "<% #local %>file:<% &local.aerogelPath %>/plugin-soukai<% /local %><% ^local %>next<% /local %>",
         "@intlify/unplugin-vue-i18n": "^0.12.2",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
@@ -26,9 +26,9 @@
         "vue-i18n": "9.3.0-beta.19"
     },
     "devDependencies": {
-        "@aerogel/cli": "next",
-        "@aerogel/cypress": "next",
-        "@aerogel/vite": "next",
+        "@aerogel/cli": "<% #local %>file:<% &local.aerogelPath %>/cli<% /local %><% ^local %>next<% /local %>",
+        "@aerogel/cypress": "<% #local %>file:<% &local.aerogelPath %>/cypress<% /local %><% ^local %>next<% /local %>",
+        "@aerogel/vite": "<% #local %>file:<% &local.aerogelPath %>/vite<% /local %><% ^local %>next<% /local %>",
         "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/node": "^20.3.1",

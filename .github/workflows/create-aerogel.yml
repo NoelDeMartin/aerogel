@@ -18,17 +18,12 @@ jobs:
                   npm run build -w packages/core
                   npm run build -w packages/cypress
                   npm run build -w packages/plugin-i18n
+                  npm run build -w packages/plugin-soukai
             - name: Create app
               run: |
                   git config --global user.email "john@example.com"
                   git config --global user.name "John Doe"
-                  sed -i "s/\"@aerogel\\/core\": \"next\"/\"@aerogel\\/core\": \"file:..\/packages\/core\"/" packages/cli/templates/app/package.json
-                  sed -i "s/\"@aerogel\\/vite\": \"next\"/\"@aerogel\\/vite\": \"file:..\/packages\/vite\"/" packages/cli/templates/app/package.json
-                  sed -i "s/\"@aerogel\\/cli\": \"next\"/\"@aerogel\\/cli\": \"file:..\/packages\/cli\"/" packages/cli/templates/app/package.json
-                  sed -i "s/\"@aerogel\\/cypress\": \"next\"/\"@aerogel\\/cypress\": \"file:..\/packages\/cypress\"/" packages/cli/templates/app/package.json
-                  sed -i "s/\"@aerogel\\/plugin-i18n\": \"next\"/\"@aerogel\\/plugin-i18n\": \"file:..\/packages\/plugin-i18n\"/" packages/cli/templates/app/package.json
-                  sed -i "s/\"@aerogel\\/plugin-soukai\": \"next\"/\"@aerogel\\/plugin-soukai\": \"file:..\/packages\/plugin-soukai\"/" packages/cli/templates/app/package.json
-                  ./packages/create-aerogel/create-aerogel.js app
+                  ./packages/create-aerogel/create-aerogel.js app --local
             - run: npm run lint
               working-directory: app
             - run: npm run build

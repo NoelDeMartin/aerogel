@@ -31,7 +31,7 @@ vi.mock('@/lib/utils', async () => {
 
     return {
         ...utils,
-        basePath(path: string) {
+        basePath(path: string = '') {
             return resolve(__dirname, '../../', path);
         },
     };

@@ -4,7 +4,7 @@ export interface FormatCodeBlockOptions {
     indent?: number;
 }
 
-export function basePath(path: string): string {
+export function basePath(path: string = ''): string {
     return resolve(__dirname, '../', path);
 }
 
