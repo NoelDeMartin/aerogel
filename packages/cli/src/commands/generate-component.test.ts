@@ -17,6 +17,17 @@ describe('Generate component command', () => {
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<div>FooBar</div>');
     });
 
+    it('generates components in subfolders', async () => {
+        // Arrange
+        FileMock.stub('package.json', '@aerogel/core');
+
+        // Act
+        await GenerateComponentCommand.run('module/FooBar');
+
+        // Assert
+        FileMock.expectCreated('src/components/module/FooBar.vue').toContain('<div>FooBar</div>');
+    });
+
     it('generates components with stories', async () => {
         // Arrange
         FileMock.stub('package.json', '@aerogel/core');
