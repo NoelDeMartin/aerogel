@@ -2,15 +2,13 @@ import { bootServices } from '@/services';
 import { definePlugin } from '@/plugins';
 
 import Lang, { LangProvider } from './Lang';
+import { translate, translateWithDefault } from './utils';
 
-export { Lang, LangProvider };
+export { Lang, LangProvider, translate, translateWithDefault };
 
 const services = { $lang: Lang };
 
 export type LangServices = typeof services;
-
-export const translate = Lang.translate.bind(Lang);
-export const translateWithDefault = Lang.translateWithDefault.bind(Lang);
 
 export default definePlugin({
     async install(app) {

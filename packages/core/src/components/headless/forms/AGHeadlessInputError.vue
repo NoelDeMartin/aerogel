@@ -8,7 +8,7 @@
 import { computed } from 'vue';
 
 import { injectReactiveOrFail } from '@/utils/vue';
-import { translateWithDefault } from '@/lang';
+import { translateWithDefault } from '@/lang/utils';
 
 import type { IAGHeadlessInput } from './AGHeadlessInput';
 

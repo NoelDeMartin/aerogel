@@ -1,7 +1,7 @@
 <template>
     <AGHeadlessInput
         ref="$input"
-        class="flex flex-col items-center"
+        class="relative flex flex-col items-center"
         :class="className"
         :name="name"
     >
@@ -12,7 +12,9 @@
                 'ring-1 ring-red-500': $input?.errors,
             }"
         />
-        <AGHeadlessInputError class="mt-1 text-sm text-red-500" />
+        <div class="absolute bottom-0 left-0 translate-y-full">
+            <AGHeadlessInputError class="mt-1 text-sm text-red-500" />
+        </div>
     </AGHeadlessInput>
 </template>
 
