@@ -60,14 +60,26 @@ export class GenerateModelCommand extends Command {
         const code = this.options.fields
             .split(',')
             .map((field) => {
-                const [name, type] = field.split(':');
+                const [name, type, rules] = field.split(':');
 
                 return {
                     name,
                     type: stringToStudlyCase(type ?? 'string'),
+                    required: rules === 'required',
                 };
             })
-            .reduce((definition, field) => definition + `\n${field.name}: FieldType.${field.type},`, '');
+            .reduce((definition, field) => {
+                const fieldDefinition = field.required
+                    ? formatCodeBlock(`
+                        ${field.name}: {
+                            type: FieldType.${field.type},
+                            required: true,
+                        }
+                    `)
+                    : `${field.name}: FieldType.${field.type}`;
+
+                return definition + `\n${fieldDefinition},`;
+            }, '');
 
         return formatCodeBlock(code, { indent: 8 });
     }

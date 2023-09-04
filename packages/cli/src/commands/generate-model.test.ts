@@ -21,7 +21,7 @@ describe('Generate model command', () => {
 
         // Act
         await GenerateModelCommand.run('FooBar', {
-            fields: 'name:string,age:number,birth:Date',
+            fields: 'name:string:required,age:number,birth:Date',
         });
 
         // Assert
@@ -30,7 +30,10 @@ describe('Generate model command', () => {
             formatCodeBlock(`
                 defineModelSchema({
                     fields: {
-                        name: FieldType.String,
+                        name: {
+                            type: FieldType.String,
+                            required: true,
+                        },
                         age: FieldType.Number,
                         birth: FieldType.Date,
                     },
