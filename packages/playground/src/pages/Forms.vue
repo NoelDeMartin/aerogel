@@ -36,10 +36,6 @@ const form = useForm({
 });
 
 function submit() {
-    if (!form.name) {
-        return;
-    }
-
     if (stringToSlug(form.name) === 'heisenberg') {
         UI.alert('You\'re Goddamn Right!');
 

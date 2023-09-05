@@ -4,7 +4,7 @@ export default defineModelSchema({
     fields: {
         name: {
             type: FieldType.String,
-            require: true,
+            required: true,
         },
     },
 });

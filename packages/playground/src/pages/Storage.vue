@@ -8,7 +8,7 @@
             :key="task.id"
             class="flex justify-between overflow-hidden rounded-md bg-white px-6 py-4 shadow"
         >
-            <span>{{ task.name }}</span>
+            <AGMarkdown :text="task.name" />
 
             <BaseButton
                 small
