@@ -1,0 +1,13 @@
+diff --git a/node_modules/@noeldemartin/solid-utils/dist/noeldemartin-solid-utils.d.ts b/node_modules/@noeldemartin/solid-utils/dist/noeldemartin-solid-utils.d.ts
+index 1500347..9cbb75b 100644
+--- a/node_modules/@noeldemartin/solid-utils/dist/noeldemartin-solid-utils.d.ts
++++ b/node_modules/@noeldemartin/solid-utils/dist/noeldemartin-solid-utils.d.ts
+@@ -69,7 +69,7 @@ export declare interface FetchLoginUserProfileOptions {
+     fetch?: Fetch;
+ }
+ 
+-export declare type FetchMock = jest.Mock<GetClosureResult<Fetch>, GetClosureArgs<Fetch>> & Fetch & FetchMockMethods;
++export declare type FetchMock = any;
+ 
+ export declare interface FetchMockMethods {
+     mockResponse(body?: string, headers?: Record<string, string>, status?: number): void;
