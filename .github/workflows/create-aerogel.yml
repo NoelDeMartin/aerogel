@@ -32,3 +32,9 @@ jobs:
               working-directory: app
             - run: npm run cy:test
               working-directory: app
+            - name: Upload Cypress screenshots
+              uses: actions/upload-artifact@v3
+              if: ${{ failure() }}
+              with:
+                  name: cypress_screenshots
+                  path: app/cypress/screenshots

@@ -20,3 +20,9 @@ jobs:
                   npm install
                   cd ../../
                   npm run cy:test
+            - name: Upload Cypress screenshots
+              uses: actions/upload-artifact@v3
+              if: ${{ failure() }}
+              with:
+                  name: cypress_screenshots
+                  path: packages/playground/cypress/screenshots
