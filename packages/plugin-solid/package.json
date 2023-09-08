@@ -1,10 +1,10 @@
 {
-    "name": "@aerogel/plugin-soukai",
-    "description": "Aerogel Soukai plugin",
+    "name": "@aerogel/plugin-solid",
+    "description": "Aerogel Solid plugin",
     "version": "0.0.0",
-    "main": "dist/aerogel-plugin-soukai.cjs.js",
-    "module": "dist/aerogel-plugin-soukai.esm.js",
-    "types": "dist/aerogel-plugin-soukai.d.ts",
+    "main": "dist/aerogel-plugin-solid.cjs.js",
+    "module": "dist/aerogel-plugin-solid.esm.js",
+    "types": "dist/aerogel-plugin-solid.d.ts",
     "sideEffects": false,
     "scripts": {
         "build": "rm dist -rf && npm run build:js && npm run build:types",
@@ -31,10 +31,11 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
-        "soukai": "^0.5.1"
+        "soukai-solid": "0.5.1-next.3f302006f0464efe2bf3707bb52769c666591da9"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
-        "vue": "^3.3.4"
+        "@inrupt/solid-client-authn-browser": "^1.17.1",
+        "@noeldemartin/solid-utils": "^0.3.0",
+        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd"
     }
 }

@@ -4,7 +4,7 @@ import type { Plugin } from '@aerogel/core';
 
 export * from './utils';
 
-interface Options {
+export interface Options {
     models: Record<string, Record<string, unknown>>;
 }
 

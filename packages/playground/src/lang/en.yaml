@@ -14,6 +14,7 @@ home:
     forms: Forms
     modals: Modals
     storage: Storage
+    solid: Solid
 
 components:
     title: Components
@@ -87,6 +88,13 @@ storage:
     deleteTask: delete
     deleteTask_a11y: Delete '{task}'
 
+solid:
+    title: Solid
+    url: Login url
+    url_placeholder: https://...
+    login: Login
+    welcome: You are logged in as [{name}]({url})!
+
 ui:
     close: Close
     ok: OK
@@ -94,3 +102,6 @@ ui:
 
 errors:
     required: This is required
+
+auth:
+    stuckConnecting: We didn't hear back from the identity provider, maybe try reconnecting?

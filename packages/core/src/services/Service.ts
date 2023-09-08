@@ -1,5 +1,5 @@
 import { computed, reactive } from 'vue';
-import { MagicObject, PromisedValue } from '@noeldemartin/utils';
+import { MagicObject, PromisedValue, Storage, isEmpty, objectDeepClone, objectOnly } from '@noeldemartin/utils';
 import type { ComputedRef } from 'vue';
 import type { Constructor } from '@noeldemartin/utils';
 
@@ -18,9 +18,13 @@ export function defineServiceState<
     ComputedState extends ServiceState = {}
 >(options: {
     initialState: State;
+    persist?: (keyof State)[];
     computed?: ComputedStateDefinition<State, ComputedState>;
+    serialize?: (state: Partial<State>) => Partial<State>;
 }): Constructor<State> & Constructor<ComputedState> & ServiceConstructor {
     return class extends Service<State, ComputedState> {
+
+        public static persist = (options.persist as string[]) ?? [];
 
         protected getInitialState(): State {
             return options.initialState;
@@ -29,14 +33,21 @@ export function defineServiceState<
         protected getComputedStateDefinition(): ComputedStateDefinition<State, ComputedState> {
             return options.computed ?? ({} as ComputedStateDefinition<State, ComputedState>);
         }
+
+        protected serializePersistedState(state: Partial<State>): Partial<State> {
+            return options.serialize?.(state) ?? state;
+        }
     
     } as unknown as Constructor<State> & Constructor<ComputedState> & ServiceConstructor;
 }
 
 export default class Service<
     State extends ServiceState = DefaultServiceState,
-    ComputedState extends ServiceState = {}
+    ComputedState extends ServiceState = {},
+    ServiceStorage extends Partial<State> = Partial<State>
 > extends MagicObject {
+
+    public static persist: string[] = [];
 
     protected _namespace: string;
     private _booted: PromisedValue<void>;
@@ -51,7 +62,7 @@ export default class Service<
         this._state = reactive(this.getInitialState());
         this._computedState = Object.entries(this.getComputedStateDefinition()).reduce(
             (computedState, [name, method]) => {
-                computedState[name as keyof ComputedState] = computed(() => method(this._state));
+                computedState[name as keyof ComputedState] = computed(() => method(this._state, this));
 
                 return computedState;
             },
@@ -115,6 +126,29 @@ export default class Service<
 
     protected setState(state: Partial<State>): void {
         Object.assign(this._state, state);
+
+        this.onStateUpdated(state);
+    }
+
+    protected onStateUpdated(state: Partial<State>): void {
+        // TODO fix this.static()
+        const persist = (this.constructor as unknown as { persist: string[] }).persist;
+        const persisted = objectOnly(state, persist);
+
+        if (isEmpty(persisted)) {
+            return;
+        }
+
+        const storage = Storage.require<ServiceStorage>(this._namespace);
+
+        Storage.set(this._namespace, {
+            ...storage,
+            ...this.serializePersistedState(objectDeepClone(persisted) as Partial<State>),
+        });
+    }
+
+    protected getPersistedState(): (keyof State)[] {
+        return [];
     }
 
     protected getInitialState(): State {
@@ -125,8 +159,30 @@ export default class Service<
         return {} as ComputedStateDefinition<State, ComputedState>;
     }
 
+    protected serializePersistedState(state: Partial<State>): Partial<State> {
+        return state;
+    }
+
     protected async boot(): Promise<void> {
-        //
+        this.restorePersistedState();
+    }
+
+    protected restorePersistedState(): void {
+        // TODO fix this.static()
+        const persist = (this.constructor as unknown as { persist: string[] }).persist;
+
+        if (isEmpty(persist)) {
+            return;
+        }
+
+        if (Storage.has(this._namespace)) {
+            const persisted = Storage.require<ServiceStorage>(this._namespace);
+            this.setState(persisted);
+
+            return;
+        }
+
+        Storage.set(this._namespace, objectOnly(this.getState(), persist));
     }
 
 }

@@ -6,6 +6,7 @@ import Forms from './Forms.vue';
 import Home from './Home.vue';
 import Modals from './modals/Modals.vue';
 import Storage from './Storage.vue';
+import Solid from './Solid.vue';
 
 export const routes: RouteRecordRaw[] = [
     {
@@ -37,5 +38,10 @@ export const routes: RouteRecordRaw[] = [
         name: 'storage',
         path: '/storage',
         component: Storage,
+    },
+    {
+        name: 'solid',
+        path: '/solid',
+        component: Solid,
     },
 ];
