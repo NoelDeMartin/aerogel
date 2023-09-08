@@ -14,4 +14,9 @@ jobs:
             - run: npm run build
             - run: npm run lint
             - run: npm run test
-            - run: npm run cy:test
+            - name: Cypress
+              run: |
+                  cd ./packages/solid-server
+                  npm install
+                  cd ../../
+                  npm run cy:test
