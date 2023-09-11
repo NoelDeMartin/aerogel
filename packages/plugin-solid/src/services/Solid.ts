@@ -12,7 +12,7 @@ import {
     urlRoot,
 } from '@noeldemartin/utils';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { App, Errors, Events, translate } from '@aerogel/core';
+import { App, Errors, Events, UI, translate } from '@aerogel/core';
 import { SolidACLAuthorization, SolidTypeIndex } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
@@ -131,40 +131,33 @@ export class SolidService extends Service {
         await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
     }
 
+    public async logout(force: boolean = false): Promise<void> {
+        const confirmLogout = force || (await UI.confirm(translate('auth.logOut_confirm')));
+
+        if (!confirmLogout) {
+            return;
+        }
+
+        if (!this.previousSession) {
+            return;
+        }
+
+        this.setState({ previousSession: null });
+        this.isLoggedIn() && (await this.authenticator.logout());
+
+        await Events.emit('logout');
+    }
+
     public dismiss(): void {
         this.setState({ dismissed: true });
     }
 
-    public async createPrivateTypeIndex(): Promise<string> {
-        if (!this.isLoggedIn()) {
-            throw new Error('Can\'t create a type index because the user is not logged in');
-        }
-
-        const user = this.user;
-        const typeIndex = await SolidTypeIndex.withEngine(this.authenticator.engine, () =>
-            SolidTypeIndex.createPrivate(user));
-
-        return tap(typeIndex.url, () => {
-            user.privateTypeIndexUrl = typeIndex.url;
-
-            this.rememberProfile(user);
-        });
+    public async findOrCreatePrivateTypeIndex(): Promise<SolidTypeIndex> {
+        return (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex());
     }
 
-    public async createPublicTypeIndex(): Promise<string> {
-        if (!this.isLoggedIn()) {
-            throw new Error('Can\'t create a type index because the user is not logged in');
-        }
-
-        const user = this.user;
-        const typeIndex = await SolidTypeIndex.withEngine(this.authenticator.engine, () =>
-            SolidTypeIndex.createPublic(user));
-
-        return tap(typeIndex.url, () => {
-            user.publicTypeIndexUrl = typeIndex.url;
-
-            this.rememberProfile(user);
-        });
+    public async findOrCreatePublicTypeIndex(): Promise<SolidTypeIndex> {
+        return (await this.findPublicTypeIndex()) ?? (await this.createPublicTypeIndex());
     }
 
     protected async boot(): Promise<void> {
@@ -187,6 +180,54 @@ export class SolidService extends Service {
 
         await this.restorePreviousSession();
         await this.startupReconnect();
+    }
+
+    protected async findPrivateTypeIndex(): Promise<SolidTypeIndex | null> {
+        if (!this.user?.privateTypeIndexUrl) {
+            return null;
+        }
+
+        return SolidTypeIndex.find(this.user.privateTypeIndexUrl);
+    }
+
+    protected async createPrivateTypeIndex(): Promise<SolidTypeIndex> {
+        if (!this.isLoggedIn()) {
+            throw new Error('Can\'t create a type index because the user is not logged in');
+        }
+
+        const user = this.user;
+        const typeIndex = await SolidTypeIndex.withEngine(this.authenticator.engine, () =>
+            SolidTypeIndex.createPrivate(user));
+
+        return tap(typeIndex, () => {
+            user.privateTypeIndexUrl = typeIndex.url;
+
+            this.rememberProfile(user);
+        });
+    }
+
+    protected async findPublicTypeIndex(): Promise<SolidTypeIndex | null> {
+        if (!this.user?.publicTypeIndexUrl) {
+            return null;
+        }
+
+        return SolidTypeIndex.find(this.user.publicTypeIndexUrl);
+    }
+
+    public async createPublicTypeIndex(): Promise<SolidTypeIndex> {
+        if (!this.isLoggedIn()) {
+            throw new Error('Can\'t create a type index because the user is not logged in');
+        }
+
+        const user = this.user;
+        const typeIndex = await SolidTypeIndex.withEngine(this.authenticator.engine, () =>
+            SolidTypeIndex.createPublic(user));
+
+        return tap(typeIndex, () => {
+            user.publicTypeIndexUrl = typeIndex.url;
+
+            this.rememberProfile(user);
+        });
     }
 
     private async restorePreviousSession(): Promise<void> {

@@ -33,10 +33,21 @@ export async function bootServices(app: VueApp, services: Record<string, Service
 }
 
 export default definePlugin({
-    async install(app) {
-        await bootServices(app, defaultServices);
+    async install(app, options) {
+        const services = {
+            ...defaultServices,
+            ...options.services,
+        };
+
+        await bootServices(app, services);
     },
 });
+
+declare module '@/bootstrap/options' {
+    interface AerogelOptions {
+        services?: Record<string, Service>;
+    }
+}
 
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties extends Services {}

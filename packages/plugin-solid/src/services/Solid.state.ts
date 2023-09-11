@@ -8,7 +8,7 @@ import type { AuthenticatorName } from '@/auth';
 export default defineServiceState({
     persist: ['autoReconnect', 'dismissed', 'previousSession', 'profiles', 'staleProfiles'],
     initialState: {
-        autoReconnect: true,
+        autoReconnect: false,
         dismissed: false,
         ignorePreviousSessionError: false,
         loginError: null as ErrorSource | null,

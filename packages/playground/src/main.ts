@@ -10,8 +10,10 @@ import './assets/styles.css';
 import App from './App.vue';
 import { components } from './components';
 import { routes } from './pages';
+import { services } from './services';
 
 bootstrapApplication(App, {
+    services,
     components,
     plugins: [
         routing({ routes }),

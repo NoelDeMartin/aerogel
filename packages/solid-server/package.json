@@ -1,7 +1,10 @@
 {
     "name": "solid-server",
     "version": "0.0.0",
-    "dependencies": {
-        "@solid/community-server": "^6.0.2"
+    "scripts": {
+        "start": "community-solid-server -c @css:config/file-no-setup.json -p 4000 -f ./data"
+    },
+    "devDependencies": {
+        "@solid/community-server": "^5.1.0"
     }
 }

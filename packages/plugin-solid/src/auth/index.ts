@@ -5,6 +5,8 @@ const _authenticators = {} as Authenticators;
 
 type BaseAuthenticators = typeof authenticators;
 
+export * from './Authenticator';
+
 export const authenticators = {
     inrupt: new InruptAuthenticator(),
 };

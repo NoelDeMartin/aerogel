@@ -31,7 +31,7 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
-        "soukai": "^0.5.1"
+        "soukai": "0.5.1-next.1eaac284ec6bc2e49cadae357a515d8f30740656"
     },
     "dependencies": {
         "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",

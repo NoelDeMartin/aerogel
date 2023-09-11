@@ -14,6 +14,9 @@ import type { AuthenticatorName } from '@/auth';
 
 const services = { $solid: Solid };
 
+export { Solid };
+export * from './auth';
+
 export interface Options {
     authenticators?: Record<string, Authenticator>;
     defaultAuthenticator?: AuthenticatorName;

@@ -77,7 +77,24 @@
                 <BaseButton icon>
                     <i-mdi-help-circle-outline class="h-6 w-6" aria-hidden="true" />
                 </BaseButton>
-                ...
+            </div>
+        </Variant>
+
+        <Variant title="Text + Icons">
+            <div class="flex items-center gap-2 p-1">
+                <BaseButton>
+                    <i-mdi-check class="h-6 w-6" aria-hidden="true" />
+                    Complete
+                </BaseButton>
+                <BaseButton color="danger">
+                    <i-mdi-alert class="h-4 w-4" aria-hidden="true" />
+                    Danger
+                    <i-mdi-alert class="h-4 w-4" aria-hidden="true" />
+                </BaseButton>
+                <BaseButton color="clear">
+                    Log out
+                    <i-mdi-login class="h-6 w-6" aria-hidden="true" />
+                </BaseButton>
             </div>
         </Variant>
     </Story>
@@ -115,7 +132,8 @@ const colorOptions = invert(Colors);
 .story-basebutton .variant-playground,
 .story-basebutton .variant-colors,
 .story-basebutton .variant-sizes,
-.story-basebutton .variant-icons {
+.story-basebutton .variant-icons,
+.story-basebutton .variant-text-icons {
     grid-column: 1 / -1;
 }
 </style>

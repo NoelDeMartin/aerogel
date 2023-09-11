@@ -94,14 +94,19 @@ solid:
     url_placeholder: https://...
     login: Login
     welcome: You are logged in as [{name}]({url})!
+    logout: logout
+    previousSession: You were previously logged in at [{name}]({url}). Do you want to log in again?
+    reconnect: Reconnect
 
 ui:
     close: Close
     ok: OK
     cancel: Cancel
+    loading: Loading...
 
 errors:
     required: This is required
 
 auth:
+    logOut_confirm: Are you sure you want to log out?
     stuckConnecting: We didn't hear back from the identity provider, maybe try reconnecting?

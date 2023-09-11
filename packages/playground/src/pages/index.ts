@@ -6,7 +6,7 @@ import Forms from './Forms.vue';
 import Home from './Home.vue';
 import Modals from './modals/Modals.vue';
 import Storage from './Storage.vue';
-import Solid from './Solid.vue';
+import Solid from './solid/Solid.vue';
 
 export const routes: RouteRecordRaw[] = [
     {

@@ -1,5 +1,8 @@
 <template>
-    <AGHeadlessButton class="font-semibold focus-visible:outline focus-visible:outline-2" :class="variantClasses">
+    <AGHeadlessButton
+        class="flex items-center gap-1 font-semibold focus-visible:outline focus-visible:outline-2"
+        :class="variantClasses"
+    >
         <slot />
     </AGHeadlessButton>
 </template>
