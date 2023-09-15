@@ -127,7 +127,11 @@ export default class Service<
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const store = this._store as any;
 
-        return store ? store[property] : undefined;
+        if (property) {
+            return store ? store[property] : undefined;
+        }
+
+        return store ? store : {};
     }
 
     protected setState(state: Partial<State>): void {
@@ -185,7 +189,7 @@ export default class Service<
         // TODO fix this.static()
         const persist = (this.constructor as unknown as { persist: string[] }).persist;
 
-        if (isEmpty(persist)) {
+        if (!this.usesStore() || isEmpty(persist)) {
             return;
         }
 
