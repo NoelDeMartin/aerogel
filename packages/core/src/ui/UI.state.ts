@@ -18,5 +18,6 @@ export interface ModalComponent<
 > {}
 
 export default defineServiceState({
+    name: 'ui',
     initialState: { modals: [] as Modal[] },
 });

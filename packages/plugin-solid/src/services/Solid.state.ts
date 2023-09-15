@@ -1,11 +1,12 @@
 import { defineServiceState } from '@aerogel/core';
 import type { ErrorSource } from '@aerogel/core';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import type { AuthSession } from '@/auth/Authenticator';
 import type { AuthenticatorName } from '@/auth';
 
 export default defineServiceState({
+    name: 'solid',
     persist: ['autoReconnect', 'dismissed', 'previousSession', 'profiles', 'staleProfiles'],
     initialState: {
         autoReconnect: false,
@@ -33,8 +34,18 @@ export default defineServiceState({
         return state;
     },
     computed: {
+        loggedIn: (state) => !!state.session,
+        user: (state) => state.session?.user ?? null,
+        userAvatarUrl: (state) => state.session?.user?.avatarUrl ?? state.previousSession?.avatarUrl ?? null,
+        wasLoggedIn: (state) => !!state.previousSession?.loginUrl,
         authenticator: (state) => state.session?.authenticator ?? null,
-        error: (state) => {
+        hasLoggedIn(): boolean {
+            return this.loggedIn || this.wasLoggedIn;
+        },
+        fetch(): Fetch {
+            return this.authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window);
+        },
+        error(state) {
             if (state.loginError) {
                 return state.loginError ?? null;
             }
@@ -45,22 +56,5 @@ export default defineServiceState({
 
             return state.previousSession?.error ?? null;
         },
-        fetch: (state) => {
-            // TODO avoid duplicating computed states
-            const authenticator = state.session?.authenticator ?? null;
-
-            return authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window);
-        },
-        hasLoggedIn: (state) => {
-            // TODO avoid duplicating computed states
-            const loggedIn = !!state.session;
-            const wasLoggedIn = !!state.previousSession?.loginUrl;
-
-            return loggedIn || wasLoggedIn;
-        },
-        loggedIn: (state) => !!state.session,
-        user: (state) => state.session?.user ?? null,
-        userAvatarUrl: (state) => state.session?.user?.avatarUrl ?? state.previousSession?.avatarUrl ?? null,
-        wasLoggedIn: (state) => !!state.previousSession?.loginUrl,
     },
 });

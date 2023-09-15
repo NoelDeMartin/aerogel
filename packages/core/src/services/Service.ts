@@ -1,9 +1,9 @@
-import { computed, reactive } from 'vue';
 import { MagicObject, PromisedValue, Storage, isEmpty, objectDeepClone, objectOnly } from '@noeldemartin/utils';
-import type { ComputedRef } from 'vue';
 import type { Constructor } from '@noeldemartin/utils';
+import type { Store } from 'pinia';
 
 import ServiceBootError from '@/errors/ServiceBootError';
+import { defineServiceStore } from '@/services/store';
 
 export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type DefaultServiceState = {};
@@ -11,12 +11,15 @@ export type ServiceConstructor<T extends Service = Service> = Constructor<T> & t
 
 export type ComputedStateDefinition<TState extends ServiceState, TComputedState extends ServiceState> = {
     [K in keyof TComputedState]: (state: TState) => TComputedState[K];
-};
+} & ThisType<{
+    readonly [K in keyof TComputedState]: TComputedState[K];
+}>;
 
 export function defineServiceState<
     State extends ServiceState = ServiceState,
     ComputedState extends ServiceState = {}
 >(options: {
+    name: string;
     initialState: State;
     persist?: (keyof State)[];
     computed?: ComputedStateDefinition<State, ComputedState>;
@@ -25,6 +28,14 @@ export function defineServiceState<
     return class extends Service<State, ComputedState> {
 
         public static persist = (options.persist as string[]) ?? [];
+
+        protected usesStore(): boolean {
+            return true;
+        }
+
+        protected getName(): string | null {
+            return options.name ?? null;
+        }
 
         protected getInitialState(): State {
             return options.initialState;
@@ -49,35 +60,35 @@ export default class Service<
 
     public static persist: string[] = [];
 
-    protected _namespace: string;
+    protected _name: string;
     private _booted: PromisedValue<void>;
-    private _state: State;
-    private _computedState: Record<keyof ComputedState, ComputedRef>;
+    private _computedStateKeys: Set<keyof State>;
+    private _store?: Store | false;
 
     constructor() {
         super();
 
-        this._namespace = new.target.name;
-        this._booted = new PromisedValue();
-        this._state = reactive(this.getInitialState());
-        this._computedState = Object.entries(this.getComputedStateDefinition()).reduce(
-            (computedState, [name, method]) => {
-                computedState[name as keyof ComputedState] = computed(() => method(this._state, this));
+        const getters = this.getComputedStateDefinition();
 
-                return computedState;
-            },
-            {} as Record<keyof ComputedState, ComputedRef>,
-        );
+        this._name = this.getName() ?? new.target.name;
+        this._booted = new PromisedValue();
+        this._computedStateKeys = new Set(Object.keys(getters));
+        this._store =
+            this.usesStore() &&
+            defineServiceStore(this._name, {
+                state: () => this.getInitialState(),
+
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                getters: getters as any,
+            });
     }
 
     public get booted(): PromisedValue<void> {
         return this._booted;
     }
 
-    public launch(namespace?: string): Promise<void> {
-        const handleError = (error: unknown) => this._booted.reject(new ServiceBootError(this._namespace, error));
-
-        this._namespace = namespace ?? this._namespace;
+    public launch(): Promise<void> {
+        const handleError = (error: unknown) => this._booted.reject(new ServiceBootError(this._name, error));
 
         try {
             this.boot()
@@ -95,10 +106,6 @@ export default class Service<
             return this.getState(property);
         }
 
-        if (this.hasComputedState(property)) {
-            return this.getComputedState(property);
-        }
-
         return super.__get(property);
     }
 
@@ -107,25 +114,28 @@ export default class Service<
     }
 
     protected hasState<P extends keyof State>(property: P): boolean {
-        return property in this._state;
-    }
+        if (!this._store) {
+            return false;
+        }
 
-    protected hasComputedState<P extends keyof State>(property: P): boolean {
-        return property in this._computedState;
+        return property in this._store.$state || this._computedStateKeys.has(property);
     }
 
     protected getState(): State;
     protected getState<P extends keyof State>(property: P): State[P];
     protected getState<P extends keyof State>(property?: P): State | State[P] {
-        return property ? this._state[property] : this._state;
-    }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const store = this._store as any;
 
-    protected getComputedState<P extends keyof ComputedState>(property: P): ComputedState[P] {
-        return this._computedState[property]?.value;
+        return store ? store[property] : undefined;
     }
 
     protected setState(state: Partial<State>): void {
-        Object.assign(this._state, state);
+        if (!this._store) {
+            return;
+        }
+
+        Object.assign(this._store.$state, state);
 
         this.onStateUpdated(state);
     }
@@ -139,16 +149,20 @@ export default class Service<
             return;
         }
 
-        const storage = Storage.require<ServiceStorage>(this._namespace);
+        const storage = Storage.require<ServiceStorage>(this._name);
 
-        Storage.set(this._namespace, {
+        Storage.set(this._name, {
             ...storage,
             ...this.serializePersistedState(objectDeepClone(persisted) as Partial<State>),
         });
     }
 
-    protected getPersistedState(): (keyof State)[] {
-        return [];
+    protected usesStore(): boolean {
+        return false;
+    }
+
+    protected getName(): string | null {
+        return null;
     }
 
     protected getInitialState(): State {
@@ -175,14 +189,14 @@ export default class Service<
             return;
         }
 
-        if (Storage.has(this._namespace)) {
-            const persisted = Storage.require<ServiceStorage>(this._namespace);
+        if (Storage.has(this._name)) {
+            const persisted = Storage.require<ServiceStorage>(this._name);
             this.setState(persisted);
 
             return;
         }
 
-        Storage.set(this._namespace, objectOnly(this.getState(), persist));
+        Storage.set(this._name, objectOnly(this.getState(), persist));
     }
 
 }

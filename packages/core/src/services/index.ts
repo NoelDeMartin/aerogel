@@ -5,6 +5,7 @@ import { definePlugin } from '@/plugins';
 import App from './App';
 import Events from './Events';
 import Service from './Service';
+import { getPiniaStore } from './store';
 
 export * from './App';
 export * from './Events';
@@ -23,9 +24,9 @@ export interface Services extends DefaultServices {}
 
 export async function bootServices(app: VueApp, services: Record<string, Service>): Promise<void> {
     await Promise.all(
-        Object.entries(services).map(async ([name, service]) => {
+        Object.entries(services).map(async ([_, service]) => {
             // eslint-disable-next-line no-console
-            await service.launch(name.slice(1)).catch((error) => console.error(error));
+            await service.launch().catch((error) => console.error(error));
         }),
     );
 
@@ -38,6 +39,8 @@ export default definePlugin({
             ...defaultServices,
             ...options.services,
         };
+
+        app.use(getPiniaStore());
 
         await bootServices(app, services);
     },

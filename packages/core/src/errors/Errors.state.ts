@@ -18,6 +18,7 @@ export interface ErrorReportLog {
 }
 
 export default defineServiceState({
+    name: 'errors',
     initialState: {
         logs: [] as ErrorReportLog[],
         startupErrors: [] as ErrorReport[],
