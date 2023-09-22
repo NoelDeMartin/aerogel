@@ -81,10 +81,10 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     }
 
     public validate(): boolean {
-        const errors = Object.entries(this._fields).reduce((errors, [name, definition]) => {
-            errors[name] = this.getFieldErrors(name, definition);
+        const errors = Object.entries(this._fields).reduce((formErrors, [name, definition]) => {
+            formErrors[name] = this.getFieldErrors(name, definition);
 
-            return errors;
+            return formErrors;
         }, {} as Record<string, string[] | null>);
 
         this.resetErrors(errors);
@@ -138,10 +138,10 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
             return {} as FormData<Fields>;
         }
 
-        const data = Object.entries(fields).reduce((data, [name, definition]) => {
-            data[name as keyof Fields] = (definition.default ?? null) as FormData<Fields>[keyof Fields];
+        const data = Object.entries(fields).reduce((formData, [name, definition]) => {
+            formData[name as keyof Fields] = (definition.default ?? null) as FormData<Fields>[keyof Fields];
 
-            return data;
+            return formData;
         }, {} as FormData<Fields>);
 
         return reactive(data) as FormData<Fields>;
@@ -152,10 +152,10 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
             return {} as FormErrors<Fields>;
         }
 
-        const errors = Object.keys(fields).reduce((errors, name) => {
-            errors[name as keyof Fields] = null;
+        const errors = Object.keys(fields).reduce((formErrors, name) => {
+            formErrors[name as keyof Fields] = null;
 
-            return errors;
+            return formErrors;
         }, {} as FormErrors<Fields>);
 
         return reactive(errors) as FormErrors<Fields>;

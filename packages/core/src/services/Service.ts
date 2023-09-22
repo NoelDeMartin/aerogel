@@ -6,7 +6,7 @@ import ServiceBootError from '@/errors/ServiceBootError';
 import { defineServiceStore } from '@/services/store';
 
 export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-export type DefaultServiceState = {};
+export type DefaultServiceState = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type ServiceConstructor<T extends Service = Service> = Constructor<T> & typeof Service;
 
 export type ComputedStateDefinition<TState extends ServiceState, TComputedState extends ServiceState> = {

@@ -23,13 +23,13 @@ const html = computed(() => {
         return null;
     }
 
-    let html = renderMarkdown(markdown.value);
+    let renderedHtml = renderMarkdown(markdown.value);
 
     if (props.inline) {
-        html = html.replace('<p>', '<span>').replace('</p>', '</span>');
+        renderedHtml = renderedHtml.replace('<p>', '<span>').replace('</p>', '</span>');
     }
 
-    return html;
+    return renderedHtml;
 });
 const root = () => h(props.as, { class: props.raw ? '' : 'prose', innerHTML: html.value });
 </script>
