@@ -1,4 +1,5 @@
 import {
+    PromisedValue,
     arrayFilter,
     arrayUnique,
     arrayWithout,
@@ -13,10 +14,12 @@ import {
 } from '@noeldemartin/utils';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { App, Errors, Events, UI, translate } from '@aerogel/core';
-import { SolidACLAuthorization, SolidTypeIndex } from 'soukai-solid';
+import type { Fetch, SolidModelConstructor } from 'soukai-solid';
+import { SolidACLAuthorization, SolidContainer, SolidTypeIndex } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
-import AuthenticationCancelledError from '@/auth/errors/AuthenticationCancelledError';
+import AuthenticationCancelledError from '@/errors/AuthenticationCancelledError';
+import { ContainerAlreadyInUse } from '@/errors';
 import { getAuthenticator } from '@/auth';
 import type { AuthenticatorName } from '@/auth';
 import type Authenticator from '@/auth/Authenticator';
@@ -25,6 +28,9 @@ import type { AuthSession } from '@/auth/Authenticator';
 import Service from './Solid.state';
 
 export class SolidService extends Service {
+
+    protected publicTypeIndexes: Record<string, PromisedValue<SolidTypeIndex>> = {};
+    protected privateTypeIndexes: Record<string, PromisedValue<SolidTypeIndex>> = {};
 
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return this.loggedIn;
@@ -153,11 +159,59 @@ export class SolidService extends Service {
     }
 
     public async findOrCreatePrivateTypeIndex(): Promise<SolidTypeIndex> {
-        return (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex());
+        if (!this.isLoggedIn()) {
+            throw new Error('Can\'t find or create a type index because the user is not logged in');
+        }
+
+        const webId = this.user.webId;
+
+        return (this.privateTypeIndexes[webId] =
+            this.privateTypeIndexes[webId] ??
+            PromisedValue.from(
+                (async () => (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex()))(),
+            ));
     }
 
     public async findOrCreatePublicTypeIndex(): Promise<SolidTypeIndex> {
-        return (await this.findPublicTypeIndex()) ?? (await this.createPublicTypeIndex());
+        if (!this.isLoggedIn()) {
+            throw new Error('Can\'t find or create a type index because the user is not logged in');
+        }
+
+        const webId = this.user.webId;
+
+        return (this.publicTypeIndexes[webId] =
+            this.publicTypeIndexes[webId] ??
+            PromisedValue.from(
+                (async () => (await this.findPublicTypeIndex()) ?? (await this.createPublicTypeIndex()))(),
+            ));
+    }
+
+    public async createPrivateContainer(options: {
+        url: string;
+        name: string;
+        register?: {
+            typeIndex: SolidTypeIndex;
+            modelClass: SolidModelConstructor;
+        };
+        reuseExisting?: boolean;
+    }): Promise<SolidContainer> {
+        const engine = this.requireAuthenticator().engine;
+
+        return SolidContainer.withEngine(engine, async () => {
+            const existingContainer = await SolidContainer.find(options.url);
+
+            if (existingContainer && !options.reuseExisting) {
+                throw new ContainerAlreadyInUse(existingContainer);
+            }
+
+            const container = existingContainer ?? new SolidContainer({ url: options.url, name: options.url });
+
+            await container.save();
+
+            options.register && (await container.register(options.register.typeIndex.url, options.register.modelClass));
+
+            return container;
+        });
     }
 
     protected async boot(): Promise<void> {
@@ -183,21 +237,16 @@ export class SolidService extends Service {
     }
 
     protected async findPrivateTypeIndex(): Promise<SolidTypeIndex | null> {
-        if (!this.user?.privateTypeIndexUrl) {
-            return null;
-        }
+        const user = this.requireUser();
+        const authenticator = this.requireAuthenticator();
 
-        return SolidTypeIndex.find(this.user.privateTypeIndexUrl);
+        return SolidTypeIndex.withEngine(authenticator.engine, () => SolidTypeIndex.find(user.privateTypeIndexUrl));
     }
 
     protected async createPrivateTypeIndex(): Promise<SolidTypeIndex> {
-        if (!this.isLoggedIn()) {
-            throw new Error('Can\'t create a type index because the user is not logged in');
-        }
-
-        const user = this.user;
-        const typeIndex = await SolidTypeIndex.withEngine(this.authenticator.engine, () =>
-            SolidTypeIndex.createPrivate(user));
+        const user = this.requireUser();
+        const authenticator = this.requireAuthenticator();
+        const typeIndex = await SolidTypeIndex.withEngine(authenticator.engine).createPrivate(user);
 
         return tap(typeIndex, () => {
             user.privateTypeIndexUrl = typeIndex.url;
@@ -283,6 +332,7 @@ export class SolidService extends Service {
             },
             onSessionFailed: async (loginUrl, error) => {
                 this.setState({
+                    session: null,
                     previousSession: {
                         authenticator: authenticator.name,
                         loginUrl,
@@ -312,3 +362,11 @@ export class SolidService extends Service {
 }
 
 export default facade(new SolidService());
+
+declare module '@aerogel/core' {
+    export interface EventsPayload {
+        'authenticated-fetch-ready': Fetch;
+        login: AuthSession;
+        logout: void;
+    }
+}

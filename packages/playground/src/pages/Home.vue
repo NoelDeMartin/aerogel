@@ -46,5 +46,9 @@ const sections: Section[] = [
         langKey: 'home.solid',
         route: 'solid',
     },
+    {
+        langKey: 'home.offline',
+        route: 'offline',
+    },
 ];
 </script>

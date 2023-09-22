@@ -18,6 +18,7 @@
     "dependencies": {
         "@aerogel/core": "*",
         "@aerogel/plugin-i18n": "*",
+        "@aerogel/plugin-offline-first": "*",
         "@aerogel/plugin-routing": "*",
         "@aerogel/plugin-solid": "*",
         "@aerogel/plugin-soukai": "*",
@@ -25,8 +26,8 @@
         "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
-        "soukai": "0.5.1-next.1eaac284ec6bc2e49cadae357a515d8f30740656",
-        "soukai-solid": "0.5.1-next.214537435555beafbcc0828a41c2b1bdbf4731f5",
+        "soukai": "0.5.1-next.6ceeddd517fac8fd180856fb3867cc33c1fa1b0b",
+        "soukai-solid": "0.5.1-next.b2df91087095d63c2884b6273578040abec5ede7",
         "tailwindcss": "^3.3.2"
     },
     "devDependencies": {
@@ -35,6 +36,7 @@
         "@aerogel/vite": "*",
         "@histoire/plugin-vue": "^0.16.1",
         "@iconify/json": "^2.2.80",
+        "@inrupt/solid-client-authn-core": "^1.17.2",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "eslint-plugin-vue": "^9.11.0",

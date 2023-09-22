@@ -6,6 +6,7 @@ const _authenticators = {} as Authenticators;
 type BaseAuthenticators = typeof authenticators;
 
 export * from './Authenticator';
+export { Authenticator };
 
 export const authenticators = {
     inrupt: new InruptAuthenticator(),
@@ -19,8 +20,8 @@ export function getAuthenticator<T extends AuthenticatorName>(name: T): Authenti
     return _authenticators[name];
 }
 
-export function registerAuthenticators(authenticators: Record<string, Authenticator>): void {
-    Object.entries(authenticators).forEach(([name, authenticator]) =>
+export function registerAuthenticators(customAuthenticators: Record<string, Authenticator>): void {
+    Object.entries(customAuthenticators).forEach(([name, authenticator]) =>
         registerAuthenticator(name as AuthenticatorName, authenticator));
 }
 

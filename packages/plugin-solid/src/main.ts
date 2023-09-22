@@ -16,6 +16,7 @@ const services = { $solid: Solid };
 
 export { Solid };
 export * from './auth';
+export * from './errors';
 
 export interface Options {
     authenticators?: Record<string, Authenticator>;

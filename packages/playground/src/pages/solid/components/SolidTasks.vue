@@ -1,5 +1,9 @@
 <template>
-    <TasksList :tasks="tasks" @create="(name: string) => SolidTask.create({ name })" />
+    <TasksList
+        :tasks="tasks"
+        @create="(name: string) => SolidTask.create({ name })"
+        @delete="(task: SolidTask) => task.delete()"
+    />
 </template>
 
 <script setup lang="ts">

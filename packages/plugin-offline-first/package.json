@@ -1,10 +1,10 @@
 {
-    "name": "@aerogel/plugin-soukai",
-    "description": "Aerogel Soukai plugin",
+    "name": "@aerogel/plugin-offline-first",
+    "description": "Aerogel Offline First plugin",
     "version": "0.0.0",
-    "main": "dist/aerogel-plugin-soukai.cjs.js",
-    "module": "dist/aerogel-plugin-soukai.esm.js",
-    "types": "dist/aerogel-plugin-soukai.d.ts",
+    "main": "dist/aerogel-plugin-offline-first.cjs.js",
+    "module": "dist/aerogel-plugin-offline-first.esm.js",
+    "types": "dist/aerogel-plugin-offline-first.d.ts",
     "sideEffects": false,
     "scripts": {
         "build": "rm dist -rf && npm run build:js && npm run build:types",
@@ -31,10 +31,11 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
-        "soukai": "*"
+        "@aerogel/plugin-solid": "*",
+        "soukai": "*",
+        "soukai-solid": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
-        "vue": "^3.3.0"
+        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd"
     }
 }

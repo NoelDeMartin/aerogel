@@ -1,6 +1,10 @@
+import OfflineTasks from './OfflineTasks';
 import SolidTasks from './SolidTasks';
 
-export const services = { $solidTasks: SolidTasks };
+export const services = {
+    $offlineTasks: OfflineTasks,
+    $solidTasks: SolidTasks,
+};
 
 export type AppServices = typeof services;
 

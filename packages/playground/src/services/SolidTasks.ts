@@ -2,7 +2,6 @@ import { Events } from '@aerogel/core';
 import { facade, stringToSlug, urlResolveDirectory } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer } from 'soukai-solid';
-import type { SolidTypeIndex } from 'soukai-solid';
 
 import SolidTask from '@/models/SolidTask';
 
@@ -19,33 +18,29 @@ export class SolidTasksService extends Service {
             SolidTask.setEngine(Solid.requireAuthenticator().engine);
             SolidTask.collection = container.url;
 
-            this.setState({ ready: true });
+            this.tasksContainer.resolve(container);
+            this.setState('tasksContainer', this.tasksContainer);
         });
     }
 
-    protected async findOrCreateTasksContainer(): Promise<SolidContainer> {
-        const engine = Solid.requireAuthenticator().engine;
-
-        return SolidContainer.withEngine(engine, async () => {
-            const typeIndex = await Solid.findOrCreatePrivateTypeIndex();
-            const container = await SolidContainer.fromTypeIndex(typeIndex.url, SolidTask);
-
-            return container ?? (await this.createTasksContainer(typeIndex));
-        });
-    }
-
-    protected async createTasksContainer(typeIndex: SolidTypeIndex): Promise<SolidContainer> {
-        // In a real application, you would confirm these with the user before proceeding to create a new container.
-        // In this playground we're going on ahead to simplify the UI.
+    private async findOrCreateTasksContainer(): Promise<SolidContainer> {
+        // In a real application, you would confirm the name and url of the container with the user before
+        // proceeding. In this playground we're going on ahead to simplify the UI.
         const name = 'Tasks';
-        const storageUrl = Solid.user?.storageUrls[0] ?? '';
-        const url = urlResolveDirectory(storageUrl, stringToSlug(name));
-        const container = (await SolidContainer.find(url)) ?? new SolidContainer({ url, name });
+        const url = urlResolveDirectory(Solid.user?.storageUrls[0] ?? '', stringToSlug(name));
+        const engine = Solid.requireAuthenticator().engine;
+        const typeIndex = await Solid.findOrCreatePrivateTypeIndex();
+        const containers = await SolidContainer.withEngine(engine).fromTypeIndex(typeIndex.url, SolidTask);
 
-        await container.save();
-        await container.register(typeIndex.url, SolidTask);
-
-        return container;
+        return (
+            containers.find((container) => container.url === url) ??
+            (await Solid.createPrivateContainer({
+                url,
+                name,
+                register: { typeIndex, modelClass: SolidTask },
+                reuseExisting: true,
+            }))
+        );
     }
 
 }

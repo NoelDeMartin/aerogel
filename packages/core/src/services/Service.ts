@@ -24,7 +24,7 @@ export function defineServiceState<
     persist?: (keyof State)[];
     computed?: ComputedStateDefinition<State, ComputedState>;
     serialize?: (state: Partial<State>) => Partial<State>;
-}): Constructor<State> & Constructor<ComputedState> & ServiceConstructor {
+}): Constructor<State> & Constructor<ComputedState> & Constructor<Service<State, ComputedState, Partial<State>>> {
     return class extends Service<State, ComputedState> {
 
         public static persist = (options.persist as string[]) ?? [];
@@ -49,7 +49,9 @@ export function defineServiceState<
             return options.serialize?.(state) ?? state;
         }
     
-    } as unknown as Constructor<State> & Constructor<ComputedState> & ServiceConstructor;
+    } as unknown as Constructor<State> &
+        Constructor<ComputedState> &
+        Constructor<Service<State, ComputedState, Partial<State>>>;
 }
 
 export default class Service<
@@ -101,19 +103,7 @@ export default class Service<
         return this._booted;
     }
 
-    protected __get(property: string): unknown {
-        if (this.hasState(property)) {
-            return this.getState(property);
-        }
-
-        return super.__get(property);
-    }
-
-    protected __set(property: string, value: unknown): void {
-        this.setState({ [property]: value } as Partial<State>);
-    }
-
-    protected hasState<P extends keyof State>(property: P): boolean {
+    public hasState<P extends keyof State>(property: P): boolean {
         if (!this._store) {
             return false;
         }
@@ -121,9 +111,9 @@ export default class Service<
         return property in this._store.$state || this._computedStateKeys.has(property);
     }
 
-    protected getState(): State;
-    protected getState<P extends keyof State>(property: P): State[P];
-    protected getState<P extends keyof State>(property?: P): State | State[P] {
+    public getState(): State;
+    public getState<P extends keyof State>(property: P): State[P];
+    public getState<P extends keyof State>(property?: P): State | State[P] {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const store = this._store as any;
 
@@ -134,14 +124,32 @@ export default class Service<
         return store ? store : {};
     }
 
-    protected setState(state: Partial<State>): void {
+    public setState<P extends keyof State>(property: P, value: State[P]): void;
+    public setState(state: Partial<State>): void;
+    public setState<P extends keyof State>(stateOrProperty: P | Partial<State>, value?: State[P]): void {
         if (!this._store) {
             return;
         }
 
+        const state = (
+            typeof stateOrProperty === 'string' ? { [stateOrProperty]: value } : stateOrProperty
+        ) as Partial<State>;
+
         Object.assign(this._store.$state, state);
 
         this.onStateUpdated(state);
+    }
+
+    protected __get(property: string): unknown {
+        if (this.hasState(property)) {
+            return this.getState(property);
+        }
+
+        return super.__get(property);
+    }
+
+    protected __set(property: string, value: unknown): void {
+        this.setState({ [property]: value } as Partial<State>);
     }
 
     protected onStateUpdated(state: Partial<State>): void {

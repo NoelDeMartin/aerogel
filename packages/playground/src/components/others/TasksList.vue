@@ -11,7 +11,7 @@
                 small
                 color="danger"
                 :aria-label="$t('storage.deleteTask_a11y', { task: task.name })"
-                @click="task.delete()"
+                @click="$emit('delete', task)"
             >
                 {{ $t('storage.deleteTask') }}
             </BaseButton>
@@ -38,7 +38,7 @@ import { requiredArrayProp, requiredStringInput, useForm } from '@aerogel/core';
 import type ITask from '@/models/ITask';
 
 defineProps({ tasks: requiredArrayProp<ITask>() });
-defineEmits(['create']);
+defineEmits(['create', 'delete']);
 
 const form = useForm({ draft: requiredStringInput() });
 </script>
