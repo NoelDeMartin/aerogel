@@ -1,6 +1,6 @@
 <template>
     <AGSolidStatus>
-        <template #logged-in>
+        <template #logged-in="{ session }: IAGSolidStatusLoggedInSlotProps">
             <AGMarkdown v-if="$cloud.syncing" :text="$td('cloud.syncing', 'Syncing...')" />
             <div v-else class="flex flex-col gap-3">
                 <AGMarkdown
@@ -8,8 +8,8 @@
                         $td(
                             'solid.loggedIn',
                             {
-                                userName: $solid.user.name ?? $solid.user.webId,
-                                userWebId: $solid.user.webId,
+                                userName: session.user.name ?? session.user.webId,
+                                userWebId: session.user.webId,
                             },
                             'You are logged in as [{userName}]({userWebId})'
                         )
@@ -27,8 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { AGMarkdown, AGButton } from '@aerogel/core';
+import { AGButton, AGMarkdown } from '@aerogel/core';
 import { AGSolidStatus } from '@aerogel/plugin-solid';
+import type { IAGSolidStatusLoggedInSlotProps } from '@aerogel/plugin-solid';
 
 defineEmits(['sync']);
 </script>

@@ -8,7 +8,7 @@
             <AGMarkdown :text="$td('ui.loading', 'Loading...')" />
         </slot>
 
-        <slot v-else-if="$solid.isLoggedIn()" name="logged-in">
+        <slot v-else-if="$solid.isLoggedIn()" name="logged-in" :session="$solid.session">
             <div class="flex flex-col gap-3">
                 <AGMarkdown
                     :text="
@@ -40,7 +40,7 @@
                         {{ $td('solid.login', 'Login') }}
                     </AGButton>
                 </AGForm>
-                <AGButton v-if="$solid.wasLoggedIn" @click="$solid.reconnect(true)" class="mt-3">
+                <AGButton v-if="$solid.wasLoggedIn" class="mt-3" @click="$solid.reconnect(true)">
                     {{ $td('solid.reconnect', 'Reconnect') }}
                 </AGButton>
                 <AGMarkdown
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { AGMarkdown, AGButton, AGForm, AGInput, useForm, requiredStringInput } from '@aerogel/core';
+import { AGButton, AGForm, AGInput, AGMarkdown, requiredStringInput, useForm } from '@aerogel/core';
 
 const form = useForm({ url: requiredStringInput() });
 </script>
