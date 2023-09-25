@@ -3,7 +3,6 @@
         <AGHeadlessInputInput
             v-bind="$attrs"
             type="checkbox"
-            class="mt-0.5"
             :class="{
                 'text-indigo-600 focus:ring-indigo-600': !$input?.errors,
                 'border-red-200 text-red-600 focus:ring-red-600': $input?.errors,
