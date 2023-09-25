@@ -13,7 +13,7 @@ import {
     urlRoot,
 } from '@noeldemartin/utils';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { App, Errors, Events, UI, translate } from '@aerogel/core';
+import { App, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import { SolidACLAuthorization, SolidContainer, SolidTypeIndex } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -83,16 +83,20 @@ export class SolidService extends Service {
     public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<boolean> {
         authenticatorName = authenticatorName ?? this.preferredAuthenticator ?? 'default';
 
+        if (App.isDevelopment && loginUrl === 'devserver') {
+            loginUrl = 'http://localhost:4000';
+        }
+
         if (this.loggedIn) {
             return true;
         }
 
-        if (this.ongoing) {
+        if (this.loginOngoing) {
             throw new Error('Authentication already in progress');
         }
 
-        const staleTimeout = setTimeout(() => (this.stale = true), 10000);
-        this.ongoing = true;
+        const staleTimeout = setTimeout(() => (this.loginStale = true), 10000);
+        this.loginOngoing = true;
 
         try {
             const profile = await this.getUserProfile(loginUrl);
@@ -106,7 +110,10 @@ export class SolidService extends Service {
                     loginUrl,
                     avatarUrl: profile?.avatarUrl,
                     authenticator: authenticatorName,
-                    error: translate('auth.stuckConnecting'),
+                    error: translateWithDefault(
+                        'auth.stuckConnecting',
+                        'We didn\'t hear back from the identity provider, maybe try reconnecting?',
+                    ),
                 },
             });
 
@@ -124,8 +131,8 @@ export class SolidService extends Service {
         } finally {
             clearTimeout(staleTimeout);
 
-            this.ongoing = false;
-            this.stale = false;
+            this.loginOngoing = false;
+            this.loginStale = false;
         }
     }
 
@@ -138,7 +145,9 @@ export class SolidService extends Service {
     }
 
     public async logout(force: boolean = false): Promise<void> {
-        const confirmLogout = force || (await UI.confirm(translate('auth.logOut_confirm')));
+        const confirmLogout =
+            force ||
+            (await UI.confirm(translateWithDefault('solid.logoutConfirm', 'Are you sure you want to log out?')));
 
         if (!confirmLogout) {
             return;

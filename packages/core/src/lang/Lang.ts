@@ -1,4 +1,4 @@
-import { facade } from '@noeldemartin/utils';
+import { facade, toString } from '@noeldemartin/utils';
 
 import App from '@/services/App';
 import Service from '@/services/Service';
@@ -41,10 +41,18 @@ export class LangService extends Service {
     ): string {
         defaultMessage ??= defaultMessageOrParameters as string;
 
-        const parameters = typeof defaultMessageOrParameters === 'string' ? {} : defaultMessageOrParameters;
+        const parameters = typeof defaultMessageOrParameters === 'string' ? {} : defaultMessageOrParameters ?? {};
         const message = this.provider.translate(key, parameters) ?? key;
 
-        return message === key ? defaultMessage : message;
+        if (message === key) {
+            return Object.entries(parameters).reduce(
+                (renderedMessage, [name, value]) =>
+                    renderedMessage.replace(new RegExp(`\\{\\s*${name}\\s*\\}`, 'g'), toString(value)),
+                defaultMessage,
+            );
+        }
+
+        return message;
     }
 
 }

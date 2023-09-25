@@ -1,0 +1,60 @@
+<template>
+    <div>
+        <slot v-if="$solid.loginStale" name="login-stale">
+            <AGMarkdown :text="$td('solid.loginStale', 'This is taking too long...')" />
+        </slot>
+
+        <slot v-if="$solid.loginOngoing" name="login-ongoing">
+            <AGMarkdown :text="$td('ui.loading', 'Loading...')" />
+        </slot>
+
+        <slot v-else-if="$solid.isLoggedIn()" name="logged-in">
+            <div class="flex flex-col gap-3">
+                <AGMarkdown
+                    :text="
+                        $td(
+                            'solid.loggedIn',
+                            {
+                                userName: $solid.user.name ?? $solid.user.webId,
+                                userWebId: $solid.user.webId,
+                            },
+                            'You are logged in as [{userName}]({userWebId})'
+                        )
+                    "
+                />
+                <AGButton @click="$solid.logout()">
+                    {{ $td('solid.logout', 'Logout') }}
+                </AGButton>
+            </div>
+        </slot>
+
+        <slot v-else name="logged-out">
+            <div class="flex flex-col">
+                <AGForm :form="form" class="flex" @submit="$solid.login(form.url)">
+                    <AGInput
+                        name="url"
+                        :aria-label="$td('solid.url', 'Login url')"
+                        :placeholder="$td('solid.placeholder', 'https://...')"
+                    />
+                    <AGButton submit>
+                        {{ $td('solid.login', 'Login') }}
+                    </AGButton>
+                </AGForm>
+                <AGButton v-if="$solid.wasLoggedIn" @click="$solid.reconnect(true)" class="mt-3">
+                    {{ $td('solid.reconnect', 'Reconnect') }}
+                </AGButton>
+                <AGMarkdown
+                    v-if="$solid.previousSession?.error"
+                    class="mt-1 self-center text-sm text-red-800"
+                    :text="$td('solid.previousLoginError', 'Previous login attempt failed')"
+                />
+            </div>
+        </slot>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { AGMarkdown, AGButton, AGForm, AGInput, useForm, requiredStringInput } from '@aerogel/core';
+
+const form = useForm({ url: requiredStringInput() });
+</script>

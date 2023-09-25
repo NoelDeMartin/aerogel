@@ -16,6 +16,7 @@ const services = { $solid: Solid };
 
 export { Solid };
 export * from './auth';
+export * from './components';
 export * from './errors';
 
 export interface Options {

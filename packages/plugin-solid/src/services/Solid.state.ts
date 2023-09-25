@@ -13,7 +13,7 @@ export default defineServiceState({
         dismissed: false,
         ignorePreviousSessionError: false,
         loginError: null as ErrorSource | null,
-        ongoing: false,
+        loginOngoing: false,
         preferredAuthenticator: null as AuthenticatorName | null,
         previousSession: null as {
             authenticator: AuthenticatorName;
@@ -23,7 +23,7 @@ export default defineServiceState({
         } | null,
         profiles: {} as Record<string, SolidUserProfile>,
         session: null as AuthSession | null,
-        stale: false,
+        loginStale: false,
         staleProfiles: [] as string[],
     },
     serialize(state) {

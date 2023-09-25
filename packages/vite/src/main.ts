@@ -18,6 +18,10 @@ export function AerogelResolver(): ComponentResolver {
                 return;
             }
 
+            if (name.startsWith('AGSolid')) {
+                return { name, as: name, from: '@aerogel/plugin-solid' };
+            }
+
             return { name, as: name, from: '@aerogel/core' };
         },
     };
