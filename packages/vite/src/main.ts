@@ -22,6 +22,10 @@ export function AerogelResolver(): ComponentResolver {
                 return { name, as: name, from: '@aerogel/plugin-solid' };
             }
 
+            if (name.startsWith('AGCloud')) {
+                return { name, as: name, from: '@aerogel/plugin-offline-first' };
+            }
+
             return { name, as: name, from: '@aerogel/core' };
         },
     };

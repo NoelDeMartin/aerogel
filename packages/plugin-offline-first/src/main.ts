@@ -6,7 +6,8 @@ import Cloud from '@/services/Cloud';
 const services = { $cloud: Cloud };
 
 export { Cloud };
-export * from '@/services/Cloud';
+export * from './components';
+export * from './services/Cloud';
 
 export type OfflineFirstServices = typeof services;
 

@@ -117,8 +117,3 @@ ui:
 
 errors:
     required: This is required
-
-cloud:
-    sync: Sync
-    syncing: Syncing...
-    syncFailed: Sync failed

@@ -19,7 +19,7 @@ import {
     objectWithout,
     tap,
 } from '@noeldemartin/utils';
-import { Errors, Events, translate } from '@aerogel/core';
+import { Errors, Events, translateWithDefault } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -58,6 +58,14 @@ export class CloudService extends Service {
         Events.on('logout', () => this.logout());
     }
 
+    public async syncIfOnline(model?: SolidModel): Promise<void> {
+        if (!this.online) {
+            return;
+        }
+
+        await this.sync(model);
+    }
+
     public async sync(model?: SolidModel): Promise<void> {
         if (!Solid.loggedIn) {
             return;
@@ -75,7 +83,7 @@ export class CloudService extends Service {
 
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
-                Errors.report(error, translate('cloud.syncFailed'));
+                Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
             } finally {
                 this.status = CloudStatus.Online;
             }
@@ -399,7 +407,9 @@ export class CloudService extends Service {
         }
 
         for (const [url, localModel] of localModels) {
-            if (synchronizedModelUrls.has(url)) continue;
+            if (synchronizedModelUrls.has(url)) {
+                continue;
+            }
 
             const remoteModel = this.getRemoteModel(localModel, remoteModels);
 
