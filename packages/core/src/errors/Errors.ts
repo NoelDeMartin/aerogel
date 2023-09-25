@@ -2,6 +2,7 @@ import { JSError, facade, isObject } from '@noeldemartin/utils';
 
 import App from '@/services/App';
 import ServiceBootError from '@/errors/ServiceBootError';
+import UI from '@/ui/UI';
 import { translate } from '@/lang/utils';
 
 import Service from './Errors.state';
@@ -54,7 +55,7 @@ export class ErrorsService extends Service {
         };
 
         // TODO open error snackbar
-        message;
+        UI.alert(message ?? 'Something went wrong, but it\'s not your fault! (look at the console for details)');
 
         this.setState({ logs: [log].concat(this.logs) });
     }

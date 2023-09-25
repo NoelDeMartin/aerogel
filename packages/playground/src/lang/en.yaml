@@ -40,6 +40,8 @@ components:
     modals_confirmMessage: Are you sure?
     modals_customConfirm: Custom confirm
     modals_defaultConfirm: Default confirm
+    modals_customLoading: Custom loading
+    modals_defaultLoading: Default loading
 
 content:
     title: Formatted Content
@@ -77,6 +79,10 @@ modals:
     confirmMessage: Are you sure?
     confirmConfirmed: Confirmed
     confirmCancelled: Cancelled
+    loading: Show loading
+    nested: Show nested
+    nestedButton: Open one more
+    nestedAlert: Hi there!
     custom: Show custom
     customContent: You can also create your own modals, like this one!
     customClose: Nice!

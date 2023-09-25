@@ -89,8 +89,25 @@
             {{ $t('components.modals_defaultConfirm') }}
         </BaseButton>
     </div>
+    <div class="mt-4 flex gap-2">
+        <BaseButton @click="$ui.loading(after({ seconds: 3 }))">
+            {{ $t('components.modals_customLoading') }}
+        </BaseButton>
+        <BaseButton @click="showDefaultLoading()">
+            {{ $t('components.modals_defaultLoading') }}
+        </BaseButton>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { AGAlertModal, AGConfirmModal } from '@aerogel/core';
+import { after } from '@noeldemartin/utils';
+import { AGAlertModal, AGConfirmModal, AGLoadingModal, UI } from '@aerogel/core';
+
+async function showDefaultLoading(): Promise<void> {
+    const modal = await UI.openModal(AGLoadingModal);
+
+    await after({ seconds: 3 });
+
+    UI.closeModal(modal.id);
+}
 </script>

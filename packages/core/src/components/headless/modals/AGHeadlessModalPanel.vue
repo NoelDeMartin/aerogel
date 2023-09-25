@@ -1,7 +1,11 @@
 <template>
     <DialogPanel>
         <slot />
-        <AGModalContext v-if="childModal" :child-index="modal.childIndex + 1" :modal="childModal" />
+
+        <template v-if="childModal">
+            <div class="pointer-events-none fixed inset-0 z-50 bg-black/30" />
+            <AGModalContext :child-index="modal.childIndex + 1" :modal="childModal" />
+        </template>
     </DialogPanel>
 </template>
 

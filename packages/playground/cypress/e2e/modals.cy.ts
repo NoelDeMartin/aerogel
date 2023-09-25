@@ -22,6 +22,19 @@ describe('Modals', () => {
         cy.dontSee('Are you sure?');
         cy.get('body').type('{esc}');
 
+        cy.press('Show loading');
+        cy.see('Loading...');
+        cy.dontSee('Loading...');
+
+        cy.press('Show nested');
+        cy.press('Open one more');
+        cy.see('Hi there!');
+        cy.get('body').type('{esc}');
+        cy.dontSee('Hi there!');
+        cy.see('Open one more');
+        cy.get('body').type('{esc}');
+        cy.dontSee('Open one more');
+
         cy.press('Show custom');
         cy.see('You can also create your own modals');
         cy.press('Nice!');

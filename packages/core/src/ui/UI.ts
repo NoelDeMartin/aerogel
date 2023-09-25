@@ -21,6 +21,7 @@ type ModalResult<TComponent> = TComponent extends ModalComponent<Record<string, 
 export const UIComponents = {
     AlertModal: 'alert-modal',
     ConfirmModal: 'confirm-modal',
+    LoadingModal: 'loading-modal',
 } as const;
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
@@ -49,6 +50,20 @@ export class UIService extends Service {
         const result = await modal.beforeClose;
 
         return result ?? false;
+    }
+
+    public async loading<T>(operation: Promise<T>): Promise<T>;
+    public async loading<T>(message: string, operation: Promise<T>): Promise<T>;
+    public async loading<T>(messageOrOperation: string | Promise<T>, operation?: Promise<T>): Promise<T> {
+        operation = typeof messageOrOperation === 'string' ? (operation as Promise<T>) : messageOrOperation;
+
+        const message = typeof messageOrOperation === 'string' ? messageOrOperation : undefined;
+        const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), { message });
+        const result = await operation;
+
+        await this.closeModal(modal.id);
+
+        return result;
     }
 
     public registerComponent(name: UIComponent, component: Component): void {
