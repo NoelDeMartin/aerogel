@@ -1,7 +1,7 @@
 {
     "name": "@aerogel/plugin-solid",
     "description": "Aerogel Solid plugin",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "main": "dist/aerogel-plugin-solid.cjs.js",
     "module": "dist/aerogel-plugin-solid.esm.js",
     "types": "dist/aerogel-plugin-solid.d.ts",
