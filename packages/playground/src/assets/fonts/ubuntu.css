@@ -1,0 +1,31 @@
+@font-face {
+    font-display: swap;
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./ubuntu-v20-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Ubuntu';
+    font-style: italic;
+    font-weight: 400;
+    src: url('./ubuntu-v20-latin-italic.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 500;
+    src: url('./ubuntu-v20-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./ubuntu-v20-latin-700.woff2') format('woff2');
+}
