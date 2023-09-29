@@ -7,9 +7,10 @@
     "types": "dist/aerogel-cypress.d.ts",
     "sideEffects": false,
     "scripts": {
-        "build": "rm dist -rf && npm run build:js && npm run build:types",
+        "build": "rm dist -rf && npm run build:js && npm run build:types && npm run build:plugin",
         "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types",
+        "build:plugin": "esbuild src/plugin.ts --format=cjs > dist/plugin.js",
+        "build:types": "noeldemartin-build-types && sed -i \"1i\\/// <reference types=\\\"@simonsmith/cypress-image-snapshot/command\\\" />\" ./dist/aerogel-cypress.d.ts",
         "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src"
     },
@@ -34,6 +35,10 @@
         "cypress": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd"
+        "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
+        "@simonsmith/cypress-image-snapshot": "^8.1.2"
+    },
+    "devDependencies": {
+        "esbuild": "^0.19.4"
     }
 }

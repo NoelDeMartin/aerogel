@@ -26,3 +26,9 @@ jobs:
               with:
                   name: cypress_screenshots
                   path: packages/playground/cypress/screenshots
+            - name: Upload Cypress snapshots
+              uses: actions/upload-artifact@v3
+              if: ${{ failure() }}
+              with:
+                  name: cypress_snapshots
+                  path: packages/playground/cypress/snapshots

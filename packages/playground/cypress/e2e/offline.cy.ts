@@ -45,6 +45,8 @@ describe('Offline', () => {
         cy.get('@deleteTask.all').should('have.length', 0);
         cy.get('@updateTask.all').should('have.length', 3);
         cy.get('@updateTask.3').its('request.body').should('contain', 'Tombstone');
+
+        cy.matchImageSnapshot();
     });
 
 });

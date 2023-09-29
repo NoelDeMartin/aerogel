@@ -7,6 +7,7 @@ describe('Storage', () => {
         cy.see('Hello World!');
         cy.ariaInput('Task name').type('It works!{enter}');
         cy.see('It works!');
+        cy.matchImageSnapshot();
     });
 
     it('Deletes tasks', () => {

@@ -1,3 +1,4 @@
+import install from '@aerogel/cypress/dist/plugin';
 import { defineConfig } from 'cypress';
 
 import tasks from './cypress/tasks';
@@ -13,6 +14,7 @@ export default defineConfig({
         },
         setupNodeEvents(on) {
             on('task', tasks);
+            install(on);
         },
     },
 });

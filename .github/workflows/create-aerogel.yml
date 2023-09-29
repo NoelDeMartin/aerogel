@@ -29,12 +29,10 @@ jobs:
               working-directory: app
               run: |
                   npx ag install solid
-                  sed -i "8i\            <AGSolidStatus />" ./src/App.vue
-                  sed -i "9i\    it('Sees Solid login', () => {" ./cypress/e2e/app.cy.ts
-                  sed -i "10i\        cy.see('Login');" ./cypress/e2e/app.cy.ts
-                  sed -i "11i\    });" ./cypress/e2e/app.cy.ts
-                  sed -i "12i\\
-                  " ./cypress/e2e/app.cy.ts
+                  sed -i "8i\            <AGSolidStatus class=\"mt-4\" />" ./src/App.vue
+                  sed -i "7i\        cy.matchImageSnapshot();" ./cypress/e2e/app.cy.ts
+                  mkdir cypress/snapshots/app.cy.ts -p
+                  cp ../.github/workflows/fixtures/create-aerogel-snapshot.png "cypress/snapshots/app.cy.ts/App -- Shows get started link.snap.png"
             - run: npm run lint
               working-directory: app
             - run: npm run build
@@ -49,3 +47,9 @@ jobs:
               with:
                   name: cypress_screenshots
                   path: app/cypress/screenshots
+            - name: Upload Cypress snapshots
+              uses: actions/upload-artifact@v3
+              if: ${{ failure() }}
+              with:
+                  name: cypress_snapshots
+                  path: app/cypress/snapshots

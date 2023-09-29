@@ -37,6 +37,8 @@ describe('Solid', () => {
         });
         cy.dontSee('You are logged in');
         cy.see('Login');
+
+        cy.matchImageSnapshot();
     });
 
 });
