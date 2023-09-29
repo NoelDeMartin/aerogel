@@ -19,7 +19,8 @@ export class LogServiceMock extends LogService {
         this.logs.push(message);
     }
 
-    public fail(message: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public fail<T = any>(message: string): T {
         throw new Error(`Fail: ${message}`);
     }
 

@@ -1,3 +1,4 @@
+import File from '@/lib/File';
 import { resolve } from 'path';
 
 export interface FormatCodeBlockOptions {
@@ -6,6 +7,16 @@ export interface FormatCodeBlockOptions {
 
 export function basePath(path: string = ''): string {
     return resolve(__dirname, '../', path);
+}
+
+export function packagePath(packageName: string): string {
+    return basePath(`../${packageName}`);
+}
+
+export function isLocalApp(): boolean {
+    const aerogelPath = basePath('../');
+
+    return File.contains('package.json', `file:${aerogelPath}`);
 }
 
 export function formatCodeBlock(code: string, options: FormatCodeBlockOptions = {}): string {

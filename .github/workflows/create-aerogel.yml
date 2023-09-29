@@ -19,11 +19,22 @@ jobs:
                   npm run build -w packages/cypress
                   npm run build -w packages/plugin-i18n
                   npm run build -w packages/plugin-soukai
+                  npm run build -w packages/plugin-solid
             - name: Create app
               run: |
                   git config --global user.email "john@example.com"
                   git config --global user.name "John Doe"
                   ./packages/create-aerogel/create-aerogel.js app --local
+            - name: Configure Solid
+              working-directory: app
+              run: |
+                  npx ag install solid
+                  sed -i "8i\            <AGSolidStatus />" ./src/App.vue
+                  sed -i "9i\    it('Sees Solid login', () => {" ./cypress/e2e/app.cy.ts
+                  sed -i "10i\        cy.see('Login');" ./cypress/e2e/app.cy.ts
+                  sed -i "11i\    });" ./cypress/e2e/app.cy.ts
+                  sed -i "12i\\
+                  " ./cypress/e2e/app.cy.ts
             - run: npm run lint
               working-directory: app
             - run: npm run build

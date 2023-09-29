@@ -9,8 +9,9 @@ export class LogService {
     protected renderError = hex('#ff0000');
 
     public async animate<T>(message: string, operation: () => Promise<T>): Promise<T> {
-        const updateStdout = (end: string = '') => {
-            const progress = this.renderInfo(this.renderMarkdown(message) + '.'.repeat(frame % 4)) + end;
+        const updateStdout = (end: string = '', done: boolean = false) => {
+            const progress =
+                this.renderInfo(this.renderMarkdown(message) + (done ? '...' : '.'.repeat(frame % 4))) + end;
 
             this.stdout(progress);
         };
@@ -23,7 +24,7 @@ export class LogService {
         const result = await operation();
 
         clearInterval(interval);
-        updateStdout('\n');
+        updateStdout('\n', true);
 
         return result;
     }
@@ -36,7 +37,8 @@ export class LogService {
         this.log(this.renderMarkdown(message), this.renderError);
     }
 
-    public fail(message: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public fail<T = any>(message: string): T {
         this.error(message);
 
         process.exit(1);
