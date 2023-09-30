@@ -1,0 +1,13 @@
+diff --git a/node_modules/@types/jest-image-snapshot/index.d.ts b/node_modules/@types/jest-image-snapshot/index.d.ts
+index ebab267..521fb12 100644
+--- a/node_modules/@types/jest-image-snapshot/index.d.ts
++++ b/node_modules/@types/jest-image-snapshot/index.d.ts
+@@ -7,8 +7,6 @@
+ // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+ // Minimum TypeScript Version: 4.3
+ 
+-/// <reference types="jest" />
+-
+ import { PixelmatchOptions } from "pixelmatch";
+ import { Options as SSIMOptions } from "ssim.js";
+ 

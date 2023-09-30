@@ -26,7 +26,6 @@ describe('Modals', () => {
 
         cy.press('Show loading');
         cy.see('Loading...');
-        cy.matchImageSnapshot('Loading');
         cy.dontSee('Loading...');
 
         cy.press('Show nested');

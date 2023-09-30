@@ -7,7 +7,7 @@ export * from '@/support/commands';
 export * from '@/support/queries';
 
 export default function install(): void {
+    addMatchImageSnapshotCommand();
     installCustomCommands();
     installCustomQueries();
-    addMatchImageSnapshotCommand();
 }
