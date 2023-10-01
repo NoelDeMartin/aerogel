@@ -7,6 +7,7 @@ import type { CommandOptions } from '@/commands/Command';
 export interface Options {
     name?: string;
     local?: boolean;
+    copy?: boolean;
 }
 
 export class CreateCommand extends Command {
@@ -18,7 +19,11 @@ export class CreateCommand extends Command {
         name: 'Application name',
         local: {
             type: 'boolean',
-            description: 'Whether to create an app linked to local Aerogel packages (used for core development)',
+            description: 'Whether to create an app using local Aerogel packages (used for core development)',
+        },
+        copy: {
+            type: 'boolean',
+            description: 'Whether to create an app linked to local Aerogel packages (used in CI)',
         },
     };
 
@@ -56,7 +61,10 @@ export class CreateCommand extends Command {
     protected async createApp(name: string, path: string): Promise<void> {
         Log.info(`Creating **${name}**...`);
 
-        new App(name, { local: this.options.local }).create(path);
+        new App(name, {
+            local: this.options.local,
+            linkedLocal: this.options.local && !this.options.copy,
+        }).create(path);
     }
 
     protected async installDependencies(): Promise<void> {

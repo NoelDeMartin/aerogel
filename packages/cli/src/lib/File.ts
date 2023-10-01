@@ -12,6 +12,12 @@ export class FileService {
         return existsSync(path);
     }
 
+    public isSymlink(path: string): boolean {
+        const stats = lstatSync(path);
+
+        return stats.isSymbolicLink();
+    }
+
     public read(path: string): string | null {
         if (!this.isFile(path)) {
             return null;

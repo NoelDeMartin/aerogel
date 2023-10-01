@@ -20,7 +20,7 @@ export default definePlugin({
 });
 
 declare module '@/services' {
-    interface Services extends LangServices {}
+    export interface Services extends LangServices {}
 }
 
 declare module '@vue/runtime-core' {

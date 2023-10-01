@@ -4,7 +4,7 @@ import type { ArrayLiteralExpression, Project, PropertyAssignment, SourceFile } 
 import Plugin from '@/plugins/Plugin';
 import Shell from '@/lib/Shell';
 import Log from '@/lib/Log';
-import { isLocalApp, packagePath } from '@/lib/utils';
+import { isLinkedLocalApp, packagePath } from '@/lib/utils';
 
 export class Solid extends Plugin {
 
@@ -26,7 +26,7 @@ export class Solid extends Plugin {
         await Log.animate('Updating tailwind configuration', async () => {
             const tailwindConfig = project.getSourceFileOrThrow('tailwind.config.js');
             const contentArray = this.getTailwindContentArray(tailwindConfig);
-            const contentValue = isLocalApp()
+            const contentValue = isLinkedLocalApp()
                 ? `'${packagePath('plugin-solid')}/dist/**/*.js'`
                 : '\'./node_modules/@aerogel/plugin-solid/dist/**/*.js\'';
 

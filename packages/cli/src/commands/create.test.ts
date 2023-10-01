@@ -16,9 +16,8 @@ describe('Create command', () => {
         FileMock.expectCreated('./app/package.json').toContain('"name": "my-app"');
         FileMock.expectCreated('./app/package.json').toContain('"@aerogel/core": "next"');
         FileMock.expectCreated('./app/index.html').toContain('My App');
-        FileMock.expectCreated('./app/src/App.vue').toContain(
-            '<h1 class="text-4xl font-semibold">{{ $t(\'home.title\') }}</h1>',
-        );
+        FileMock.expectCreated('./app/src/App.vue').toContain('<h1 class="text-4xl font-semibold">');
+        FileMock.expectCreated('./app/src/App.vue').toContain('{{ $t(\'home.title\') }}');
 
         ShellMock.expectRan('npm install');
         ShellMock.expectRan('git init');

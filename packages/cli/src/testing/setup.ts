@@ -29,11 +29,18 @@ beforeEach(() => {
 vi.mock('@/lib/utils', async () => {
     const utils = (await vi.importActual('@/lib/utils')) as object;
 
+    function basePath(path: string = '') {
+        return resolve(__dirname, '../../', path);
+    }
+
+    function packagePath(packageName: string) {
+        return basePath(`../${packageName}`);
+    }
+
     return {
         ...utils,
-        basePath(path: string = '') {
-            return resolve(__dirname, '../../', path);
-        },
+        basePath,
+        packagePath,
     };
 });
 

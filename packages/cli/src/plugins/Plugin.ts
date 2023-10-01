@@ -11,7 +11,7 @@ import type {
 import Log from '@/lib/Log';
 import Shell from '@/lib/Shell';
 import File from '@/lib/File';
-import { isLocalApp, packagePath } from '@/lib/utils';
+import { isLinkedLocalApp, isLocalApp, packNotFound, packagePackPath, packagePath } from '@/lib/utils';
 
 const projectSavedFiles: WeakMap<Project, Set<string>> = new WeakMap();
 
@@ -78,11 +78,21 @@ export default abstract class Plugin {
     }
 
     protected async installNpmDependencies(): Promise<void> {
-        if (isLocalApp()) {
-            await Shell.run(`npm install ${this.getNpmPackageName()}@file:${packagePath(`plugin-${this.name}`)}`);
-        } else {
-            await Shell.run(`npm install ${this.getNpmPackageName()}@next`);
+        if (isLinkedLocalApp()) {
+            await Shell.run(`npm install file:${packagePath(this.getLocalPackageName())}`);
+
+            return;
         }
+
+        if (isLocalApp()) {
+            const packPath = packagePackPath(this.getLocalPackageName()) ?? packNotFound(this.getLocalPackageName());
+
+            await Shell.run(`npm install file:${packPath}`);
+
+            return;
+        }
+
+        await Shell.run(`npm install ${this.getNpmPackageName()}@next`);
     }
 
     protected async injectBootstrapConfig(project: Project): Promise<void> {
@@ -142,7 +152,11 @@ export default abstract class Plugin {
     }
 
     protected getNpmPackageName(): string {
-        return `@aerogel/plugin-${this.name}`;
+        return `@aerogel/${this.getLocalPackageName()}`;
+    }
+
+    protected getLocalPackageName(): string {
+        return `plugin-${this.name}`;
     }
 
     protected getBootstrapConfig(): string {

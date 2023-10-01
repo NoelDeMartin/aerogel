@@ -17,5 +17,5 @@ export default definePlugin({
 });
 
 declare module '@/services' {
-    interface Services extends ErrorsServices {}
+    export interface Services extends ErrorsServices {}
 }

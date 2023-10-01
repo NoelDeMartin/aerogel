@@ -39,5 +39,5 @@ declare module '@/bootstrap/options' {
 }
 
 declare module '@/services' {
-    interface Services extends UIServices {}
+    export interface Services extends UIServices {}
 }
