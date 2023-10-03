@@ -10,17 +10,10 @@ import type {
 import Log from '@/lib/Log';
 import Shell from '@/lib/Shell';
 import File from '@/lib/File';
-import { app, editFiles, isLinkedLocalApp, isLocalApp } from '@/lib/utils/app';
+import { app, isLinkedLocalApp, isLocalApp } from '@/lib/utils/app';
+import { editFiles, findDescendant, when } from '@/lib/utils/edit';
 import { packNotFound, packagePackPath, packagePath } from '@/lib/utils/paths';
 import type { Editor } from '@/lib/Editor';
-
-function when<T extends Node>(node: Node | undefined, assertion: (node: Node) => node is T): T | undefined {
-    if (!node || !assertion(node)) {
-        return;
-    }
-
-    return node as T;
-}
 
 export default abstract class Plugin {
 
@@ -100,22 +93,10 @@ export default abstract class Plugin {
     }
 
     protected getBootstrapPluginsDeclaration(mainConfig: SourceFile): ArrayLiteralExpression | null {
-        const bootstrapAppCall = mainConfig.forEachDescendant((node, traversal) => {
-            switch (node.getKind()) {
-                case SyntaxKind.CallExpression:
-                    {
-                        const callExpression = node as CallExpression;
-
-                        if (callExpression.getExpression().getText() === 'bootstrapApplication') {
-                            return callExpression;
-                        }
-                    }
-
-                    break;
-                case SyntaxKind.ImportDeclaration:
-                    traversal.skip();
-                    break;
-            }
+        const bootstrapAppCall = findDescendant(mainConfig, {
+            guard: Node.isCallExpression,
+            validate: (callExpression) => callExpression.getExpression().getText() === 'bootstrapApplication',
+            skip: SyntaxKind.ImportDeclaration,
         });
         const bootstrapOptions = bootstrapAppCall?.getArguments()[1];
         const pluginsOption = when(bootstrapOptions, Node.isObjectLiteralExpression)?.getProperty('plugins');

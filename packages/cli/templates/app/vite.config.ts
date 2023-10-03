@@ -9,7 +9,6 @@ export default {
     plugins: [
         Aerogel(),
         Components({
-            dirs: ['src/pages'],
             dts: false,
             resolvers: [AerogelResolver(), IconsResolver()],
         }),

@@ -1,12 +1,13 @@
 import { arrayFrom } from '@noeldemartin/utils';
 import { Node, SyntaxKind } from 'ts-morph';
-import type { ArrayLiteralExpression, PropertyAssignment, SourceFile } from 'ts-morph';
+import type { ArrayLiteralExpression, CallExpression, SourceFile } from 'ts-morph';
 
 import Command from '@/commands/Command';
 import File from '@/lib/File';
 import Log from '@/lib/Log';
 import Template from '@/lib/Template';
-import { app, editFiles } from '@/lib/utils/app';
+import { app } from '@/lib/utils/app';
+import { editFiles, findDescendant } from '@/lib/utils/edit';
 import { basePath } from '@/lib/utils/paths';
 import type { CommandOptions } from '@/commands/Command';
 
@@ -128,31 +129,38 @@ export class GenerateComponentCommand extends Command {
     }
 
     protected getComponentDirsArray(viteConfig: SourceFile): ArrayLiteralExpression | null {
-        const dirsAssignment = viteConfig.forEachDescendant((node, traversal) => {
-            switch (node.getKind()) {
-                case SyntaxKind.PropertyAssignment:
-                    {
-                        const propertyAssignment = node as PropertyAssignment;
+        const pluginCall = findDescendant(viteConfig, {
+            guard: Node.isCallExpression,
+            validate: (callExpression) => callExpression.getText().startsWith('Components('),
+            skip: SyntaxKind.ImportDeclaration,
+        });
 
-                        if (propertyAssignment.getName() === 'dirs') {
-                            return propertyAssignment;
-                        }
-                    }
+        if (!pluginCall) {
+            return null;
+        }
 
-                    break;
-                case SyntaxKind.ImportDeclaration:
-                    traversal.skip();
-                    break;
-            }
+        const dirsAssignment = findDescendant(pluginCall, {
+            guard: Node.isPropertyAssignment,
+            validate: (propertyAssignment) => propertyAssignment.getName() === 'dirs',
         });
 
         const dirsArray = dirsAssignment?.getInitializer();
 
         if (!Node.isArrayLiteralExpression(dirsArray)) {
-            return null;
+            return this.declareComponentDirsArray(pluginCall);
         }
 
         return dirsArray;
+    }
+
+    protected declareComponentDirsArray(pluginCall: CallExpression): ArrayLiteralExpression | null {
+        const pluginOptions = findDescendant(pluginCall, { guard: Node.isObjectLiteralExpression });
+        const dirsAssignment = pluginOptions?.addPropertyAssignment({
+            name: 'dirs',
+            initializer: '[]',
+        });
+
+        return (dirsAssignment?.getInitializer() as ArrayLiteralExpression) ?? null;
     }
 
     protected parsePathComponents(): [string, string] {

@@ -29,9 +29,17 @@ vi.mock('@/lib/utils/app', async () => {
 
     return {
         ...original,
-        editFiles: () => false,
         isLocalApp: () => false,
         isLinkedLocalApp: () => false,
+    };
+});
+
+vi.mock('@/lib/utils/edit', async () => {
+    const original = (await vi.importActual('@/lib/utils/edit')) as object;
+
+    return {
+        ...original,
+        editFiles: () => false,
     };
 });
 

@@ -6,11 +6,6 @@ export function app(): App {
     return new App('');
 }
 
-export function editFiles(): boolean {
-    // TODO mock editor instead of relying on this for unit tests
-    return true;
-}
-
 export function isLocalApp(): boolean {
     return File.contains('package.json', 'file');
 }
