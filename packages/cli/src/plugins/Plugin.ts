@@ -1,11 +1,5 @@
 import { Node, SyntaxKind } from 'ts-morph';
-import type {
-    ArrayLiteralExpression,
-    CallExpression,
-    ImportDeclarationStructure,
-    OptionalKind,
-    SourceFile,
-} from 'ts-morph';
+import type { ArrayLiteralExpression, ImportDeclarationStructure, OptionalKind, SourceFile } from 'ts-morph';
 
 import Log from '@/lib/Log';
 import Shell from '@/lib/Shell';
