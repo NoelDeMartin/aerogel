@@ -24,10 +24,20 @@ beforeEach(() => {
     Shell.mock();
 });
 
-// TODO find out why these need to be mocked
+vi.mock('@/lib/utils/app', async () => {
+    const original = (await vi.importActual('@/lib/utils/app')) as object;
 
-vi.mock('@/lib/utils', async () => {
-    const utils = (await vi.importActual('@/lib/utils')) as object;
+    return {
+        ...original,
+        editFiles: () => false,
+        isLocalApp: () => false,
+        isLinkedLocalApp: () => false,
+    };
+});
+
+// TODO find out why these need to be mocked
+vi.mock('@/lib/utils/paths', async () => {
+    const original = (await vi.importActual('@/lib/utils/paths')) as object;
 
     function basePath(path: string = '') {
         return resolve(__dirname, '../../', path);
@@ -38,7 +48,7 @@ vi.mock('@/lib/utils', async () => {
     }
 
     return {
-        ...utils,
+        ...original,
         basePath,
         packagePath,
     };

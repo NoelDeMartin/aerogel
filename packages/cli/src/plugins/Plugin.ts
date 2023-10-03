@@ -1,5 +1,4 @@
-import { Node, Project, SyntaxKind } from 'ts-morph';
-import { arrayFrom, tap } from '@noeldemartin/utils';
+import { Node, SyntaxKind } from 'ts-morph';
 import type {
     ArrayLiteralExpression,
     CallExpression,
@@ -11,9 +10,9 @@ import type {
 import Log from '@/lib/Log';
 import Shell from '@/lib/Shell';
 import File from '@/lib/File';
-import { isLinkedLocalApp, isLocalApp, packNotFound, packagePackPath, packagePath } from '@/lib/utils';
-
-const projectSavedFiles: WeakMap<Project, Set<string>> = new WeakMap();
+import { app, editFiles, isLinkedLocalApp, isLocalApp } from '@/lib/utils/app';
+import { packNotFound, packagePackPath, packagePath } from '@/lib/utils/paths';
+import type { Editor } from '@/lib/Editor';
 
 function when<T extends Node>(node: Node | undefined, assertion: (node: Node) => node is T): T | undefined {
     if (!node || !assertion(node)) {
@@ -34,14 +33,14 @@ export default abstract class Plugin {
     public async install(): Promise<void> {
         this.assertNotInstalled();
 
-        const project = tap(new Project({ tsConfigFilePath: 'tsconfig.json' }), (appProject) => {
-            appProject.addSourceFilesAtPaths('src/**/*.ts');
-            appProject.addSourceFilesAtPaths('tailwind.config.js');
-        });
-
         await this.installDependencies();
-        await this.updateFiles(project);
-        await this.formatFiles(project);
+
+        if (editFiles()) {
+            const editor = app().edit();
+
+            await this.updateFiles(editor);
+            await editor.format();
+        }
 
         Log.info(`Plugin ${this.name} installed!`);
     }
@@ -58,23 +57,8 @@ export default abstract class Plugin {
         });
     }
 
-    protected async updateFiles(project: Project): Promise<void> {
-        await this.injectBootstrapConfig(project);
-    }
-
-    protected async formatFiles(project: Project): Promise<void> {
-        await Log.animate('Formatting modified files', async () => {
-            const savedFiles = projectSavedFiles.get(project) ?? new Set();
-            const usingPrettier = File.exists('prettier.config.js');
-            const usingESLint = File.exists('.eslintrc.js');
-
-            await Promise.all(
-                arrayFrom(savedFiles).map(async (file) => {
-                    usingPrettier && (await Shell.run(`npx prettier ${file} --write`));
-                    usingESLint && (await Shell.run(`npx eslint ${file} --fix`));
-                }),
-            );
-        });
+    protected async updateFiles(editor: Editor): Promise<void> {
+        await this.updateBootstrapConfig(editor);
     }
 
     protected async installNpmDependencies(): Promise<void> {
@@ -95,9 +79,9 @@ export default abstract class Plugin {
         await Shell.run(`npm install ${this.getNpmPackageName()}@next`);
     }
 
-    protected async injectBootstrapConfig(project: Project): Promise<void> {
+    protected async updateBootstrapConfig(editor: Editor): Promise<void> {
         await Log.animate('Injecting plugin in bootstrap configuration', async () => {
-            const mainConfig = project.getSourceFileOrThrow('src/main.ts');
+            const mainConfig = editor.requireSourceFile('src/main.ts');
             const pluginsArray = this.getBootstrapPluginsDeclaration(mainConfig);
 
             if (!pluginsArray) {
@@ -111,7 +95,7 @@ export default abstract class Plugin {
             mainConfig.addImportDeclaration(this.getBootstrapImport());
             pluginsArray.addElement(this.getBootstrapConfig());
 
-            await this.saveFile(mainConfig);
+            await editor.save(mainConfig);
         });
     }
 
@@ -161,16 +145,6 @@ export default abstract class Plugin {
 
     protected getBootstrapConfig(): string {
         return `${this.name}()`;
-    }
-
-    protected async saveFile(file: SourceFile): Promise<void> {
-        await file.save();
-
-        const savedFiles = projectSavedFiles.get(file.getProject()) ?? new Set();
-
-        savedFiles.add(file.getFilePath());
-
-        projectSavedFiles.set(file.getProject(), savedFiles);
     }
 
 }

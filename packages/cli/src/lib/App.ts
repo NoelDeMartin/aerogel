@@ -3,7 +3,8 @@ import { stringToSlug } from '@noeldemartin/utils';
 import File from '@/lib/File';
 import Log from '@/lib/Log';
 import Template from '@/lib/Template';
-import { basePath, packNotFound, packagePackPath, packagePath } from '@/lib/utils';
+import { basePath, packNotFound, packagePackPath, packagePath } from '@/lib/utils/paths';
+import { Editor } from '@/lib/Editor';
 
 interface Dependencies {
     aerogelCli: string;
@@ -38,6 +39,10 @@ export default class App {
                 ? `${packagePath('core')}/dist/**/*.js`
                 : './node_modules/@aerogel/core/dist/**/*.js',
         });
+    }
+
+    public edit(): Editor {
+        return new Editor();
     }
 
     protected getDependencies(): Dependencies {

@@ -4,7 +4,8 @@ import Command from '@/commands/Command';
 import File from '@/lib/File';
 import Log from '@/lib/Log';
 import Template from '@/lib/Template';
-import { basePath, formatCodeBlock } from '@/lib/utils';
+import { basePath } from '@/lib/utils/paths';
+import { formatCodeBlock } from '@/lib/utils/format';
 import type { CommandOptions } from '@/commands/Command';
 
 interface Options {

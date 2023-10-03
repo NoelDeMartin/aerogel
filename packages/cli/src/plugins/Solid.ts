@@ -1,10 +1,12 @@
 import { Node, SyntaxKind } from 'ts-morph';
-import type { ArrayLiteralExpression, Project, PropertyAssignment, SourceFile } from 'ts-morph';
+import type { ArrayLiteralExpression, PropertyAssignment, SourceFile } from 'ts-morph';
 
 import Plugin from '@/plugins/Plugin';
 import Shell from '@/lib/Shell';
 import Log from '@/lib/Log';
-import { isLinkedLocalApp, packagePath } from '@/lib/utils';
+import { isLinkedLocalApp } from '@/lib/utils/app';
+import { packagePath } from '@/lib/utils/paths';
+import type { Editor } from '@/lib/Editor';
 
 export class Solid extends Plugin {
 
@@ -12,9 +14,9 @@ export class Solid extends Plugin {
         super('solid');
     }
 
-    protected async updateFiles(project: Project): Promise<void> {
-        await this.updateTailwindConfig(project);
-        await super.updateFiles(project);
+    protected async updateFiles(editor: Editor): Promise<void> {
+        await this.updateTailwindConfig(editor);
+        await super.updateFiles(editor);
     }
 
     protected async installNpmDependencies(): Promise<void> {
@@ -22,9 +24,9 @@ export class Solid extends Plugin {
         await super.installNpmDependencies();
     }
 
-    protected async updateTailwindConfig(project: Project): Promise<void> {
+    protected async updateTailwindConfig(editor: Editor): Promise<void> {
         await Log.animate('Updating tailwind configuration', async () => {
-            const tailwindConfig = project.getSourceFileOrThrow('tailwind.config.js');
+            const tailwindConfig = editor.requireSourceFile('tailwind.config.js');
             const contentArray = this.getTailwindContentArray(tailwindConfig);
             const contentValue = isLinkedLocalApp()
                 ? `'${packagePath('plugin-solid')}/dist/**/*.js'`
@@ -40,7 +42,7 @@ export class Solid extends Plugin {
 
             contentArray.addElement(contentValue);
 
-            await this.saveFile(tailwindConfig);
+            await editor.save(tailwindConfig);
         });
     }
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatCodeBlock } from './utils';
+import { formatCodeBlock } from './format';
 
-describe('Utils', () => {
+describe('Format utils', () => {
 
     it('Formats code blocks', () => {
         // Arrange
