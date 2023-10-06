@@ -62,7 +62,7 @@ jobs:
                   npx ag install solid
 
                   # Add Solid status component
-                  sed -i "10i\            <AGSolidStatus class=\"mt-4\" />" ./src/App.vue
+                  sed -i "10i\            <AGSolidStatus v-if="!$solid.loggedIn" class=\"mt-4\" />" ./src/App.vue
 
                   # Configure snapshots
                   sed -i "7i\        cy.matchImageSnapshot();" ./cypress/e2e/app.cy.ts
