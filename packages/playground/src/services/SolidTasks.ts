@@ -37,7 +37,7 @@ export class SolidTasksService extends Service {
             (await Solid.createPrivateContainer({
                 url,
                 name,
-                register: { typeIndex, modelClass: SolidTask },
+                registerFor: SolidTask,
                 reuseExisting: true,
             }))
         );

@@ -198,10 +198,7 @@ export class SolidService extends Service {
     public async createPrivateContainer(options: {
         url: string;
         name: string;
-        register?: {
-            typeIndex: SolidTypeIndex;
-            modelClass: SolidModelConstructor;
-        };
+        registerFor?: SolidModelConstructor;
         reuseExisting?: boolean;
     }): Promise<SolidContainer> {
         const engine = this.requireAuthenticator().engine;
@@ -217,7 +214,11 @@ export class SolidService extends Service {
 
             await container.save();
 
-            options.register && (await container.register(options.register.typeIndex.url, options.register.modelClass));
+            if (options.registerFor) {
+                const typeIndex = await this.findOrCreatePrivateTypeIndex();
+
+                await container.register(typeIndex.url, options.registerFor);
+            }
 
             return container;
         });
