@@ -7,7 +7,7 @@ import File from '@/lib/File';
 import Log from '@/lib/Log';
 import Template from '@/lib/Template';
 import { app } from '@/lib/utils/app';
-import { basePath } from '@/lib/utils/paths';
+import { templatePath } from '@/lib/utils/paths';
 import { editFiles, findDescendant } from '@/lib/utils/edit';
 import { formatCodeBlock } from '@/lib/utils/format';
 import type { Editor } from '@/lib/Editor';
@@ -52,7 +52,7 @@ export class GenerateServiceCommand extends Command {
                 Log.fail(`${this.name} service already exists!`);
             }
 
-            const serviceFiles = Template.instantiate(basePath('templates/service'), 'src/services', {
+            const serviceFiles = Template.instantiate(templatePath('service'), 'src/services', {
                 service: {
                     name: this.name,
                 },

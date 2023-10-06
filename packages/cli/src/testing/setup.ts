@@ -47,10 +47,6 @@ vi.mock('@/lib/utils/edit', async () => {
 vi.mock('@/lib/utils/paths', async () => {
     const original = (await vi.importActual('@/lib/utils/paths')) as object;
 
-    function cliBasePath(path: string = '') {
-        return resolve(__dirname, '../../', path);
-    }
-
     function basePath(path: string = '') {
         return resolve(__dirname, '../../', path);
     }
@@ -59,11 +55,15 @@ vi.mock('@/lib/utils/paths', async () => {
         return basePath(`../${packageName}`);
     }
 
+    function templatePath(name: string = '') {
+        return resolve(__dirname, `../../templates/${name}`);
+    }
+
     return {
         ...original,
         basePath,
-        cliBasePath,
         packagePath,
+        templatePath,
     };
 });
 

@@ -8,7 +8,7 @@ import Log from '@/lib/Log';
 import Template from '@/lib/Template';
 import { app } from '@/lib/utils/app';
 import { editFiles, findDescendant } from '@/lib/utils/edit';
-import { basePath } from '@/lib/utils/paths';
+import { templatePath } from '@/lib/utils/paths';
 import type { CommandOptions } from '@/commands/Command';
 
 export interface Options {
@@ -74,11 +74,9 @@ export class GenerateComponentCommand extends Command {
                 Log.fail(`${this.path} component already exists!`);
             }
 
-            const componentFiles = Template.instantiate(
-                basePath('templates/component'),
-                `src/components/${directoryName}`,
-                { component: { name: componentName } },
-            );
+            const componentFiles = Template.instantiate(templatePath('component'), `src/components/${directoryName}`, {
+                component: { name: componentName },
+            });
 
             componentFiles.forEach((file) => files.add(file));
         });
@@ -90,7 +88,7 @@ export class GenerateComponentCommand extends Command {
         }
 
         await Log.animate('Creating story', async () => {
-            const storyFiles = Template.instantiate(basePath('templates/component-story'), 'src/components', {
+            const storyFiles = Template.instantiate(templatePath('component-story'), 'src/components', {
                 component: { name: componentName },
             });
 
