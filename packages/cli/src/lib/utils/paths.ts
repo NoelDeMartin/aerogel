@@ -6,7 +6,7 @@ import Log from '@/lib/Log';
 
 export function basePath(path: string = ''): string {
     if (File.contains(resolve(__dirname, '../../../package.json'), '"name": "aerogel"')) {
-        return resolve(__dirname, '../', path);
+        return cliBasePath(path);
     }
 
     const packageJson = File.read(resolve(__dirname, '../../../../package.json'));
@@ -14,6 +14,10 @@ export function basePath(path: string = ''): string {
     const cliPath = matches?.[1] ?? Log.fail<string>('Could not determine base path');
 
     return resolve(cliPath, path);
+}
+
+export function cliBasePath(path: string = ''): string {
+    return resolve(__dirname, '../', path);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -3,7 +3,7 @@ import { stringToSlug } from '@noeldemartin/utils';
 import File from '@/lib/File';
 import Log from '@/lib/Log';
 import Template from '@/lib/Template';
-import { basePath, packNotFound, packagePackPath, packagePath } from '@/lib/utils/paths';
+import { cliBasePath, packNotFound, packagePackPath, packagePath } from '@/lib/utils/paths';
 import { Editor } from '@/lib/Editor';
 
 interface Dependencies {
@@ -29,7 +29,7 @@ export default class App {
             Log.fail(`Folder at '${path}' already exists!`);
         }
 
-        Template.instantiate(basePath('templates/app'), path, {
+        Template.instantiate(cliBasePath('templates/app'), path, {
             app: {
                 name: this.name,
                 slug: stringToSlug(this.name),
