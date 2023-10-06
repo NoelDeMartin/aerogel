@@ -3,6 +3,7 @@ import { CreateCommand } from '@/commands/create';
 import { facade } from '@noeldemartin/utils';
 import { GenerateComponentCommand } from '@/commands/generate-component';
 import { GenerateModelCommand } from '@/commands/generate-model';
+import { GenerateServiceCommand } from '@/commands/generate-service';
 import { InstallCommand } from '@/commands/install';
 
 export class CLIService {
@@ -15,6 +16,7 @@ export class CLIService {
         CreateCommand.define(program);
         GenerateComponentCommand.define(program);
         GenerateModelCommand.define(program);
+        GenerateServiceCommand.define(program);
         InstallCommand.define(program);
 
         program.parse(argv);

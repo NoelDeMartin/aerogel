@@ -18,7 +18,7 @@ export interface Options {
 export class GenerateComponentCommand extends Command {
 
     public static command: string = 'generate:component';
-    public static description: string = 'Generate an AerogelJS component';
+    public static description: string = 'Generate an AerogelJS Component';
     public static parameters: [string, string][] = [
         ['path', 'Component path (relative to components folder; extension not necessary)'],
     ];

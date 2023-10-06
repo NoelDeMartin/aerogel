@@ -20,6 +20,10 @@ export class Editor {
         this.project.addSourceFilesAtPaths('vite.config.ts');
     }
 
+    public addSourceFile(path: string): void {
+        this.project.addSourceFilesAtPaths(path);
+    }
+
     public requireSourceFile(path: string): SourceFile {
         return this.project.getSourceFileOrThrow(path);
     }

@@ -4,7 +4,7 @@ import FileMock from '@/lib/File.mock';
 
 import { GenerateComponentCommand } from './generate-component';
 
-describe('Generate component command', () => {
+describe('Generate Component command', () => {
 
     it('generates components', async () => {
         // Arrange

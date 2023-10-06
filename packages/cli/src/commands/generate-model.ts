@@ -15,7 +15,7 @@ interface Options {
 export class GenerateModelCommand extends Command {
 
     public static command: string = 'generate:model';
-    public static description: string = 'Generate an AerogelJS model';
+    public static description: string = 'Generate an AerogelJS Model';
     public static parameters: [string, string][] = [['name', 'Model name']];
     public static options: CommandOptions = {
         fields: 'Create model with the given fields',
@@ -40,15 +40,17 @@ export class GenerateModelCommand extends Command {
 
         this.assertSoukaiInstalled();
 
-        const files = Template.instantiate(basePath('templates/model'), 'src/models', {
-            model: {
-                name: this.name,
-                fieldsDefinition: this.getFieldsDefinition(),
-            },
-            soukaiImports: this.options.fields ? 'FieldType, defineModelSchema' : 'defineModelSchema',
-        });
+        const filesList = await Log.animate('Creating model', async () => {
+            const files = Template.instantiate(basePath('templates/model'), 'src/models', {
+                model: {
+                    name: this.name,
+                    fieldsDefinition: this.getFieldsDefinition(),
+                },
+                soukaiImports: this.options.fields ? 'FieldType, defineModelSchema' : 'defineModelSchema',
+            });
 
-        const filesList = files.map((file) => `- ${file}`).join('\n');
+            return files.map((file) => `- ${file}`).join('\n');
+        });
 
         Log.info(`${this.name} model created successfully! The following files were created:\n\n${filesList}`);
     }

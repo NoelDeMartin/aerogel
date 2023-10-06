@@ -5,7 +5,7 @@ import { formatCodeBlock } from '@/lib/utils/format';
 
 import { GenerateModelCommand } from './generate-model';
 
-describe('Generate model command', () => {
+describe('Generate Model command', () => {
 
     it('generates models', async () => {
         // Arrange
