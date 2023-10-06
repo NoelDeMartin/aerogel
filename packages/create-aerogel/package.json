@@ -25,6 +25,6 @@
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
     "dependencies": {
-        "@aerogel/cli": "*"
+        "@aerogel/cli": "next"
     }
 }
