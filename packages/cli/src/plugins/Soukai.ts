@@ -8,7 +8,7 @@ export class Soukai extends Plugin {
     }
 
     protected async installNpmDependencies(): Promise<void> {
-        await Shell.run('npm install soukai@next');
+        await Shell.run('npm install soukai@next --save-exact');
         await super.installNpmDependencies();
     }
 

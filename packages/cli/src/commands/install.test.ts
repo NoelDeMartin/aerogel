@@ -11,8 +11,8 @@ describe('Install plugin command', () => {
         await InstallCommand.run('solid');
 
         // Assert
-        ShellMock.expectRan('npm install soukai-solid@next');
-        ShellMock.expectRan('npm install @aerogel/plugin-solid@next');
+        ShellMock.expectRan('npm install soukai-solid@next --save-exact');
+        ShellMock.expectRan('npm install @aerogel/plugin-solid@next --save-exact');
     });
 
 });

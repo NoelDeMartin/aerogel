@@ -63,7 +63,7 @@ export default abstract class Plugin {
             return;
         }
 
-        await Shell.run(`npm install ${this.getNpmPackageName()}@next`);
+        await Shell.run(`npm install ${this.getNpmPackageName()}@next --save-exact`);
     }
 
     protected async updateBootstrapConfig(editor: Editor): Promise<void> {
