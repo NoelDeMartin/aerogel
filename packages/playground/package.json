@@ -22,7 +22,7 @@
         "@aerogel/plugin-routing": "*",
         "@aerogel/plugin-solid": "*",
         "@aerogel/plugin-soukai": "*",
-        "@noeldemartin/solid-utils": "^0.3.0",
+        "@noeldemartin/solid-utils": "0.3.0-next.a444b642b5ee2c1d412a667cb87b853b85115b98",
         "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",

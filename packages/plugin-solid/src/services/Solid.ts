@@ -14,8 +14,8 @@ import {
 } from '@noeldemartin/utils';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { App, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
-import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import { SolidACLAuthorization, SolidContainer, SolidTypeIndex } from 'soukai-solid';
+import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import AuthenticationCancelledError from '@/errors/AuthenticationCancelledError';
