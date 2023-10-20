@@ -29,8 +29,8 @@ function setUpErrorHandler(baseHandler: ErrorHandler = () => false): ErrorHandle
     return tap(
         (error) => baseHandler(error) || frameworkHandler(error),
         (errorHandler) => {
-            window.onerror = (message, _, __, ___, error) => errorHandler(error ?? message);
-            window.onunhandledrejection = (event) => errorHandler(event.reason);
+            globalThis.onerror = (message, _, __, ___, error) => errorHandler(error ?? message);
+            globalThis.onunhandledrejection = (event) => errorHandler(event.reason);
         },
     );
 }

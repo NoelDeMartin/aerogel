@@ -12,7 +12,17 @@ function parseSourceUrl(packageJsonPath: string): string | undefined {
         return;
     }
 
-    const packageJson = JSON.parse(readFileSync(packageJsonPath).toString()) as { repository?: string };
+    const packageJson = JSON.parse(readFileSync(packageJsonPath).toString()) as {
+        repository?: string | { type: string; url: string };
+    };
+
+    if (!packageJson.repository) {
+        return;
+    }
+
+    if (typeof packageJson.repository === 'object') {
+        return packageJson.repository.url.replace(`.${packageJson.repository.type}`, '');
+    }
 
     return packageJson.repository?.replace('github:', 'https://github.com/');
 }
