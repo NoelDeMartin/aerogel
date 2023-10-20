@@ -63,6 +63,8 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             },
             config: (config) => {
                 basePath = config.base;
+                config.optimizeDeps = config.optimizeDeps ?? {};
+                config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), 'virtual:aerogel'];
 
                 return config;
             },
@@ -97,7 +99,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 }
 
                 return `export default ${JSON.stringify({
-                    environment: JSON.stringify(process.env.NODE_ENV ?? 'development'),
+                    environment: process.env.NODE_ENV ?? 'development',
                     basePath,
                     sourceUrl,
                 })};`;

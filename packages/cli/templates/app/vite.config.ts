@@ -3,9 +3,10 @@ import Components from 'unplugin-vue-components/vite';
 import I18n from '@intlify/unplugin-vue-i18n/vite';
 import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
+import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 
-export default {
+export default defineConfig({
     plugins: [
         Aerogel(),
         Components({
@@ -20,4 +21,4 @@ export default {
             '@': resolve(__dirname, './src'),
         },
     },
-};
+});
