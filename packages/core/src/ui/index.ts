@@ -6,7 +6,9 @@ import { definePlugin } from '@/plugins';
 import UI, { UIComponents } from './UI';
 import AGAlertModal from '../components/modals/AGAlertModal.vue';
 import AGConfirmModal from '../components/modals/AGConfirmModal.vue';
+import AGErrorReportModal from '../components/modals/AGErrorReportModal.vue';
 import AGLoadingModal from '../components/modals/AGLoadingModal.vue';
+import AGSnackbar from '../components/snackbars/AGSnackbar.vue';
 import type { UIComponent } from './UI';
 
 export { UI, UIComponents, UIComponent };
@@ -20,7 +22,9 @@ export default definePlugin({
         const defaultComponents = {
             [UIComponents.AlertModal]: AGAlertModal,
             [UIComponents.ConfirmModal]: AGConfirmModal,
+            [UIComponents.ErrorReportModal]: AGErrorReportModal,
             [UIComponents.LoadingModal]: AGLoadingModal,
+            [UIComponents.Snackbar]: AGSnackbar,
         };
 
         Object.entries({

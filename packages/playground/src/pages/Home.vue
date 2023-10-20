@@ -2,7 +2,7 @@
     <div class="flex flex-grow flex-col items-center">
         <PageTitle>{{ $t('home.title') }}</PageTitle>
         <AGMarkdown lang-key="home.description" />
-        <ul class="mt-2 flex flex-row gap-3">
+        <ul class="mt-2 flex max-w-prose flex-row flex-wrap gap-3">
             <li v-for="section of sections" :key="section.route">
                 <RouterLink
                     :to="{ name: section.route }"
@@ -29,6 +29,10 @@ const sections: Section[] = [
     {
         langKey: 'home.content',
         route: 'content',
+    },
+    {
+        langKey: 'home.errors',
+        route: 'errors',
     },
     {
         langKey: 'home.forms',

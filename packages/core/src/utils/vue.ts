@@ -10,6 +10,8 @@ type BaseProp<T> = {
 type RequiredProp<T> = BaseProp<T> & { required: true };
 type OptionalProp<T> = BaseProp<T> & { default: T | (() => T) | null };
 
+export type ComponentProps = Record<string, unknown>;
+
 export function arrayProp<T>(defaultValue?: () => T[]): OptionalProp<T[]> {
     return {
         type: Array as PropType<T[]>,

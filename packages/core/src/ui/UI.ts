@@ -4,9 +4,10 @@ import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
 
 import Events from '@/services/Events';
+import type { AGSnackbarAction } from '@/components/headless/snackbars';
 
 import Service from './UI.state';
-import type { Modal, ModalComponent } from './UI.state';
+import type { Modal, ModalComponent, Snackbar } from './UI.state';
 
 interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
@@ -21,7 +22,9 @@ type ModalResult<TComponent> = TComponent extends ModalComponent<Record<string, 
 export const UIComponents = {
     AlertModal: 'alert-modal',
     ConfirmModal: 'confirm-modal',
+    ErrorReportModal: 'error-report-modal',
     LoadingModal: 'loading-modal',
+    Snackbar: 'snackbar',
 } as const;
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
@@ -30,6 +33,10 @@ export class UIService extends Service {
 
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Partial<Record<UIComponent, Component>> = {};
+
+    public requireComponent(name: UIComponent): Component {
+        return this.components[name] ?? fail(`UI Component '${name}' is not defined!`);
+    }
 
     public alert(message: string): void;
     public alert(title: string, message: string): void;
@@ -64,6 +71,25 @@ export class UIService extends Service {
         await this.closeModal(modal.id);
 
         return result;
+    }
+
+    public showSnackbar(message: string, actions: AGSnackbarAction[] = []): void {
+        const snackbar: Snackbar = {
+            id: uuid(),
+            properties: { message, actions },
+            component: markRaw(this.requireComponent(UIComponents.Snackbar)),
+        };
+
+        this.setState('snackbars', this.snackbars.concat(snackbar));
+
+        setTimeout(() => this.hideSnackbar(snackbar.id), 5000);
+    }
+
+    public hideSnackbar(id: string): void {
+        this.setState(
+            'snackbars',
+            this.snackbars.filter((snackbar) => snackbar.id !== id),
+        );
     }
 
     public registerComponent(name: UIComponent, component: Component): void {
@@ -110,10 +136,6 @@ export class UIService extends Service {
         this.watchModalEvents();
     }
 
-    private requireComponent(name: UIComponent): Component {
-        return this.components[name] ?? fail(`UI Component '${name}' is not defined!`);
-    }
-
     private watchModalEvents(): void {
         Events.on('modal-will-close', ({ modal, result }) => {
             this.modalCallbacks[modal.id]?.willClose?.(result);
@@ -124,7 +146,10 @@ export class UIService extends Service {
         });
 
         Events.on('modal-closed', async ({ modal, result }) => {
-            this.setState({ modals: this.modals.filter((m) => m.id !== modal.id) });
+            this.setState(
+                'modals',
+                this.modals.filter((m) => m.id !== modal.id),
+            );
 
             this.modalCallbacks[modal.id]?.closed?.(result);
 

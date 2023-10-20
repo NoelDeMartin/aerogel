@@ -1,3 +1,5 @@
+import Build from 'virtual:aerogel';
+
 import type { Plugin } from '@aerogel/core';
 import type { RouteRecordRaw } from 'vue-router';
 
@@ -13,7 +15,7 @@ export default function routing(options: Options): Plugin {
         install(app) {
             const plugin = createAppRouter({
                 routes: options.routes,
-                basePath: options.basePath ?? __AG_BASE_PATH,
+                basePath: options.basePath ?? Build.basePath,
             });
 
             app.use(plugin);

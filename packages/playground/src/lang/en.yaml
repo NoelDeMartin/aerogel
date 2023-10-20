@@ -11,6 +11,7 @@ home:
     description: 'Explore these features:'
     components: Components
     content: Formatted Content
+    errors: Error Handling
     forms: Forms
     modals: Modals
     storage: Storage
@@ -116,6 +117,12 @@ ui:
     loading: Loading...
 
 errors:
+    title: Error Handling
+    throw: Throw error
+    throwMessage: This error was thrown for testing purposes
+    throwWithoutTrace: Throw error (no trace)
+    throwWithoutTraceName: Test Error
+    all: See all ({count})
     required: This is required
 
 cloud:

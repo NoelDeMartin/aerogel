@@ -1,6 +1,7 @@
 {
     "name": "playground",
     "private": true,
+    "repository": "github:noeldemartin/aerogel",
     "scripts": {
         "build": "vite build",
         "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run test:serve-pod\" \"npm run cy:open\"",
@@ -35,7 +36,6 @@
         "@aerogel/cypress": "*",
         "@aerogel/vite": "*",
         "@histoire/plugin-vue": "^0.16.1",
-        "@iconify/json": "^2.2.80",
         "@inrupt/solid-client-authn-core": "^1.17.2",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
@@ -43,7 +43,6 @@
         "histoire": "^0.16.2",
         "postcss": "^8.4.23",
         "postcss-pseudo-classes": "^0.2.1",
-        "start-server-and-test": "^2.0.0",
-        "unplugin-icons": "^0.16.3"
+        "start-server-and-test": "^2.0.0"
     }
 }

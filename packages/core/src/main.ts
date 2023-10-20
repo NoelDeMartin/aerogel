@@ -1,5 +1,3 @@
-import './globals';
-
 export * from './bootstrap';
 export * from './components';
 export * from './errors';

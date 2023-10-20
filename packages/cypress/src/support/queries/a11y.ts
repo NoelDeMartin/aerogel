@@ -2,9 +2,12 @@ import { prepareQuery, queryAlias } from './helpers';
 import type { Query, QueryOptions } from './helpers';
 
 export function a11yGet(this: Cypress.Command, text: string, options: QueryOptions = {}): Query {
-    // TODO read from aria-label, aria-labelledby, and ignore aria-hidden
+    // TODO read from aria-labelledby and ignore aria-hidden
+    const query = prepareQuery(this, options);
+    const getByContent = query.subquery('contains', text);
+    const getByAriaLabel = query.subquery('get', `[aria-label="${text}"]`);
 
-    return queryAlias(this, ['contains', text], options);
+    return (subject) => query.execute(subject, getByContent, getByAriaLabel);
 }
 
 export function ariaInput(this: Cypress.Command, label: string, options: QueryOptions = {}): Query {

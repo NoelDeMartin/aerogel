@@ -1,9 +1,9 @@
-import { JSError, facade, isObject } from '@noeldemartin/utils';
+import { JSError, facade, isObject, objectWithoutEmpty, toString } from '@noeldemartin/utils';
 
 import App from '@/services/App';
 import ServiceBootError from '@/errors/ServiceBootError';
-import UI from '@/ui/UI';
-import { translate } from '@/lang/utils';
+import UI, { UIComponents } from '@/ui/UI';
+import { translate, translateWithDefault } from '@/lang/utils';
 
 import Service from './Errors.state';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
@@ -24,8 +24,13 @@ export class ErrorsService extends Service {
     public async inspect(error: ErrorSource | ErrorReport[]): Promise<void> {
         const reports = Array.isArray(error) ? error : [await this.createErrorReport(error)];
 
-        // TODO open errors modal
-        reports;
+        if (reports.length === 0) {
+            UI.alert(translateWithDefault('errors.inspectEmpty', 'Nothing to inspect!'));
+
+            return;
+        }
+
+        UI.openModal(UI.requireComponent(UIComponents.ErrorReportModal), { reports });
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
@@ -54,8 +59,20 @@ export class ErrorsService extends Service {
             date: new Date(),
         };
 
-        // TODO open error snackbar
-        UI.alert(message ?? 'Something went wrong, but it\'s not your fault! (look at the console for details)');
+        UI.showSnackbar(
+            message ??
+                translateWithDefault('errors.notice', 'Something went wrong, but it\'s not your fault. Try again!'),
+            [
+                {
+                    text: translateWithDefault('errors.viewDetails', 'View details'),
+                    dismiss: true,
+                    handler: () =>
+                        UI.openModal(UI.requireComponent(UIComponents.ErrorReportModal), {
+                            reports: [report],
+                        }),
+                },
+            ],
+        );
 
         this.setState({ logs: [log].concat(this.logs) });
     }
@@ -100,6 +117,14 @@ export class ErrorsService extends Service {
 
         if (error instanceof Error || error instanceof JSError) {
             return this.createErrorReportFromError(error);
+        }
+
+        if (isObject(error)) {
+            return objectWithoutEmpty({
+                title: toString(error['name'] ?? error['title'] ?? translate('errors.unknown')),
+                description: toString(error['message'] ?? error['description'] ?? ''),
+                error,
+            });
         }
 
         return {

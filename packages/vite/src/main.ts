@@ -1,9 +1,21 @@
 import Vue from '@vitejs/plugin-vue';
+import { existsSync, readFileSync } from 'fs';
+import { resolve } from 'path';
 import { render } from 'mustache';
 import type { ComponentResolver } from 'unplugin-vue-components';
 import type { Plugin } from 'vite';
 
 import static404RedirectHTML from './templates/404.html';
+
+function parseSourceUrl(packageJsonPath: string): string | undefined {
+    if (!existsSync(packageJsonPath)) {
+        return;
+    }
+
+    const packageJson = JSON.parse(readFileSync(packageJsonPath).toString()) as { repository?: string };
+
+    return packageJson.repository?.replace('github:', 'https://github.com/');
+}
 
 export interface Options {
     name?: string;
@@ -33,18 +45,24 @@ export function AerogelResolver(): ComponentResolver {
 
 export default function Aerogel(options: Options = {}): Plugin[] {
     let basePath: string | undefined;
+    let sourceUrl: string | undefined;
 
     return [
         Vue(),
         {
             name: 'vite:aerogel',
+            configureServer(server) {
+                sourceUrl = parseSourceUrl(`${server.config.root}/package.json`);
+            },
+            buildStart(buildOptions) {
+                if (!Array.isArray(buildOptions.input) || !buildOptions.input[0]) {
+                    return;
+                }
+
+                sourceUrl = parseSourceUrl(resolve(buildOptions.input[0], '../package.json'));
+            },
             config: (config) => {
                 basePath = config.base;
-                config.define = {
-                    ...config.define,
-                    __AG_BASE_PATH: basePath ? JSON.stringify(basePath) : 'undefined',
-                    __AG_ENV: JSON.stringify(process.env.NODE_ENV ?? 'development'),
-                };
 
                 return config;
             },
@@ -65,6 +83,24 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                         },
                     }),
                 });
+            },
+            resolveId(id) {
+                if (id !== 'virtual:aerogel') {
+                    return;
+                }
+
+                return id;
+            },
+            load(id) {
+                if (id !== 'virtual:aerogel') {
+                    return;
+                }
+
+                return `export default ${JSON.stringify({
+                    environment: JSON.stringify(process.env.NODE_ENV ?? 'development'),
+                    basePath,
+                    sourceUrl,
+                })};`;
             },
         },
     ];

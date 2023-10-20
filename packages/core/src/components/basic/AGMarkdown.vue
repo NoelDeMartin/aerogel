@@ -11,10 +11,11 @@ import { translate } from '@/lang';
 
 const props = defineProps({
     as: stringProp('div'),
-    langKey: stringProp(),
-    text: stringProp(),
+    heading: booleanProp(),
     inline: booleanProp(),
+    langKey: stringProp(),
     raw: booleanProp(),
+    text: stringProp(),
 });
 
 const markdown = computed(() => props.text ?? (props.langKey && translate(props.langKey)));
@@ -24,6 +25,10 @@ const html = computed(() => {
     }
 
     let renderedHtml = renderMarkdown(markdown.value);
+
+    if (props.heading) {
+        renderedHtml = renderedHtml.replace('<p>', '<span>').replace('</p>', '</span>');
+    }
 
     if (props.inline) {
         renderedHtml = renderedHtml.replace('<p>', '<span>').replace('</p>', '</span>');

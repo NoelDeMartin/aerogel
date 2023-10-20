@@ -1,4 +1,4 @@
-describe('Content', () => {
+describe('Formatted Content', () => {
 
     beforeEach(() => cy.visit('/content'));
 

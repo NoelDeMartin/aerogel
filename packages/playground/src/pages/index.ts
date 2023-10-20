@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 import Components from './Components.vue';
 import Content from './Content.vue';
+import Errors from './Errors.vue';
 import Forms from './Forms.vue';
 import Home from './Home.vue';
 import Modals from './modals/Modals.vue';
@@ -24,6 +25,11 @@ export const routes: RouteRecordRaw[] = [
         name: 'content',
         path: '/content',
         component: Content,
+    },
+    {
+        name: 'errors',
+        path: '/errors',
+        component: Errors,
     },
     {
         name: 'forms',

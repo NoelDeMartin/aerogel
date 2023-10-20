@@ -4,7 +4,7 @@ describe('Solid', () => {
 
     beforeEach(() => cy.visit('/solid'));
 
-    it('works', () => {
+    it('Manipulates Tasks', () => {
         cy.intercept('PATCH', cssPodUrl('/alice/tasks/*')).as('updateTask');
         cy.intercept('DELETE', cssPodUrl('/alice/tasks/*')).as('deleteTask');
 

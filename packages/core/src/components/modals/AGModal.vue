@@ -5,7 +5,7 @@
         :cancellable="cancellable"
         class="relative z-50"
     >
-        <div class="fixed inset-0 flex items-center justify-center">
+        <div class="fixed inset-0 flex items-center justify-center p-8">
             <AGHeadlessModalPanel class="flex max-h-full max-w-full flex-col overflow-hidden bg-white">
                 <div class="flex max-h-full flex-col overflow-auto p-4">
                     <slot :close="close" />

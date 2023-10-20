@@ -27,10 +27,11 @@
         "test": "npm run test -ws --if-present"
     },
     "devDependencies": {
+        "@iconify/json": "^2.2.131",
         "@intlify/unplugin-vue-i18n": "^0.11.0",
         "@noeldemartin/eslint-config-typescript": "0.1.1-next.213cffed3d1b24c286a9602ebd17085b58a673b4",
         "@noeldemartin/eslint-config-vue": "0.1.1-next.6991d432d0368b4d59bb674c8bf0384e9eded802",
-        "@noeldemartin/scripts": "0.1.2-next.c5fed8ff1c58f51e758a5e589b7191f993296b7b",
+        "@noeldemartin/scripts": "0.1.2-next.202a8485ce60472abeb3c26a8a181aa6c9f3f400",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/mustache": "^4.2.2",
         "cypress": "^12.17.0",
@@ -42,6 +43,7 @@
         "soukai": "0.5.1-next.6ceeddd517fac8fd180856fb3867cc33c1fa1b0b",
         "soukai-solid": "0.5.1-next.17ce9fccdbfa3d99bd1718e9aaf169cea189ee8a",
         "typescript": "~5.0.4",
+        "unplugin-icons": "^0.17.1",
         "unplugin-vue-components": "^0.24.1",
         "vite": "^4.3.1",
         "vitest": "^0.31.0",

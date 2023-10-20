@@ -17,7 +17,16 @@ export interface ModalComponent<
     Result = unknown
 > {}
 
+export interface Snackbar {
+    id: string;
+    component: Component;
+    properties: Record<string, unknown>;
+}
+
 export default defineServiceState({
     name: 'ui',
-    initialState: { modals: [] as Modal[] },
+    initialState: {
+        modals: [] as Modal[],
+        snackbars: [] as Snackbar[],
+    },
 });
