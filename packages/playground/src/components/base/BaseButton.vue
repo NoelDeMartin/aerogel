@@ -2,6 +2,7 @@
     <AGHeadlessButton
         class="flex items-center gap-1 font-semibold focus-visible:outline focus-visible:outline-2"
         :class="variantClasses"
+        :disabled="disabled"
     >
         <slot />
     </AGHeadlessButton>
@@ -17,6 +18,7 @@ const props = defineProps({
     color: enumProp(Colors, Colors.Primary),
     small: booleanProp(),
     icon: booleanProp(),
+    disabled: booleanProp(),
 });
 
 const colorClasses = computed(() => {
@@ -59,5 +61,18 @@ const sizeClasses = computed(() => {
     return 'px-3.5 py-2.5 text-sm';
 });
 
-const variantClasses = computed(() => `${colorClasses.value} ${sizeClasses.value} ${roundClasses.value}`);
+const variantClasses = computed(() => {
+    const classes = `${colorClasses.value} ${sizeClasses.value} ${roundClasses.value}`;
+
+    if (props.disabled) {
+        const inertClasses = classes
+            .split(' ')
+            .filter((className) => !className.startsWith('hover:'))
+            .join(' ');
+
+        return `${inertClasses} opacity-50`;
+    }
+
+    return classes;
+});
 </script>

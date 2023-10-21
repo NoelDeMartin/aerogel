@@ -46,8 +46,9 @@ import IconCheveronLeft from '~icons/zondicons/cheveron-left';
 
 import { computed, ref } from 'vue';
 
-import { requiredArrayProp } from '@/utils/vue';
 import type { ErrorReport } from '@/errors';
+
+import { useErrorReportModalProps } from './AGErrorReportModal';
 
 import AGButton from '../forms/AGButton.vue';
 import AGErrorReportModalButtons from './AGErrorReportModalButtons.vue';
@@ -55,9 +56,7 @@ import AGErrorReportModalTitle from './AGErrorReportModalTitle.vue';
 import AGMarkdown from '../basic/AGMarkdown.vue';
 import AGModal from './AGModal.vue';
 
-const { reports } = defineProps({
-    reports: requiredArrayProp<ErrorReport>(),
-});
+const props = defineProps(useErrorReportModalProps());
 const activeReportIndex = ref(0);
-const report = computed(() => reports[activeReportIndex.value] as ErrorReport);
+const report = computed(() => props.reports[activeReportIndex.value] as ErrorReport);
 </script>

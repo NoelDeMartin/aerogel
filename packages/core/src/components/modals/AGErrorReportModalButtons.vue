@@ -8,7 +8,7 @@
                 :aria-label="$td(`errors.report_${button.id}`, button.description)"
                 @click="button.handler"
             >
-                <component :is="button.icon" class="h-4 w-4" aria-hidden="true" />
+                <component :is="button.iconComponent" class="h-4 w-4" aria-hidden="true" />
             </AGButton>
         </slot>
     </div>
@@ -65,7 +65,7 @@ const buttons = computed(() =>
             {
                 id: 'clipboard',
                 description: 'Copy to clipboard',
-                icon: IconCopy,
+                iconComponent: IconCopy,
                 async handler() {
                     await navigator.clipboard.writeText(`${summary.value}\n\n${props.report.details}`);
 
@@ -77,7 +77,7 @@ const buttons = computed(() =>
             {
                 id: 'console',
                 description: 'Log to console',
-                icon: IconConsole,
+                iconComponent: IconConsole,
                 handler() {
                     (window as { error?: unknown }).error = props.report.error;
 
@@ -98,7 +98,7 @@ const buttons = computed(() =>
             reportButtons.push({
                 id: 'github',
                 description: 'Report in GitHub',
-                icon: IconGitHub,
+                iconComponent: IconGitHub,
                 url: githubReportUrl.value,
             });
         },

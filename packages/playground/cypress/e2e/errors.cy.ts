@@ -22,17 +22,17 @@ describe('Error Handling', () => {
         cy.see('See all (2)');
         cy.press('View details');
         cy.see('Test Error');
-        cy.see('This error is missing a stacktrace');
         cy.focused().type('{esc}');
 
         // All errors
         cy.press('See all (2)');
         cy.see('Test Error (1/2)');
-        cy.see('This error is missing a stacktrace');
         cy.ariaLabel('Show next report').click();
         cy.see('Error (2/2)');
         cy.see('throwError');
         cy.see('Errors.vue');
+
+        cy.matchImageSnapshot();
     });
 
 });

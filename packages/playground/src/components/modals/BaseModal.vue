@@ -3,7 +3,8 @@
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-full items-center justify-center p-4 text-center">
                 <AGHeadlessModalPanel
-                    class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all"
+                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all"
+                    :class="{ 'px-4 pb-4 pt-5': !noPadding }"
                 >
                     <BaseButton
                         v-if="renderedTitle && cancellable"
@@ -39,6 +40,7 @@ const props = defineProps({
     title: stringProp(),
     titleLangKey: stringProp(),
     cancellable: booleanProp(true),
+    noPadding: booleanProp(),
 });
 
 const renderedTitle = computed(() => {

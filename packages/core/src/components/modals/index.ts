@@ -5,7 +5,10 @@ import AGErrorReportModalTitle from './AGErrorReportModalTitle.vue';
 import AGLoadingModal from './AGLoadingModal.vue';
 import AGModal from './AGModal.vue';
 import AGModalContext from './AGModalContext.vue';
-import { IAGModal } from './AGModal';
+
+export * from './AGErrorReportModal';
+export * from './AGModal';
+export * from './AGModalContext';
 
 export {
     AGAlertModal,
@@ -15,5 +18,4 @@ export {
     AGLoadingModal,
     AGModal,
     AGModalContext,
-    IAGModal,
 };

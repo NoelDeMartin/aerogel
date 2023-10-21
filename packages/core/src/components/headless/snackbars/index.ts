@@ -8,7 +8,7 @@ export interface AGSnackbarAction {
     handler?(): unknown;
 }
 
-const snackbarProps = {
+export const snackbarProps = {
     id: requiredStringProp(),
     message: requiredStringProp(),
     actions: arrayProp<AGSnackbarAction>(() => []),
