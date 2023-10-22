@@ -1,5 +1,6 @@
 export const Colors = {
     Primary: 'primary',
+    Secondary: 'secondary',
     Danger: 'danger',
     Clear: 'clear',
 } as const;

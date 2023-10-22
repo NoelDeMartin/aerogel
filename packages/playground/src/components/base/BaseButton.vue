@@ -9,10 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import { booleanProp, enumProp } from '@aerogel/core';
+import { Colors, booleanProp, enumProp } from '@aerogel/core';
 import { computed } from 'vue';
-
-import { Colors } from '@/components/constants';
 
 const props = defineProps({
     color: enumProp(Colors, Colors.Primary),
@@ -29,6 +27,8 @@ const colorClasses = computed(() => {
             return `${baseColoredStyles} bg-red-600 hover:bg-red-500 focus-visible:outline-red-600`;
         case Colors.Clear:
             return 'text-gray-900 bg-white hover:bg-gray-100 focus-visible:outline-gray-900';
+        case Colors.Secondary:
+            return `${baseColoredStyles} bg-gray-600 hover:bg-gray-500 focus-visible:outline-gray-600`;
         default:
         case Colors.Primary:
             return `${baseColoredStyles} bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600`;

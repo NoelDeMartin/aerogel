@@ -7,7 +7,7 @@
             <AGButton @click="close(true)">
                 {{ $td('ui.ok', 'OK') }}
             </AGButton>
-            <AGButton secondary @click="close()">
+            <AGButton color="secondary" @click="close()">
                 {{ $td('ui.cancel', 'Cancel') }}
             </AGButton>
         </div>

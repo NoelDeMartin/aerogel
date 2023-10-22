@@ -1,11 +1,10 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import Components from './Components.vue';
+import Components from './components/Components.vue';
 import Content from './Content.vue';
 import Errors from './Errors.vue';
 import Forms from './Forms.vue';
 import Home from './Home.vue';
-import Modals from './modals/Modals.vue';
 import Offline from './offline/Offline.vue';
 import Solid from './solid/Solid.vue';
 import Storage from './Storage.vue';
@@ -35,11 +34,6 @@ export const routes: RouteRecordRaw[] = [
         name: 'forms',
         path: '/forms',
         component: Forms,
-    },
-    {
-        name: 'modals',
-        path: '/modals',
-        component: Modals,
     },
     {
         name: 'storage',

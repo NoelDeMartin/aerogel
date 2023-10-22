@@ -10,7 +10,7 @@
                     />
                     <template v-if="reports.length > 1">
                         <AGButton
-                            clear
+                            color="clear"
                             :disabled="activeReportIndex === 0"
                             :title="$td('errors.previousReport', 'Show previous report')"
                             :aria-label="$td('errors.previousReport', 'Show previous report')"
@@ -19,7 +19,7 @@
                             <IconCheveronLeft aria-hidden="true" class="h-4 w-4" />
                         </AGButton>
                         <AGButton
-                            clear
+                            color="clear"
                             :disabled="activeReportIndex === reports.length - 1"
                             :title="$td('errors.nextReport', 'Show next report')"
                             :aria-label="$td('errors.nextReport', 'Show next report')"

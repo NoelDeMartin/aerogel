@@ -4,7 +4,7 @@ import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
 
 import Events from '@/services/Events';
-import type { AGSnackbarAction } from '@/components/headless/snackbars';
+import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackbars';
 
 import Service from './UI.state';
 import type { Modal, ModalComponent, Snackbar } from './UI.state';
@@ -28,6 +28,12 @@ export const UIComponents = {
 } as const;
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
+
+export interface ShowSnackbarOptions {
+    component?: Component;
+    color?: SnackbarColor;
+    actions?: SnackbarAction[];
+}
 
 export class UIService extends Service {
 
@@ -73,11 +79,11 @@ export class UIService extends Service {
         return result;
     }
 
-    public showSnackbar(message: string, actions: AGSnackbarAction[] = []): void {
+    public showSnackbar(message: string, options: ShowSnackbarOptions = {}): void {
         const snackbar: Snackbar = {
             id: uuid(),
-            properties: { message, actions },
-            component: markRaw(this.requireComponent(UIComponents.Snackbar)),
+            properties: { message, ...options },
+            component: options.component ?? markRaw(this.requireComponent(UIComponents.Snackbar)),
         };
 
         this.setState('snackbars', this.snackbars.concat(snackbar));

@@ -2,8 +2,8 @@
     <div class="flex">
         <slot v-for="(button, i) of buttons" v-bind="(button as unknown as ComponentProps)" :key="i">
             <AGButton
+                color="clear"
                 :url="button.url"
-                clear
                 :title="$td(`errors.report_${button.id}`, button.description)"
                 :aria-label="$td(`errors.report_${button.id}`, button.description)"
                 @click="button.handler"

@@ -6,6 +6,7 @@ import UI, { UIComponents } from '@/ui/UI';
 import { translate, translateWithDefault } from '@/lang/utils';
 
 import Service from './Errors.state';
+import { Colors } from '@/components/constants';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
 
 export class ErrorsService extends Service {
@@ -62,16 +63,19 @@ export class ErrorsService extends Service {
         UI.showSnackbar(
             message ??
                 translateWithDefault('errors.notice', 'Something went wrong, but it\'s not your fault. Try again!'),
-            [
-                {
-                    text: translateWithDefault('errors.viewDetails', 'View details'),
-                    dismiss: true,
-                    handler: () =>
-                        UI.openModal(UI.requireComponent(UIComponents.ErrorReportModal), {
-                            reports: [report],
-                        }),
-                },
-            ],
+            {
+                color: Colors.Danger,
+                actions: [
+                    {
+                        text: translateWithDefault('errors.viewDetails', 'View details'),
+                        dismiss: true,
+                        handler: () =>
+                            UI.openModal(UI.requireComponent(UIComponents.ErrorReportModal), {
+                                reports: [report],
+                            }),
+                    },
+                ],
+            },
         );
 
         this.setState({ logs: [log].concat(this.logs) });

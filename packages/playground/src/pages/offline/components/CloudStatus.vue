@@ -1,6 +1,6 @@
 <template>
     <SolidLogin v-if="$cloud.disconnected" />
-    <AGMarkdown v-else-if="$cloud.syncing" :text="$t('cloud.syncing')" />
+    <AGMarkdown v-else-if="$cloud.syncing" lang-key="cloud.syncing" />
     <span v-else>
         <AGMarkdown
             :text="

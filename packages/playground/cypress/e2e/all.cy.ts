@@ -3,9 +3,9 @@
 
 // If you want to use it, just uncomment these lines:
 // import './content.cy';
+// import './components.cy';
 // import './errors.cy';
 // import './forms.cy';
-// import './modals.cy';
 // import './offline.cy';
 // import './solid.cy';
 // import './storage.cy';
