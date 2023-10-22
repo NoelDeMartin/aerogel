@@ -2,6 +2,7 @@
     "compilerOptions": {
         "target": "esnext",
         "module": "esnext",
+        "skipLibCheck": true,
         "moduleResolution": "node",
         "strict": true,
         "types": [],

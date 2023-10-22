@@ -101,11 +101,10 @@
 </template>
 
 <script setup lang="ts">
+import { Colors } from '@aerogel/core';
 import { invert } from '@noeldemartin/utils';
 import { ref } from 'vue';
-
-import { Colors } from '@/components/constants';
-import type { Color } from '@/components/constants';
+import type { Color } from '@aerogel/core';
 
 const Icons = {
     None: 'none',
