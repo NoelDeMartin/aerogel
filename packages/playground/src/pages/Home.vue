@@ -39,10 +39,6 @@ const sections: Section[] = [
         route: 'forms',
     },
     {
-        langKey: 'home.modals',
-        route: 'modals',
-    },
-    {
         langKey: 'home.storage',
         route: 'storage',
     },

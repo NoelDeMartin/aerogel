@@ -81,6 +81,9 @@ const buttons = computed(() =>
                 handler() {
                     (window as { error?: unknown }).error = props.report.error;
 
+                    // eslint-disable-next-line no-console
+                    console.error(props.report.error);
+
                     UI.showSnackbar(
                         translateWithDefault(
                             'errors.addedToConsole',
