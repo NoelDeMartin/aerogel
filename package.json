@@ -24,6 +24,7 @@
         "dev": "npm run dev -ws --if-present",
         "lint": "npm run lint -ws --if-present",
         "postinstall": "patch-package",
+        "publish-next": "npm run publish-next -ws --if-present",
         "test": "npm run test -ws --if-present"
     },
     "devDependencies": {
