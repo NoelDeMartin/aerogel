@@ -10,7 +10,8 @@ import { objectWithoutEmpty } from '@noeldemartin/utils';
 
 import { booleanProp, objectProp, stringProp } from '@/utils/vue';
 
-const { url, route, routeParams, routeQuery, submit } = defineProps({
+const { href, url, route, routeParams, routeQuery, submit } = defineProps({
+    href: stringProp(),
     url: stringProp(),
     route: stringProp(),
     routeParams: objectProp(() => ({})),
@@ -32,12 +33,12 @@ const component = computed(() => {
         };
     }
 
-    if (url) {
+    if (href || url) {
         return {
             tag: 'a',
             props: {
                 target: '_blank',
-                href: url,
+                href: href || url,
             },
         };
     }

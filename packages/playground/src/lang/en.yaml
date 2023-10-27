@@ -69,17 +69,17 @@ content:
 
         ### Formatting
 
-        You can use **bold**, *italic*, `code`, ...
+        You can use **bold**, *italic*, `code`, [links](https://www.youtube.com/watch?v=4oO97JnzkS8), ...
 
-        ### Lists
+        #### lists...
 
         - One
         - Two
         - Three
 
-        ### Images
+        #### and images!
 
-        ![A cute kitten](http://placekitten.com/300/300)
+        ![A cute kitten](http://placekitten.com/600/300)
 
 forms:
     title: Forms

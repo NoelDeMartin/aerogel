@@ -3,7 +3,7 @@ describe('Formatted Content', () => {
     beforeEach(() => cy.visit('/content'));
 
     it('Shows formatted content', () => {
-        cy.intercept('http://placekitten.com/300/300', { fixture: 'kitten.jpg' });
+        cy.intercept('http://placekitten.com/600/300', { fixture: 'kitten.jpg' });
 
         cy.see('This is an example');
         cy.see('bold', 'strong');
