@@ -137,8 +137,6 @@ export class UIService extends Service {
     }
 
     protected async boot(): Promise<void> {
-        await super.boot();
-
         this.watchModalEvents();
     }
 

@@ -49,7 +49,6 @@ export class CloudService extends Service {
     protected engine: Engine | null = null;
 
     protected async boot(): Promise<void> {
-        await super.boot();
         await Solid.booted;
 
         Solid.isLoggedIn() && this.login(Solid.authenticator);

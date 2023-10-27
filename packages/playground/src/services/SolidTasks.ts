@@ -11,8 +11,6 @@ import Service from './SolidTasks.state';
 export class SolidTasksService extends Service {
 
     protected async boot(): Promise<void> {
-        await super.boot();
-
         Events.on('login', async (session) => {
             const container = await this.findOrCreateTasksContainer(session);
 

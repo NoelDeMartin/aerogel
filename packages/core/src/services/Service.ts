@@ -93,7 +93,8 @@ export default class Service<
         const handleError = (error: unknown) => this._booted.reject(new ServiceBootError(this._name, error));
 
         try {
-            this.boot()
+            this.frameworkBoot()
+                .then(() => this.boot())
                 .then(() => this._booted.resolve())
                 .catch(handleError);
         } catch (error) {
@@ -189,8 +190,12 @@ export default class Service<
         return state;
     }
 
-    protected async boot(): Promise<void> {
+    protected async frameworkBoot(): Promise<void> {
         this.restorePersistedState();
+    }
+
+    protected async boot(): Promise<void> {
+        // Override.
     }
 
     protected restorePersistedState(): void {

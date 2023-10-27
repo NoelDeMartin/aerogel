@@ -7,8 +7,6 @@ import Service from './App.state';
 export class AppService extends Service {
 
     protected async boot(): Promise<void> {
-        await super.boot();
-
         Events.once('application-mounted', () => this.setState({ isMounted: true }));
     }
 

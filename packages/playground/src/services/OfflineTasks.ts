@@ -11,8 +11,6 @@ import Service from './OfflineTasks.state';
 export class OfflineTasksService extends Service {
 
     protected async boot(): Promise<void> {
-        await super.boot();
-
         Events.on('login', () => this.login());
 
         await trackModelCollection(OfflineTask, {

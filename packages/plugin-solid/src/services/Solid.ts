@@ -225,7 +225,6 @@ export class SolidService extends Service {
     }
 
     protected async boot(): Promise<void> {
-        await super.boot();
         await Errors.booted;
 
         if (hasLocationQueryParameter('authenticator')) {
