@@ -1,3 +1,6 @@
+import { basename } from 'path';
+import { stringToTitleCase } from '@noeldemartin/utils';
+
 import App from '@/lib/App';
 import Command from '@/commands/Command';
 import Log from '@/lib/Log';
@@ -30,7 +33,7 @@ export class CreateCommand extends Command {
     private path: string;
     private options: Options;
 
-    constructor(path: string, options: Options) {
+    constructor(path: string, options: Options = {}) {
         super();
 
         this.path = path;
@@ -39,7 +42,7 @@ export class CreateCommand extends Command {
 
     public async run(): Promise<void> {
         const path = this.path;
-        const name = this.options.name ?? 'Aerogel App';
+        const name = this.options.name ?? stringToTitleCase(basename(path));
 
         Shell.setWorkingDirectory(path);
 
