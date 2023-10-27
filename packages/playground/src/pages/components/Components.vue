@@ -21,13 +21,13 @@
             <div class="mt-4 flex items-center gap-2">
                 <span>{{ $t('components.buttons_customWithIcons') }}:</span>
                 <BaseButton icon>
-                    <i-mdi-check class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-check class="h-6 w-6" />
                 </BaseButton>
                 <BaseButton icon color="danger">
-                    <i-mdi-close class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-close class="h-6 w-6" />
                 </BaseButton>
                 <BaseButton icon color="clear">
-                    <i-mdi-help-circle-outline class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-help-circle-outline class="h-6 w-6" />
                 </BaseButton>
             </div>
             <div class="mt-4 flex items-center gap-2">
@@ -39,7 +39,7 @@
                     {{ $t('components.buttons_clickMe') }}
                 </AGButton>
                 <AGButton color="clear">
-                    <i-mdi-help-circle-outline class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-help-circle-outline class="h-6 w-6" />
                 </AGButton>
             </div>
         </section>

@@ -9,7 +9,7 @@
             />
             <BaseButton submit>
                 {{ $t('solid.login') }}
-                <i-mdi-login aria-hidden="true" class="h-4 w-4" />
+                <i-mdi-login class="h-4 w-4" />
             </BaseButton>
         </div>
 

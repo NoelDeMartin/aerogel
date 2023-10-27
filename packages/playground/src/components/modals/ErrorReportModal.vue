@@ -3,7 +3,7 @@
         <div class="px-4 pb-4 pt-5">
             <h2 class="flex justify-between gap-4">
                 <div class="flex items-center gap-2">
-                    <i-zondicons-exclamation-solid class="h-5 w-5 text-red-600" aria-hidden="true" />
+                    <i-zondicons-exclamation-solid class="h-5 w-5 text-red-600" />
                     <AGErrorReportModalTitle
                         class="text-lg font-semibold leading-6 text-gray-900"
                         :report="report"
@@ -19,7 +19,7 @@
                             :title="$t('errors.previousReport')"
                             @click="activeReportIndex--"
                         >
-                            <i-zondicons-cheveron-left aria-hidden="true" class="h-4 w-4" />
+                            <i-zondicons-cheveron-left class="h-4 w-4" />
                         </BaseButton>
                         <BaseButton
                             icon
@@ -29,7 +29,7 @@
                             :title="$t('errors.nextReport')"
                             @click="activeReportIndex++"
                         >
-                            <i-zondicons-cheveron-right aria-hidden="true" class="h-4 w-4" />
+                            <i-zondicons-cheveron-right class="h-4 w-4" />
                         </BaseButton>
                     </span>
                 </div>

@@ -13,12 +13,16 @@ export default defineConfig({
     base: basePath,
     plugins: [
         Aerogel({ name: 'Aerogel', static404Redirect: isProduction }),
-        Icons(),
-        I18n({ include: resolve(__dirname, './src/lang/**/*.yaml') }),
         Components({
             dirs: ['src/pages', 'src/components'],
             dts: false,
             resolvers: [AerogelResolver(), IconsResolver()],
+        }),
+        I18n({ include: resolve(__dirname, './src/lang/**/*.yaml') }),
+        Icons({
+            iconCustomizer(_, __, props) {
+                props['aria-hidden'] = 'true';
+            },
         }),
     ],
     resolve: {

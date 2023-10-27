@@ -1,7 +1,7 @@
 <template>
     <BaseModal :cancellable="false">
         <div class="flex items-center justify-center gap-2">
-            <i-svg-spinners:90-ring-with-bg class="h-6 w-6" aria-hidden="true" />
+            <i-svg-spinners:90-ring-with-bg class="h-6 w-6" />
             <AGMarkdown :text="renderedMessage" />
         </div>
     </BaseModal>

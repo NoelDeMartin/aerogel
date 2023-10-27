@@ -7,13 +7,9 @@
                 :small="small"
                 :icon="icon !== 'none'"
             >
-                <i-mdi-check v-if="icon === 'check'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" aria-hidden="true" />
-                <i-mdi-close v-else-if="icon === 'close'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" aria-hidden="true" />
-                <i-mdi-help-circle-outline
-                    v-else-if="icon === 'help'"
-                    :class="small ? 'h-4 w-4' : 'h-6 w-6'"
-                    aria-hidden="true"
-                />
+                <i-mdi-check v-if="icon === 'check'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" />
+                <i-mdi-close v-else-if="icon === 'close'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" />
+                <i-mdi-help-circle-outline v-else-if="icon === 'help'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" />
                 <span v-else>{{ content }}</span>
             </BaseButton>
 
@@ -69,13 +65,13 @@
         <Variant title="Icons">
             <div class="flex items-center gap-2 p-1">
                 <BaseButton icon>
-                    <i-mdi-check class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-check class="h-6 w-6" />
                 </BaseButton>
                 <BaseButton icon>
-                    <i-mdi-close class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-close class="h-6 w-6" />
                 </BaseButton>
                 <BaseButton icon>
-                    <i-mdi-help-circle-outline class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-help-circle-outline class="h-6 w-6" />
                 </BaseButton>
             </div>
         </Variant>
@@ -83,17 +79,17 @@
         <Variant title="Text + Icons">
             <div class="flex items-center gap-2 p-1">
                 <BaseButton>
-                    <i-mdi-check class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-check class="h-6 w-6" />
                     Complete
                 </BaseButton>
                 <BaseButton color="danger">
-                    <i-mdi-alert class="h-4 w-4" aria-hidden="true" />
+                    <i-mdi-alert class="h-4 w-4" />
                     Danger
-                    <i-mdi-alert class="h-4 w-4" aria-hidden="true" />
+                    <i-mdi-alert class="h-4 w-4" />
                 </BaseButton>
                 <BaseButton color="clear">
                     Log out
-                    <i-mdi-login class="h-6 w-6" aria-hidden="true" />
+                    <i-mdi-login class="h-6 w-6" />
                 </BaseButton>
             </div>
         </Variant>

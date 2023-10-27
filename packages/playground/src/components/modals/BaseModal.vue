@@ -15,7 +15,7 @@
                         :aria-label="$t('ui.close')"
                         @click="close()"
                     >
-                        <i-mdi-close class="h-4 w-4" aria-hidden="true" />
+                        <i-mdi-close class="h-4 w-4" />
                     </BaseButton>
                     <AGHeadlessModalTitle
                         v-if="renderedTitle"

@@ -14,7 +14,11 @@ export default defineConfig({
             resolvers: [AerogelResolver(), IconsResolver()],
         }),
         I18n({ include: resolve(__dirname, './src/lang/**/*.yaml') }),
-        Icons(),
+        Icons({
+            iconCustomizer(_, __, props) {
+                props['aria-hidden'] = 'true';
+            },
+        }),
     ],
     resolve: {
         alias: {

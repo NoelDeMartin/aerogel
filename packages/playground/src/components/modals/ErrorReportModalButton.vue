@@ -1,6 +1,6 @@
 <template>
     <BaseButton color="clear" class="group whitespace-nowrap">
-        <component :is="iconComponent" class="h-4 w-4" aria-hidden="true" />
+        <component :is="iconComponent" class="h-4 w-4" />
         <span
             v-measure="() => (measured = true)"
             :class="{
