@@ -9,12 +9,12 @@
         "cy:run": "cypress run",
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:4000 cy:run",
         "dev": "vite",
-        "dev:serve-pod": "cd ../solid-server && npx community-solid-server -c @css:config/file-no-setup.json -p 4000 -f ./data",
+        "dev:serve-pod": "community-solid-server -c @css:config/file.json -p 4000 -f ./solid-data",
         "histoire:dev": "histoire dev",
         "histoire:prod": "histoire build",
         "lint": "noeldemartin-lint src",
         "test:serve-app": "vite --port 5001",
-        "test:serve-pod": "cd ../solid-server && npx community-solid-server -p 4000 -l warn"
+        "test:serve-pod": "community-solid-server -p 4000 -l warn"
     },
     "dependencies": {
         "@aerogel/core": "*",
@@ -37,6 +37,7 @@
         "@aerogel/vite": "*",
         "@histoire/plugin-vue": "^0.16.1",
         "@inrupt/solid-client-authn-core": "^1.17.2",
+        "@solid/community-server": "^7.0.1",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "eslint-plugin-vue": "^9.11.0",

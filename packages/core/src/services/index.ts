@@ -24,13 +24,16 @@ export interface Services extends DefaultServices {}
 
 export async function bootServices(app: VueApp, services: Record<string, Service>): Promise<void> {
     await Promise.all(
-        Object.entries(services).map(async ([_, service]) => {
-            // eslint-disable-next-line no-console
-            await service.launch().catch((error) => console.error(error));
+        Object.entries(services).map(async ([name, service]) => {
+            await service
+                .launch()
+                .catch((error) => app.config.errorHandler?.(error, null, `Failed launching ${name}.`));
         }),
     );
 
     Object.assign(app.config.globalProperties, services);
+
+    App.development && Object.assign(window, services);
 }
 
 export default definePlugin({

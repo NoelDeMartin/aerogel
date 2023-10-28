@@ -1,8 +1,12 @@
-import { cssPodUrl, cyCssLogin } from '@cy/support/community-solid-server';
+import { cssPodUrl } from '@aerogel/cypress';
 
 describe('Offline First', () => {
 
-    beforeEach(() => cy.visit('/offline'));
+    beforeEach(() => {
+        cy.resetSoukai();
+        cy.resetSolid();
+        cy.visit('/offline');
+    });
 
     it('Manipulates Tasks', () => {
         cy.intercept('PATCH', cssPodUrl('/alice/tasks/*')).as('updateTask');
@@ -10,7 +14,7 @@ describe('Offline First', () => {
 
         // Log in
         cy.ariaInput('Login url').type(`${cssPodUrl()}{enter}`);
-        cyCssLogin();
+        cy.cssLogin();
         cy.see('You are logged in');
         cy.see(cssPodUrl('/alice/profile/card#me'));
 
@@ -31,6 +35,8 @@ describe('Offline First', () => {
         cy.get('@updateTask.1').its('request.body').should('contain', 'Hello World!');
         cy.get('@updateTask.2').its('request.body').should('contain', 'It works!');
 
+        cy.matchImageSnapshot();
+
         // Deletes local tasks
         cy.ariaLabel('Delete \'It works!\'').click();
         cy.dontSee('It works!');
@@ -45,8 +51,6 @@ describe('Offline First', () => {
         cy.get('@deleteTask.all').should('have.length', 0);
         cy.get('@updateTask.all').should('have.length', 3);
         cy.get('@updateTask.3').its('request.body').should('contain', 'Tombstone');
-
-        cy.matchImageSnapshot();
     });
 
 });

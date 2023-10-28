@@ -5,7 +5,6 @@
             :text="title"
             as="h2"
             class="font-semibold"
-            raw
             inline
         />
         <AGMarkdown :text="message" />

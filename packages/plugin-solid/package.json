@@ -34,7 +34,7 @@
         "soukai-solid": "*"
     },
     "dependencies": {
-        "@inrupt/solid-client-authn-browser": "^1.17.1",
+        "@inrupt/solid-client-authn-browser": "^1.17.3",
         "@noeldemartin/solid-utils": "0.3.0-next.5176c3d9efdc3cf9d06772d0c55c24b2eb49893a",
         "@noeldemartin/utils": "0.4.0-next.ac00beaecf32bb02ed8e335225d7948d946d73bd",
         "vue": "^3.3.0"

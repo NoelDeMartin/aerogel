@@ -34,7 +34,7 @@ export default class InruptAuthenticator extends Authenticator {
     }
 
     protected async restoreSession(): Promise<void> {
-        const { fetch, handleIncomingRedirect, login, logout } = await import('@inrupt/solid-client-authn-browser');
+        const { fetch, handleIncomingRedirect, login, logout } = await import('./InruptAuthenticator.lazy');
 
         this._fetch = fetch;
         this._login = login;

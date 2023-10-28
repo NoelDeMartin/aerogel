@@ -1,8 +1,12 @@
-import { cssPodUrl, cyCssLogin } from '@cy/support/community-solid-server';
+import { cssPodUrl } from '@aerogel/cypress';
 
 describe('Solid', () => {
 
-    beforeEach(() => cy.visit('/solid'));
+    beforeEach(() => {
+        cy.resetSoukai();
+        cy.resetSolid();
+        cy.visit('/solid');
+    });
 
     it('Manipulates Tasks', () => {
         cy.intercept('PATCH', cssPodUrl('/alice/tasks/*')).as('updateTask');
@@ -10,7 +14,7 @@ describe('Solid', () => {
 
         // Log in
         cy.ariaInput('Login url').type(`${cssPodUrl()}{enter}`);
-        cyCssLogin();
+        cy.cssLogin();
         cy.see('You are logged in');
         cy.see(cssPodUrl('/alice/profile/card#me'));
 
@@ -23,6 +27,8 @@ describe('Solid', () => {
         cy.get('@updateTask.all').should('have.length', 2);
         cy.get('@updateTask.1').its('request.body').should('contain', 'Hello World!');
         cy.get('@updateTask.2').its('request.body').should('contain', 'It works!');
+
+        cy.matchImageSnapshot();
 
         // Deletes tasks
         cy.ariaLabel('Delete \'It works!\'').click();
@@ -37,8 +43,6 @@ describe('Solid', () => {
         });
         cy.dontSee('You are logged in');
         cy.see('Login');
-
-        cy.matchImageSnapshot();
     });
 
 });

@@ -69,7 +69,9 @@ export default abstract class Authenticator {
     }
 
     public async boot(): Promise<void> {
-        if (this.booted) return this.booted;
+        if (this.booted) {
+            return this.booted;
+        }
 
         this.booted = new PromisedValue();
 

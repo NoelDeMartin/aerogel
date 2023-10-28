@@ -1,6 +1,6 @@
 <template>
     <AGHeadlessSnackbar class="flex flex-row items-center justify-center gap-3 p-4" :class="styleClasses">
-        <AGMarkdown :text="message" raw />
+        <AGMarkdown :text="message" inline />
         <AGButton
             v-for="(action, i) of actions"
             :key="i"

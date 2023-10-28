@@ -83,7 +83,7 @@ export class SolidService extends Service {
     public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<boolean> {
         authenticatorName = authenticatorName ?? this.preferredAuthenticator ?? 'default';
 
-        if (App.isDevelopment && loginUrl === 'devserver') {
+        if (App.development && loginUrl === 'devserver') {
             loginUrl = 'http://localhost:4000';
         }
 

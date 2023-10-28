@@ -1,7 +1,7 @@
 <template>
     <AGHeadlessSnackbar class="overflow-hidden rounded-lg shadow-lg ring-1 ring-opacity-5" :class="colorClasses">
         <div class="flex items-center gap-3 p-4">
-            <AGMarkdown :text="message" raw />
+            <AGMarkdown :text="message" inline />
 
             <BaseButton
                 v-for="(action, i) of actions"

@@ -21,7 +21,7 @@
                         v-if="renderedTitle"
                         class="mr-12 text-base font-semibold leading-6 text-gray-900"
                     >
-                        <AGMarkdown :text="renderedTitle" raw inline />
+                        <AGMarkdown :text="renderedTitle" inline />
                     </AGHeadlessModalTitle>
                     <div :class="{ 'mt-3': renderedTitle }">
                         <slot :close="close" />

@@ -5,6 +5,7 @@ import installCustomQueries from '@/support/queries';
 
 export * from '@/support/commands';
 export * from '@/support/queries';
+export * from '@/support/solid';
 
 export default function install(): void {
     addMatchImageSnapshotCommand();

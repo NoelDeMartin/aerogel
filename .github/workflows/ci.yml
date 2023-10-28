@@ -15,11 +15,7 @@ jobs:
             - run: npm run lint
             - run: npm run test
             - name: Cypress
-              run: |
-                  cd ./packages/solid-server
-                  npm install
-                  cd ../../
-                  npm run cy:test-snapshots:ci
+              run: npm run cy:test-snapshots:ci
             - name: Upload Cypress screenshots
               uses: actions/upload-artifact@v3
               if: ${{ failure() }}

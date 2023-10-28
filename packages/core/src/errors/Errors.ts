@@ -3,7 +3,7 @@ import { JSError, facade, isObject, objectWithoutEmpty, toString } from '@noelde
 import App from '@/services/App';
 import ServiceBootError from '@/errors/ServiceBootError';
 import UI, { UIComponents } from '@/ui/UI';
-import { translate, translateWithDefault } from '@/lang/utils';
+import { translateWithDefault } from '@/lang/utils';
 
 import Service from './Errors.state';
 import { Colors } from '@/components/constants';
@@ -35,7 +35,7 @@ export class ErrorsService extends Service {
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
-        if (App.isDevelopment || App.isTesting) {
+        if (App.development || App.testing) {
             this.logError(error);
         }
 
@@ -105,6 +105,22 @@ export class ErrorsService extends Service {
         });
     }
 
+    public getErrorMessage(error: ErrorSource): string {
+        if (typeof error === 'string') {
+            return error;
+        }
+
+        if (error instanceof Error || error instanceof JSError) {
+            return error.message;
+        }
+
+        if (isObject(error)) {
+            return toString(error['message'] ?? error['description'] ?? 'Unknown error object');
+        }
+
+        return translateWithDefault('errors.unknown', 'Unknown Error');
+    }
+
     private logError(error: unknown): void {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -125,14 +141,20 @@ export class ErrorsService extends Service {
 
         if (isObject(error)) {
             return objectWithoutEmpty({
-                title: toString(error['name'] ?? error['title'] ?? translate('errors.unknown')),
-                description: toString(error['message'] ?? error['description'] ?? ''),
+                title: toString(
+                    error['name'] ?? error['title'] ?? translateWithDefault('errors.unknown', 'Unknown Error'),
+                ),
+                description: toString(
+                    error['message'] ??
+                        error['description'] ??
+                        translateWithDefault('errors.unknownDescription', 'Unknown error object'),
+                ),
                 error,
             });
         }
 
         return {
-            title: translate('errors.unknown'),
+            title: translateWithDefault('errors.unknown', 'Unknown Error'),
             error,
         };
     }

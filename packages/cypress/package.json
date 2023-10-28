@@ -9,7 +9,7 @@
     "scripts": {
         "build": "rm dist -rf && npm run build:js && npm run build:types && npm run build:plugin",
         "build:js": "noeldemartin-build-javascript",
-        "build:plugin": "esbuild src/plugin.ts --format=cjs > dist/plugin.js",
+        "build:plugin": "esbuild src/plugin.ts --format=cjs --bundle --external:soukai --external:soukai-solid --external:@inrupt/solid-client-authn-core --external:@simonsmith/cypress-image-snapshot/plugin > dist/plugin.js",
         "build:types": "noeldemartin-build-types && sed -i \"1i\\/// <reference types=\\\"@simonsmith/cypress-image-snapshot/command\\\" />\" ./dist/aerogel-cypress.d.ts",
         "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src"

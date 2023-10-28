@@ -1,5 +1,5 @@
 <template>
-    <AGMarkdown :text="text" heading />
+    <AGMarkdown :text="text" inline />
 </template>
 
 <script setup lang="ts">

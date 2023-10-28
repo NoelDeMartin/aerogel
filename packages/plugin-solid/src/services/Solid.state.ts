@@ -45,7 +45,7 @@ export default defineServiceState({
         fetch(): Fetch {
             return this.authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window);
         },
-        error(state) {
+        error(state): ErrorSource | null {
             if (state.loginError) {
                 return state.loginError ?? null;
             }

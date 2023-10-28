@@ -10,7 +10,7 @@ export default defineServiceState({
         isMounted: false,
     },
     computed: {
-        isDevelopment: (state) => state.environment === 'development',
-        isTesting: (state) => state.environment === 'testing',
+        development: (state) => state.environment === 'development',
+        testing: (state) => state.environment === 'testing',
     },
 });

@@ -17,7 +17,7 @@ export class LangService extends Service {
         this.provider = {
             translate: (key) => {
                 // eslint-disable-next-line no-console
-                App.isDevelopment && console.warn('Lang provider is missing');
+                App.development && console.warn('Lang provider is missing');
 
                 return key;
             },
