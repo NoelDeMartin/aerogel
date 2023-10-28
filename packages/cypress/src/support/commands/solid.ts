@@ -3,6 +3,10 @@ export function cssLogin(): void {
     cy.get('#password').type('secret');
     cy.contains('button', 'Log in').click();
     cy.see('http://localhost:4000/alice/profile/card#me');
+
+    // TODO wait for proper event
+    cy.wait(200);
+
     cy.contains('button', 'Authorize').click();
 }
 
