@@ -3,9 +3,10 @@ describe('Components', () => {
     beforeEach(() => cy.visit('/components'));
 
     it('All', () => {
-        cy.matchImageSnapshot('Components 1');
-        cy.contains('h2', 'Snackbars').scrollIntoView();
-        cy.matchImageSnapshot('Components 2');
+        // TODO wait fonts to load instead
+        cy.wait(200);
+
+        cy.matchImageSnapshot();
     });
 
     it('Modals', () => {
