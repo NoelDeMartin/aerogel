@@ -18,6 +18,7 @@ export class Editor {
         this.project.addSourceFilesAtPaths('src/**/*.ts');
         this.project.addSourceFilesAtPaths('tailwind.config.js');
         this.project.addSourceFilesAtPaths('vite.config.ts');
+        this.project.addSourceFilesAtPaths('package.json');
     }
 
     public addSourceFile(path: string): void {
@@ -36,7 +37,7 @@ export class Editor {
             await Promise.all(
                 arrayFrom(this.modifiedFiles).map(async (file) => {
                     usingPrettier && (await Shell.run(`npx prettier ${file} --write`));
-                    usingESLint && (await Shell.run(`npx eslint ${file} --fix`));
+                    file.match(/\.(ts|js|vue)$/) && usingESLint && (await Shell.run(`npx eslint ${file} --fix`));
                 }),
             );
         });
@@ -45,7 +46,11 @@ export class Editor {
     public async save(file: SourceFile): Promise<void> {
         await file.save();
 
-        this.modifiedFiles.add(file.getFilePath());
+        this.addModifiedFile(file.getFilePath());
+    }
+
+    public addModifiedFile(path: string): void {
+        this.modifiedFiles.add(path);
     }
 
 }
