@@ -12,7 +12,7 @@ export default defineServiceState({
         autoReconnect: false,
         dismissed: false,
         ignorePreviousSessionError: false,
-        loginError: null as ErrorSource | null,
+        loginStartupError: null as ErrorSource | null,
         loginOngoing: false,
         preferredAuthenticator: null as AuthenticatorName | null,
         previousSession: null as {
@@ -46,8 +46,8 @@ export default defineServiceState({
             return this.authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window);
         },
         error(state): ErrorSource | null {
-            if (state.loginError) {
-                return state.loginError ?? null;
+            if (state.loginStartupError) {
+                return state.loginStartupError ?? null;
             }
 
             if (state.ignorePreviousSessionError) {

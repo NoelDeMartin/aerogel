@@ -15,6 +15,7 @@ import {
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { App, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
 import { SolidACLAuthorization, SolidContainer, SolidTypeIndex } from 'soukai-solid';
+import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
@@ -26,6 +27,15 @@ import type Authenticator from '@/auth/Authenticator';
 import type { AuthSession } from '@/auth/Authenticator';
 
 import Service from './Solid.state';
+
+export type LoginOptions = {
+    authenticator?: AuthenticatorName;
+    onError?(error: ErrorSource): unknown;
+};
+
+export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
+    force?: boolean;
+};
 
 export class SolidService extends Service {
 
@@ -80,8 +90,12 @@ export class SolidService extends Service {
         });
     }
 
-    public async login(loginUrl: string, authenticatorName?: AuthenticatorName): Promise<boolean> {
-        authenticatorName = authenticatorName ?? this.preferredAuthenticator ?? 'default';
+    public async login(loginUrl: string, options: LoginOptions = {}): Promise<boolean> {
+        const authenticatorName = options.authenticator ?? this.preferredAuthenticator ?? 'default';
+        const handleLoginError =
+            options.onError ??
+            ((error: ErrorSource) =>
+                App.isMounted ? Errors.report(error) : this.setState({ loginStartupError: error }));
 
         if (App.development && loginUrl === 'devserver') {
             loginUrl = 'http://localhost:4000';
@@ -96,6 +110,11 @@ export class SolidService extends Service {
         }
 
         const staleTimeout = setTimeout(() => (this.loginStale = true), 10000);
+        const initialState = {
+            dismissed: this.dismissed,
+            ignorePreviousSessionError: this.ignorePreviousSessionError,
+            previousSession: this.previousSession,
+        };
         this.loginOngoing = true;
 
         try {
@@ -117,31 +136,41 @@ export class SolidService extends Service {
                 },
             });
 
+            // This should redirect away from the app, so in most cases
+            // the rest of the code won't be reached.
             await authenticator.login(oidcIssuerUrl);
 
             return true;
         } catch (error) {
+            this.setState(initialState);
+
             if (error instanceof AuthenticationCancelledError) {
                 return false;
             }
 
-            App.isMounted ? Errors.report(error) : this.setState({ loginError: error });
+            handleLoginError(error);
 
             return false;
         } finally {
             clearTimeout(staleTimeout);
 
-            this.loginOngoing = false;
-            this.loginStale = false;
+            this.setState({
+                loginOngoing: false,
+                loginStale: false,
+            });
         }
     }
 
-    public async reconnect(force: boolean = false): Promise<void> {
+    public async reconnect(options: ReconnectOptions = {}): Promise<void> {
+        const { force, ...loginOptions } = options;
         if (this.loggedIn || !this.previousSession || (this.previousSession.error !== null && !force)) {
             return;
         }
 
-        await this.login(this.previousSession.loginUrl, this.previousSession.authenticator);
+        await this.login(this.previousSession.loginUrl, {
+            authenticator: this.previousSession.authenticator,
+            ...loginOptions,
+        });
     }
 
     public async logout(force: boolean = false): Promise<void> {

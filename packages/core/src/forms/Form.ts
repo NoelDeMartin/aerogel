@@ -92,11 +92,11 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return this.valid;
     }
 
-    public reset(): void {
+    public reset(options: { keepData?: boolean; keepErrors?: boolean } = {}): void {
         this._submitted.value = false;
 
-        this.resetData();
-        this.resetErrors();
+        options.keepData || this.resetData();
+        options.keepErrors || this.resetErrors();
     }
 
     public submit(): boolean {
