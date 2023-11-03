@@ -40,7 +40,7 @@
                         {{ $td('solid.login', 'Login') }}
                     </AGButton>
                 </AGForm>
-                <AGButton v-if="$solid.wasLoggedIn" class="mt-3" @click="$solid.reconnect(true)">
+                <AGButton v-if="$solid.wasLoggedIn" class="mt-3" @click="$solid.reconnect({ force: true })">
                     {{ $td('solid.reconnect', 'Reconnect') }}
                 </AGButton>
                 <AGMarkdown
