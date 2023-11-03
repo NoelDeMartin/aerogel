@@ -91,7 +91,9 @@ export class Solid extends Plugin {
     protected async updateGitIgnore(): Promise<void> {
         Log.info('Updating .gitignore');
 
-        File.write('.gitignore', 'solid-data\n');
+        const gitignore = File.read('.gitignore') ?? '';
+
+        File.write('.gitignore', `${gitignore}/solid-data\n`);
     }
 
     protected getTailwindContentArray(tailwindConfig: SourceFile): ArrayLiteralExpression | null {
