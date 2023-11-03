@@ -7,7 +7,7 @@
     >
         <div class="fixed inset-0 flex items-center justify-center p-8">
             <AGHeadlessModalPanel class="flex max-h-full max-w-full flex-col overflow-hidden bg-white">
-                <div class="flex max-h-full flex-col overflow-auto p-4">
+                <div class="flex max-h-full flex-col overflow-auto p-4" v-bind="$attrs">
                     <slot :close="close" />
                 </div>
             </AGHeadlessModalPanel>
@@ -28,6 +28,7 @@ import AGHeadlessModalPanel from '../headless/modals/AGHeadlessModalPanel.vue';
 
 const $headlessModal = ref<IAGHeadlessModal>();
 
+defineOptions({ inheritAttrs: false });
 defineProps({ cancellable: booleanProp(true) });
 defineExpose<IAGModal>({
     close: async () => $headlessModal.value?.close(),
