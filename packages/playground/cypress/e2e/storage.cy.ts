@@ -1,7 +1,7 @@
 describe('Storage', () => {
 
     beforeEach(() => {
-        cy.resetSoukai();
+        cy.soukaiReset();
         cy.visit('/storage');
     });
 

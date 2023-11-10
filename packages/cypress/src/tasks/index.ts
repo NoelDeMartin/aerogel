@@ -1,5 +1,6 @@
-import resetSolid from './reset-solid';
+import solidReset from './solid-reset';
+import solidRequest from './solid-request';
 
 export function addSolidTasks(on: Cypress.PluginEvents): void {
-    on('task', { resetSolid });
+    on('task', { solidReset, solidRequest });
 }

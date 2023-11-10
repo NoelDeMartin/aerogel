@@ -3,8 +3,8 @@ import { cssPodUrl } from '@aerogel/cypress';
 describe('Solid', () => {
 
     beforeEach(() => {
-        cy.resetSoukai();
-        cy.resetSolid();
+        cy.soukaiReset();
+        cy.solidReset();
         cy.visit('/solid');
     });
 
@@ -15,8 +15,7 @@ describe('Solid', () => {
         // Log in
         cy.ariaInput('Login url').type(`${cssPodUrl()}{enter}`);
         cy.cssLogin();
-        cy.see('You are logged in');
-        cy.see(cssPodUrl('/alice/profile/card#me'));
+        cy.see('You are logged in as Alice Cooper!');
 
         // Creates tasks
         cy.ariaInput('Task name').type('Hello World!{enter}');

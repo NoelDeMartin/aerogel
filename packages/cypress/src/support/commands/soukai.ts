@@ -1,5 +1,5 @@
 import { IndexedDBEngine } from 'soukai';
 
-export function resetSoukai(): void {
+export function soukaiReset(): void {
     new IndexedDBEngine().purgeDatabase();
 }
