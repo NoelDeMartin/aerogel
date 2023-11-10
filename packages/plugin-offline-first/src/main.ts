@@ -13,6 +13,7 @@ export type OfflineFirstServices = typeof services;
 
 export default function offlineFirst(): Plugin {
     return {
+        name: '@aerogel/offline-first',
         async install(app) {
             await bootServices(app, services);
         },

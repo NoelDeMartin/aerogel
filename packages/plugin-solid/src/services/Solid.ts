@@ -13,8 +13,9 @@ import {
     tap,
     urlRoot,
 } from '@noeldemartin/utils';
-import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { App, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
+import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
+import { setEngine } from 'soukai';
 import { SolidACLAuthorization, SolidContainer, SolidTypeIndex } from 'soukai-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
@@ -342,6 +343,8 @@ export class SolidService extends Service {
                 ) {
                     await this.refreshUserProfile();
                 }
+
+                App.plugin('@aerogel/offline-first') || setEngine(session.authenticator.engine);
 
                 SolidACLAuthorization.setEngine(session.authenticator.engine);
 
