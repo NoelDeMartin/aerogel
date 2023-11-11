@@ -1,7 +1,7 @@
 import { buildAuthenticatedFetch, createDpopHeader, generateDpopKeyPair } from '@inrupt/solid-client-authn-core';
 import { fail, objectWithoutEmpty } from '@noeldemartin/utils';
 
-import { cssPodUrl } from '../support/solid';
+import { cssPodWebId, cssUrl } from '../support/solid';
 
 import { log } from './utils';
 
@@ -42,7 +42,7 @@ async function getCredentials(authorization: string): Promise<{ id: string; secr
             'Authorization': `CSS-Account-Token ${authorization}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ webId: cssPodUrl('/alice/profile/card#me') }),
+        body: JSON.stringify({ webId: cssPodWebId() }),
     });
     const json = (await response.json()) as CSSCredentialsResponse;
 
@@ -57,7 +57,7 @@ async function getCredentials(authorization: string): Promise<{ id: string; secr
 }
 
 async function controlUrl(key: string, authorization?: string): Promise<string> {
-    const response = await fetch(cssPodUrl('/.account/'), {
+    const response = await fetch(cssUrl('/.account/'), {
         headers: objectWithoutEmpty({
             Authorization: authorization && `CSS-Account-Token ${authorization}`,
         }),
@@ -76,7 +76,7 @@ export async function authenticate(): Promise<typeof fetch> {
         log('Getting authenticated fetch');
         const credentials = await getCredentials(authorization);
         const authString = `${encodeURIComponent(credentials.id)}:${encodeURIComponent(credentials.secret)}`;
-        const tokenUrl = cssPodUrl('/.oidc/token');
+        const tokenUrl = cssUrl('/.oidc/token');
         const dpopKey = await generateDpopKeyPair();
         const dpop = await createDpopHeader(tokenUrl, 'POST', dpopKey);
         const response = await fetch(tokenUrl, {

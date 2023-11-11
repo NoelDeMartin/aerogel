@@ -17,5 +17,7 @@ export async function bootstrapApplication(rootComponent: Component, options: Ae
     await installPlugins(plugins, app, options);
 
     app.mount('#app');
+    app._container?.classList.remove('loading');
+
     Events.emit('application-mounted');
 }

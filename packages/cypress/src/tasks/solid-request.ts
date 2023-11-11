@@ -4,7 +4,7 @@ import { authenticate } from './solid-utils';
 import { defineTask, log } from './utils';
 
 export default defineTask(async (...args: GetClosureArgs<typeof fetch>) => {
-    log('Running request...');
+    log(`Running request for ${args[0]}...`);
 
     const authenticatedFetch = await authenticate();
     const response = await authenticatedFetch(...args);

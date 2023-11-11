@@ -7,10 +7,10 @@ import { authenticate } from './solid-utils';
 import { defineTask, log } from './utils';
 
 const DEFAULT_POD_DOCUMENTS = [
-    cssPodUrl('/alice/'),
-    cssPodUrl('/alice/profile/'),
-    cssPodUrl('/alice/profile/card'),
-    cssPodUrl('/alice/README'),
+    cssPodUrl('/'),
+    cssPodUrl('/profile/'),
+    cssPodUrl('/profile/card'),
+    cssPodUrl('/README'),
 ];
 
 async function deleteContainer(container: SolidContainer): Promise<void> {
@@ -61,9 +61,9 @@ export default defineTask(async () => {
     bootSolidModels();
     setEngine(new SolidEngine(authenticatedFetch));
 
-    await deleteContainer(await SolidContainer.findOrFail(cssPodUrl('/alice/')));
+    await deleteContainer(await SolidContainer.findOrFail(cssPodUrl('/')));
     await replaceDocument(
-        cssPodUrl('/alice/profile/card'),
+        cssPodUrl('/profile/card'),
         `
             @prefix foaf: <http://xmlns.com/foaf/0.1/>.
             @prefix solid: <http://www.w3.org/ns/solid/terms#>.

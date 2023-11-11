@@ -1,4 +1,4 @@
-import { cssPodUrl } from '@aerogel/cypress';
+import { cssPodUrl, cssUrl } from '@aerogel/cypress';
 
 describe('Offline First', () => {
 
@@ -9,11 +9,11 @@ describe('Offline First', () => {
     });
 
     it('Manipulates Tasks', () => {
-        cy.intercept('PATCH', cssPodUrl('/alice/tasks/*')).as('updateTask');
-        cy.intercept('DELETE', cssPodUrl('/alice/tasks/*')).as('deleteTask');
+        cy.intercept('PATCH', cssPodUrl('/tasks/*')).as('updateTask');
+        cy.intercept('DELETE', cssPodUrl('/tasks/*')).as('deleteTask');
 
         // Log in
-        cy.ariaInput('Login url').type(`${cssPodUrl()}{enter}`);
+        cy.ariaInput('Login url').type(`${cssUrl()}{enter}`);
         cy.cssLogin();
         cy.see('You are logged in as Alice Cooper!');
 

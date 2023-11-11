@@ -1,9 +1,9 @@
-import { cssPodUrl } from '@/support/solid';
+import { cssPodUrl, cssUrl } from '@/support/solid';
 import type { GetClosureArgs } from '@noeldemartin/utils';
 
 export function createSolidDocument(path: string, fixture: string): void {
     cy.fixture(fixture).then((body) =>
-        cy.solidRequest(cssPodUrl(`/alice${path}`), {
+        cy.solidRequest(cssPodUrl(path), {
             method: 'PUT',
             headers: { 'Content-Type': 'text/turtle' },
             body,
@@ -11,19 +11,26 @@ export function createSolidDocument(path: string, fixture: string): void {
 }
 
 export function createSolidContainer(path: string, name: string): void {
-    cy.solidRequest(cssPodUrl(`/alice${path}`), {
+    const containerUrl = cssPodUrl(path);
+
+    cy.solidRequest(containerUrl, {
         method: 'PUT',
         headers: {
             'Content-Type': 'text/turtle',
             'Link': '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"',
             'If-None-Match': '*',
         },
-        body: `<> <http://www.w3.org/2000/01/rdf-schema#label> "${name}" .`,
+    });
+
+    cy.solidRequest(`${containerUrl}.meta`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/sparql-update' },
+        body: `INSERT DATA { <${containerUrl}> <http://www.w3.org/2000/01/rdf-schema#label> "${name}" . }`,
     });
 }
 
 export function cssLogin(): void {
-    cy.origin(cssPodUrl(), () => {
+    cy.origin(cssUrl(), () => {
         cy.get('#email').type('alice@example.com');
         cy.get('#password').type('secret');
         cy.contains('button', 'Log in').click();
@@ -34,6 +41,8 @@ export function cssLogin(): void {
 
         cy.contains('button', 'Authorize').click();
     });
+
+    cy.waitForReload();
 }
 
 export function solidReset(): void {
@@ -46,7 +55,7 @@ export function solidRequest(...args: GetClosureArgs<typeof fetch>): Cypress.Cha
 
 export function updateSolidDocument(path: string, fixture: string): void {
     cy.fixture(fixture).then((body) =>
-        cy.solidRequest(cssPodUrl(`/alice${path}`), {
+        cy.solidRequest(cssPodUrl(path), {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/sparql-update' },
             body,

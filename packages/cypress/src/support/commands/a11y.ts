@@ -1,3 +1,9 @@
+export type SeeOptions = Partial<
+    Cypress.Timeoutable & {
+        srOnly: boolean;
+    }
+>;
+
 export function dontSee(text: string): void {
     cy.contains(text).should('not.exist');
 }
@@ -6,20 +12,16 @@ export function press(label: string, selector: string = 'button, a, label'): voi
     cy.contains(selector, label).click();
 }
 
-export function see(text: string, options?: Partial<Cypress.Timeoutable>): void;
-export function see(text: string, selector: string, options?: Partial<Cypress.Timeoutable>): void;
-export function see(
-    text: string,
-    selectorOrOptions: string | Partial<Cypress.Timeoutable> = {},
-    options: Partial<Cypress.Timeoutable> = {},
-): void {
-    if (typeof selectorOrOptions === 'string') {
-        cy.contains(selectorOrOptions, text, options).scrollIntoView().should('be.visible');
+export function see(text: string, options?: SeeOptions): void;
+export function see(text: string, selector: string, options?: SeeOptions): void;
+export function see(text: string, selectorOrOptions: string | SeeOptions = {}, options: SeeOptions = {}): void {
+    const { srOnly, ...baseOptions } = typeof selectorOrOptions === 'string' ? options : selectorOrOptions;
+    const element =
+        typeof selectorOrOptions === 'string'
+            ? cy.contains(selectorOrOptions, text, baseOptions)
+            : cy.a11yGet(text, baseOptions);
 
-        return;
-    }
-
-    cy.a11yGet(text, selectorOrOptions).scrollIntoView().should('be.visible');
+    srOnly ? element.should('exist') : element.scrollIntoView().should('be.visible');
 }
 
 export function seeImage(text: string): void {

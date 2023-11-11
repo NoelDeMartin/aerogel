@@ -1,10 +1,13 @@
 import * as a11yCommands from './a11y';
-import * as overrides from './overrides';
+import * as appCommands from './app';
 import * as solidCommands from './solid';
 import * as soukaiCommands from './soukai';
 
+import * as overrides from './overrides';
+
 export const commands = {
     ...a11yCommands,
+    ...appCommands,
     ...solidCommands,
     ...soukaiCommands,
 };
