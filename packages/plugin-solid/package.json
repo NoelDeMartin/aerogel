@@ -31,7 +31,8 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
-        "soukai-solid": "*"
+        "soukai-solid": "*",
+        "soukai": "*"
     },
     "dependencies": {
         "@inrupt/solid-client-authn-browser": "^1.17.3",
