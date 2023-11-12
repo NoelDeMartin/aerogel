@@ -7,6 +7,7 @@ export const FormFieldTypes = {
     String: 'string',
     Number: 'number',
     Boolean: 'boolean',
+    Object: 'object',
 } as const;
 
 export interface FormFieldDefinition<TType extends FormFieldType = FormFieldType, TRules extends string = string> {
@@ -36,6 +37,8 @@ export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.Strin
     ? number
     : TType extends typeof FormFieldTypes.Boolean
     ? boolean
+    : TType extends typeof FormFieldTypes.Object
+    ? object
     : never;
 
 export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {

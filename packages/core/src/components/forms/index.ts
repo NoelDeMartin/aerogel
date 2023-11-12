@@ -1,6 +1,5 @@
-import AGButton from './AGButton.vue';
-import AGCheckbox from './AGCheckbox.vue';
-import AGForm from './AGForm.vue';
-import AGInput from './AGInput.vue';
-
-export { AGButton, AGCheckbox, AGForm, AGInput };
+export { default as AGButton } from './AGButton.vue';
+export { default as AGCheckbox } from './AGCheckbox.vue';
+export { default as AGForm } from './AGForm.vue';
+export { default as AGInput } from './AGInput.vue';
+export { default as AGSelect } from './AGSelect.vue';

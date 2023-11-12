@@ -3,7 +3,7 @@ import { inject, reactive, ref } from 'vue';
 import type { Directive, InjectionKey, PropType, Ref, UnwrapNestedRefs } from 'vue';
 
 type BaseProp<T> = {
-    type: PropType<T>;
+    type?: PropType<T>;
     validator?(value: unknown): boolean;
 };
 
@@ -64,7 +64,7 @@ export function injectOrFail<T>(key: InjectionKey<T> | string, errorMessage?: st
     return inject(key) ?? fail(errorMessage ?? `Could not resolve '${key}' injection key`);
 }
 
-export function mixedProp<T>(type: PropType<T>): OptionalProp<T | null> {
+export function mixedProp<T>(type?: PropType<T>): OptionalProp<T | null> {
     return {
         type,
         default: null,

@@ -5,6 +5,6 @@ export interface IAGModal {
     close(): Promise<void>;
 }
 
-export interface IAGModalDefaultSlotProps {
+export interface IAGModalSlotProps {
     close(result?: unknown): Promise<void>;
 }
