@@ -7,8 +7,8 @@ hero:
     tagline: Work in Progress!
     actions:
         - theme: brand
-          text: Follow the development story
-          link: https://noeldemartin.com/tasks/making-a-web-application-framework
+          text: Watch a Sneak Peek
+          link: https://www.youtube.com/watch?v=JXyCH_S9efk
         - theme: alt
           text: View the Source Code
           link: https://github.com/noeldemartin/aerogel
