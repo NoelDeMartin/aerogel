@@ -2,6 +2,7 @@ import * as a11yCommands from './a11y';
 import * as appCommands from './app';
 import * as solidCommands from './solid';
 import * as soukaiCommands from './soukai';
+import * as storageCommands from './storage';
 
 import * as overrides from './overrides';
 
@@ -10,6 +11,7 @@ export const commands = {
     ...appCommands,
     ...solidCommands,
     ...soukaiCommands,
+    ...storageCommands,
 };
 
 export type CustomCommands = typeof commands;

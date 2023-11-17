@@ -1,5 +1,7 @@
-import { cssPodUrl, cssUrl } from '@/support/solid';
+import { normalizeSparql } from '@noeldemartin/solid-utils';
 import type { GetClosureArgs } from '@noeldemartin/utils';
+
+import { cssPodUrl, cssUrl } from '@/support/solid';
 
 export function createSolidDocument(path: string, fixture: string): void {
     cy.fixture(fixture).then((body) =>
@@ -53,11 +55,16 @@ export function solidRequest(...args: GetClosureArgs<typeof fetch>): Cypress.Cha
     return cy.task<Response>('solidRequest', args);
 }
 
-export function updateSolidDocument(path: string, fixture: string): void {
+export function updateSolidDocument(path: string, fixture: string, replacements: Record<string, string> = {}): void {
     cy.fixture(fixture).then((body) =>
         cy.solidRequest(cssPodUrl(path), {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/sparql-update' },
-            body,
+            body: normalizeSparql(
+                Object.entries(replacements).reduce(
+                    (renderedBody, [name, value]) => renderedBody.replaceAll(`{{${name}}}`, value),
+                    body,
+                ),
+            ),
         }));
 }
