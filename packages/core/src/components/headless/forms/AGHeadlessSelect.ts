@@ -1,17 +1,29 @@
-import type { ComputedRef } from 'vue';
+import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 
-import { requiredArrayProp } from '@/utils/vue';
+import { requiredArrayProp, stringProp } from '@/utils/vue';
 
-export type SelectOptionValue = string | number | boolean | object | null;
+export interface IAGSelectOption {
+    value: string | number | boolean | object | null;
+    text: string;
+}
+
+export type IAGSelectOptionValue = string | number | boolean | object | null;
 
 export interface IAGHeadlessSelect {
-    value: ComputedRef<SelectOptionValue | undefined>;
-    options: SelectOptionValue[];
-    update(value: string | number | boolean | null): void;
+    id: string;
+    label: ComputedRef<string | null>;
+    noSelectionText: ComputedRef<string>;
+    buttonText: ComputedRef<string>;
+    selectedOption: ComputedRef<IAGSelectOption | undefined>;
+    options: ComputedRef<IAGSelectOption[]>;
+    errors: DeepReadonly<Ref<string[] | null>>;
+    update(value: IAGSelectOptionValue): void;
 }
 
 export const selectProps = {
-    options: requiredArrayProp<SelectOptionValue>(),
+    options: requiredArrayProp<IAGSelectOptionValue>(),
+    label: stringProp(),
+    noSelectionText: stringProp(),
 };
 
 export function useSelectProps(): typeof selectProps {

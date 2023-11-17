@@ -1,12 +1,14 @@
 export * from './AGHeadlessInput';
 export * from './AGHeadlessSelect';
+export * from './AGHeadlessSelectOption';
 export { default as AGHeadlessButton } from './AGHeadlessButton.vue';
 export { default as AGHeadlessInput } from './AGHeadlessInput.vue';
 export { default as AGHeadlessInputError } from './AGHeadlessInputError.vue';
 export { default as AGHeadlessInputInput } from './AGHeadlessInputInput.vue';
 export { default as AGHeadlessInputLabel } from './AGHeadlessInputLabel.vue';
 export { default as AGHeadlessSelect } from './AGHeadlessSelect.vue';
-export { default as AGHeadlessSelectButton } from './AGHeadlessSelectButton';
-export { default as AGHeadlessSelectLabel } from './AGHeadlessSelectLabel';
-export { default as AGHeadlessSelectOption, IAGHeadlessSelectOptionSlotProps } from './AGHeadlessSelectOption';
+export { default as AGHeadlessSelectButton } from './AGHeadlessSelectButton.vue';
+export { default as AGHeadlessSelectError } from './AGHeadlessSelectError.vue';
+export { default as AGHeadlessSelectLabel } from './AGHeadlessSelectLabel.vue';
+export { default as AGHeadlessSelectOption } from './AGHeadlessSelectOption.vue';
 export { default as AGHeadlessSelectOptions } from './AGHeadlessSelectOptions';

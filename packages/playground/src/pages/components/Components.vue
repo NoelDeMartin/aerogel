@@ -59,6 +59,34 @@
         </section>
 
         <section>
+            <h2>{{ $t('components.selects') }}</h2>
+            <div class="not-prose mt-4 flex gap-2">
+                <BaseSelect
+                    v-model="customSelectValue"
+                    class="min-w-[150px]"
+                    :label="$t('components.selects_customLabel')"
+                    :no-selection-text="$t('components.selects_customNoSelectionText')"
+                    :options="
+                        $t('components.selects_customOptions')
+                            .split(',')
+                            .map((o) => o.trim())
+                    "
+                />
+                <AGSelect
+                    v-model="defaultSelectValue"
+                    class="min-w-[150px]"
+                    :label="$t('components.selects_defaultLabel')"
+                    :no-selection-text="$t('components.selects_defaultNoSelectionText')"
+                    :options="
+                        $t('components.selects_defaultOptions')
+                            .split(',')
+                            .map((o) => o.trim())
+                    "
+                />
+            </div>
+        </section>
+
+        <section>
             <h2>{{ $t('components.checkboxes') }}</h2>
             <BaseCheckbox>{{ $t('components.checkboxes_custom') }}</BaseCheckbox>
             <AGCheckbox>{{ $t('components.checkboxes_default') }}</AGCheckbox>
@@ -199,9 +227,13 @@
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
 import { AGAlertModal, AGConfirmModal, AGLoadingModal, AGSnackbar, UI, translate } from '@aerogel/core';
+import { ref } from 'vue';
 
 import CustomModal from './components/CustomModal.vue';
 import NestedModal from './components/NestedModal.vue';
+
+const customSelectValue = ref(null);
+const defaultSelectValue = ref(null);
 
 async function confirmResult(result: Promise<unknown>) {
     const confirmed = await result;

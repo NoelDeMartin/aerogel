@@ -7,19 +7,21 @@ import StoryPage from './histoire/components/StoryPage.vue';
 import StoryPlaceholder from './histoire/components/StoryPlaceholder.vue';
 
 import './assets/styles.css';
+import './assets/histoire.css';
 import { UI, UIComponents } from '@aerogel/core';
 
 export const setupVue3 = defineSetupVue3(async ({ app, story, variant }) => {
     const plugins = [i18n({ messages: import.meta.glob('@/lang/*.yaml') })];
-    const services = [UI];
+    const services = { $ui: UI };
     const components = { StoryPage, StoryPlaceholder };
 
-    await Promise.all(services.map((service) => service.launch()));
+    await Promise.all(Object.values(services).map((service) => service.launch()));
     await Promise.all(plugins.map((plugin) => plugin.install(app, {})));
 
-    UI.registerComponent(UIComponents.AlertModal, AlertModal);
-
+    Object.assign(app.config.globalProperties, services);
     Object.entries(components).forEach(([name, component]) => app.component(name, component));
+
+    UI.registerComponent(UIComponents.AlertModal, AlertModal);
 
     monkeyPatch(app, 'mount', (el: HTMLElement) => {
         const variantEl = el.parentElement?.parentElement?.parentElement?.parentElement;
@@ -30,6 +32,7 @@ export const setupVue3 = defineSetupVue3(async ({ app, story, variant }) => {
                 .filter((className) => className.startsWith('story-'))
                 .forEach((className) => storyEl.classList.remove(className));
 
+            storyEl.classList.add('story');
             storyEl.classList.add(`story-${stringToSlug(story.title)}`);
         }
 
@@ -38,6 +41,7 @@ export const setupVue3 = defineSetupVue3(async ({ app, story, variant }) => {
                 .filter((className) => className.startsWith('variant-'))
                 .forEach((className) => variantEl.classList.remove(className));
 
+            variantEl.classList.add('variant');
             variantEl.classList.add(`variant-${stringToSlug(variant.title)}`);
         }
     });

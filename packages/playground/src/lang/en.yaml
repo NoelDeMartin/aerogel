@@ -29,6 +29,13 @@ components:
     inputs_customPlaceholder: Type here...
     inputs_defaultLabel: Default
     inputs_defaultPlaceholder: Type here...
+    selects: Selects
+    selects_customLabel: Custom
+    selects_customNoSelectionText: Select one...
+    selects_customOptions: One, Two, Three
+    selects_defaultLabel: Default
+    selects_defaultNoSelectionText: Select one...
+    selects_defaultOptions: One, Two, Three
     checkboxes: Checkboxes
     checkboxes_custom: This is a custom checkbox.
     checkboxes_default: This is the default checkbox.

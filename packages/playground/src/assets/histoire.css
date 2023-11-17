@@ -1,0 +1,7 @@
+.story .histoire-story-variant-grid-item > div:nth-child(2) {
+    padding: 0;
+}
+
+.story .histoire-generic-render-story > div {
+    margin: 1rem;
+}

@@ -28,7 +28,7 @@ const errors = computed(() => {
     return form.errors[props.name] ?? null;
 });
 const form = inject<Form | null>('form', null);
-const publicApi: IAGHeadlessInput = {
+const api: IAGHeadlessInput = {
     id: `input-${uuid()}`,
     value: computed(() => {
         if (form && props.name) {
@@ -49,6 +49,6 @@ const publicApi: IAGHeadlessInput = {
     },
 };
 
-provide<IAGHeadlessInput>('input', publicApi);
-defineExpose<IAGHeadlessInput>(publicApi);
+provide<IAGHeadlessInput>('input', api);
+defineExpose<IAGHeadlessInput>(api);
 </script>

@@ -108,7 +108,7 @@ export function requiredEnumProp<Enum extends Record<string, unknown>>(
     };
 }
 
-export function requiredMixedProp<T>(type: PropType<T>): RequiredProp<T> {
+export function requiredMixedProp<T>(type?: PropType<T>): RequiredProp<T> {
     return {
         type,
         required: true,
