@@ -35,13 +35,11 @@
         "@aerogel/cli": "*",
         "@aerogel/cypress": "*",
         "@aerogel/vite": "*",
-        "@histoire/plugin-vue": "^0.16.1",
         "@inrupt/solid-client-authn-core": "^1.17.2",
         "@solid/community-server": "^7.0.1",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "eslint-plugin-vue": "^9.11.0",
-        "histoire": "^0.16.2",
         "postcss": "^8.4.23",
         "postcss-pseudo-classes": "^0.2.1",
         "start-server-and-test": "^2.0.0"

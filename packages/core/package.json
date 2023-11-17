@@ -10,6 +10,8 @@
         "build": "rm dist -rf && npm run build:js && npm run build:types",
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types && cp src/types/virtual.d.ts dist",
+        "histoire:dev": "histoire dev",
+        "histoire:prod": "histoire build",
         "lint": "noeldemartin-lint src",
         "publish-next": "noeldemartin-publish-next",
         "test": "vitest --run"
@@ -42,6 +44,7 @@
     "devDependencies": {
         "@aerogel/vite": "*",
         "@types/dompurify": "^3.0.2",
-        "@types/marked": "^5.0.0"
+        "@types/marked": "^5.0.0",
+        "tailwindcss": "^3.3.5"
     }
 }

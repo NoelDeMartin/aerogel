@@ -41,13 +41,14 @@ export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.Strin
     ? object
     : never;
 
+const validForms: WeakMap<Form, ComputedRef<boolean>> = new WeakMap();
+
 export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {
 
     public errors: DeepReadonly<UnwrapNestedRefs<FormErrors<Fields>>>;
 
     private _fields: Fields;
     private _data: FormData<Fields>;
-    private _valid: ComputedRef<boolean>;
     private _submitted: Ref<boolean>;
     private _errors: FormErrors<Fields>;
 
@@ -58,13 +59,17 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         this._submitted = ref(false);
         this._data = this.getInitialData(fields);
         this._errors = this.getInitialErrors(fields);
-        this._valid = computed(() => !Object.values(this._errors).some((error) => error !== null));
+
+        validForms.set(
+            this,
+            computed(() => !Object.values(this._errors).some((error) => error !== null)),
+        );
 
         this.errors = readonly(this._errors);
     }
 
     public get valid(): boolean {
-        return this._valid.value;
+        return !!validForms.get(this)?.value;
     }
 
     public get submitted(): boolean {
