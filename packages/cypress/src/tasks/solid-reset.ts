@@ -3,7 +3,7 @@ import { SolidContainer, SolidEngine, bootSolidModels } from 'soukai-solid';
 
 import { cssPodUrl } from '../support/solid';
 
-import { authenticate } from './solid-utils';
+import { authenticate, resetAuthentication } from './solid-utils';
 import { defineTask, log } from './utils';
 
 const DEFAULT_POD_DOCUMENTS = [
@@ -53,29 +53,43 @@ async function replaceDocument(url: string, body: string): Promise<void> {
     });
 }
 
-export default defineTask(async () => {
-    log('Resetting POD...');
-
+async function resetPod(retry: boolean = true): Promise<void> {
     const authenticatedFetch = await authenticate();
 
     bootSolidModels();
     setEngine(new SolidEngine(authenticatedFetch));
 
-    await deleteContainer(await SolidContainer.findOrFail(cssPodUrl('/')));
-    await replaceDocument(
-        cssPodUrl('/profile/card'),
-        `
-            @prefix foaf: <http://xmlns.com/foaf/0.1/>.
-            @prefix solid: <http://www.w3.org/ns/solid/terms#>.
+    try {
+        await deleteContainer(await SolidContainer.findOrFail(cssPodUrl('/')));
+        await replaceDocument(
+            cssPodUrl('/profile/card'),
+            `
+                @prefix foaf: <http://xmlns.com/foaf/0.1/>.
+                @prefix solid: <http://www.w3.org/ns/solid/terms#>.
 
-            <> a foaf:PersonalProfileDocument;
-                foaf:maker <#me>;
-                foaf:primaryTopic <#me>.
-            <#me> a foaf:Person;
-                foaf:name "Alice Cooper";
-                solid:oidcIssuer <http://localhost:4000/>.
-        `,
-    );
+                <> a foaf:PersonalProfileDocument;
+                    foaf:maker <#me>;
+                    foaf:primaryTopic <#me>.
+                <#me> a foaf:Person;
+                    foaf:name "Alice Cooper";
+                    solid:oidcIssuer <http://localhost:4000/>.
+            `,
+        );
+    } catch (error) {
+        if (!retry) {
+            throw error;
+        }
+
+        resetAuthentication();
+
+        await resetPod(false);
+    }
+}
+
+export default defineTask(async () => {
+    log('Resetting POD...');
+
+    await resetPod();
 
     log('POD reset complete.');
 });

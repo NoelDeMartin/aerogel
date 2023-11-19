@@ -68,38 +68,6 @@ async function controlUrl(key: string, authorization?: string): Promise<string> 
     return typeof url === 'string' ? url : fail(`'${key}' CSS control not found`);
 }
 
-export async function authenticate(): Promise<typeof fetch> {
-    if (!authenticatedFetch) {
-        log('Logging in...');
-        const authorization = (await logIn()) ?? (await setupAccount());
-
-        log('Getting authenticated fetch');
-        const credentials = await getCredentials(authorization);
-        const authString = `${encodeURIComponent(credentials.id)}:${encodeURIComponent(credentials.secret)}`;
-        const tokenUrl = cssUrl('/.oidc/token');
-        const dpopKey = await generateDpopKeyPair();
-        const dpop = await createDpopHeader(tokenUrl, 'POST', dpopKey);
-        const response = await fetch(tokenUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Basic ${Buffer.from(authString).toString('base64')}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'DPoP': dpop,
-            },
-            body: 'grant_type=client_credentials&scope=webid',
-        });
-        const json = (await response.json()) as { access_token: string };
-
-        if (isUnsuccessfulResponse(json)) {
-            throw new Error(json.message || json.name);
-        }
-
-        authenticatedFetch = await buildAuthenticatedFetch(fetch, json.access_token, { dpopKey });
-    }
-
-    return authenticatedFetch;
-}
-
 async function logIn(): Promise<string | null> {
     const url = await controlUrl('password.login');
     const response = await fetch(url, {
@@ -178,4 +146,40 @@ async function setupAccount(): Promise<string> {
     await createPOD(authorization);
 
     return authorization;
+}
+
+export function resetAuthentication(): void {
+    authenticatedFetch = null;
+}
+
+export async function authenticate(): Promise<typeof fetch> {
+    if (!authenticatedFetch) {
+        log('Logging in...');
+        const authorization = (await logIn()) ?? (await setupAccount());
+
+        log('Getting authenticated fetch');
+        const credentials = await getCredentials(authorization);
+        const authString = `${encodeURIComponent(credentials.id)}:${encodeURIComponent(credentials.secret)}`;
+        const tokenUrl = cssUrl('/.oidc/token');
+        const dpopKey = await generateDpopKeyPair();
+        const dpop = await createDpopHeader(tokenUrl, 'POST', dpopKey);
+        const response = await fetch(tokenUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${Buffer.from(authString).toString('base64')}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'DPoP': dpop,
+            },
+            body: 'grant_type=client_credentials&scope=webid',
+        });
+        const json = (await response.json()) as { access_token: string };
+
+        if (isUnsuccessfulResponse(json)) {
+            throw new Error(json.message || json.name);
+        }
+
+        authenticatedFetch = await buildAuthenticatedFetch(fetch, json.access_token, { dpopKey });
+    }
+
+    return authenticatedFetch;
 }
