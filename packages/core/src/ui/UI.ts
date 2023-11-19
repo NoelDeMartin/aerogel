@@ -1,4 +1,4 @@
-import { facade, fail, uuid } from '@noeldemartin/utils';
+import { after, facade, fail, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
@@ -72,11 +72,14 @@ export class UIService extends Service {
 
         const message = typeof messageOrOperation === 'string' ? messageOrOperation : undefined;
         const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), { message });
-        const result = await operation;
 
-        await this.closeModal(modal.id);
+        try {
+            const [result] = await Promise.all([operation, after({ seconds: 1 })]);
 
-        return result;
+            return result;
+        } finally {
+            await this.closeModal(modal.id);
+        }
     }
 
     public showSnackbar(message: string, options: ShowSnackbarOptions = {}): void {
