@@ -8,7 +8,7 @@ export function dontSee(text: string): void {
     cy.contains(text).should('not.exist');
 }
 
-export function press(label: string, selector: string = 'button, a, label'): void {
+export function press(label: string, selector: string = 'button:visible, a:visible, label:visible'): void {
     cy.contains(selector, label).click();
 }
 
