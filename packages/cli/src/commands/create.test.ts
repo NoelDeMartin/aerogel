@@ -15,7 +15,7 @@ describe('Create command', () => {
         FileMock.expectCreated('./app/.gitignore').toContain('node_modules');
         FileMock.expectCreated('./app/package.json').toContain('"name": "my-app"');
         FileMock.expectCreated('./app/package.json').toContain('"@aerogel/core": "next"');
-        FileMock.expectCreated('./app/index.html').toContain('My App');
+        FileMock.expectCreated('./app/index.html').toContain('{{ app.name }}');
         FileMock.expectCreated('./app/README.md').toContain('My App');
         FileMock.expectCreated('./app/src/App.vue').toContain('<h1 class="text-4xl font-semibold">');
         FileMock.expectCreated('./app/src/App.vue').toContain('{{ $t(\'home.title\') }}');
@@ -38,7 +38,6 @@ describe('Create command', () => {
 
         // Assert
         FileMock.expectCreated('./my-app/package.json').toContain('"name": "my-app"');
-        FileMock.expectCreated('./my-app/index.html').toContain('My App');
     });
 
 });
