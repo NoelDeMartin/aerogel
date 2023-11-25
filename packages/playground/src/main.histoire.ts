@@ -6,8 +6,8 @@ import AlertModal from './components/modals/AlertModal.vue';
 import StoryPage from './histoire/components/StoryPage.vue';
 import StoryPlaceholder from './histoire/components/StoryPlaceholder.vue';
 
-import './assets/styles.css';
-import './assets/histoire.css';
+import './assets/css/styles.css';
+import './assets/css/histoire.css';
 import { UI, UIComponents } from '@aerogel/core';
 
 export const setupVue3 = defineSetupVue3(async ({ app, story, variant }) => {

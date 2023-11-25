@@ -1,0 +1,30 @@
+#splash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    background: rgb(243 244 246); /* bg-gray-100 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    transition: opacity 600ms ease-in-out;
+}
+
+#splash svg {
+    width: 15rem;
+    height: 15rem;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}

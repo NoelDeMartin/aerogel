@@ -7,7 +7,7 @@ import solid from '@aerogel/plugin-solid';
 import soukai from '@aerogel/plugin-soukai';
 import { bootstrapApplication } from '@aerogel/core';
 
-import './assets/styles.css';
+import './assets/css/styles.css';
 import App from './App.vue';
 import { components } from './components';
 import { directives } from './directives';

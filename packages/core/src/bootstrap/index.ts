@@ -21,3 +21,9 @@ export async function bootstrapApplication(rootComponent: Component, options: Ae
 
     Events.emit('application-mounted');
 }
+
+declare module '@/services/Events' {
+    export interface EventsPayload {
+        'application-mounted': void;
+    }
+}

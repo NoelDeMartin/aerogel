@@ -1,4 +1,4 @@
-@import './fonts/ubuntu.css';
+@import '../fonts/ubuntu.css';
 
 @tailwind base;
 @tailwind components;

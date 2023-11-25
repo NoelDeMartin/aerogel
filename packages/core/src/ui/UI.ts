@@ -141,6 +141,7 @@ export class UIService extends Service {
 
     protected async boot(): Promise<void> {
         this.watchModalEvents();
+        this.watchMountedEvent();
     }
 
     private watchModalEvents(): void {
@@ -165,6 +166,24 @@ export class UIService extends Service {
             const activeModal = this.modals.at(-1);
 
             await (activeModal && Events.emit('show-modal', { id: activeModal.id }));
+        });
+    }
+
+    private watchMountedEvent(): void {
+        Events.once('application-mounted', async () => {
+            const splash = document.getElementById('splash');
+
+            if (!splash) {
+                return;
+            }
+
+            if (window.getComputedStyle(splash).opacity !== '0') {
+                splash.style.opacity = '0';
+
+                await after({ ms: 600 });
+            }
+
+            splash.remove();
         });
     }
 
