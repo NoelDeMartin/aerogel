@@ -14,7 +14,8 @@
         "histoire:prod": "histoire build",
         "lint": "noeldemartin-lint src",
         "publish-next": "noeldemartin-publish-next",
-        "test": "vitest --run"
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose"
     },
     "engines": {
         "node": ">=18.x"

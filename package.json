@@ -25,7 +25,8 @@
         "lint": "npm run lint -ws --if-present",
         "postinstall": "patch-package",
         "publish-next": "npm run publish-next -ws --if-present",
-        "test": "npm run test -ws --if-present"
+        "test": "npm run test -ws --if-present",
+        "test:ci": "npm run test:ci -ws --if-present"
     },
     "devDependencies": {
         "@histoire/plugin-vue": "^0.17.4",
