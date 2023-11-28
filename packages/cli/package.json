@@ -43,5 +43,10 @@
     },
     "devDependencies": {
         "@types/node": "^20.4.0"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@noeldemartin/eslint-config-typescript"
+        ]
     }
 }

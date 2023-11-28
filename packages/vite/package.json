@@ -34,5 +34,10 @@
         "@vitejs/plugin-vue": "^4.1.0",
         "mustache": "^4.2.0",
         "rollup": "^3.29.4"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@noeldemartin/eslint-config-typescript"
+        ]
     }
 }

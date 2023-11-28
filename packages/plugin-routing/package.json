@@ -38,5 +38,10 @@
     },
     "devDependencies": {
         "@aerogel/core": "*"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@noeldemartin/eslint-config-typescript"
+        ]
     }
 }

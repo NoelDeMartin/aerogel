@@ -5,8 +5,8 @@
     "scripts": {
         "build": "vite build",
         "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run test:serve-pod\" \"npm run cy:open\"",
-        "cy:open": "cypress open --e2e --browser chromium",
-        "cy:run": "cypress run",
+        "cy:open": "cypress open --config-file ./cypress/cypress.config.ts --e2e --browser chromium",
+        "cy:run": "cypress run --config-file ./cypress/cypress.config.ts",
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:4000 cy:run",
         "dev": "vite",
         "dev:serve-pod": "community-solid-server -c @css:config/file.json -p 4000 -f ./solid-data",
@@ -43,5 +43,10 @@
         "postcss": "^8.4.23",
         "postcss-pseudo-classes": "^0.2.1",
         "start-server-and-test": "^2.0.0"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@noeldemartin/eslint-config-vue"
+        ]
     }
 }

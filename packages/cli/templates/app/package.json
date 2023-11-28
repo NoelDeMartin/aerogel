@@ -5,8 +5,8 @@
     "scripts": {
         "build": "vite build",
         "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run cy:open\"",
-        "cy:open": "cypress open --e2e --browser chromium",
-        "cy:run": "cypress run",
+        "cy:open": "cypress open --config-file ./cypress/cypress.config.ts --e2e --browser chromium",
+        "cy:run": "cypress run --config-file ./cypress/cypress.config.ts",
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 cy:run",
         "cy:test-snapshots": "docker run -it -u `id -u ${whoami}` -e CYPRESS_SNAPSHOTS=true -v ./:/app -w /app cypress/base:18.16.0 sh -c \"npx cypress install && npm run cy:test\"",
         "cy:test-snapshots:ci": "docker run -e CYPRESS_SNAPSHOTS=true -v ./:/app -w /app cypress/base:18.16.0 sh -c \"npx cypress install && npm run cy:test\"",
@@ -51,5 +51,16 @@
         "vite": "^4.3.0",
         "vitest": "^0.33.0",
         "vue-tsc": "^1.8.15"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@noeldemartin/eslint-config-vue"
+        ]
+    },
+    "prettier": {
+        "plugins": [
+            "prettier-plugin-tailwindcss"
+        ],
+        "printWidth": 120
     }
 }
