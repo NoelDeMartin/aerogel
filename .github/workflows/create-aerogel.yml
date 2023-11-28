@@ -55,9 +55,6 @@ jobs:
             - name: Configure Solid
               working-directory: app
               run: |
-                  # Disable eslint in parent folder
-                  sed -i '2d' ../.eslintrc.js
-
                   # Install plugin
                   npx ag install solid
 

@@ -31,8 +31,8 @@ export class Editor {
 
     public async format(): Promise<void> {
         await Log.animate('Formatting modified files', async () => {
-            const usingPrettier = File.exists('prettier.config.js');
-            const usingESLint = File.exists('.eslintrc.js');
+            const usingPrettier = File.exists('prettier.config.js') || File.contains('package.json', '"prettier": {');
+            const usingESLint = File.exists('.eslintrc.js') || File.contains('package.json', '"eslintConfig"');
 
             await Promise.all(
                 arrayFrom(this.modifiedFiles).map(async (file) => {
