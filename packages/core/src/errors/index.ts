@@ -1,4 +1,4 @@
-import { tap } from '@noeldemartin/utils';
+import type { App } from 'vue';
 
 import { bootServices } from '@/services';
 import { definePlugin } from '@/plugins';
@@ -25,14 +25,12 @@ const frameworkHandler: ErrorHandler = (error) => {
     return true;
 };
 
-function setUpErrorHandler(baseHandler: ErrorHandler = () => false): ErrorHandler {
-    return tap(
-        (error) => baseHandler(error) || frameworkHandler(error),
-        (errorHandler) => {
-            globalThis.onerror = (message, _, __, ___, error) => errorHandler(error ?? message);
-            globalThis.onunhandledrejection = (event) => errorHandler(event.reason);
-        },
-    );
+function setUpErrorHandler(app: App, baseHandler: ErrorHandler = () => false): void {
+    const errorHandler: ErrorHandler = (error) => baseHandler(error) || frameworkHandler(error);
+
+    app.config.errorHandler = errorHandler;
+    globalThis.onerror = (event, _, __, ___, error) => errorHandler(error ?? event);
+    globalThis.onunhandledrejection = (event) => errorHandler(event.reason);
 }
 
 export type ErrorHandler = (error: ErrorSource) => boolean;
@@ -40,9 +38,7 @@ export type ErrorsServices = typeof services;
 
 export default definePlugin({
     async install(app, options) {
-        const errorHandler = setUpErrorHandler(options.handleError);
-
-        app.config.errorHandler = errorHandler;
+        setUpErrorHandler(app, options.handleError);
 
         await bootServices(app, services);
     },
