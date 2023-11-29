@@ -11,8 +11,8 @@ jobs:
               with:
                   node-version-file: '.nvmrc'
             - run: npm ci
-            - run: npm run lint
             - run: npm run build
+            - run: npm run lint
             - run: npm run test:ci
             - name: Cypress
               run: npm run cy:test-snapshots:ci
