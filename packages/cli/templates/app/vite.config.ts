@@ -7,6 +7,7 @@ import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 
 export default defineConfig({
+    publicDir: resolve(__dirname, './src/assets/public/'),
     plugins: [
         Aerogel(),
         Components({
