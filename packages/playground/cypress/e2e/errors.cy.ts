@@ -2,7 +2,7 @@ describe('Error Handling', () => {
 
     beforeEach(() => cy.visit('/errors'));
 
-    it('Handles errors', () => {
+    it('Handles runtime errors', () => {
         // Error with stack trace
         cy.press('Throw error');
         cy.see('See all (1)');
@@ -35,6 +35,17 @@ describe('Error Handling', () => {
         // Normalize stacktrace
         cy.get('[aria-modal="true"] pre').invoke('text', '[stacktrace]');
         cy.matchImageSnapshot();
+    });
+
+    it('Handles startup crashes', () => {
+        cy.see('Test Startup Crash');
+        cy.visit('?startupCrash=true'); // TODO call cy.press('Test Startup Crash'); instead
+        cy.see('Something failed trying to start the application');
+
+        cy.matchImageSnapshot();
+
+        cy.press('View error details');
+        cy.see('This is an error caused during application startup');
     });
 
 });

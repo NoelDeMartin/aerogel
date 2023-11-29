@@ -53,7 +53,7 @@ import { useErrorReportModalProps } from './AGErrorReportModal';
 import AGButton from '../forms/AGButton.vue';
 import AGErrorReportModalButtons from './AGErrorReportModalButtons.vue';
 import AGErrorReportModalTitle from './AGErrorReportModalTitle.vue';
-import AGMarkdown from '../basic/AGMarkdown.vue';
+import AGMarkdown from '../lib/AGMarkdown.vue';
 import AGModal from './AGModal.vue';
 
 const props = defineProps(useErrorReportModalProps());

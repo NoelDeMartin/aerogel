@@ -1,6 +1,9 @@
 <template>
     <div class="flex h-full flex-col text-base font-normal leading-tight text-gray-900 antialiased">
-        <slot />
+        <slot v-if="$errors.hasStartupErrors" name="startup-crash">
+            <AGStartupCrash />
+        </slot>
+        <slot v-else />
 
         <AGAppOverlays />
     </div>
@@ -8,4 +11,5 @@
 
 <script setup lang="ts">
 import AGAppOverlays from './AGAppOverlays.vue';
+import AGStartupCrash from './lib/AGStartupCrash.vue';
 </script>

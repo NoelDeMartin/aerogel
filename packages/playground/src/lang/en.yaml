@@ -130,6 +130,7 @@ errors:
     throwMessage: This error was thrown for testing purposes
     throwWithoutTrace: Throw error (no trace)
     throwWithoutTraceName: Test Error
+    startupCrash: Test Startup Crash
     previousReport: Show previous report
     nextReport: Show next report
     all: See all ({count})

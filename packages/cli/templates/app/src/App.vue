@@ -1,6 +1,6 @@
 <template>
-    <AGAppLayout>
-        <main class="flex flex-grow flex-col items-center justify-center bg-blue-50">
+    <AGAppLayout class="bg-blue-50">
+        <main class="flex flex-grow flex-col items-center justify-center">
             <h1 class="text-4xl font-semibold">
                 {{ $t('home.title') }}
             </h1>

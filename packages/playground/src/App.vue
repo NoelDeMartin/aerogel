@@ -1,7 +1,7 @@
 <template>
-    <AGAppLayout>
+    <AGAppLayout class="bg-gray-100">
         <AppHeader />
-        <main class="flex flex-grow bg-gray-100 p-4">
+        <main class="flex flex-grow p-4">
             <div class="mx-auto flex max-w-screen-lg flex-grow flex-col">
                 <RouterView />
             </div>

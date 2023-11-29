@@ -21,7 +21,7 @@ import AGModal from './AGModal.vue';
 import type { IAGModalSlotProps } from './AGModal';
 
 import AGButton from '../forms/AGButton.vue';
-import AGMarkdown from '../basic/AGMarkdown.vue';
+import AGMarkdown from '../lib/AGMarkdown.vue';
 
 defineProps({
     title: stringProp(),

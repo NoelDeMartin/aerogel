@@ -12,7 +12,7 @@ import { translateWithDefault } from '@/lang/utils';
 
 import AGModal from './AGModal.vue';
 
-import AGMarkdown from '../basic/AGMarkdown.vue';
+import AGMarkdown from '../lib/AGMarkdown.vue';
 
 const props = defineProps({ message: stringProp() });
 const renderedMessage = computed(() => props.message ?? translateWithDefault('ui.loading', 'Loading...'));

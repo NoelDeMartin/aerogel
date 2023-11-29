@@ -16,7 +16,7 @@ import { requiredStringProp, stringProp } from '@/utils/vue';
 
 import AGModal from './AGModal.vue';
 
-import AGMarkdown from '../basic/AGMarkdown.vue';
+import AGMarkdown from '../lib/AGMarkdown.vue';
 
 defineProps({
     title: stringProp(),

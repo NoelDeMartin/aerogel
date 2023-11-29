@@ -22,7 +22,7 @@ import type { SnackbarAction } from '@/components/headless';
 
 import AGButton from '../forms/AGButton.vue';
 import AGHeadlessSnackbar from '../headless/snackbars/AGHeadlessSnackbar.vue';
-import AGMarkdown from '../basic/AGMarkdown.vue';
+import AGMarkdown from '../lib/AGMarkdown.vue';
 
 const props = defineProps(useSnackbarProps());
 const styleClasses = computed(() => {

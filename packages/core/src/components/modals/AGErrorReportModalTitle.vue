@@ -8,7 +8,7 @@ import { computed } from 'vue';
 import { numberProp, requiredObjectProp } from '@/utils/vue';
 import type { ErrorReport } from '@/errors';
 
-import AGMarkdown from '../basic/AGMarkdown.vue';
+import AGMarkdown from '../lib/AGMarkdown.vue';
 
 const props = defineProps({
     report: requiredObjectProp<ErrorReport>(),
