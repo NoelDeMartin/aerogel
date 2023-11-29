@@ -14,7 +14,7 @@
         <BaseButton @click="$errors.inspect($errors.logs.map(({ report }) => report))">
             {{ $t('errors.all', { count: $errors.logs.length }) }}
         </BaseButton>
-        <BaseButton @click="$app.reload({ startupCrash: true })">
+        <BaseButton @click="$app.reload({ startupCrash: 'true' })">
             {{ $t('errors.startupCrash') }}
         </BaseButton>
     </div>
