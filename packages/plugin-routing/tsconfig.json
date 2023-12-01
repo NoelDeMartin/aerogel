@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["@aerogel/core/dist/virtual"]
+        "types": ["@aerogel/vite/dist/virtual"]
     },
     "include": ["src/**/*.ts"]
 }

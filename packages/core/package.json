@@ -9,7 +9,7 @@
     "scripts": {
         "build": "rm dist -rf && npm run build:js && npm run build:types",
         "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types && cp src/types/virtual.d.ts dist",
+        "build:types": "noeldemartin-build-types",
         "histoire:dev": "histoire dev",
         "histoire:prod": "histoire build",
         "lint": "noeldemartin-lint src",

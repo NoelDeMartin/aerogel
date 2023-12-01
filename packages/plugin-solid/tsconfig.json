@@ -2,7 +2,7 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "baseUrl": ".",
-        "types": ["@aerogel/core/dist/virtual"],
+        "types": ["@aerogel/vite/dist/virtual"],
         "paths": {
             "@/*": ["./src/*"]
         }
