@@ -20,6 +20,7 @@ export * from './components';
 export * from './errors';
 
 export interface Options {
+    autoReconnect?: boolean;
     authenticators?: Record<string, Authenticator>;
     defaultAuthenticator?: AuthenticatorName;
 }
@@ -32,6 +33,8 @@ export default function solid(options: Options = {}): Plugin {
             bootSolidModels();
             registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
+
+            Solid.autoReconnect = options.autoReconnect ?? Solid.autoReconnect;
 
             await bootServices(app, services);
         },
