@@ -197,7 +197,7 @@
                     {{ $t('components.snackbars_defaultDanger') }}
                 </BaseButton>
             </div>
-            <div class="mt-4 flex gap-2">
+            <div class="mt-4 flex flex-wrap gap-2">
                 <BaseButton
                     @click="
                         $ui.showSnackbar($t('components.snackbars_message'), {

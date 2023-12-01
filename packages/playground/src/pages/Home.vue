@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-grow flex-col items-center">
         <PageTitle>{{ $t('home.title') }}</PageTitle>
-        <AGMarkdown lang-key="home.description" />
-        <ul class="mt-2 flex max-w-prose flex-row flex-wrap gap-3">
+        <AGMarkdown lang-key="home.description" class="text-center" />
+        <ul class="mt-2 flex w-full max-w-prose flex-wrap justify-center gap-3">
             <li v-for="section of sections" :key="section.route">
                 <RouterLink
                     :to="{ name: section.route }"

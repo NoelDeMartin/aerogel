@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-full flex-col text-base font-normal leading-tight text-gray-900 antialiased">
+    <div class="flex min-h-full flex-col text-base font-normal leading-tight text-gray-900 antialiased">
         <slot v-if="$errors.hasStartupErrors" name="startup-crash">
             <AGStartupCrash />
         </slot>

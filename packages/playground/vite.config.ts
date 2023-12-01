@@ -13,7 +13,15 @@ export default defineConfig({
     base: basePath,
     publicDir: resolve(__dirname, './src/assets/public/'),
     plugins: [
-        Aerogel({ name: 'Aerogel Playground', static404Redirect: isProduction }),
+        Aerogel({
+            name: 'Aerogel Playground',
+            description: 'Explore this playground to see what Aerogel can do',
+            static404Redirect: isProduction,
+            icons: {
+                '192x192': 'android-chrome-192x192.png',
+                '512x512': 'android-chrome-512x512.png',
+            },
+        }),
         Components({
             dirs: ['src/pages', 'src/components'],
             dts: false,

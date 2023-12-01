@@ -29,11 +29,16 @@
     "bugs": {
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
+    "peerDependencies": {
+        "vite": "*"
+    },
     "dependencies": {
         "@noeldemartin/utils": "^0.5.0",
         "@vitejs/plugin-vue": "^4.1.0",
         "mustache": "^4.2.0",
-        "rollup": "^3.29.4"
+        "rollup": "^3.29.4",
+        "unplugin-vue-components": "^0.25.2",
+        "vite-plugin-pwa": "^0.17.2"
     },
     "eslintConfig": {
         "extends": [

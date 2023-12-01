@@ -2,7 +2,7 @@
     <PageTitle source="src/pages/Errors.vue">
         {{ $t('errors.title') }}
     </PageTitle>
-    <div class="flex w-full items-center justify-center gap-3">
+    <div class="flex w-full flex-wrap items-center justify-center gap-3">
         <BaseButton @click="throwError()">
             {{ $t('errors.throw') }}
         </BaseButton>
