@@ -5,6 +5,8 @@ import type { handleIncomingRedirect, login, logout } from '@inrupt/solid-client
 import Authenticator from '@/auth/Authenticator';
 import type { AuthSession } from '@/auth/Authenticator';
 
+import clientID from 'virtual:aerogel-solid-clientid';
+
 const STORAGE_KEY = 'inrupt-authenticator';
 
 export default class InruptAuthenticator extends Authenticator {
@@ -19,7 +21,9 @@ export default class InruptAuthenticator extends Authenticator {
 
         await this._login({
             oidcIssuer: loginUrl,
-            // TODO clientId, clientName, and redirectUrl
+            clientId: clientID.client_id,
+            clientName: clientID.client_name,
+            redirectUrl: clientID.redirect_uris[0],
         });
 
         // Browser should redirect, so just make it wait for a while.

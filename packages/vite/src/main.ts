@@ -1,5 +1,4 @@
 import Vue from '@vitejs/plugin-vue';
-import { existsSync, readFileSync } from 'fs';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -7,30 +6,11 @@ import type { ComponentResolver } from 'unplugin-vue-components';
 import type { Plugin } from 'vite';
 
 import { generate404Assets } from '@/lib/404';
+import { generateSolidAssets, generateSolidVirtualClientIDModule, solidMiddleware } from '@/lib/solid';
 import { guessMediaType } from '@/lib/media-types';
+import { loadPackageInfo } from '@/lib/package-parser';
 import { renderHTML } from '@/lib/html';
 import type { AppInfo, Options } from '@/lib/options';
-
-function parseSourceUrl(packageJsonPath: string): string | undefined {
-    if (!existsSync(packageJsonPath)) {
-        return;
-    }
-
-    const packageJson = JSON.parse(readFileSync(packageJsonPath).toString()) as {
-        repository?: string | { type: string; url: string };
-    };
-
-    if (!packageJson.repository) {
-        return;
-    }
-
-    if (typeof packageJson.repository === 'object') {
-        return packageJson.repository.url.replace(`.${packageJson.repository.type}`, '');
-    }
-
-    return packageJson.repository?.replace('github:', 'https://github.com/');
-}
-
 export function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
@@ -53,12 +33,22 @@ export function AerogelResolver(): ComponentResolver {
 }
 
 export default function Aerogel(options: Options = {}): Plugin[] {
-    const appInfo: AppInfo = {
+    const app: AppInfo = {
+        name: options.name ?? 'App',
+        description: options.description,
         basePath: '/',
         baseUrl: options.baseUrl,
-        name: options.name ?? 'App',
         themeColor: options.themeColor ?? '#ffffff',
-        description: options.description,
+    };
+    const virtualHandlers: Record<string, () => string> = {
+        'virtual:aerogel'() {
+            return `export default ${JSON.stringify({
+                environment: process.env.NODE_ENV ?? 'development',
+                basePath: app.basePath,
+                sourceUrl: app.sourceUrl,
+            })};`;
+        },
+        'virtual:aerogel-solid-clientid': () => generateSolidVirtualClientIDModule(app, options),
     };
     const AerogelPlugin: Plugin = {
         name: 'vite:aerogel',
@@ -67,44 +57,31 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 return;
             }
 
-            appInfo.sourceUrl = parseSourceUrl(resolve(buildOptions.input[0], '../package.json'));
+            loadPackageInfo(app, resolve(buildOptions.input[0], '../package.json'));
         },
         configureServer(server) {
             server.watcher.on('ready', () => {
-                appInfo.baseUrl = server.resolvedUrls?.local?.[0] ?? appInfo.baseUrl;
+                app.baseUrl = server.resolvedUrls?.local?.[0] ?? app.baseUrl;
             });
 
-            appInfo.sourceUrl = parseSourceUrl(`${server.config.root}/package.json`);
+            server.middlewares.use(solidMiddleware(app, options));
+
+            loadPackageInfo(app, `${server.config.root}/package.json`);
         },
         config: (config) => {
-            appInfo.basePath = config.base ?? appInfo.basePath;
+            app.basePath = config.base ?? app.basePath;
             config.optimizeDeps = config.optimizeDeps ?? {};
             config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), 'virtual:aerogel'];
 
             return config;
         },
         generateBundle() {
-            generate404Assets(this, appInfo, options);
+            generate404Assets(this, app, options);
+            generateSolidAssets(this, app, options);
         },
-        load(id) {
-            if (id !== 'virtual:aerogel') {
-                return;
-            }
-
-            return `export default ${JSON.stringify({
-                environment: process.env.NODE_ENV ?? 'development',
-                basePath: appInfo.basePath,
-                sourceUrl: appInfo.sourceUrl,
-            })};`;
-        },
-        resolveId(id) {
-            if (id !== 'virtual:aerogel') {
-                return;
-            }
-
-            return id;
-        },
-        transformIndexHtml: (html, context) => renderHTML(html, context.filename, { app: appInfo }),
+        load: (id) => virtualHandlers[id]?.(),
+        resolveId: (id) => (id in virtualHandlers ? id : undefined),
+        transformIndexHtml: (html, context) => renderHTML(html, context.filename, app),
     };
 
     return [
@@ -112,9 +89,9 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         VitePWA({
             registerType: 'autoUpdate',
             manifest: objectWithoutEmpty({
-                name: appInfo.name,
-                short_name: appInfo.name,
-                description: appInfo.description,
+                name: app.name,
+                short_name: app.name,
+                description: app.description,
                 theme_color: options.themeColor,
                 icons:
                     options.icons &&

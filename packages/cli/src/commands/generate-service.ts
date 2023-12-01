@@ -1,4 +1,4 @@
-import { arrayFrom, stringToCamelCase } from '@noeldemartin/utils';
+import { arrayFrom, formatCodeBlock, stringToCamelCase } from '@noeldemartin/utils';
 import { Node, SyntaxKind } from 'ts-morph';
 import type { ObjectLiteralExpression, SourceFile } from 'ts-morph';
 
@@ -9,7 +9,6 @@ import Template from '@/lib/Template';
 import { app } from '@/lib/utils/app';
 import { templatePath } from '@/lib/utils/paths';
 import { editFiles, findDescendant } from '@/lib/utils/edit';
-import { formatCodeBlock } from '@/lib/utils/format';
 import type { Editor } from '@/lib/Editor';
 
 export class GenerateServiceCommand extends Command {

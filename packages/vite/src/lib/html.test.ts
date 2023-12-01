@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
+import { formatCodeBlock } from '@noeldemartin/utils';
+
+import type { AppInfo } from '@/lib/options';
 
 import { renderHTML } from './html';
 
 describe('HTML helpers', () => {
+
+    const app: AppInfo = {
+        name: 'My App',
+        basePath: '/',
+        themeColor: '#654321',
+    };
 
     it('Evaluates app info', () => {
         // Arrange
@@ -10,13 +19,13 @@ describe('HTML helpers', () => {
         const expected = '<title>My App</title>';
 
         // Act
-        const actual = renderHTML(html, '/var/www/index.html', { app: { name: 'My App' } });
+        const actual = renderHTML(html, '/var/www/index.html', app);
 
         // Assert
         expect(actual).toEqual(expected);
     });
 
-    it('Evaluates helpers', () => {
+    it('Evaluates asset helpers', () => {
         // Arrange
         const html = `
             {{ css('./inline-styles.css') }}
@@ -30,10 +39,38 @@ describe('HTML helpers', () => {
         `;
 
         // Act
-        const actual = renderHTML(html, '/var/www/index.html');
+        const actual = renderHTML(html, '/var/www/index.html', app);
 
         // Assert
         expect(actual).toEqual(expected);
+    });
+
+    it('Evaluates meta helpers', () => {
+        // Arrange
+        const html = `
+            {{ favicons({ maskIconColor: '#123456' }) }}
+            {{ socialMeta() }}
+        `;
+        const expected = formatCodeBlock(`
+            <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+            <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#123456" />
+
+
+            <meta name="apple-mobile-web-app-title" content="My App" />
+            <meta name="application-name" content="My App" />
+            <meta name="msapplication-TileColor" content="#654321" />
+            <meta name="theme-color" content="#654321" />
+            <meta property="og:title" content="My App" />
+            <meta property="og:type" content="website" />
+        `);
+
+        // Act
+        const actual = renderHTML(html, '/var/www/index.html', app);
+
+        // Assert
+        expect(formatCodeBlock(actual)).toEqual(expected);
     });
 
 });

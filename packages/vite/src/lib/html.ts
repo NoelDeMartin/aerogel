@@ -2,6 +2,8 @@ import { dirname, resolve } from 'path';
 import { readFileSync } from 'fs';
 import { stringMatchAll, toString } from '@noeldemartin/utils';
 
+import type { AppInfo } from '@/lib/options';
+
 import * as globalScope from './html-eval';
 import type { HTMLEvalScope } from './html-eval';
 
@@ -12,7 +14,7 @@ function evalScript(script: string, scope: HTMLEvalScope): unknown {
     })();
 }
 
-export function renderHTML(html: string, filename: string, scope: Record<string, unknown> = {}): string {
+export function renderHTML(html: string, filename: string, app: AppInfo): string {
     const matches = stringMatchAll<2>(html, /{{(.*?)}}/g);
     const directory = dirname(filename);
     const readFile = (path: string) => readFileSync(resolve(directory, path)).toString();
@@ -22,7 +24,7 @@ export function renderHTML(html: string, filename: string, scope: Record<string,
             match[0],
             toString(
                 evalScript(match[1], {
-                    ...scope,
+                    app,
                     readFile,
                 }),
             ),

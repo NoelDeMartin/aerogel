@@ -15,6 +15,7 @@ describe('Offline First', () => {
         // Log in
         cy.ariaInput('Login url').type(`${cssUrl()}{enter}`);
         cy.cssLogin();
+        cy.press('Offline First');
         cy.see('You are logged in as Alice Cooper!');
 
         // Creates local tasks

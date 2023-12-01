@@ -9,7 +9,7 @@ export function css(this: HTMLEvalScope, path: string): string {
     return `<style>${this.readFile(path)}</style>`;
 }
 
-export function favicons(options: { maskIconColor?: string }): string {
+export function favicons(options: { maskIconColor?: string } = {}): string {
     return `
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -22,7 +22,7 @@ export function js(this: HTMLEvalScope, path: string): string {
     return `<script>${this.readFile(path)}</script>`;
 }
 
-export function socialMeta(this: HTMLEvalScope, options: { image?: string }): string {
+export function socialMeta(this: HTMLEvalScope, options: { image?: string } = {}): string {
     const urlMeta = this.app.baseUrl && `<meta property="og:url" content="${this.app.baseUrl}" />`;
     const descriptionMeta =
         this.app.description &&
@@ -47,9 +47,9 @@ export function socialMeta(this: HTMLEvalScope, options: { image?: string }): st
         <meta name="theme-color" content="${this.app.themeColor}" />
         <meta property="og:title" content="${this.app.name}" />
         <meta property="og:type" content="website" />
-        ${urlMeta}
-        ${descriptionMeta}
-        ${imageMeta}
+        ${urlMeta ?? ''}
+        ${descriptionMeta ?? ''}
+        ${imageMeta ?? ''}
     `;
 }
 

@@ -1,4 +1,4 @@
-import { facade, updateLocationQueryParameters } from '@noeldemartin/utils';
+import { facade, forever, updateLocationQueryParameters } from '@noeldemartin/utils';
 
 import Events from '@/services/Events';
 import type { Plugin } from '@/plugins';
@@ -12,9 +12,8 @@ export class AppService extends Service {
 
         location.reload();
 
-        await new Promise(() => {
-            // Stall until actual reload happens
-        });
+        // Stall until the reload happens
+        await forever();
     }
 
     public plugin<T extends Plugin = Plugin>(name: string): T | null {
