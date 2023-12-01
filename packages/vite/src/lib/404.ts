@@ -6,7 +6,7 @@ import type { AppInfo, Options } from '@/lib/options';
 import static404RedirectHTML from '../templates/404.html';
 
 export function generate404Assets(context: PluginContext, app: AppInfo, options: Options): void {
-    const static404Redirect = options.static404Redirect ?? false;
+    const static404Redirect = options.static404Redirect ?? process.env.NODE_ENV === 'production';
 
     if (!static404Redirect) {
         return;
