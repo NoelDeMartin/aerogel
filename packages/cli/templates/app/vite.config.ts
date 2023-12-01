@@ -9,7 +9,7 @@ import { resolve } from 'path';
 export default defineConfig({
     publicDir: resolve(__dirname, './src/assets/public/'),
     plugins: [
-        Aerogel(),
+        Aerogel({ name: '<% app.name %>' }),
         Components({
             dts: false,
             resolvers: [AerogelResolver(), IconsResolver()],

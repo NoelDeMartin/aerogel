@@ -8,12 +8,14 @@ import { resolve } from 'path';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const basePath = isProduction ? '/playground/' : undefined;
+const baseUrl = isProduction ? 'https://aerogel.js.org/playground/' : undefined;
 
 export default defineConfig({
     base: basePath,
     publicDir: resolve(__dirname, './src/assets/public/'),
     plugins: [
         Aerogel({
+            baseUrl,
             name: 'Aerogel Playground',
             description: 'Explore this playground to see what Aerogel can do',
             static404Redirect: isProduction,

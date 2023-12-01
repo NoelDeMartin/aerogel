@@ -54,8 +54,10 @@ export function AerogelResolver(): ComponentResolver {
 
 export default function Aerogel(options: Options = {}): Plugin[] {
     const appInfo: AppInfo = {
-        name: options.name ?? 'App',
         basePath: '/',
+        baseUrl: options.baseUrl,
+        name: options.name ?? 'App',
+        themeColor: options.themeColor ?? '#ffffff',
         description: options.description,
     };
     const AerogelPlugin: Plugin = {
@@ -68,6 +70,10 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             appInfo.sourceUrl = parseSourceUrl(resolve(buildOptions.input[0], '../package.json'));
         },
         configureServer(server) {
+            server.watcher.on('ready', () => {
+                appInfo.baseUrl = server.resolvedUrls?.local?.[0] ?? appInfo.baseUrl;
+            });
+
             appInfo.sourceUrl = parseSourceUrl(`${server.config.root}/package.json`);
         },
         config: (config) => {
@@ -109,7 +115,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 name: appInfo.name,
                 short_name: appInfo.name,
                 description: appInfo.description,
-                theme_color: options.themeColor ?? '#ffffff',
+                theme_color: options.themeColor,
                 icons:
                     options.icons &&
                     Object.entries(options.icons).map(([sizes, src]) =>
