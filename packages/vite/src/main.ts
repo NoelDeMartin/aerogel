@@ -76,7 +76,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         config: (config) => {
             app.basePath = config.base ?? app.basePath;
             config.optimizeDeps = config.optimizeDeps ?? {};
-            config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), 'virtual:aerogel'];
+            config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), ...Object.keys(virtualHandlers)];
 
             return config;
         },
