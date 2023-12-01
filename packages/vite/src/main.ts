@@ -66,7 +66,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         },
         configureServer(server) {
             server.watcher.on('ready', () => {
-                app.baseUrl = server.resolvedUrls?.local?.[0] ?? app.baseUrl;
+                app.baseUrl = server.resolvedUrls?.network?.[0] ?? server.resolvedUrls?.local?.[0] ?? app.baseUrl;
             });
 
             server.middlewares.use(solidMiddleware(app, options));
