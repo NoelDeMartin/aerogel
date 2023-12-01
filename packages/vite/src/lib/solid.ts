@@ -1,13 +1,20 @@
+import { objectWithoutEmpty } from '@noeldemartin/utils';
 import type { Connect } from 'vite';
 import type { PluginContext } from 'rollup';
 
 import type { AppInfo, Options } from '@/lib/options';
 
-import type { ClientIDDocument } from 'virtual:aerogel-solid-clientid';
+import type { ClientIDDocument, VirtualAerogelSolid } from 'virtual:aerogel-solid';
 
-function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocument {
+function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocument | null {
     if (!app.baseUrl) {
-        throw new Error('Can\'t create solid clientID without a baseUrl!');
+        // eslint-disable-next-line no-console
+        console.warn(
+            'It was not possible to create a Solid ClientID document because the baseUrl ' +
+                'was not provided, to remove this warning add a `baseUrl` option in the Aerogel vite plugin options.',
+        );
+
+        return null;
     }
 
     const baseUrl = app.baseUrl.endsWith('/') ? app.baseUrl : `${app.baseUrl}/`;
@@ -35,15 +42,25 @@ export function generateSolidAssets(context: PluginContext, app: AppInfo, option
         return;
     }
 
+    const clientID = createClientIDDocument(app, options);
+
+    if (!clientID) {
+        return;
+    }
+
     context.emitFile({
         type: 'asset',
         fileName: 'clientid.jsonld',
-        source: JSON.stringify(createClientIDDocument(app, options)),
+        source: JSON.stringify(clientID),
     });
 }
 
-export function generateSolidVirtualClientIDModule(app: AppInfo, options: Options): string {
-    return `export default ${JSON.stringify(createClientIDDocument(app, options))};`;
+export function generateSolidVirtualModule(app: AppInfo, options: Options): string {
+    const virtual: VirtualAerogelSolid = objectWithoutEmpty({
+        clientID: createClientIDDocument(app, options),
+    });
+
+    return `export default ${JSON.stringify(virtual)};`;
 }
 
 export function solidMiddleware(app: AppInfo, options: Options): Connect.NextHandleFunction {
@@ -54,9 +71,17 @@ export function solidMiddleware(app: AppInfo, options: Options): Connect.NextHan
             return;
         }
 
+        const clientID = createClientIDDocument(app, options);
+
+        if (!clientID) {
+            next();
+
+            return;
+        }
+
         response.statusCode = 200;
         response.setHeader('Content-Type', 'application/ld+json');
-        response.write(JSON.stringify(createClientIDDocument(app, options)), 'utf-8');
+        response.write(JSON.stringify(clientID), 'utf-8');
         response.end();
     };
 }

@@ -1,4 +1,4 @@
-import Build from 'virtual:aerogel';
+import Aerogel from 'virtual:aerogel';
 
 import { defineServiceState } from '@/services/Service';
 import type { Plugin } from '@/plugins/Plugin';
@@ -7,8 +7,8 @@ export default defineServiceState({
     name: 'app',
     initialState: {
         plugins: {} as Record<string, Plugin>,
-        environment: Build.environment,
-        sourceUrl: Build.sourceUrl,
+        environment: Aerogel.environment,
+        sourceUrl: Aerogel.sourceUrl,
         isMounted: false,
     },
     computed: {

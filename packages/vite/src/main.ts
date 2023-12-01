@@ -6,11 +6,14 @@ import type { ComponentResolver } from 'unplugin-vue-components';
 import type { Plugin } from 'vite';
 
 import { generate404Assets } from '@/lib/404';
-import { generateSolidAssets, generateSolidVirtualClientIDModule, solidMiddleware } from '@/lib/solid';
+import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@/lib/solid';
 import { guessMediaType } from '@/lib/media-types';
 import { loadPackageInfo } from '@/lib/package-parser';
 import { renderHTML } from '@/lib/html';
 import type { AppInfo, Options } from '@/lib/options';
+
+import type { VirtualAerogel } from 'virtual:aerogel';
+
 export function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
@@ -42,13 +45,15 @@ export default function Aerogel(options: Options = {}): Plugin[] {
     };
     const virtualHandlers: Record<string, () => string> = {
         'virtual:aerogel'() {
-            return `export default ${JSON.stringify({
+            const virtual: VirtualAerogel = {
                 environment: process.env.NODE_ENV ?? 'development',
                 basePath: app.basePath,
                 sourceUrl: app.sourceUrl,
-            })};`;
+            };
+
+            return `export default ${JSON.stringify(virtual)};`;
         },
-        'virtual:aerogel-solid-clientid': () => generateSolidVirtualClientIDModule(app, options),
+        'virtual:aerogel-solid': () => generateSolidVirtualModule(app, options),
     };
     const AerogelPlugin: Plugin = {
         name: 'vite:aerogel',

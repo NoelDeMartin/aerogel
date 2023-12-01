@@ -1,11 +1,11 @@
 import { Storage, after, fail } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
-import type { handleIncomingRedirect, login, logout } from '@inrupt/solid-client-authn-browser';
+import type { ILoginInputOptions, handleIncomingRedirect, login, logout } from '@inrupt/solid-client-authn-browser';
 
 import Authenticator from '@/auth/Authenticator';
 import type { AuthSession } from '@/auth/Authenticator';
 
-import clientID from 'virtual:aerogel-solid-clientid';
+import AerogelSolid from 'virtual:aerogel-solid';
 
 const STORAGE_KEY = 'inrupt-authenticator';
 
@@ -19,12 +19,17 @@ export default class InruptAuthenticator extends Authenticator {
     public async login(loginUrl: string): Promise<AuthSession> {
         Storage.set<boolean>(STORAGE_KEY, true);
 
-        await this._login({
+        const options: ILoginInputOptions = {
             oidcIssuer: loginUrl,
-            clientId: clientID.client_id,
-            clientName: clientID.client_name,
-            redirectUrl: clientID.redirect_uris[0],
-        });
+        };
+
+        if (AerogelSolid.clientID) {
+            options.clientId = AerogelSolid.clientID.client_id;
+            options.clientName = AerogelSolid.clientID.client_name;
+            options.redirectUrl = AerogelSolid.clientID.redirect_uris[0];
+        }
+
+        await this._login(options);
 
         // Browser should redirect, so just make it wait for a while.
         await after({ seconds: 60 });

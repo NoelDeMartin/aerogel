@@ -1,16 +1,20 @@
 declare module 'virtual:aerogel' {
-    interface AerogelBuild {
-        environment: 'production' | 'development' | 'testing';
+    export interface VirtualAerogel {
+        environment: 'production' | 'development' | 'testing' | string;
         basePath?: string;
         sourceUrl?: string;
     }
 
-    const build: AerogelBuild;
+    const virtual: VirtualAerogel;
 
-    export default build;
+    export default virtual;
 }
 
-declare module 'virtual:aerogel-solid-clientid' {
+declare module 'virtual:aerogel-solid' {
+    export interface VirtualAerogelSolid {
+        clientID?: ClientIDDocument;
+    }
+
     export interface ClientIDDocument {
         '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld';
         client_id: string;
@@ -23,7 +27,7 @@ declare module 'virtual:aerogel-solid-clientid' {
         response_types: string[];
     }
 
-    const clientID: ClientIDDocument;
+    const virtual: VirtualAerogelSolid;
 
-    export default clientID;
+    export default virtual;
 }
