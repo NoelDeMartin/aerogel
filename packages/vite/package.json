@@ -30,6 +30,7 @@
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
     "peerDependencies": {
+        "@aerogel/core": "*",
         "vite": "*"
     },
     "dependencies": {
