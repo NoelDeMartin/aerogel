@@ -162,7 +162,11 @@ export default class Service<
             return;
         }
 
-        const storage = Storage.require<ServiceStorage>(this._name);
+        const storage = Storage.get<ServiceStorage>(this._name);
+
+        if (!storage) {
+            return;
+        }
 
         Storage.set(this._name, {
             ...storage,
@@ -191,14 +195,14 @@ export default class Service<
     }
 
     protected async frameworkBoot(): Promise<void> {
-        this.restorePersistedState();
+        this.initializePersistedState();
     }
 
     protected async boot(): Promise<void> {
         // Override.
     }
 
-    protected restorePersistedState(): void {
+    protected initializePersistedState(): void {
         // TODO fix this.static()
         const persist = (this.constructor as unknown as { persist: string[] }).persist;
 
