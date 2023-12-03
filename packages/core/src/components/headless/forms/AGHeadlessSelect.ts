@@ -21,8 +21,9 @@ export interface IAGHeadlessSelect {
 }
 
 export const selectProps = {
-    options: requiredArrayProp<IAGSelectOptionValue>(),
+    name: stringProp(),
     label: stringProp(),
+    options: requiredArrayProp<IAGSelectOptionValue>(),
     noSelectionText: stringProp(),
 };
 

@@ -13,7 +13,7 @@ import { computed, inject, provide } from 'vue';
 import { isObject, toString, uuid } from '@noeldemartin/utils';
 import { Listbox } from '@headlessui/vue';
 
-import { mixedProp, stringProp } from '@/utils/vue';
+import { mixedProp } from '@/utils/vue';
 import { translateWithDefault } from '@/lang/utils';
 import type Form from '@/forms/Form';
 import type { ComponentProps } from '@/utils/vue';
@@ -23,7 +23,6 @@ import type { IAGHeadlessSelect, IAGSelectOption, IAGSelectOptionValue } from '.
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
-    name: stringProp(),
     modelValue: mixedProp<IAGSelectOptionValue>(),
     ...useSelectProps(),
 });
