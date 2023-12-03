@@ -11,6 +11,7 @@
         "packages/plugin-solid",
         "packages/plugin-offline-first",
         "packages/cypress",
+        "packages/histoire",
         "packages/playground",
         "packages/create-aerogel",
         "packages/docs"
@@ -29,7 +30,6 @@
         "test:ci": "npm run test:ci -ws --if-present"
     },
     "devDependencies": {
-        "@histoire/plugin-vue": "^0.17.4",
         "@iconify/json": "^2.2.131",
         "@intlify/unplugin-vue-i18n": "^0.11.0",
         "@noeldemartin/eslint-config-typescript": "0.1.1-next.213cffed3d1b24c286a9602ebd17085b58a673b4",

@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ['./index.html', './src/**/*.{vue,ts}', '../core/src/**/*.{vue,ts}'],
+    content: ['./index.html', './src/**/*.{vue,ts}', '../core/src/**/*.{vue,ts}', '../histoire/src/**/*.{vue,ts}'],
     plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
     theme: {
         extend: {

@@ -1,0 +1,49 @@
+{
+    "name": "@aerogel/histoire",
+    "description": "Aerogel Histoire plugin",
+    "version": "0.0.0",
+    "main": "dist/aerogel-histoire.cjs.js",
+    "module": "dist/aerogel-histoire.esm.js",
+    "types": "dist/aerogel-histoire.d.ts",
+    "sideEffects": false,
+    "scripts": {
+        "build": "rm dist -rf && npm run build:js && npm run build:types && npm run build:plugin && npm run build:styles",
+        "build:js": "noeldemartin-build-javascript",
+        "build:types": "noeldemartin-build-types",
+        "build:plugin": "esbuild src/plugin.ts --format=cjs --bundle --external:@histoire/plugin-vue > dist/plugin.js",
+        "build:styles": "cp src/assets/styles.css dist",
+        "publish-next": "noeldemartin-publish-next",
+        "lint": "noeldemartin-lint src"
+    },
+    "engines": {
+        "node": ">=18.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
+    },
+    "keywords": [
+        "javascript",
+        "aerogel",
+        "histoire"
+    ],
+    "author": "Noel De Martin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    },
+    "peerDependencies": {
+        "@aerogel/core": "*",
+        "histoire": "*",
+        "vue": "*"
+    },
+    "dependencies": {
+        "@histoire/plugin-vue": "^0.17.6",
+        "@noeldemartin/utils": "0.5.0-next.dce7f1ca99862fde01601bb39d71d0eaaed3abe5"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@noeldemartin/eslint-config-vue"
+        ]
+    }
+}

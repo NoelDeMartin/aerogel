@@ -10,8 +10,7 @@
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:4000 cy:run",
         "dev": "vite",
         "dev:serve-pod": "community-solid-server -c @css:config/file.json -p 4000 -f ./solid-data",
-        "histoire:dev": "histoire dev",
-        "histoire:prod": "histoire build",
+        "histoire": "histoire dev",
         "lint": "noeldemartin-lint src",
         "test:serve-app": "vite --port 5001",
         "test:serve-pod": "community-solid-server -p 4000 -l warn"
@@ -34,6 +33,7 @@
     "devDependencies": {
         "@aerogel/cli": "*",
         "@aerogel/cypress": "*",
+        "@aerogel/histoire": "*",
         "@aerogel/vite": "*",
         "@inrupt/solid-client-authn-core": "^1.17.2",
         "@solid/community-server": "^7.0.1",

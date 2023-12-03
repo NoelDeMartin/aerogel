@@ -1,12 +1,12 @@
 <template>
     <Story :layout="{ type: 'grid' }">
         <Variant title="Primary">
-            <StoryPage>
+            <AGStoryPage>
                 <PageTitle :source="viewSource ? '#' : undefined">
                     {{ content }}
                 </PageTitle>
-                <StoryPlaceholder class="h-96" />
-            </StoryPage>
+                <AGStoryPlaceholder class="h-96" />
+            </AGStoryPage>
 
             <template #controls>
                 <HstText v-model="content" title="Content" />

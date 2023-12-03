@@ -18,7 +18,7 @@ export function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
         resolve: (name) => {
-            if (!name.startsWith('AG')) {
+            if (!name.startsWith('AG') || name.startsWith('AGStory')) {
                 return;
             }
 
