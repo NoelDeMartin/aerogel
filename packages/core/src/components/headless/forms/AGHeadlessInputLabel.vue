@@ -1,6 +1,8 @@
 <template>
-    <label :for="input.id">
-        <slot />
+    <label v-if="input.label" :for="input.id">
+        <slot>
+            {{ input.label }}
+        </slot>
     </label>
 </template>
 

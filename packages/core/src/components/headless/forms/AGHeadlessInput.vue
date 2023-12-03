@@ -12,13 +12,14 @@ import { uuid } from '@noeldemartin/utils';
 import { mixedProp, stringProp } from '@/utils/vue';
 import type Form from '@/forms/Form';
 
+import { useInputProps } from './AGHeadlessInput';
 import type { IAGHeadlessInput } from './AGHeadlessInput';
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
     as: stringProp('div'),
-    name: stringProp(),
     modelValue: mixedProp<string | number | boolean>([String, Number, Boolean]),
+    ...useInputProps(),
 });
 const errors = computed(() => {
     if (!form || !props.name) {
@@ -30,6 +31,8 @@ const errors = computed(() => {
 const form = inject<Form | null>('form', null);
 const api: IAGHeadlessInput = {
     id: `input-${uuid()}`,
+    name: computed(() => props.name),
+    label: computed(() => props.label),
     value: computed(() => {
         if (form && props.name) {
             return form.getFieldValue(props.name) as string | number | boolean | null;

@@ -1,8 +1,6 @@
 <template>
-    <AGHeadlessInput ref="$input" :name="name" :class="className">
-        <AGHeadlessInputLabel v-if="label" class="block text-sm font-medium leading-6 text-gray-900">
-            {{ label }}
-        </AGHeadlessInputLabel>
+    <AGHeadlessInput ref="$input" v-bind="inputProps" :class="className">
+        <AGHeadlessInputLabel class="block text-sm font-medium leading-6 text-gray-900" />
         <div class="relative rounded-md shadow-sm" :class="{ 'mt-1': label, [wrapperClass]: true }">
             <AGHeadlessInputInput
                 v-bind="attrs"
@@ -23,17 +21,18 @@
 </template>
 
 <script setup lang="ts">
-import { componentRef, stringProp, useInputAttrs } from '@aerogel/core';
+import { componentRef, extractInputProps, stringProp, useInputAttrs, useInputProps } from '@aerogel/core';
 import type { IAGHeadlessInput } from '@aerogel/core';
 
 defineOptions({ inheritAttrs: false });
-defineProps({
-    name: stringProp(),
-    label: stringProp(),
+
+const props = defineProps({
+    ...useInputProps(),
     inputClass: stringProp(''),
     wrapperClass: stringProp(''),
 });
 
 const $input = componentRef<IAGHeadlessInput>();
+const inputProps = extractInputProps(props);
 const [attrs, className] = useInputAttrs();
 </script>
