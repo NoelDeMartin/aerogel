@@ -6,7 +6,11 @@ import File from '@/lib/File';
 
 export default class Template {
 
-    public static instantiate(path: string, destination: string, replacements: Record<string, unknown>): string[] {
+    public static instantiate(
+        path: string,
+        destination: string = './',
+        replacements: Record<string, unknown> = {},
+    ): string[] {
         const template = new Template(path);
 
         return template.instantiate(destination, replacements);

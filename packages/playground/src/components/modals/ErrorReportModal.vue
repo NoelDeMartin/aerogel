@@ -54,7 +54,7 @@
             </h2>
             <AGMarkdown v-if="report.description" :text="report.description" class="text-gray-600" />
         </div>
-        <div v-if="report.details" class="bg-red-grey -mt-2 max-h-[80vh] overflow-auto">
+        <div v-if="hasDetails" class="bg-red-grey -mt-2 max-h-[80vh] overflow-auto">
             <pre class="p-4 text-xs text-red-800" v-text="report.details" />
         </div>
     </BaseModal>
@@ -68,4 +68,5 @@ import type { ErrorReport, IAGErrorReportModalButtonsDefaultSlotProps } from '@a
 const props = defineProps(useErrorReportModalProps());
 const activeReportIndex = ref(0);
 const report = computed(() => props.reports[activeReportIndex.value] as ErrorReport);
+const hasDetails = computed(() => (report.value.details?.trim() ?? '').length > 0);
 </script>

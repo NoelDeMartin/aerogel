@@ -1,4 +1,4 @@
-import { arrayFrom } from '@noeldemartin/utils';
+import { arrayFrom, stringToSlug } from '@noeldemartin/utils';
 import { Node, SyntaxKind } from 'ts-morph';
 import type { ArrayLiteralExpression, CallExpression, SourceFile } from 'ts-morph';
 
@@ -13,6 +13,7 @@ import type { CommandOptions } from '@/commands/Command';
 
 export interface Options {
     story?: boolean;
+    input?: boolean;
 }
 
 export class GenerateComponentCommand extends Command {
@@ -26,6 +27,10 @@ export class GenerateComponentCommand extends Command {
     public static options: CommandOptions = {
         story: {
             description: 'Create component story using Histoire',
+            type: 'boolean',
+        },
+        input: {
+            description: 'Create a custom input',
             type: 'boolean',
         },
     };
@@ -48,7 +53,7 @@ export class GenerateComponentCommand extends Command {
         const [directoryName, componentName] = this.parsePathComponents();
 
         await this.createComponent(directoryName, componentName, files);
-        await this.createStory(componentName, files);
+        await this.createStory(directoryName, componentName, files);
         await this.declareComponents();
 
         const filesList = arrayFrom(files)
@@ -63,8 +68,11 @@ export class GenerateComponentCommand extends Command {
             return;
         }
 
-        if (!File.exists('src/main.histoire.ts')) {
-            Log.fail('Histoire is not installed yet!');
+        if (!File.contains('package.json', '"histoire"') && !File.contains('package.json', '"@aerogel/histoire"')) {
+            Log.fail(`
+                Histoire is not installed yet! You can install it running:
+                npx ag install histoire
+            `);
         }
     }
 
@@ -74,22 +82,30 @@ export class GenerateComponentCommand extends Command {
                 Log.fail(`${this.path} component already exists!`);
             }
 
-            const componentFiles = Template.instantiate(templatePath('component'), `src/components/${directoryName}`, {
-                component: { name: componentName },
+            const templateName = this.options.input ? 'component-input' : 'component';
+            const componentFiles = Template.instantiate(templatePath(templateName), `src/components/${directoryName}`, {
+                component: {
+                    name: componentName,
+                    slug: stringToSlug(componentName),
+                },
             });
 
             componentFiles.forEach((file) => files.add(file));
         });
     }
 
-    protected async createStory(componentName: string, files: Set<string>): Promise<void> {
+    protected async createStory(directoryName: string, componentName: string, files: Set<string>): Promise<void> {
         if (!this.options.story) {
             return;
         }
 
         await Log.animate('Creating story', async () => {
-            const storyFiles = Template.instantiate(templatePath('component-story'), 'src/components', {
-                component: { name: componentName },
+            const templateName = this.options.input ? 'component-input-story' : 'component-story';
+            const storyFiles = Template.instantiate(templatePath(templateName), `src/components/${directoryName}`, {
+                component: {
+                    name: componentName,
+                    slug: stringToSlug(componentName),
+                },
             });
 
             storyFiles.forEach((file) => files.add(file));

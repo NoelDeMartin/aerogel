@@ -7,7 +7,7 @@ export function app(): App {
 }
 
 export function isLocalApp(): boolean {
-    return File.contains('package.json', 'file');
+    return File.contains('package.json', '"@aerogel/core": "file:');
 }
 
 export function isLinkedLocalApp(): boolean {

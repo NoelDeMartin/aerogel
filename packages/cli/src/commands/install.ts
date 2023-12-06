@@ -1,10 +1,11 @@
 import Command from '@/commands/Command';
 import Log from '@/lib/Log';
+import { Histoire } from '@/plugins/Histoire';
 import { Solid } from '@/plugins/Solid';
 import { Soukai } from '@/plugins/Soukai';
 import type Plugin from '@/plugins/Plugin';
 
-const plugins = [new Soukai(), new Solid()].reduce(
+const plugins = [new Soukai(), new Solid(), new Histoire()].reduce(
     (pluginsObject, plugin) => Object.assign(pluginsObject, { [plugin.name]: plugin }),
     {} as Record<string, Plugin>,
 );

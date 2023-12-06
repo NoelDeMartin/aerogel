@@ -20,6 +20,7 @@ export default abstract class Plugin {
     public async install(): Promise<void> {
         this.assertNotInstalled();
 
+        await this.beforeInstall();
         await this.installDependencies();
 
         if (editFiles()) {
@@ -28,6 +29,8 @@ export default abstract class Plugin {
             await this.updateFiles(editor);
             await editor.format();
         }
+
+        await this.afterInstall();
 
         Log.info(`Plugin ${this.name} installed!`);
     }
@@ -38,6 +41,14 @@ export default abstract class Plugin {
         }
     }
 
+    protected async beforeInstall(): Promise<void> {
+        // Placeholder for overrides, don't place any functionality here.
+    }
+
+    protected async afterInstall(): Promise<void> {
+        // Placeholder for overrides, don't place any functionality here.
+    }
+
     protected async installDependencies(): Promise<void> {
         await Log.animate('Installing plugin dependencies', async () => {
             await this.installNpmDependencies();
@@ -45,12 +56,16 @@ export default abstract class Plugin {
     }
 
     protected async updateFiles(editor: Editor): Promise<void> {
-        await this.updateBootstrapConfig(editor);
+        if (!this.isForDevelopment()) {
+            await this.updateBootstrapConfig(editor);
+        }
     }
 
     protected async installNpmDependencies(): Promise<void> {
+        const flags = this.isForDevelopment() ? '--save-dev' : '';
+
         if (isLinkedLocalApp()) {
-            await Shell.run(`npm install file:${packagePath(this.getLocalPackageName())}`);
+            await Shell.run(`npm install file:${packagePath(this.getLocalPackageName())} ${flags}`);
 
             return;
         }
@@ -58,12 +73,12 @@ export default abstract class Plugin {
         if (isLocalApp()) {
             const packPath = packagePackPath(this.getLocalPackageName()) ?? packNotFound(this.getLocalPackageName());
 
-            await Shell.run(`npm install file:${packPath}`);
+            await Shell.run(`npm install file:${packPath} ${flags}`);
 
             return;
         }
 
-        await Shell.run(`npm install ${this.getNpmPackageName()}@next --save-exact`);
+        await Shell.run(`npm install ${this.getNpmPackageName()}@next --save-exact ${flags}`);
     }
 
     protected async updateBootstrapConfig(editor: Editor): Promise<void> {
@@ -86,6 +101,25 @@ export default abstract class Plugin {
         });
     }
 
+    protected async updateTailwindConfig(editor: Editor, options: { content: string }): Promise<void> {
+        await Log.animate('Updating tailwind configuration', async () => {
+            const tailwindConfig = editor.requireSourceFile('tailwind.config.js');
+            const contentArray = this.getTailwindContentArray(tailwindConfig);
+
+            if (!contentArray) {
+                return Log.fail(`
+                    Could not find content array in tailwind config, please add the following manually:
+
+                    ${options.content}
+                `);
+            }
+
+            contentArray.addElement(options.content);
+
+            await editor.save(tailwindConfig);
+        });
+    }
+
     protected getBootstrapPluginsDeclaration(mainConfig: SourceFile): ArrayLiteralExpression | null {
         const bootstrapAppCall = findDescendant(mainConfig, {
             guard: Node.isCallExpression,
@@ -103,6 +137,21 @@ export default abstract class Plugin {
         return pluginsArray;
     }
 
+    protected getTailwindContentArray(tailwindConfig: SourceFile): ArrayLiteralExpression | null {
+        const contentAssignment = findDescendant(tailwindConfig, {
+            guard: Node.isPropertyAssignment,
+            validate: (propertyAssignment) => propertyAssignment.getName() === 'content',
+            skip: SyntaxKind.JSDoc,
+        });
+        const contentArray = contentAssignment?.getInitializer();
+
+        if (!Node.isArrayLiteralExpression(contentArray)) {
+            return null;
+        }
+
+        return contentArray;
+    }
+
     protected getBootstrapImport(): OptionalKind<ImportDeclarationStructure> {
         return {
             defaultImport: this.name,
@@ -116,6 +165,10 @@ export default abstract class Plugin {
 
     protected getLocalPackageName(): string {
         return `plugin-${this.name}`;
+    }
+
+    protected isForDevelopment(): boolean {
+        return false;
     }
 
     protected getBootstrapConfig(): string {

@@ -17,7 +17,12 @@ export class Solid extends Plugin {
     }
 
     protected async updateFiles(editor: Editor): Promise<void> {
-        await this.updateTailwindConfig(editor);
+        await this.updateTailwindConfig(editor, {
+            content: isLinkedLocalApp()
+                ? `'${packagePath('plugin-solid')}/dist/**/*.js'`
+                : '\'./node_modules/@aerogel/plugin-solid/dist/**/*.js\'',
+        });
+
         await this.updateNpmScripts(editor);
         await this.updateGitIgnore();
         await super.updateFiles(editor);
@@ -27,28 +32,6 @@ export class Solid extends Plugin {
         await Shell.run('npm install soukai-solid@next --save-exact');
         await Shell.run('npm install @solid/community-server@7 --save');
         await super.installNpmDependencies();
-    }
-
-    protected async updateTailwindConfig(editor: Editor): Promise<void> {
-        await Log.animate('Updating tailwind configuration', async () => {
-            const tailwindConfig = editor.requireSourceFile('tailwind.config.js');
-            const contentArray = this.getTailwindContentArray(tailwindConfig);
-            const contentValue = isLinkedLocalApp()
-                ? `'${packagePath('plugin-solid')}/dist/**/*.js'`
-                : '\'./node_modules/@aerogel/plugin-solid/dist/**/*.js\'';
-
-            if (!contentArray) {
-                return Log.fail(`
-                    Could not find content array in tailwind config, please add the following manually:
-
-                    ${contentValue}
-                `);
-            }
-
-            contentArray.addElement(contentValue);
-
-            await editor.save(tailwindConfig);
-        });
     }
 
     protected async updateNpmScripts(editor: Editor): Promise<void> {
@@ -94,21 +77,6 @@ export class Solid extends Plugin {
         const gitignore = File.read('.gitignore') ?? '';
 
         File.write('.gitignore', `${gitignore}/solid-data\n`);
-    }
-
-    protected getTailwindContentArray(tailwindConfig: SourceFile): ArrayLiteralExpression | null {
-        const contentAssignment = findDescendant(tailwindConfig, {
-            guard: Node.isPropertyAssignment,
-            validate: (propertyAssignment) => propertyAssignment.getName() === 'content',
-            skip: SyntaxKind.JSDoc,
-        });
-        const contentArray = contentAssignment?.getInitializer();
-
-        if (!Node.isArrayLiteralExpression(contentArray)) {
-            return null;
-        }
-
-        return contentArray;
     }
 
 }

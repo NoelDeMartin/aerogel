@@ -199,7 +199,7 @@ export default class Service<
     }
 
     protected async boot(): Promise<void> {
-        // Override.
+        // Placeholder for overrides, don't place any functionality here.
     }
 
     protected initializePersistedState(): void {

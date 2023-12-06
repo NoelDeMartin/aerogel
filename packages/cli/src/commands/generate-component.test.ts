@@ -30,8 +30,13 @@ describe('Generate Component command', () => {
 
     it('generates components with stories', async () => {
         // Arrange
-        FileMock.stub('package.json', '@aerogel/core');
-        FileMock.stub('src/main.histoire.ts');
+        FileMock.stub(
+            'package.json',
+            `
+                "@aerogel/core": "*",
+                "histoire": "*"
+            `,
+        );
 
         // Act
         await GenerateComponentCommand.run('FooBar', { story: true });
@@ -39,6 +44,27 @@ describe('Generate Component command', () => {
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<div>FooBar</div>');
         FileMock.expectCreated('src/components/FooBar.story.vue').toContain('<FooBar />');
+    });
+
+    it('generates input components with stories', async () => {
+        // Arrange
+        FileMock.stub(
+            'package.json',
+            `
+                "@aerogel/core": "*",
+                "histoire": "*"
+            `,
+        );
+
+        // Act
+        await GenerateComponentCommand.run('FooBar', { input: true, story: true });
+
+        // Assert
+        FileMock.expectCreated('src/components/FooBar.vue').toContain('<AGHeadlessInputInput v-bind="attrs" />');
+        FileMock.expectCreated('src/components/FooBar.story.vue').toContain('.story-foobar .variant-playground');
+        FileMock.expectCreated('src/components/FooBar.story.vue').toContain(
+            '<FooBar name="food" :label="label" :placeholder="placeholder" />',
+        );
     });
 
 });

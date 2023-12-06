@@ -33,13 +33,15 @@ export class Editor {
         await Log.animate('Formatting modified files', async () => {
             const usingPrettier = File.exists('prettier.config.js') || File.contains('package.json', '"prettier": {');
             const usingESLint = File.exists('.eslintrc.js') || File.contains('package.json', '"eslintConfig"');
-
-            await Promise.all(
-                arrayFrom(this.modifiedFiles).map(async (file) => {
+            const usingPrettierESLint = File.contains('package.json', '"prettier-eslint-cli"');
+            const formatFile = usingPrettierESLint
+                ? (file: string) => Shell.run(`npx prettier-eslint ${file} --write`)
+                : async (file: string) => {
                     usingPrettier && (await Shell.run(`npx prettier ${file} --write`));
                     file.match(/\.(ts|js|vue)$/) && usingESLint && (await Shell.run(`npx eslint ${file} --fix`));
-                }),
-            );
+                };
+
+            await Promise.all(arrayFrom(this.modifiedFiles).map(async (file) => formatFile(file)));
         });
     }
 

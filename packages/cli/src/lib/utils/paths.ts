@@ -10,7 +10,7 @@ export function basePath(path: string = ''): string {
     }
 
     const packageJson = File.read(resolve(__dirname, '../../../../package.json'));
-    const matches = stringMatch<2>(packageJson ?? '', /"@aerogel\/cli": "file:(.*)\/aerogel-cli-[\d.]*\.tgz"/);
+    const matches = stringMatch<2>(packageJson ?? '', /"@aerogel\/core": "file:(.*)\/aerogel-core-[\d.]*\.tgz"/);
     const cliPath = matches?.[1] ?? Log.fail<string>('Could not determine base path');
 
     return resolve(cliPath, path);
