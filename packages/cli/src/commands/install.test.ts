@@ -34,7 +34,7 @@ describe('Install plugin command', () => {
 
         // Assert
         ShellMock.expectRan('npm install histoire@0.17.6 --save-dev');
-        ShellMock.expectRan('npm install @aerogel/histoire@next --save-exact');
+        ShellMock.expectRan('npm install @aerogel/histoire@next --save-exact --save-dev');
         ShellMock.expectRan('npm install patch-package --save-dev');
     });
 
