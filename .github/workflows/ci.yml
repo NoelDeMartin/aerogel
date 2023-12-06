@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-    ci:
+    build:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -12,10 +12,64 @@ jobs:
                   node-version-file: '.nvmrc'
             - run: npm ci
             - run: npm run build
+            - uses: actions/cache/save@v3
+              with:
+                  key: build-${{ github.sha }}
+                  path: |
+                      packages/*/dist/**
+                      node_modules/**/*
+                      packages/*/node_modules/**/*
+
+    lint:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+            - uses: actions/cache/restore@v3
+              with:
+                  key: build-${{ github.sha }}
+                  path: |
+                      packages/*/dist/**
+                      node_modules/**/*
+                      packages/*/node_modules/**/*
             - run: npm run lint
+
+    unit-tests:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+            - uses: actions/cache/restore@v3
+              with:
+                  key: build-${{ github.sha }}
+                  path: |
+                      packages/*/dist/**
+                      node_modules/**/*
+                      packages/*/node_modules/**/*
             - run: npm run test:ci
-            - name: Cypress
-              run: npm run cy:test-snapshots:ci
+
+    cypress-tests:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+            - uses: actions/cache/restore@v3
+              with:
+                  key: build-${{ github.sha }}
+                  path: |
+                      packages/*/dist/**
+                      node_modules/**/*
+                      packages/*/node_modules/**/*
+            - run: npm run cy:test-snapshots:ci
             - name: Upload Cypress screenshots
               uses: actions/upload-artifact@v3
               if: ${{ failure() }}
