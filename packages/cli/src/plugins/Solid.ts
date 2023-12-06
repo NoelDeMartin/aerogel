@@ -1,11 +1,7 @@
-import { Node, SyntaxKind } from 'ts-morph';
-import type { ArrayLiteralExpression, SourceFile } from 'ts-morph';
-
 import File from '@/lib/File';
 import Log from '@/lib/Log';
 import Plugin from '@/plugins/Plugin';
 import Shell from '@/lib/Shell';
-import { findDescendant } from '@/lib/utils/edit';
 import { isLinkedLocalApp } from '@/lib/utils/app';
 import { packagePath } from '@/lib/utils/paths';
 import type { Editor } from '@/lib/Editor';
