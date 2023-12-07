@@ -63,7 +63,7 @@ jobs:
                   sed -i '58d' ../package.json
 
                   # Install plugin
-                  npx ag install solid
+                  npx gel install solid
 
                   # Add Solid status component
                   sed -i "10i\            <AGSolidStatus v-if=\"!\$solid.loggedIn\" class=\"mt-4\" />" ./src/App.vue
