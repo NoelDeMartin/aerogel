@@ -1,5 +1,5 @@
 <template>
-    <AGModal v-slot="{ close }: IAGModalSlotProps" :cancellable="false">
+    <AGModal v-slot="{ close }: IAGModalDefaultSlotProps" :cancellable="false">
         <AGMarkdown v-if="title" :text="title" as="h1" />
         <AGMarkdown :text="message" />
 
@@ -18,7 +18,7 @@
 import { requiredStringProp, stringProp } from '@/utils/vue';
 
 import AGModal from './AGModal.vue';
-import type { IAGModalSlotProps } from './AGModal';
+import type { IAGModalDefaultSlotProps } from './AGModal';
 
 import AGButton from '../forms/AGButton.vue';
 import AGMarkdown from '../lib/AGMarkdown.vue';

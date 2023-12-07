@@ -1,6 +1,4 @@
-import AGHeadlessModal from './AGHeadlessModal.vue';
-import AGHeadlessModalPanel from './AGHeadlessModalPanel.vue';
-import AGHeadlessModalTitle from './AGHeadlessModalTitle.vue';
-import type { IAGHeadlessModal } from './AGHeadlessModal';
-
-export { AGHeadlessModal, AGHeadlessModalPanel, AGHeadlessModalTitle, IAGHeadlessModal };
+export * from './AGHeadlessModal';
+export { default as AGHeadlessModal } from './AGHeadlessModal.vue';
+export { default as AGHeadlessModalPanel } from './AGHeadlessModalPanel.vue';
+export { default as AGHeadlessModalTitle } from './AGHeadlessModalTitle.vue';
