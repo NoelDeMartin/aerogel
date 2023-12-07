@@ -75,4 +75,23 @@ describe('Generate Component command', () => {
         );
     });
 
+    it('generates button components with stories', async () => {
+        // Arrange
+        FileMock.stub(
+            'package.json',
+            `
+                "@aerogel/core": "*",
+                "histoire": "*"
+            `,
+        );
+
+        // Act
+        await run('FooBar', { button: true, story: true });
+
+        // Assert
+        FileMock.expectCreated('src/components/FooBar.vue').toContain('<AGHeadlessButton :class="colorClasses">');
+        FileMock.expectCreated('src/components/FooBar.story.vue').toContain('.story-foobar .variant-playground');
+        FileMock.expectCreated('src/components/FooBar.story.vue').toContain('<FooBar :color="color">');
+    });
+
 });

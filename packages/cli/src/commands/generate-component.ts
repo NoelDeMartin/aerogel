@@ -12,6 +12,7 @@ import { templatePath } from '@/lib/utils/paths';
 import type { CommandOptions } from '@/commands/Command';
 
 export interface Options {
+    button?: boolean;
     input?: boolean;
     story?: boolean;
 }
@@ -25,6 +26,10 @@ export class GenerateComponentCommand extends Command {
     ];
 
     protected static options: CommandOptions = {
+        button: {
+            description: 'Create a custom button',
+            type: 'boolean',
+        },
         input: {
             description: 'Create a custom input',
             type: 'boolean',
@@ -43,6 +48,12 @@ export class GenerateComponentCommand extends Command {
 
         this.path = path;
         this.options = options;
+    }
+
+    protected async validate(): Promise<void> {
+        if (this.options.button && this.options.input) {
+            Log.fail('Cannot use both \'button\' and \'input\' flags!');
+        }
     }
 
     protected async run(): Promise<void> {
@@ -82,7 +93,11 @@ export class GenerateComponentCommand extends Command {
                 Log.fail(`${this.path} component already exists!`);
             }
 
-            const templateName = this.options.input ? 'component-input' : 'component';
+            const templateName = this.options.input
+                ? 'component-input'
+                : this.options.button
+                    ? 'component-button'
+                    : 'component';
             const componentFiles = Template.instantiate(templatePath(templateName), `src/components/${directoryName}`, {
                 component: {
                     name: componentName,
@@ -100,7 +115,11 @@ export class GenerateComponentCommand extends Command {
         }
 
         await Log.animate('Creating story', async () => {
-            const templateName = this.options.input ? 'component-input-story' : 'component-story';
+            const templateName = this.options.input
+                ? 'component-input-story'
+                : this.options.button
+                    ? 'component-button-story'
+                    : 'component-story';
             const storyFiles = Template.instantiate(templatePath(templateName), `src/components/${directoryName}`, {
                 component: {
                     name: componentName,

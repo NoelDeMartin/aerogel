@@ -10,6 +10,7 @@ import type { Editor } from '@/lib/Editor';
 export class Histoire extends Plugin {
 
     private installedPatchPackage: boolean = false;
+    private installedPostCSSPseudoClasses: boolean = false;
 
     constructor() {
         super('histoire');
@@ -17,6 +18,7 @@ export class Histoire extends Plugin {
 
     public async beforeInstall(): Promise<void> {
         this.installedPatchPackage = false;
+        this.installedPostCSSPseudoClasses = false;
     }
 
     protected async afterInstall(): Promise<void> {
@@ -49,6 +51,12 @@ export class Histoire extends Plugin {
             await Shell.run('npm install patch-package --save-dev');
 
             this.installedPatchPackage = true;
+        }
+
+        if (!File.contains('package.json', '"postcss-pseudo-classes"')) {
+            await Shell.run('npm install postcss-pseudo-classes --save-dev');
+
+            this.installedPostCSSPseudoClasses = true;
         }
 
         await super.installNpmDependencies();
@@ -84,6 +92,10 @@ export class Histoire extends Plugin {
         Log.info('Creating config files...');
 
         Template.instantiate(templatePath('histoire'));
+
+        if (this.installedPostCSSPseudoClasses) {
+            Template.instantiate(templatePath('postcss-pseudo-classes'));
+        }
     }
 
     protected isForDevelopment(): boolean {

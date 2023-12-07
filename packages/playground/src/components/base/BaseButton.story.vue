@@ -1,12 +1,7 @@
 <template>
     <Story group="base" :layout="{ type: 'grid' }">
         <Variant title="Playground">
-            <BaseButton
-                class="m-1"
-                :color="color"
-                :small="small"
-                :icon="icon !== 'none'"
-            >
+            <BaseButton :color="color" :small="small" :icon="icon !== 'none'">
                 <i-mdi-check v-if="icon === 'check'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" />
                 <i-mdi-close v-else-if="icon === 'close'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" />
                 <i-mdi-help-circle-outline v-else-if="icon === 'help'" :class="small ? 'h-4 w-4' : 'h-6 w-6'" />
@@ -22,27 +17,28 @@
         </Variant>
 
         <Variant title="Default">
-            <BaseButton class="m-1">
-                Click me!
-            </BaseButton>
+            <BaseButton> Click me! </BaseButton>
         </Variant>
 
         <Variant title="Hover">
-            <BaseButton class=":hover m-1">
+            <BaseButton class=":hover">
                 Click me!
             </BaseButton>
         </Variant>
 
         <Variant title="Focus">
-            <BaseButton class=":focus :focus-visible m-1">
+            <BaseButton class=":focus :focus-visible">
                 Click me!
             </BaseButton>
         </Variant>
 
         <Variant title="Colors" :layout="{ width: '300px' }">
-            <div class="flex items-center gap-2 p-1">
+            <div class="flex items-center gap-2">
                 <BaseButton color="primary">
                     Primary
+                </BaseButton>
+                <BaseButton color="secondary">
+                    Secondary
                 </BaseButton>
                 <BaseButton color="danger">
                     Danger
