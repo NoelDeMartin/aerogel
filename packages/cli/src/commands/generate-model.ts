@@ -13,10 +13,10 @@ interface Options {
 
 export class GenerateModelCommand extends Command {
 
-    public static command: string = 'generate:model';
-    public static description: string = 'Generate an AerogelJS Model';
-    public static parameters: [string, string][] = [['name', 'Model name']];
-    public static options: CommandOptions = {
+    protected static command: string = 'generate:model';
+    protected static description: string = 'Generate an AerogelJS Model';
+    protected static parameters: [string, string][] = [['name', 'Model name']];
+    protected static options: CommandOptions = {
         fields: 'Create model with the given fields',
     };
 
@@ -30,7 +30,7 @@ export class GenerateModelCommand extends Command {
         this.options = options;
     }
 
-    public async run(): Promise<void> {
+    protected async run(): Promise<void> {
         this.assertAerogelOrDirectory('src/models');
 
         if (File.exists(`src/models/${this.name}.ts`)) {

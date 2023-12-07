@@ -15,10 +15,10 @@ export interface Options {
 
 export class CreateCommand extends Command {
 
-    public static command: string = 'create';
-    public static description: string = 'Create AerogelJS app';
-    public static parameters: [string, string][] = [['path', 'Application path']];
-    public static options: CommandOptions = {
+    protected static command: string = 'create';
+    protected static description: string = 'Create AerogelJS app';
+    protected static parameters: [string, string][] = [['path', 'Application path']];
+    protected static options: CommandOptions = {
         name: 'Application name',
         local: {
             type: 'boolean',
@@ -40,7 +40,7 @@ export class CreateCommand extends Command {
         this.options = options;
     }
 
-    public async run(): Promise<void> {
+    protected async run(): Promise<void> {
         const path = this.path;
         const name = this.options.name ?? stringToTitleCase(basename(path));
 

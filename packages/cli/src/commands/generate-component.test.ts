@@ -1,17 +1,25 @@
-import { describe, it } from 'vitest';
+import { beforeEach, describe, it } from 'vitest';
 
 import FileMock from '@/lib/File.mock';
+import { stubCommandRunner } from '@/testing/utils';
+import type { StubCommandRunner } from '@/testing/utils';
 
 import { GenerateComponentCommand } from './generate-component';
 
 describe('Generate Component command', () => {
+
+    let run: StubCommandRunner<typeof GenerateComponentCommand>;
+
+    beforeEach(() => {
+        run = stubCommandRunner(GenerateComponentCommand);
+    });
 
     it('generates components', async () => {
         // Arrange
         FileMock.stub('package.json', '@aerogel/core');
 
         // Act
-        await GenerateComponentCommand.run('FooBar');
+        await run('FooBar');
 
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<div>FooBar</div>');
@@ -22,7 +30,7 @@ describe('Generate Component command', () => {
         FileMock.stub('package.json', '@aerogel/core');
 
         // Act
-        await GenerateComponentCommand.run('module/FooBar');
+        await run('module/FooBar');
 
         // Assert
         FileMock.expectCreated('src/components/module/FooBar.vue').toContain('<div>FooBar</div>');
@@ -39,7 +47,7 @@ describe('Generate Component command', () => {
         );
 
         // Act
-        await GenerateComponentCommand.run('FooBar', { story: true });
+        await run('FooBar', { story: true });
 
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<div>FooBar</div>');
@@ -57,7 +65,7 @@ describe('Generate Component command', () => {
         );
 
         // Act
-        await GenerateComponentCommand.run('FooBar', { input: true, story: true });
+        await run('FooBar', { input: true, story: true });
 
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<AGHeadlessInputInput v-bind="attrs" />');

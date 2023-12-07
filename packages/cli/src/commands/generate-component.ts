@@ -12,25 +12,25 @@ import { templatePath } from '@/lib/utils/paths';
 import type { CommandOptions } from '@/commands/Command';
 
 export interface Options {
-    story?: boolean;
     input?: boolean;
+    story?: boolean;
 }
 
 export class GenerateComponentCommand extends Command {
 
-    public static command: string = 'generate:component';
-    public static description: string = 'Generate an AerogelJS Component';
-    public static parameters: [string, string][] = [
+    protected static command: string = 'generate:component';
+    protected static description: string = 'Generate an AerogelJS Component';
+    protected static parameters: [string, string][] = [
         ['path', 'Component path (relative to components folder; extension not necessary)'],
     ];
 
-    public static options: CommandOptions = {
-        story: {
-            description: 'Create component story using Histoire',
-            type: 'boolean',
-        },
+    protected static options: CommandOptions = {
         input: {
             description: 'Create a custom input',
+            type: 'boolean',
+        },
+        story: {
+            description: 'Create component story using Histoire',
             type: 'boolean',
         },
     };
@@ -45,7 +45,7 @@ export class GenerateComponentCommand extends Command {
         this.options = options;
     }
 
-    public async run(): Promise<void> {
+    protected async run(): Promise<void> {
         this.assertAerogelOrDirectory('src/components');
         this.assertHistoireInstalled();
 

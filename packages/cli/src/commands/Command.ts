@@ -8,10 +8,10 @@ export type CommandOptions = Record<string, string | { description: string; type
 
 export default class Command {
 
-    public static command: string = '';
-    public static description: string = '';
-    public static parameters: [string, string][] = [];
-    public static options: CommandOptions = {};
+    protected static command: string = '';
+    protected static description: string = '';
+    protected static parameters: [string, string][] = [];
+    protected static options: CommandOptions = {};
 
     public static define(program: CommanderCommand): void {
         program = program.command(this.command).description(this.description);
@@ -30,14 +30,22 @@ export default class Command {
         program = program.action((...args) => this.run.call(this, ...args));
     }
 
-    public static async run<T extends CommandConstructor>(this: T, ...args: ConstructorParameters<T>): Promise<void> {
+    protected static async run<T extends CommandConstructor>(
+        this: T,
+        ...args: ConstructorParameters<T>
+    ): Promise<void> {
         const instance = new this(...args);
 
+        await instance.validate();
         await instance.run();
     }
 
-    public async run(): Promise<void> {
-        //
+    protected async validate(): Promise<void> {
+        // Placeholder for overrides, don't place any functionality here.
+    }
+
+    protected async run(): Promise<void> {
+        // Placeholder for overrides, don't place any functionality here.
     }
 
     protected assertAerogelOrDirectory(path?: string): void {

@@ -13,9 +13,9 @@ import type { Editor } from '@/lib/Editor';
 
 export class GenerateServiceCommand extends Command {
 
-    public static command: string = 'generate:service';
-    public static description: string = 'Generate an AerogelJS Service';
-    public static parameters: [string, string][] = [['name', 'Service name']];
+    protected static command: string = 'generate:service';
+    protected static description: string = 'Generate an AerogelJS Service';
+    protected static parameters: [string, string][] = [['name', 'Service name']];
 
     private name: string;
 
@@ -25,7 +25,7 @@ export class GenerateServiceCommand extends Command {
         this.name = name;
     }
 
-    public async run(): Promise<void> {
+    protected async run(): Promise<void> {
         this.assertAerogelOrDirectory('src/services');
 
         const files = new Set<string>();

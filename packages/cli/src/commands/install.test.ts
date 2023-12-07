@@ -1,15 +1,23 @@
-import { describe, it } from 'vitest';
+import { beforeEach, describe, it } from 'vitest';
 
 import FileMock from '@/lib/File.mock';
 import ShellMock from '@/lib/Shell.mock';
+import { stubCommandRunner } from '@/testing/utils';
+import type { StubCommandRunner } from '@/testing/utils';
 
 import { InstallCommand } from './install';
 
 describe('Install plugin command', () => {
 
+    let run: StubCommandRunner<typeof InstallCommand>;
+
+    beforeEach(() => {
+        run = stubCommandRunner(InstallCommand);
+    });
+
     it('installs solid', async () => {
         // Act
-        await InstallCommand.run('solid');
+        await run('solid');
 
         // Assert
         ShellMock.expectRan('npm install soukai-solid@next --save-exact');
@@ -18,7 +26,7 @@ describe('Install plugin command', () => {
 
     it('installs soukai', async () => {
         // Act
-        await InstallCommand.run('soukai');
+        await run('soukai');
 
         // Assert
         ShellMock.expectRan('npm install soukai@next --save-exact');
@@ -30,7 +38,7 @@ describe('Install plugin command', () => {
         FileMock.stub('package.json', '"@aerogel/core"');
 
         // Act
-        await InstallCommand.run('histoire');
+        await run('histoire');
 
         // Assert
         ShellMock.expectRan('npm install histoire@0.17.6 --save-dev');

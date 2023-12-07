@@ -1,11 +1,19 @@
-import { describe, it } from 'vitest';
+import { beforeEach, describe, it } from 'vitest';
 import { formatCodeBlock } from '@noeldemartin/utils';
 
 import FileMock from '@/lib/File.mock';
+import { stubCommandRunner } from '@/testing/utils';
+import type { StubCommandRunner } from '@/testing/utils';
 
 import { GenerateModelCommand } from './generate-model';
 
 describe('Generate Model command', () => {
+
+    let run: StubCommandRunner<typeof GenerateModelCommand>;
+
+    beforeEach(() => {
+        run = stubCommandRunner(GenerateModelCommand);
+    });
 
     it('generates models', async () => {
         // Arrange
@@ -20,7 +28,7 @@ describe('Generate Model command', () => {
         );
 
         // Act
-        await GenerateModelCommand.run('FooBar', {
+        await run('FooBar', {
             fields: 'name:string:required,age:number,birth:Date',
         });
 
