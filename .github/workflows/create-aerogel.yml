@@ -51,7 +51,7 @@ jobs:
               run: |
                   git config --global user.email "john@example.com"
                   git config --global user.name "John Doe"
-                  ./packages/cli/bin/ag create app --local --copy
+                  ./packages/cli/bin/gel create app --local --copy
             - name: Configure Solid
               working-directory: app
               run: |
