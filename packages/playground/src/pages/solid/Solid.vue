@@ -3,7 +3,7 @@
         {{ $t('solid.title') }}
     </PageTitle>
 
-    <SolidLogin v-if="!$solid.loggedIn" />
+    <SolidLogin v-if="!$solid.isLoggedIn()" />
 
     <div v-else-if="!$solidTasks.ready">
         {{ $t('ui.loading') }}

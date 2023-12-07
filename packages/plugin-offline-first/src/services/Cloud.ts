@@ -66,7 +66,7 @@ export class CloudService extends Service {
     }
 
     public async sync(model?: SolidModel): Promise<void> {
-        if (!Solid.loggedIn) {
+        if (!Solid.isLoggedIn()) {
             return;
         }
 

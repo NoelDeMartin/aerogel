@@ -8,6 +8,7 @@ import {
     getLocationQueryParameter,
     hasLocationQueryParameter,
     objectWithout,
+    objectWithoutEmpty,
     parseBoolean,
     setAsyncMemo,
     tap,
@@ -42,7 +43,15 @@ export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
 export class SolidService extends Service {
 
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
-        return this.loggedIn;
+        return !!this.session;
+    }
+
+    public wasLoggedIn(): this is { user: SolidUserProfile } {
+        return !!this.previousSession;
+    }
+
+    public hasLoggedIn(): this is { user: SolidUserProfile } {
+        return !!(this.session || this.previousSession);
     }
 
     public requireAuthenticator(): Authenticator {
@@ -100,7 +109,7 @@ export class SolidService extends Service {
             loginUrl = 'http://localhost:4000';
         }
 
-        if (this.loggedIn) {
+        if (this.isLoggedIn()) {
             return true;
         }
 
@@ -124,15 +133,15 @@ export class SolidService extends Service {
             this.setState({
                 dismissed: false,
                 ignorePreviousSessionError: true,
-                previousSession: {
+                previousSession: objectWithoutEmpty({
+                    profile,
                     loginUrl,
-                    avatarUrl: profile?.avatarUrl,
                     authenticator: authenticatorName,
                     error: translateWithDefault(
                         'auth.stuckConnecting',
                         'We didn\'t hear back from the identity provider, maybe try reconnecting?',
                     ),
-                },
+                }),
             });
 
             // This should redirect away from the app, so in most cases
@@ -162,7 +171,7 @@ export class SolidService extends Service {
 
     public async reconnect(options: ReconnectOptions = {}): Promise<void> {
         const { force, ...loginOptions } = options;
-        if (this.loggedIn || !this.previousSession || (this.previousSession.error !== null && !force)) {
+        if (this.isLoggedIn() || !this.previousSession || (this.previousSession.error !== null && !force)) {
             return;
         }
 
@@ -331,7 +340,7 @@ export class SolidService extends Service {
                     previousSession: {
                         authenticator: authenticator.name,
                         loginUrl: session.loginUrl,
-                        avatarUrl: session.user.avatarUrl,
+                        profile: session.user,
                         error: null,
                     },
                 });

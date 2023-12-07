@@ -16,9 +16,9 @@ export default defineServiceState({
         loginOngoing: false,
         preferredAuthenticator: null as AuthenticatorName | null,
         previousSession: null as {
+            profile?: SolidUserProfile;
             authenticator: AuthenticatorName;
             loginUrl: string;
-            avatarUrl?: string;
             error: ErrorSource | null;
         } | null,
         profiles: {} as Record<string, SolidUserProfile>,
@@ -34,14 +34,8 @@ export default defineServiceState({
         return state;
     },
     computed: {
-        loggedIn: (state) => !!state.session,
-        user: (state) => state.session?.user ?? null,
-        userAvatarUrl: (state) => state.session?.user?.avatarUrl ?? state.previousSession?.avatarUrl ?? null,
-        wasLoggedIn: (state) => !!state.previousSession?.loginUrl,
+        user: (state) => state.session?.user ?? state.previousSession?.profile ?? null,
         authenticator: (state) => state.session?.authenticator ?? null,
-        hasLoggedIn(): boolean {
-            return this.loggedIn || this.wasLoggedIn;
-        },
         fetch(): Fetch {
             return this.authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window);
         },
