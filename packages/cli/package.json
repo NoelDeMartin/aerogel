@@ -7,7 +7,7 @@
     "types": "dist/aerogel-cli.d.ts",
     "sideEffects": false,
     "bin": {
-        "ag": "bin/ag"
+        "gel": "bin/gel"
     },
     "scripts": {
         "build": "rm dist -rf && npm run build:js && npm run build:types",
