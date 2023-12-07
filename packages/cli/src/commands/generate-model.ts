@@ -90,7 +90,7 @@ export class GenerateModelCommand extends Command {
         if (!File.contains('package.json', '"soukai"') && !File.contains('package.json', '"@aerogel/plugin-soukai"')) {
             Log.fail(`
                 Soukai is not installed yet! You can install it running:
-                npx ag install soukai
+                npx gel install soukai
             `);
         }
     }

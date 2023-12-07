@@ -82,7 +82,7 @@ export class GenerateComponentCommand extends Command {
         if (!File.contains('package.json', '"histoire"') && !File.contains('package.json', '"@aerogel/histoire"')) {
             Log.fail(`
                 Histoire is not installed yet! You can install it running:
-                npx ag install histoire
+                npx gel install histoire
             `);
         }
     }
