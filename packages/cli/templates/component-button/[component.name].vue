@@ -1,15 +1,16 @@
 <template>
-    <AGHeadlessButton :class="colorClasses">
+    <AGHeadlessButton :class="variantClasses" :disabled="disabled">
         <slot />
     </AGHeadlessButton>
 </template>
 
 <script setup lang="ts">
-import { Colors, enumProp } from '@aerogel/core';
+import { Colors, booleanProp, enumProp, removeInteractiveClasses } from '@aerogel/core';
 import { computed } from 'vue';
 
 const props = defineProps({
     color: enumProp(Colors, Colors.Primary),
+    disabled: booleanProp(),
 });
 
 const colorClasses = computed(() => {
@@ -28,5 +29,14 @@ const colorClasses = computed(() => {
             // Add your custom color classes here.
             return '';
     }
+});
+
+const variantClasses = computed(() => {
+    if (props.disabled) {
+        // Add additional classes for disabled state here.
+        return removeInteractiveClasses(colorClasses.value);
+    }
+
+    return colorClasses.value;
 });
 </script>

@@ -29,6 +29,12 @@
             </<% component.name %>>
         </Variant>
 
+        <Variant title="Disabled">
+            <<% component.name %> disabled>
+                You can't click me
+            </<% component.name %>>
+        </Variant>
+
         <Variant title="Colors" :layout="{ width: '300px' }">
             <div class="flex items-center gap-2">
                 <<% component.name %> color="primary">
@@ -61,7 +67,7 @@ const colorOptions = invert(Colors);
 
 <style>
 .story-<% component.slug %> {
-    grid-template-columns: repeat(3, 200px) !important;
+    grid-template-columns: repeat(2, 300px) !important;
 }
 
 .story-<% component.slug %> .variant-playground,

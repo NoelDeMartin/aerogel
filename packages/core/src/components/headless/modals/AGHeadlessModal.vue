@@ -11,15 +11,13 @@ import type { VNode } from 'vue';
 
 import Events from '@/services/Events';
 import { useEvent } from '@/utils/composition/events';
-import { booleanProp, injectReactiveOrFail } from '@/utils/vue';
+import { injectReactiveOrFail } from '@/utils/vue';
 import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
+import { useModalProps } from './AGHeadlessModal';
 import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from './AGHeadlessModal';
 
-const props = defineProps({
-    cancellable: booleanProp(true),
-});
-
+const props = defineProps(useModalProps());
 const $root = ref<{ $el?: HTMLElement } | null>(null);
 const hidden = ref(true);
 const closed = ref(false);

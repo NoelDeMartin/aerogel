@@ -1,5 +1,9 @@
 <template>
-    <div ref="$backdrop" class="pointer-events-none fixed inset-0 z-50 bg-black/30 opacity-0" />
+    <div
+        id="aerogel-overlays-backdrop"
+        ref="$backdrop"
+        class="pointer-events-none fixed inset-0 z-50 bg-black/30 opacity-0"
+    />
     <AGAppModals />
     <AGAppSnackbars />
 </template>

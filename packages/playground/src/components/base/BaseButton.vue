@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { Colors, booleanProp, enumProp } from '@aerogel/core';
+import { Colors, booleanProp, enumProp, removeInteractiveClasses } from '@aerogel/core';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -65,12 +65,7 @@ const variantClasses = computed(() => {
     const classes = `${colorClasses.value} ${sizeClasses.value} ${roundClasses.value}`;
 
     if (props.disabled) {
-        const inertClasses = classes
-            .split(' ')
-            .filter((className) => !className.startsWith('hover:'))
-            .join(' ');
-
-        return `${inertClasses} opacity-50`;
+        return `${removeInteractiveClasses(classes)} opacity-50`;
     }
 
     return classes;

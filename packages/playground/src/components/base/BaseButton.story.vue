@@ -32,6 +32,12 @@
             </BaseButton>
         </Variant>
 
+        <Variant title="Disabled">
+            <BaseButton disabled>
+                You can't click me
+            </BaseButton>
+        </Variant>
+
         <Variant title="Colors" :layout="{ width: '300px' }">
             <div class="flex items-center gap-2">
                 <BaseButton color="primary">
@@ -117,7 +123,7 @@ const colorOptions = invert(Colors);
 
 <style>
 .story-basebutton {
-    grid-template-columns: repeat(3, 200px) !important;
+    grid-template-columns: repeat(2, 300px) !important;
 }
 
 .story-basebutton .variant-playground,
