@@ -123,7 +123,7 @@ export default abstract class Plugin {
     protected getBootstrapPluginsDeclaration(mainConfig: SourceFile): ArrayLiteralExpression | null {
         const bootstrapAppCall = findDescendant(mainConfig, {
             guard: Node.isCallExpression,
-            validate: (callExpression) => callExpression.getExpression().getText() === 'bootstrapApplication',
+            validate: (callExpression) => callExpression.getExpression().getText() === 'bootstrap',
             skip: SyntaxKind.ImportDeclaration,
         });
         const bootstrapOptions = bootstrapAppCall?.getArguments()[1];

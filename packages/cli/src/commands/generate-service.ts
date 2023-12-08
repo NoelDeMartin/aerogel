@@ -122,7 +122,7 @@ export class GenerateServiceCommand extends Command {
     protected getBootstrapOptions(mainConfig: SourceFile): ObjectLiteralExpression | null {
         const bootstrapAppCall = findDescendant(mainConfig, {
             guard: Node.isCallExpression,
-            validate: (callExpression) => callExpression.getExpression().getText() === 'bootstrapApplication',
+            validate: (callExpression) => callExpression.getExpression().getText() === 'bootstrap',
             skip: SyntaxKind.ImportDeclaration,
         });
         const bootstrapOptions = bootstrapAppCall?.getArguments()[1];

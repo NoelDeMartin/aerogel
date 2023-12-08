@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import type { Component } from 'vue';
+import type { App, Component } from 'vue';
 
 import directives from '@/directives';
 import errors from '@/errors';
@@ -10,11 +10,18 @@ import ui from '@/ui';
 import { installPlugins } from '@/plugins';
 import type { AerogelOptions } from '@/bootstrap/options';
 
-export async function bootstrapApplication(rootComponent: Component, options: AerogelOptions = {}): Promise<void> {
+export { AerogelOptions };
+
+export async function bootstrapApplication(app: App, options: AerogelOptions = {}): Promise<void> {
     const plugins = [directives, errors, lang, services, ui, ...(options.plugins ?? [])];
-    const app = createApp(rootComponent);
 
     await installPlugins(plugins, app, options);
+}
+
+export async function bootstrap(rootComponent: Component, options: AerogelOptions = {}): Promise<void> {
+    const app = createApp(rootComponent);
+
+    await bootstrapApplication(app, options);
 
     app.mount('#app');
     app._container?.classList.remove('loading');

@@ -34,6 +34,14 @@ export function useErrorReportModal(props: ExtractPropTypes<typeof errorReportMo
             // prettier fix
             translateWithDefault('errors.detailsEmpty', 'This error is missing a stacktrace.'),
     );
+    const previousReportText = translateWithDefault('errors.previousReport', 'Show previous report');
+    const nextReportText = translateWithDefault('errors.nextReport', 'Show next report');
 
-    return { activeReportIndex, details, report };
+    return {
+        activeReportIndex,
+        details,
+        nextReportText,
+        previousReportText,
+        report,
+    };
 }

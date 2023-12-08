@@ -15,8 +15,8 @@
                             icon
                             color="clear"
                             :disabled="activeReportIndex === 0"
-                            :aria-label="$t('errors.previousReport')"
-                            :title="$t('errors.previousReport')"
+                            :aria-label="previousReportText"
+                            :title="previousReportText"
                             @click="activeReportIndex--"
                         >
                             <i-zondicons-cheveron-left class="h-4 w-4" />
@@ -25,8 +25,8 @@
                             icon
                             color="clear"
                             :disabled="activeReportIndex === reports.length - 1"
-                            :aria-label="$t('errors.nextReport')"
-                            :title="$t('errors.nextReport')"
+                            :aria-label="nextReportText"
+                            :title="nextReportText"
                             @click="activeReportIndex++"
                         >
                             <i-zondicons-cheveron-right class="h-4 w-4" />
@@ -65,5 +65,5 @@ import { useErrorReportModal, useErrorReportModalProps } from '@aerogel/core';
 import type { IAGErrorReportModalButtonsDefaultSlotProps } from '@aerogel/core';
 
 const props = defineProps(useErrorReportModalProps());
-const { activeReportIndex, details, report } = useErrorReportModal(props);
+const { activeReportIndex, details, nextReportText, previousReportText, report } = useErrorReportModal(props);
 </script>

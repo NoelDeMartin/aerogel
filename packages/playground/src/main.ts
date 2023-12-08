@@ -5,7 +5,7 @@ import offlineFirst from '@aerogel/plugin-offline-first';
 import routing from '@aerogel/plugin-routing';
 import solid from '@aerogel/plugin-solid';
 import soukai from '@aerogel/plugin-soukai';
-import { bootstrapApplication } from '@aerogel/core';
+import { bootstrap } from '@aerogel/core';
 
 import './assets/css/styles.css';
 import App from './App.vue';
@@ -14,7 +14,7 @@ import { directives } from './directives';
 import { routes } from './pages';
 import { services } from './services';
 
-bootstrapApplication(App, {
+bootstrap(App, {
     services,
     components,
     directives,

@@ -11,9 +11,10 @@ import AGLoadingModal from '../components/modals/AGLoadingModal.vue';
 import AGSnackbar from '../components/snackbars/AGSnackbar.vue';
 import type { UIComponent } from './UI';
 
-export { UI, UIComponents, UIComponent };
-
 const services = { $ui: UI };
+
+export * from './UI';
+export { default as UI } from './UI';
 
 export type UIServices = typeof services;
 
@@ -37,7 +38,7 @@ export default definePlugin({
 });
 
 declare module '@/bootstrap/options' {
-    interface AerogelOptions {
+    export interface AerogelOptions {
         components?: Partial<Record<UIComponent, Component>>;
     }
 }

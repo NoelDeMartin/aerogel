@@ -6,7 +6,7 @@ import type { Component } from 'vue';
 import Events from '@/services/Events';
 import initialFocus from '@/directives/initial-focus';
 
-import { bootstrapApplication } from './index';
+import { bootstrap } from './index';
 
 describe('Aerogel', () => {
 
@@ -32,7 +32,7 @@ describe('Aerogel', () => {
         const rootComponent = mock<Component>();
 
         // Act
-        await bootstrapApplication(rootComponent);
+        await bootstrap(rootComponent);
 
         // Assert
         const globals = vi.mocked(createApp).mock.results[0]?.value.config.globalProperties;
@@ -46,7 +46,7 @@ describe('Aerogel', () => {
         const rootComponent = mock<Component>();
 
         // Act
-        await bootstrapApplication(rootComponent);
+        await bootstrap(rootComponent);
 
         // Assert
         expect(vi.mocked(createApp).mock.results[0]?.value.directive).toHaveBeenCalledWith(

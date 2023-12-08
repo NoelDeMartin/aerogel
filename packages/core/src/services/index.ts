@@ -50,7 +50,7 @@ export default definePlugin({
 });
 
 declare module '@/bootstrap/options' {
-    interface AerogelOptions {
+    export interface AerogelOptions {
         services?: Record<string, Service>;
     }
 }

@@ -22,7 +22,7 @@ export default definePlugin({
 });
 
 declare module '@/bootstrap/options' {
-    interface AerogelOptions {
+    export interface AerogelOptions {
         directives?: Record<string, Directive>;
     }
 }

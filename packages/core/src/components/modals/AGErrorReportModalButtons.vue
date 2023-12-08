@@ -79,10 +79,12 @@ const buttons = computed(() =>
                 description: 'Log to console',
                 iconComponent: IconConsole,
                 handler() {
-                    (window as { error?: unknown }).error = props.report.error;
+                    const error = props.report.error ?? props.report;
+
+                    (window as { error?: unknown }).error = error;
 
                     // eslint-disable-next-line no-console
-                    console.error(props.report.error);
+                    console.error(error);
 
                     UI.showSnackbar(
                         translateWithDefault(

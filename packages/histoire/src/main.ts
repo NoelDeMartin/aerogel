@@ -1,33 +1,32 @@
+import { bootstrapApplication } from '@aerogel/core';
 import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { monkeyPatch, stringToSlug } from '@noeldemartin/utils';
-import { UI } from '@aerogel/core';
-import type { Plugin as AerogelPlugin, Service } from '@aerogel/core';
+import type { AerogelOptions } from '@aerogel/core';
 import type { Vue3StorySetupHandler } from '@histoire/plugin-vue';
 
 import components from './components';
 
-export interface Options {
+export type Options = Pick<AerogelOptions, 'components' | 'plugins'> & {
     messages?: Record<string, unknown>;
     setup?: Vue3StorySetupHandler;
-}
+};
 
 export function defineSetupAerogel(options: Options): Vue3StorySetupHandler {
     return defineSetupVue3(async (histoireOptions) => {
         const { app, story, variant } = histoireOptions;
-        const plugins: AerogelPlugin[] = [];
-        const services: Record<string, Service> = { $ui: UI };
+        const { messages, setup, ...aerogelOptions } = options;
 
-        if (options.messages) {
+        aerogelOptions.plugins ??= [];
+
+        if (messages) {
             const { default: i18n } = await import('@aerogel/plugin-i18n');
 
-            plugins.push(i18n({ messages: options.messages }));
+            aerogelOptions.plugins.push(i18n({ messages }));
         }
 
-        await Promise.all(Object.values(services).map((service) => service.launch()));
-        await Promise.all(plugins.map((plugin) => plugin.install(app, {})));
+        await bootstrapApplication(app, aerogelOptions);
 
         Object.entries(components).forEach(([name, component]) => app.component(name, component));
-        Object.assign(app.config.globalProperties, services);
 
         monkeyPatch(app, 'mount', (el: HTMLElement) => {
             const variantEl = el.parentElement?.parentElement?.parentElement?.parentElement;
@@ -52,6 +51,6 @@ export function defineSetupAerogel(options: Options): Vue3StorySetupHandler {
             }
         });
 
-        await options.setup?.(histoireOptions);
+        await setup?.(histoireOptions);
     });
 }

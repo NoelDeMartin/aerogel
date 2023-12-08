@@ -12,8 +12,8 @@
                         <AGButton
                             color="clear"
                             :disabled="activeReportIndex === 0"
-                            :title="$td('errors.previousReport', 'Show previous report')"
-                            :aria-label="$td('errors.previousReport', 'Show previous report')"
+                            :title="previousReportText"
+                            :aria-label="previousReportText"
                             @click="activeReportIndex--"
                         >
                             <IconCheveronLeft aria-hidden="true" class="h-4 w-4" />
@@ -21,8 +21,8 @@
                         <AGButton
                             color="clear"
                             :disabled="activeReportIndex === reports.length - 1"
-                            :title="$td('errors.nextReport', 'Show next report')"
-                            :aria-label="$td('errors.nextReport', 'Show next report')"
+                            :title="nextReportText"
+                            :aria-label="nextReportText"
                             @click="activeReportIndex++"
                         >
                             <IconCheveronRight aria-hidden="true" class="h-4 w-4" />
@@ -50,5 +50,5 @@ import AGMarkdown from '../lib/AGMarkdown.vue';
 import AGModal from './AGModal.vue';
 
 const props = defineProps(useErrorReportModalProps());
-const { activeReportIndex, details, report } = useErrorReportModal(props);
+const { activeReportIndex, details, nextReportText, previousReportText, report } = useErrorReportModal(props);
 </script>

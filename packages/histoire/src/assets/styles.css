@@ -5,3 +5,12 @@
 .story .histoire-generic-render-story > div {
     margin: 1rem;
 }
+
+#headlessui-portal-root {
+    position: fixed;
+    z-index: 50;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
