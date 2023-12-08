@@ -16,7 +16,6 @@ describe('Solid', () => {
         // Log in
         cy.ariaInput('Login url').type(`${urlClean(cssUrl(), { protocol: false })}{enter}`);
         cy.cssLogin();
-        cy.press('Solid');
         cy.see('You are logged in as Alice Cooper!');
 
         // Creates tasks

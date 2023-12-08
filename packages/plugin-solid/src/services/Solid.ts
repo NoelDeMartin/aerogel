@@ -151,6 +151,8 @@ export class SolidService extends Service {
                 }),
             });
 
+            await Events.emit('before-login');
+
             // This should redirect away from the app, so in most cases
             // the rest of the code won't be reached.
             await authenticator.login(oidcIssuerUrl);
@@ -406,6 +408,7 @@ export default facade(new SolidService());
 declare module '@aerogel/core' {
     export interface EventsPayload {
         'authenticated-fetch-ready': Fetch;
+        'before-login': void;
         login: AuthSession;
         logout: void;
     }
