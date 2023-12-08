@@ -26,6 +26,7 @@ export const UIComponents = {
     ErrorReportModal: 'error-report-modal',
     LoadingModal: 'loading-modal',
     Snackbar: 'snackbar',
+    StartupCrash: 'startup-crash',
 } as const;
 
 export type UIComponent = ObjectValues<typeof UIComponents>;

@@ -30,8 +30,7 @@ export function useErrorReportModal(props: ExtractPropTypes<typeof errorReportMo
     const report = computed(() => props.reports[activeReportIndex.value] as ErrorReport);
     const details = computed(
         () =>
-            report.value.details ??
-            // prettier fix
+            report.value.details?.trim() ||
             translateWithDefault('errors.detailsEmpty', 'This error is missing a stacktrace.'),
     );
     const previousReportText = translateWithDefault('errors.previousReport', 'Show previous report');

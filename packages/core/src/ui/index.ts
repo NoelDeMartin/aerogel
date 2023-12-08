@@ -9,6 +9,7 @@ import AGConfirmModal from '../components/modals/AGConfirmModal.vue';
 import AGErrorReportModal from '../components/modals/AGErrorReportModal.vue';
 import AGLoadingModal from '../components/modals/AGLoadingModal.vue';
 import AGSnackbar from '../components/snackbars/AGSnackbar.vue';
+import AGStartupCrash from '../components/lib/AGStartupCrash.vue';
 import type { UIComponent } from './UI';
 
 const services = { $ui: UI };
@@ -26,6 +27,7 @@ export default definePlugin({
             [UIComponents.ErrorReportModal]: AGErrorReportModal,
             [UIComponents.LoadingModal]: AGLoadingModal,
             [UIComponents.Snackbar]: AGSnackbar,
+            [UIComponents.StartupCrash]: AGStartupCrash,
         };
 
         Object.entries({
