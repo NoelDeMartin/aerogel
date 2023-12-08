@@ -1,4 +1,5 @@
 import { cssPodUrl, cssUrl } from '@aerogel/cypress';
+import { urlClean } from '@noeldemartin/utils';
 
 describe('Solid', () => {
 
@@ -13,7 +14,7 @@ describe('Solid', () => {
         cy.intercept('DELETE', cssPodUrl('/tasks/*')).as('deleteTask');
 
         // Log in
-        cy.ariaInput('Login url').type(`${cssUrl()}{enter}`);
+        cy.ariaInput('Login url').type(`${urlClean(cssUrl(), { protocol: false })}{enter}`);
         cy.cssLogin();
         cy.press('Solid');
         cy.see('You are logged in as Alice Cooper!');

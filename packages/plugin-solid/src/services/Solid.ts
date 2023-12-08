@@ -1,4 +1,5 @@
 import {
+    after,
     arrayFilter,
     arrayUnique,
     arrayWithout,
@@ -34,6 +35,7 @@ import Service from './Solid.state';
 export type LoginOptions = {
     authenticator?: AuthenticatorName;
     onError?(error: ErrorSource): unknown;
+    fallbackUrl?: string;
 };
 
 export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
@@ -109,6 +111,11 @@ export class SolidService extends Service {
             loginUrl = 'http://localhost:4000';
         }
 
+        if (!/^https?:\/\//.test(loginUrl)) {
+            options.fallbackUrl ??= `http://${loginUrl}`;
+            loginUrl = `https://${loginUrl}`;
+        }
+
         if (this.isLoggedIn()) {
             return true;
         }
@@ -154,6 +161,10 @@ export class SolidService extends Service {
 
             if (error instanceof AuthenticationCancelledError) {
                 return false;
+            }
+
+            if (options.fallbackUrl) {
+                return after().then(() => this.login(options.fallbackUrl ?? '', objectWithout(options, 'fallbackUrl')));
             }
 
             handleLoginError(error);
