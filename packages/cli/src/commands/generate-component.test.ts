@@ -89,7 +89,9 @@ describe('Generate Component command', () => {
         await run('FooBar', { button: true, story: true });
 
         // Assert
-        FileMock.expectCreated('src/components/FooBar.vue').toContain('<AGHeadlessButton :class="colorClasses">');
+        FileMock.expectCreated('src/components/FooBar.vue').toContain(
+            '<AGHeadlessButton :class="variantClasses" :disabled="disabled">',
+        );
         FileMock.expectCreated('src/components/FooBar.story.vue').toContain('.story-foobar .variant-playground');
         FileMock.expectCreated('src/components/FooBar.story.vue').toContain('<FooBar :color="color">');
     });
