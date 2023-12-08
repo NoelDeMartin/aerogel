@@ -1,6 +1,7 @@
-import type { ComputedRef, DeepReadonly, Ref } from 'vue';
+import type { ComputedRef, DeepReadonly, ExtractPropTypes, Ref } from 'vue';
 
 import { stringProp } from '@/utils';
+import { extractComponentProps } from '@/components/utils';
 
 export interface IAGHeadlessInput {
     id: string;
@@ -20,14 +21,8 @@ export function useInputProps(): typeof inputProps {
     return inputProps;
 }
 
-export function extractInputProps<T extends Record<keyof typeof inputProps, unknown>>(
-    componentProps: T,
+export function extractInputProps<T extends ExtractPropTypes<typeof inputProps>>(
+    props: T,
 ): Pick<T, keyof typeof inputProps> {
-    return Object.keys(inputProps).reduce((extractedProps, selectProp) => {
-        const prop = selectProp as keyof typeof inputProps;
-
-        extractedProps[prop] = componentProps[prop];
-
-        return extractedProps;
-    }, {} as Pick<T, keyof typeof inputProps>);
+    return extractComponentProps(props, inputProps);
 }

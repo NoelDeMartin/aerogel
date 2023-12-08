@@ -15,16 +15,15 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import UI from '@/ui/UI';
 import { Colors } from '@/components/constants';
-import { useSnackbarProps } from '@/components/headless';
-import type { SnackbarAction } from '@/components/headless';
+import { useSnackbar, useSnackbarProps } from '@/components/headless/snackbars';
 
 import AGButton from '../forms/AGButton.vue';
 import AGHeadlessSnackbar from '../headless/snackbars/AGHeadlessSnackbar.vue';
 import AGMarkdown from '../lib/AGMarkdown.vue';
 
 const props = defineProps(useSnackbarProps());
+const { activate } = useSnackbar(props);
 const styleClasses = computed(() => {
     switch (props.color) {
         case Colors.Danger:
@@ -34,9 +33,4 @@ const styleClasses = computed(() => {
             return 'bg-gray-900 text-white';
     }
 });
-
-function activate(action: SnackbarAction): void {
-    action.handler?.();
-    action.dismiss && UI.hideSnackbar(props.id);
-}
 </script>

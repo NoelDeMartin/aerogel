@@ -1,6 +1,9 @@
-import type { Component } from 'vue';
+import { computed, ref } from 'vue';
+import type { Component, ExtractPropTypes } from 'vue';
+import type { ObjectWithoutEmpty } from '@noeldemartin/utils';
 
 import { requiredArrayProp } from '@/utils/vue';
+import { translateWithDefault } from '@/lang';
 import type { ErrorReport } from '@/errors';
 
 export interface IAGErrorReportModalButtonsDefaultSlotProps {
@@ -15,6 +18,22 @@ export const errorReportModalProps = {
     reports: requiredArrayProp<ErrorReport>(),
 };
 
+export type AGErrorReportModalProps = ObjectWithoutEmpty<ExtractPropTypes<typeof errorReportModalProps>>;
+
 export function useErrorReportModalProps(): typeof errorReportModalProps {
     return errorReportModalProps;
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function useErrorReportModal(props: ExtractPropTypes<typeof errorReportModalProps>) {
+    const activeReportIndex = ref(0);
+    const report = computed(() => props.reports[activeReportIndex.value] as ErrorReport);
+    const details = computed(
+        () =>
+            report.value.details ??
+            // prettier fix
+            translateWithDefault('errors.detailsEmpty', 'This error is missing a stacktrace.'),
+    );
+
+    return { activeReportIndex, details, report };
 }

@@ -33,10 +33,7 @@
             </h2>
             <AGMarkdown v-if="report.description" :text="report.description" class="mt-2" />
         </div>
-        <pre
-            class="h-full overflow-auto bg-gray-200 p-4 text-xs text-red-900"
-            v-text="report.details ?? $td('errors.detailsEmpty', 'This error is missing a stacktrace.')"
-        />
+        <pre class="h-full overflow-auto bg-gray-200 p-4 text-xs text-red-900" v-text="details" />
     </AGModal>
 </template>
 
@@ -44,11 +41,7 @@
 import IconCheveronRight from '~icons/zondicons/cheveron-right';
 import IconCheveronLeft from '~icons/zondicons/cheveron-left';
 
-import { computed, ref } from 'vue';
-
-import type { ErrorReport } from '@/errors';
-
-import { useErrorReportModalProps } from './AGErrorReportModal';
+import { useErrorReportModal, useErrorReportModalProps } from './AGErrorReportModal';
 
 import AGButton from '../forms/AGButton.vue';
 import AGErrorReportModalButtons from './AGErrorReportModalButtons.vue';
@@ -57,6 +50,5 @@ import AGMarkdown from '../lib/AGMarkdown.vue';
 import AGModal from './AGModal.vue';
 
 const props = defineProps(useErrorReportModalProps());
-const activeReportIndex = ref(0);
-const report = computed(() => props.reports[activeReportIndex.value] as ErrorReport);
+const { activeReportIndex, details, report } = useErrorReportModal(props);
 </script>

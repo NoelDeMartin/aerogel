@@ -7,7 +7,9 @@ import { translateWithDefault } from '@/lang/utils';
 
 import Service from './Errors.state';
 import { Colors } from '@/components/constants';
+import type { AGErrorReportModalProps } from '@/components/modals/AGErrorReportModal';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
+import type { ModalComponent } from '@/ui/UI.state';
 
 export class ErrorsService extends Service {
 
@@ -23,7 +25,7 @@ export class ErrorsService extends Service {
     }
 
     public async inspect(error: ErrorSource | ErrorReport[]): Promise<void> {
-        const reports = Array.isArray(error) ? error : [await this.createErrorReport(error)];
+        const reports = Array.isArray(error) ? (error as ErrorReport[]) : [await this.createErrorReport(error)];
 
         if (reports.length === 0) {
             UI.alert(translateWithDefault('errors.inspectEmpty', 'Nothing to inspect!'));
@@ -31,7 +33,9 @@ export class ErrorsService extends Service {
             return;
         }
 
-        UI.openModal(UI.requireComponent(UIComponents.ErrorReportModal), { reports });
+        UI.openModal<ModalComponent<AGErrorReportModalProps>>(UI.requireComponent(UIComponents.ErrorReportModal), {
+            reports,
+        });
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
@@ -70,9 +74,10 @@ export class ErrorsService extends Service {
                         text: translateWithDefault('errors.viewDetails', 'View details'),
                         dismiss: true,
                         handler: () =>
-                            UI.openModal(UI.requireComponent(UIComponents.ErrorReportModal), {
-                                reports: [report],
-                            }),
+                            UI.openModal<ModalComponent<AGErrorReportModalProps>>(
+                                UI.requireComponent(UIComponents.ErrorReportModal),
+                                { reports: [report] },
+                            ),
                     },
                 ],
             },

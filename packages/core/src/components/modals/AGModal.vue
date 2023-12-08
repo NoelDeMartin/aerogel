@@ -1,13 +1,16 @@
 <template>
     <AGHeadlessModal
-        ref="$headlessModal"
+        ref="$modal"
         v-slot="{ close }: IAGHeadlessModalDefaultSlotProps"
-        :cancellable="cancellable"
+        v-bind="props"
         class="relative z-50"
     >
         <div class="fixed inset-0 flex items-center justify-center p-8">
-            <AGHeadlessModalPanel class="flex max-h-full max-w-full flex-col overflow-hidden bg-white">
-                <div class="flex max-h-full flex-col overflow-auto p-4" v-bind="$attrs">
+            <AGHeadlessModalPanel class="flex max-h-full max-w-full flex-col overflow-hidden bg-white p-4">
+                <AGHeadlessModalTitle v-if="title" class="mb-2 text-lg font-semibold">
+                    <AGMarkdown :text="title" inline />
+                </AGHeadlessModalTitle>
+                <div class="flex max-h-full flex-col overflow-auto" v-bind="$attrs">
                     <slot :close="close" />
                 </div>
             </AGHeadlessModalPanel>
@@ -16,22 +19,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
-import { booleanProp } from '@/utils';
+import { useModalExpose, useModalProps } from '@/components/headless/modals/AGHeadlessModal';
 import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from '@/components/headless/modals/AGHeadlessModal';
 
 import type { IAGModal } from './AGModal';
 
 import AGHeadlessModal from '../headless/modals/AGHeadlessModal.vue';
 import AGHeadlessModalPanel from '../headless/modals/AGHeadlessModalPanel.vue';
+import AGHeadlessModalTitle from '../headless/modals/AGHeadlessModalTitle.vue';
+import AGMarkdown from '../lib/AGMarkdown.vue';
 
-const $headlessModal = ref<IAGHeadlessModal>();
+const props = defineProps(useModalProps());
+const $modal = ref<IAGHeadlessModal>();
 
 defineOptions({ inheritAttrs: false });
-defineProps({ cancellable: booleanProp(true) });
-defineExpose<IAGModal>({
-    close: async () => $headlessModal.value?.close(),
-    cancellable: computed(() => !!$headlessModal.value?.cancellable),
-});
+defineExpose<IAGModal>(useModalExpose($modal));
 </script>

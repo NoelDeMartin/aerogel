@@ -5,15 +5,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
-import { stringProp } from '@/utils/vue';
-import { translateWithDefault } from '@/lang/utils';
-
 import AGModal from './AGModal.vue';
+import { useLoadingModal, useLoadingModalProps } from './AGLoadingModal';
 
 import AGMarkdown from '../lib/AGMarkdown.vue';
 
-const props = defineProps({ message: stringProp() });
-const renderedMessage = computed(() => props.message ?? translateWithDefault('ui.loading', 'Loading...'));
+const props = defineProps(useLoadingModalProps());
+const { renderedMessage } = useLoadingModal(props);
 </script>

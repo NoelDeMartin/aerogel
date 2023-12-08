@@ -17,10 +17,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Colors, UI, useSnackbarProps } from '@aerogel/core';
-import type { SnackbarAction } from '@aerogel/core';
+import { Colors, useSnackbar, useSnackbarProps } from '@aerogel/core';
 
 const props = defineProps(useSnackbarProps());
+const { activate } = useSnackbar(props);
 const colorClasses = computed(() => {
     switch (props.color) {
         case Colors.Danger:
@@ -30,9 +30,4 @@ const colorClasses = computed(() => {
             return 'bg-white ring-black';
     }
 });
-
-function activate(action: SnackbarAction): void {
-    action.handler?.();
-    action.dismiss && UI.hideSnackbar(props.id);
-}
 </script>

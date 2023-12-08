@@ -5,10 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { requiredStringProp, stringProp } from '@aerogel/core';
+import { useAlertModalProps } from '@aerogel/core';
 
-defineProps({
-    title: stringProp(),
-    message: requiredStringProp(),
-});
+defineProps(useAlertModalProps());
 </script>

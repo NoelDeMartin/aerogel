@@ -8,9 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { stringProp, translate } from '@aerogel/core';
-import { computed } from 'vue';
+import { useLoadingModal, useLoadingModalProps } from '@aerogel/core';
 
-const props = defineProps({ message: stringProp() });
-const renderedMessage = computed(() => props.message ?? translate('ui.loading'));
+const props = defineProps(useLoadingModalProps());
+const { renderedMessage } = useLoadingModal(props);
 </script>

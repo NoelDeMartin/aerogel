@@ -8,6 +8,7 @@ import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackb
 
 import Service from './UI.state';
 import type { Modal, ModalComponent, Snackbar } from './UI.state';
+import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps } from '@/components';
 
 interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
@@ -29,6 +30,11 @@ export const UIComponents = {
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
 
+export interface ConfirmOptions {
+    acceptText?: string;
+    cancelText?: string;
+}
+
 export interface ShowSnackbarOptions {
     component?: Component;
     color?: SnackbarColor;
@@ -47,18 +53,45 @@ export class UIService extends Service {
     public alert(message: string): void;
     public alert(title: string, message: string): void;
     public alert(messageOrTitle: string, message?: string): void {
-        const options = typeof message === 'string' ? { title: messageOrTitle, message } : { message: messageOrTitle };
+        const getProperties = (): AGAlertModalProps => {
+            if (typeof message !== 'string') {
+                return { message: messageOrTitle };
+            }
 
-        this.openModal(this.requireComponent(UIComponents.AlertModal), options);
+            return {
+                title: messageOrTitle,
+                message,
+            };
+        };
+
+        this.openModal(this.requireComponent(UIComponents.AlertModal), getProperties());
     }
 
-    public async confirm(message: string): Promise<boolean>;
-    public async confirm(title: string, message: string): Promise<boolean>;
-    public async confirm(messageOrTitle: string, message?: string): Promise<boolean> {
-        const options = typeof message === 'string' ? { title: messageOrTitle, message } : { message: messageOrTitle };
+    public async confirm(message: string, options?: ConfirmOptions): Promise<boolean>;
+    public async confirm(title: string, message: string, options?: ConfirmOptions): Promise<boolean>;
+    public async confirm(
+        messageOrTitle: string,
+        messageOrOptions?: string | ConfirmOptions,
+        options?: ConfirmOptions,
+    ): Promise<boolean> {
+        const getProperties = (): AGConfirmModalProps => {
+            if (typeof messageOrOptions !== 'string') {
+                return {
+                    message: messageOrTitle,
+                    ...(messageOrOptions ?? {}),
+                };
+            }
+
+            return {
+                title: messageOrTitle,
+                message: messageOrOptions,
+                ...(options ?? {}),
+            };
+        };
+
         const modal = await this.openModal<ModalComponent<{ message: string }, boolean>>(
             this.requireComponent(UIComponents.ConfirmModal),
-            options,
+            getProperties(),
         );
         const result = await modal.beforeClose;
 
@@ -68,12 +101,19 @@ export class UIService extends Service {
     public async loading<T>(operation: Promise<T>): Promise<T>;
     public async loading<T>(message: string, operation: Promise<T>): Promise<T>;
     public async loading<T>(messageOrOperation: string | Promise<T>, operation?: Promise<T>): Promise<T> {
-        operation = typeof messageOrOperation === 'string' ? (operation as Promise<T>) : messageOrOperation;
+        const getProperties = (): AGLoadingModalProps => {
+            if (typeof messageOrOperation !== 'string') {
+                return {};
+            }
 
-        const message = typeof messageOrOperation === 'string' ? messageOrOperation : undefined;
-        const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), { message });
+            return { message: messageOrOperation };
+        };
+
+        const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), getProperties());
 
         try {
+            operation = typeof messageOrOperation === 'string' ? (operation as Promise<T>) : messageOrOperation;
+
             const [result] = await Promise.all([operation, after({ seconds: 1 })]);
 
             return result;

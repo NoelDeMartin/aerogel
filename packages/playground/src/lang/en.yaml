@@ -44,17 +44,23 @@ components:
     modals_alertMessage: How's your day going? I hope you're having fun :)
     modals_customAlert: Custom alert
     modals_defaultAlert: Default alert
-    modals_confirmMessage: Are you sure?
+    modals_confirmTitle: You're about to do something dangerous
+    modals_confirmMessage: Are you sure you want to continue?
+    modals_confirmAccept: Of course!
+    modals_confirmCancel: Maybe not
+    modals_confirmConfirmed: You were just eaten by a crocodile
+    modals_confirmCancelled: You dodged that bullet
     modals_customConfirm: Custom confirm
     modals_defaultConfirm: Default confirm
+    modals_loadingMessage: The elfs are working, please wait...
     modals_customLoading: Custom loading
     modals_defaultLoading: Default loading
-    modals_confirmConfirmed: Confirmed
-    modals_confirmCancelled: Cancelled
     modals_nested: Nested
-    modals_nestedButton: Open one more
-    modals_nestedAlert: Hi there!
-    modals_custom: Custom component
+    modals_nestedTitle: Nested modal ({count})
+    modals_nestedMessage: Modals can be nested indefinitely
+    modals_nestedTurtle: One turtle
+    modals_nestedButton: When does this end?
+    modals_custom: Custom content
     modals_customContent: You can also create your own modals, like this one!
     modals_customClose: Nice!
     snackbars: Snackbars
@@ -120,7 +126,7 @@ offline:
 
 ui:
     close: Close
-    ok: OK
+    accept: OK
     cancel: Cancel
     loading: Loading...
 

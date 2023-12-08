@@ -17,36 +17,41 @@ describe('Components', () => {
         cy.dontSee('How\'s your day going?');
 
         cy.press('Custom confirm');
-        cy.see('Are you sure?');
+        cy.see('You\'re about to do something dangerous');
+        cy.see('Are you sure you want to continue?');
         cy.matchImageSnapshot('Confirm');
-        cy.press('OK');
-        cy.see('Confirmed');
-        cy.dontSee('Are you sure?');
+        cy.press('Of course!');
+        cy.see('You were just eaten by a crocodile');
+        cy.dontSee('Are you sure you want to continue?');
         cy.get('body').type('{esc}');
 
         cy.press('Custom confirm');
-        cy.see('Are you sure?');
-        cy.press('Cancel');
-        cy.see('Cancelled');
-        cy.dontSee('Are you sure?');
+        cy.see('Are you sure you want to continue?');
+        cy.press('Maybe not');
+        cy.see('You dodged that bullet');
+        cy.dontSee('Are you sure you want to continue?');
         cy.get('body').type('{esc}');
 
         cy.press('Custom loading');
-        cy.see('Loading...');
-        cy.dontSee('Loading...');
+        cy.see('The elfs are working, please wait...');
+        cy.dontSee('The elfs are working, please wait...');
 
         cy.press('Nested');
-        cy.see('Open one more');
-        cy.press('Open one more');
-        cy.see('Hi there!');
+        cy.see('Nested modal (1)');
+        cy.see('Modals can be nested indefinitely');
+        cy.press('When does this end?');
+        cy.see('Nested modal (2)');
+        cy.press('When does this end?');
+        cy.see('Nested modal (3)');
         cy.matchImageSnapshot('Nested');
         cy.get('body').type('{esc}');
-        cy.dontSee('Hi there!');
-        cy.see('Open one more');
+        cy.dontSee('Nested modal (3)');
         cy.get('body').type('{esc}');
-        cy.dontSee('Open one more');
+        cy.dontSee('Nested modal (2)');
+        cy.get('body').type('{esc}');
+        cy.dontSee('Nested modal (1)');
 
-        cy.press('Custom component');
+        cy.press('Custom content');
         cy.see('You can also create your own modals');
         cy.matchImageSnapshot('Custom');
         cy.press('Nice!');

@@ -7,6 +7,7 @@ import AGModal from './AGModal.vue';
 import AGModalTitle from './AGModalTitle.vue';
 import AGModalContext from './AGModalContext.vue';
 
+export * from './AGAlertModal';
 export * from './AGConfirmModal';
 export * from './AGErrorReportModal';
 export * from './AGLoadingModal';

@@ -54,19 +54,16 @@
             </h2>
             <AGMarkdown v-if="report.description" :text="report.description" class="text-gray-600" />
         </div>
-        <div v-if="hasDetails" class="bg-red-grey -mt-2 max-h-[80vh] overflow-auto">
-            <pre class="p-4 text-xs text-red-800" v-text="report.details" />
+        <div class="bg-red-grey -mt-2 max-h-[80vh] overflow-auto">
+            <pre class="p-4 text-xs text-red-800" v-text="details" />
         </div>
     </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { useErrorReportModalProps } from '@aerogel/core';
-import { computed, ref } from 'vue';
-import type { ErrorReport, IAGErrorReportModalButtonsDefaultSlotProps } from '@aerogel/core';
+import { useErrorReportModal, useErrorReportModalProps } from '@aerogel/core';
+import type { IAGErrorReportModalButtonsDefaultSlotProps } from '@aerogel/core';
 
 const props = defineProps(useErrorReportModalProps());
-const activeReportIndex = ref(0);
-const report = computed(() => props.reports[activeReportIndex.value] as ErrorReport);
-const hasDetails = computed(() => (report.value.details?.trim() ?? '').length > 0);
+const { activeReportIndex, details, report } = useErrorReportModal(props);
 </script>

@@ -4,20 +4,18 @@
 
         <div class="mt-4 flex flex-row-reverse gap-2">
             <BaseButton @click="close(true)">
-                {{ $t('ui.ok') }}
+                {{ renderedAcceptText }}
             </BaseButton>
             <BaseButton color="clear" @click="close(false)">
-                {{ $t('ui.cancel') }}
+                {{ renderedCancelText }}
             </BaseButton>
         </div>
     </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { requiredStringProp, stringProp } from '@aerogel/core';
+import { useConfirmModal, useConfirmModalProps } from '@aerogel/core';
 
-defineProps({
-    title: stringProp(),
-    message: requiredStringProp(),
-});
+const props = defineProps(useConfirmModalProps());
+const { renderedAcceptText, renderedCancelText } = useConfirmModal(props);
 </script>

@@ -112,13 +112,25 @@
                 </BaseButton>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton @click="confirmResult($ui.confirm($t('components.modals_confirmMessage')))">
+                <BaseButton
+                    @click="
+                        confirmResult(
+                            $ui.confirm($t('components.modals_confirmTitle'), $t('components.modals_confirmMessage'), {
+                                acceptText: $t('components.modals_confirmAccept'),
+                                cancelText: $t('components.modals_confirmCancel'),
+                            })
+                        )
+                    "
+                >
                     {{ $t('components.modals_customConfirm') }}
                 </BaseButton>
                 <BaseButton
                     @click="
                         $ui.openModal(AGConfirmModal, {
+                            title: $t('components.modals_confirmTitle'),
                             message: $t('components.modals_confirmMessage'),
+                            acceptText: $t('components.modals_confirmAccept'),
+                            cancelText: $t('components.modals_confirmCancel'),
                         }).then((modal) => confirmResult(modal.afterClose))
                     "
                 >
@@ -126,7 +138,7 @@
                 </BaseButton>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton @click="$ui.loading(after({ seconds: 3 }))">
+                <BaseButton @click="$ui.loading($t('components.modals_loadingMessage'), after({ seconds: 3 }))">
                     {{ $t('components.modals_customLoading') }}
                 </BaseButton>
                 <BaseButton @click="showDefaultLoading()">
@@ -134,7 +146,7 @@
                 </BaseButton>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton @click="$ui.openModal(NestedModal)">
+                <BaseButton @click="$events.emit('all-the-way-down')">
                     {{ $t('components.modals_nested') }}
                 </BaseButton>
             </div>
@@ -226,7 +238,7 @@
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { AGAlertModal, AGConfirmModal, AGLoadingModal, AGSnackbar, UI, translate } from '@aerogel/core';
+import { AGAlertModal, AGConfirmModal, AGLoadingModal, AGSnackbar, UI, translate, useEvent } from '@aerogel/core';
 import { ref } from 'vue';
 
 import CustomModal from './components/CustomModal.vue';
@@ -234,6 +246,8 @@ import NestedModal from './components/NestedModal.vue';
 
 const customSelectValue = ref(null);
 const defaultSelectValue = ref(null);
+
+useEvent<number | undefined>('all-the-way-down', (count) => UI.openModal(NestedModal, { count }));
 
 async function confirmResult(result: Promise<unknown>) {
     const confirmed = await result;
@@ -244,7 +258,7 @@ async function confirmResult(result: Promise<unknown>) {
 }
 
 async function showDefaultLoading(): Promise<void> {
-    const modal = await UI.openModal(AGLoadingModal);
+    const modal = await UI.openModal(AGLoadingModal, { message: translate('components.modals_loadingMessage') });
 
     await after({ seconds: 3 });
 
