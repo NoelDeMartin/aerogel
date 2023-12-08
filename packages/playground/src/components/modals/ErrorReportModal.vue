@@ -42,13 +42,20 @@
                             description,
                         }: IAGErrorReportModalButtonsDefaultSlotProps"
                     >
-                        <ErrorReportModalButton
+                        <BaseButton
+                            color="clear"
+                            class="group whitespace-nowrap"
                             :url="url"
                             :aria-label="description"
-                            :icon-component="iconComponent"
-                            :description="description"
                             @click="handler"
-                        />
+                        >
+                            <component :is="iconComponent" class="h-4 w-4" />
+                            <AGMeasured
+                                class="w-0 overflow-hidden transition-[width] group-hover:w-[--width] group-focus:w-[--width]"
+                            >
+                                {{ description }}
+                            </AGMeasured>
+                        </BaseButton>
                     </template>
                 </AGErrorReportModalButtons>
             </h2>
