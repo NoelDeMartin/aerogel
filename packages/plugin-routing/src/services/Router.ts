@@ -1,6 +1,6 @@
 import { Events } from '@aerogel/core';
-import { facade, fail } from '@noeldemartin/utils';
-import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';
+import { facade, fail, objectOnly } from '@noeldemartin/utils';
+import type { Router } from 'vue-router';
 
 import Service from './Router.state';
 
@@ -8,12 +8,15 @@ export class RouterService extends Service {
 
     public router?: Router;
 
-    public get currentRoute(): RouteLocationNormalizedLoaded {
-        return this.requireRouter().currentRoute.value;
-    }
-
     protected async boot(): Promise<void> {
-        Events.on('before-login', () => (this.flashRoute = this.currentRoute));
+        Events.on(
+            'before-login',
+            () =>
+                (this.flashRoute = objectOnly(
+                    this.requireRouter().currentRoute.value as unknown as Record<string, unknown>,
+                    ['path', 'query', 'hash'],
+                )),
+        );
         Events.on('login', async () => {
             if (!this.flashRoute) {
                 return;

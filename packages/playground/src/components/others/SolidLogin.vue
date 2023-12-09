@@ -13,7 +13,7 @@
             </BaseButton>
         </div>
 
-        <div v-if="$solid.previousSession?.error">
+        <div v-if="!$solid.ignorePreviousSessionError && $solid.previousSession?.error">
             <AGMarkdown lang-key="solid.loginError" />
         </div>
 
