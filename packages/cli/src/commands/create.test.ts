@@ -1,23 +1,15 @@
-import { beforeEach, describe, it } from 'vitest';
+import { describe, it } from 'vitest';
 
 import FileMock from '@/lib/File.mock';
 import ShellMock from '@/lib/Shell.mock';
-import { stubCommandRunner } from '@/testing/utils';
-import type { StubCommandRunner } from '@/testing/utils';
 
 import { CreateCommand } from './create';
 
 describe('Create command', () => {
 
-    let run: StubCommandRunner<typeof CreateCommand>;
-
-    beforeEach(() => {
-        run = stubCommandRunner(CreateCommand);
-    });
-
     it('creates apps', async () => {
         // Act
-        await run('./app', { name: 'My App' });
+        await CreateCommand.run('./app', { name: 'My App' });
 
         // Assert
         FileMock.expectCreated('./app/.gitignore').toContain('node_modules');
@@ -34,7 +26,7 @@ describe('Create command', () => {
 
     it('creates apps for local core development', async () => {
         // Act
-        await run('./app', { name: 'My App', local: true });
+        await CreateCommand.run('./app', { name: 'My App', local: true });
 
         // Assert
         FileMock.expectCreated('./app/package.json').toMatch(/"@aerogel\/core": "file:[^"]+\/packages\/core"/);
@@ -42,7 +34,7 @@ describe('Create command', () => {
 
     it('infers app name from path', async () => {
         // Act
-        await run('./my-app');
+        await CreateCommand.run('./my-app');
 
         // Assert
         FileMock.expectCreated('./my-app/package.json').toContain('"name": "my-app"');

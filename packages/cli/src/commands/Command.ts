@@ -30,10 +30,7 @@ export default class Command {
         program = program.action((...args) => this.run.call(this, ...args));
     }
 
-    protected static async run<T extends CommandConstructor>(
-        this: T,
-        ...args: ConstructorParameters<T>
-    ): Promise<void> {
+    public static async run<T extends CommandConstructor>(this: T, ...args: ConstructorParameters<T>): Promise<void> {
         const instance = new this(...args);
 
         await instance.validate();

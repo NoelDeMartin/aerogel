@@ -1,25 +1,17 @@
-import { beforeEach, describe, it } from 'vitest';
+import { describe, it } from 'vitest';
 
 import FileMock from '@/lib/File.mock';
-import { stubCommandRunner } from '@/testing/utils';
-import type { StubCommandRunner } from '@/testing/utils';
 
 import { GenerateComponentCommand } from './generate-component';
 
 describe('Generate Component command', () => {
-
-    let run: StubCommandRunner<typeof GenerateComponentCommand>;
-
-    beforeEach(() => {
-        run = stubCommandRunner(GenerateComponentCommand);
-    });
 
     it('generates components', async () => {
         // Arrange
         FileMock.stub('package.json', '@aerogel/core');
 
         // Act
-        await run('FooBar');
+        await GenerateComponentCommand.run('FooBar');
 
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<div>FooBar</div>');
@@ -30,7 +22,7 @@ describe('Generate Component command', () => {
         FileMock.stub('package.json', '@aerogel/core');
 
         // Act
-        await run('module/FooBar');
+        await GenerateComponentCommand.run('module/FooBar');
 
         // Assert
         FileMock.expectCreated('src/components/module/FooBar.vue').toContain('<div>FooBar</div>');
@@ -47,7 +39,7 @@ describe('Generate Component command', () => {
         );
 
         // Act
-        await run('FooBar', { story: true });
+        await GenerateComponentCommand.run('FooBar', { story: true });
 
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<div>FooBar</div>');
@@ -65,7 +57,7 @@ describe('Generate Component command', () => {
         );
 
         // Act
-        await run('FooBar', { input: true, story: true });
+        await GenerateComponentCommand.run('FooBar', { input: true, story: true });
 
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain('<AGHeadlessInputInput v-bind="attrs" />');
@@ -86,7 +78,7 @@ describe('Generate Component command', () => {
         );
 
         // Act
-        await run('FooBar', { button: true, story: true });
+        await GenerateComponentCommand.run('FooBar', { button: true, story: true });
 
         // Assert
         FileMock.expectCreated('src/components/FooBar.vue').toContain(
