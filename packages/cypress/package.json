@@ -2,14 +2,13 @@
     "name": "@aerogel/cypress",
     "description": "Aerogel Cypress plugin",
     "version": "0.0.0",
-    "main": "dist/aerogel-cypress.cjs.js",
-    "module": "dist/aerogel-cypress.esm.js",
+    "main": "dist/index.js",
     "types": "dist/aerogel-cypress.d.ts",
     "sideEffects": false,
     "scripts": {
-        "build": "rm dist -rf && npm run build:js && npm run build:types && npm run build:plugin",
-        "build:js": "noeldemartin-build-javascript",
-        "build:plugin": "esbuild src/plugin.ts --format=cjs --bundle --external:soukai --external:soukai-solid --external:@inrupt/solid-client-authn-core --external:@simonsmith/cypress-image-snapshot/plugin > dist/plugin.js",
+        "build": "rm -rf dist && npm run build:support && npm run build:plugin && npm run build:types",
+        "build:plugin": "esbuild src/plugin/index.ts --format=cjs --bundle --sourcemap --outfile=dist/plugin.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/plugin",
+        "build:support": "esbuild src/support/index.ts --format=cjs --bundle --sourcemap --outfile=dist/index.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/command",
         "build:types": "noeldemartin-build-types && sed -i \"1i\\/// <reference types=\\\"@simonsmith/cypress-image-snapshot/command\\\" />\" ./dist/aerogel-cypress.d.ts",
         "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src"
@@ -32,12 +31,13 @@
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
     "peerDependencies": {
-        "cypress": "*"
+        "cypress": "*",
+        "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/solid-utils": "0.3.0-next.5176c3d9efdc3cf9d06772d0c55c24b2eb49893a",
         "@noeldemartin/utils": "0.5.0-next.dce7f1ca99862fde01601bb39d71d0eaaed3abe5",
-        "@simonsmith/cypress-image-snapshot": "^8.1.2"
+        "@simonsmith/cypress-image-snapshot": "^8.1.2",
+        "cypress-solid": "^0.1.1"
     },
     "devDependencies": {
         "esbuild": "^0.19.4"

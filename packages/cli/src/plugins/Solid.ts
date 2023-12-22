@@ -50,12 +50,12 @@ export class Solid extends Plugin {
                 .replace(
                     '"cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 cy:run",',
                     '"cy:test": "start-server-and-test ' +
-                        'test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:4000 cy:run",',
+                        'test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:3000 cy:run",',
                 )
                 .replace(
                     '"dev": "vite",',
                     '"dev": "vite",\n' +
-                        '"dev:serve-pod": "community-solid-server -c @css:config/file.json -p 4000 -f ./solid-data",',
+                        '"dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid-data",',
                 )
                 .replace(
                     '"test:serve-app": "vite --port 5001"',

@@ -1,3 +1,1 @@
-import install from '@aerogel/cypress';
-
-install();
+import '@aerogel/cypress/support';

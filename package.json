@@ -34,7 +34,7 @@
         "@intlify/unplugin-vue-i18n": "^0.11.0",
         "@noeldemartin/eslint-config-typescript": "0.1.1-next.213cffed3d1b24c286a9602ebd17085b58a673b4",
         "@noeldemartin/eslint-config-vue": "0.1.1-next.6991d432d0368b4d59bb674c8bf0384e9eded802",
-        "@noeldemartin/scripts": "0.2.0-next.52449adb6a06e1cbe6714cf0553fe6ce9391baec",
+        "@noeldemartin/scripts": "^0.2.1",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/mustache": "^4.2.2",
         "cypress": "^12.17.0",

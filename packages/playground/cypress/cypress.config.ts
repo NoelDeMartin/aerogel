@@ -1,4 +1,4 @@
-import install from '@aerogel/cypress/dist/plugin';
+import { setupAerogelNodeEvents } from '@aerogel/cypress/config';
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
@@ -10,8 +10,6 @@ export default defineConfig({
             runMode: 3,
             openMode: 0,
         },
-        setupNodeEvents(on) {
-            install(on);
-        },
+        setupNodeEvents: setupAerogelNodeEvents,
     },
 });

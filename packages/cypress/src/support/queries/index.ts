@@ -12,7 +12,7 @@ export type CustomQueries<T = typeof queries> = {
         : never;
 };
 
-export default function installCustomQueries(): void {
+export default function(): void {
     for (const [name, implementation] of Object.entries(queries)) {
         Cypress.Commands.addQuery(
             name as unknown as keyof Cypress.Chainable,

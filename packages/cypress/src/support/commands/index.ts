@@ -1,23 +1,19 @@
 import * as a11yCommands from './a11y';
 import * as appCommands from './app';
-import * as solidCommands from './solid';
 import * as soukaiCommands from './soukai';
-import * as storageCommands from './storage';
 
 import * as overrides from './overrides';
 
-export const commands = {
+export const aerogelCommands = {
     ...a11yCommands,
     ...appCommands,
-    ...solidCommands,
     ...soukaiCommands,
-    ...storageCommands,
 };
 
-export type CustomCommands = typeof commands;
+export type CustomAerogelCommands = typeof aerogelCommands;
 
-export default function installCustomCommands(): void {
-    for (const [name, implementation] of Object.entries(commands)) {
+export default function(): void {
+    for (const [name, implementation] of Object.entries(aerogelCommands)) {
         Cypress.Commands.add(
             name as unknown as keyof Cypress.Chainable,
             implementation as Cypress.CommandFn<keyof Cypress.ChainableMethods>,
@@ -34,6 +30,6 @@ export default function installCustomCommands(): void {
 
 declare global {
     namespace Cypress {
-        interface Chainable extends CustomCommands {}
+        interface Chainable extends CustomAerogelCommands {}
     }
 }
