@@ -11,6 +11,7 @@ import {
     objectWithout,
     objectWithoutEmpty,
     parseBoolean,
+    requireUrlParse,
     setAsyncMemo,
     tap,
     urlRoot,
@@ -136,6 +137,7 @@ export class SolidService extends Service {
             const profile = await this.getUserProfile(loginUrl);
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
             const authenticator = await this.bootAuthenticator(authenticatorName);
+            const { domain: loginDomain } = requireUrlParse(loginUrl);
 
             this.setState({
                 dismissed: false,
@@ -146,7 +148,7 @@ export class SolidService extends Service {
                     authenticator: authenticatorName,
                     error: translateWithDefault(
                         'auth.stuckConnecting',
-                        'We didn\'t hear back from the identity provider, maybe try reconnecting?',
+                        `We didn't hear back from the identity provider at \`${loginDomain}\`, maybe try reconnecting?`,
                     ),
                 }),
             });
