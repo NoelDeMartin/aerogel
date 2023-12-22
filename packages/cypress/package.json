@@ -37,7 +37,7 @@
     "dependencies": {
         "@noeldemartin/utils": "0.5.0-next.dce7f1ca99862fde01601bb39d71d0eaaed3abe5",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
-        "cypress-solid": "^0.1.1"
+        "cypress-solid": "^0.1.2"
     },
     "devDependencies": {
         "esbuild": "^0.19.4"

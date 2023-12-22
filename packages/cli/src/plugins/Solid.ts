@@ -60,8 +60,7 @@ export class Solid extends Plugin {
                 )
                 .replace(
                     '"test:serve-app": "vite --port 5001"',
-                    '"test:serve-app": "vite --port 5001",\n' +
-                        '"test:serve-pod": "community-solid-server -p 4000 -l warn"',
+                    '"test:serve-app": "vite --port 5001",\n"test:serve-pod": "community-solid-server -l warn"',
                 ),
         );
 
