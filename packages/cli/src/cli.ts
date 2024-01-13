@@ -8,6 +8,7 @@ import { GenerateComponentCommand } from '@/commands/generate-component';
 import { GenerateModelCommand } from '@/commands/generate-model';
 import { GenerateOverridesCommand } from '@/commands/generate-overrides';
 import { GenerateServiceCommand } from '@/commands/generate-service';
+import { InfoCommand } from '@/commands/info';
 import { InstallCommand } from '@/commands/install';
 
 export class CLIService {
@@ -22,6 +23,7 @@ export class CLIService {
         GenerateModelCommand.define(program);
         GenerateOverridesCommand.define(program);
         GenerateServiceCommand.define(program);
+        InfoCommand.define(program);
         InstallCommand.define(program);
 
         program.parse(argv);
