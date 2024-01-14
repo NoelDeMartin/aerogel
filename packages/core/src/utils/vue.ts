@@ -1,5 +1,5 @@
 import { fail } from '@noeldemartin/utils';
-import { inject, reactive, ref } from 'vue';
+import { computed, inject, reactive, ref, watch } from 'vue';
 import type { Directive, InjectionKey, PropType, Ref, UnwrapNestedRefs } from 'vue';
 
 type BaseProp<T> = {
@@ -28,6 +28,15 @@ export function booleanProp(defaultValue: boolean = false): OptionalProp<boolean
 
 export function componentRef<T>(): Ref<UnwrapNestedRefs<T> | undefined> {
     return ref<UnwrapNestedRefs<T>>();
+}
+
+export function computedAsync<T>(getter: () => Promise<T>): Ref<T | undefined> {
+    const result = ref<T>();
+    const asyncValue = computed(getter);
+
+    watch(asyncValue, async () => (result.value = await asyncValue.value), { immediate: true });
+
+    return result;
 }
 
 export function defineDirective(directive: Directive): Directive {
