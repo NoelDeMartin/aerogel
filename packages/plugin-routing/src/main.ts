@@ -6,13 +6,17 @@ import type { RouteRecordRaw } from 'vue-router';
 
 import Router from './services/Router';
 import { createAppRouter } from './router';
+import type { RouteBindings } from './services/Router';
 
 const services = { $router: Router };
 
-export { Router };
+export * from './services/Router';
+export * from './utils';
+export { default as Router } from './services/Router';
 
 export interface Options {
     routes: RouteRecordRaw[];
+    bindings?: RouteBindings;
     basePath?: string;
 }
 
@@ -27,8 +31,7 @@ export default function routing(options: Options): Plugin {
             });
 
             app.use(router);
-
-            Router.router = router;
+            Router.use(router, options);
 
             await bootServices(app, services);
         },
