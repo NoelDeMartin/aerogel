@@ -1,0 +1,13 @@
+diff --git a/node_modules/@vue/runtime-core/dist/runtime-core.d.ts b/node_modules/@vue/runtime-core/dist/runtime-core.d.ts
+index c485727..b3afcbe 100644
+--- a/node_modules/@vue/runtime-core/dist/runtime-core.d.ts
++++ b/node_modules/@vue/runtime-core/dist/runtime-core.d.ts
+@@ -1081,7 +1081,7 @@ export type SetupContext<E = EmitsOptions, S extends SlotsType = {}> = E extends
+     attrs: Data;
+     slots: UnwrapSlotsType<S>;
+     emit: EmitFn<E>;
+-    expose: (exposed?: Record<string, any>) => void;
++    expose: <Exposed extends Record<string, any> = Record<string, any>>(exposed?: Exposed) => void
+ } : never;
+ /**
+  * We expose a subset of properties on the internal instance as they are
