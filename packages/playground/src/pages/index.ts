@@ -1,4 +1,4 @@
-import type { RouteRecordRaw } from 'vue-router';
+import { defineRoutes } from '@aerogel/plugin-routing';
 
 import Components from './components/Components.vue';
 import Content from './Content.vue';
@@ -9,7 +9,7 @@ import Offline from './offline/Offline.vue';
 import Solid from './solid/Solid.vue';
 import Storage from './Storage.vue';
 
-export const routes: RouteRecordRaw[] = [
+export const routes = defineRoutes([
     {
         name: 'home',
         path: '/',
@@ -50,4 +50,4 @@ export const routes: RouteRecordRaw[] = [
         path: '/offline',
         component: Offline,
     },
-];
+]);

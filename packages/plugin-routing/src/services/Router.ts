@@ -84,8 +84,6 @@ export class RouterService extends Service {
     }
 
     protected async beforeNavigation(route: RouteLocationNormalized): Promise<void> {
-        await App.ready;
-
         const resolvedParams: Record<string, unknown> = { ...route.params };
 
         for (const [paramName, paramValue] of Object.entries(route.params)) {
@@ -109,11 +107,13 @@ export class RouterService extends Service {
         value: RouteParamValue | RouteParamValue[],
         params: Record<string, unknown>,
     ): Promise<unknown> {
-        if (Array.isArray(value)) {
+        const binding = this.bindings[name];
+
+        if (Array.isArray(value) || !binding) {
             return value;
         }
 
-        const binding = this.bindings[name] ?? (() => value);
+        await App.ready;
 
         return binding(value, params);
     }
