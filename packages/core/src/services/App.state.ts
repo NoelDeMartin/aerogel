@@ -9,7 +9,6 @@ export default defineServiceState({
         plugins: {} as Record<string, Plugin>,
         environment: Aerogel.environment,
         sourceUrl: Aerogel.sourceUrl,
-        isMounted: false,
     },
     computed: {
         development: (state) => state.environment === 'development',

@@ -1,4 +1,4 @@
-import { facade, forever, updateLocationQueryParameters } from '@noeldemartin/utils';
+import { PromisedValue, facade, forever, updateLocationQueryParameters } from '@noeldemartin/utils';
 
 import Events from '@/services/Events';
 import type { Plugin } from '@/plugins';
@@ -6,6 +6,17 @@ import type { Plugin } from '@/plugins';
 import Service from './App.state';
 
 export class AppService extends Service {
+
+    public readonly ready = new PromisedValue<void>();
+    public readonly mounted = new PromisedValue<void>();
+
+    public isReady(): boolean {
+        return this.ready.isResolved();
+    }
+
+    public isMounted(): boolean {
+        return this.mounted.isResolved();
+    }
 
     public async reload(queryParameters?: Record<string, string | undefined>): Promise<void> {
         queryParameters && updateLocationQueryParameters(queryParameters);
@@ -21,7 +32,8 @@ export class AppService extends Service {
     }
 
     protected async boot(): Promise<void> {
-        Events.once('application-mounted', () => this.setState({ isMounted: true }));
+        Events.once('application-ready', () => this.ready.resolve());
+        Events.once('application-mounted', () => this.mounted.resolve());
     }
 
 }

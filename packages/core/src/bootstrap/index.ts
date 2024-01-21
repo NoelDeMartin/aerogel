@@ -17,6 +17,8 @@ export async function bootstrapApplication(app: App, options: AerogelOptions = {
 
     await installPlugins(plugins, app, options);
     await options.install?.(app);
+
+    Events.emit('application-ready');
 }
 
 export async function bootstrap(rootComponent: Component, options: AerogelOptions = {}): Promise<void> {

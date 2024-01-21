@@ -106,7 +106,7 @@ export class SolidService extends Service {
         const handleLoginError =
             options.onError ??
             ((error: ErrorSource) =>
-                App.isMounted ? Errors.report(error) : this.setState({ loginStartupError: error }));
+                App.isMounted() ? Errors.report(error) : this.setState({ loginStartupError: error }));
 
         if (App.development && loginUrl === 'devserver') {
             loginUrl = 'http://localhost:3000';

@@ -1,36 +1,49 @@
-import { computed, ref, unref } from 'vue';
-import { Events } from '@aerogel/core';
-import { facade, objectOnly } from '@noeldemartin/utils';
+import { computed, shallowRef, unref } from 'vue';
+import { App, Events } from '@aerogel/core';
+import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
 import type { ComputedRef, Ref } from 'vue';
-import type { RouteLocationNormalizedLoaded, RouteParamValue, Router } from 'vue-router';
+import type {
+    RouteLocationNormalized,
+    RouteLocationNormalizedLoaded,
+    RouteLocationRaw,
+    RouteParamValue,
+    RouteParams,
+    Router,
+} from 'vue-router';
 
 import Service from './Router.state';
 
-export type LoadedRoute = Omit<RouteLocationNormalizedLoaded, 'params'> & { params: Record<string, unknown> };
+export type LoadedRoute = Omit<RouteLocationNormalizedLoaded, 'params'> & {
+    rawParams: RouteParams;
+    params?: Record<string, unknown>;
+};
 export type RouteBinding = (slug: string, params: Record<string, unknown>) => unknown | Promise<unknown>;
 export type RouteBindings = Record<string, RouteBinding>;
 
 export class RouterService extends Service {
 
     public readonly currentRoute: ComputedRef<LoadedRoute | null>;
+    public readonly routesParams: Ref<Record<string, Record<string, unknown>>>;
     protected router: Ref<Router | null>;
     protected bindings: RouteBindings;
-    protected currentRouteParams: Ref<Record<string, unknown>>;
 
     constructor() {
         super();
 
-        this.router = ref(null);
+        this.router = shallowRef(null);
         this.bindings = {};
-        this.currentRouteParams = ref({});
+        this.routesParams = shallowRef({});
         this.currentRoute = computed(() => {
             if (!this.router.value) {
                 return null;
             }
 
+            const route = unref(this.router.value.currentRoute);
+
             return {
-                ...unref(this.router.value.currentRoute),
-                params: this.currentRouteParams.value,
+                ...route,
+                params: this.routesParams.value?.[route.path],
+                rawParams: route.params,
             };
         });
     }
@@ -38,24 +51,9 @@ export class RouterService extends Service {
     public use(router: Router, options: { bindings?: RouteBindings } = {}): void {
         this.router.value = router;
         this.bindings = options.bindings ?? {};
-    }
 
-    public updateRouteParams(params: Record<string, unknown>): void {
-        this.currentRouteParams.value = params;
-    }
-
-    public async resolveBinding(
-        name: string,
-        value: RouteParamValue | RouteParamValue[],
-        params: Record<string, unknown>,
-    ): Promise<unknown> {
-        if (Array.isArray(value)) {
-            return value;
-        }
-
-        const binding = this.bindings[name] ?? (() => value);
-
-        return binding(value, params);
+        router.beforeEach(once(() => this.handleStatic404Redirect()));
+        router.beforeEach((to) => this.beforeNavigation(to));
     }
 
     protected async boot(): Promise<void> {
@@ -83,6 +81,41 @@ export class RouterService extends Service {
         return this.router.value
             ? super.__get(property) ?? Reflect.get(this.router.value, property)
             : super.__get(property);
+    }
+
+    protected async beforeNavigation(route: RouteLocationNormalized): Promise<void> {
+        await App.ready;
+
+        const resolvedParams: Record<string, unknown> = { ...route.params };
+
+        for (const [paramName, paramValue] of Object.entries(route.params)) {
+            resolvedParams[paramName] = await this.resolveBinding(paramName, paramValue, resolvedParams);
+        }
+
+        this.routesParams.value = {
+            ...this.routesParams.value,
+            [route.path]: resolvedParams,
+        };
+    }
+
+    protected handleStatic404Redirect(): void {
+        const route = Storage.pull<RouteLocationRaw>('static-404-redirect');
+
+        route && this.replace(route);
+    }
+
+    protected async resolveBinding(
+        name: string,
+        value: RouteParamValue | RouteParamValue[],
+        params: Record<string, unknown>,
+    ): Promise<unknown> {
+        if (Array.isArray(value)) {
+            return value;
+        }
+
+        const binding = this.bindings[name] ?? (() => value);
+
+        return binding(value, params);
     }
 
 }

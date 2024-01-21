@@ -1,7 +1,8 @@
-import { defineComponent, h, ref } from 'vue';
-import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { App } from '@aerogel/core';
+import { computed, defineComponent, h } from 'vue';
+import { useRoute } from 'vue-router';
 import type { Component, ConcreteComponent } from 'vue';
-import type { RouteRecordRaw } from 'vue-router';
+import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
 
 import Router from './services/Router';
 import type { RouteBindings } from './services/Router';
@@ -10,48 +11,62 @@ export type AerogelRoute = RouteRecordRaw;
 
 function setupPageComponent(pageComponent: ConcreteComponent) {
     const route = useRoute();
-    const params = ref<Record<string, unknown>>({});
+    const pageParams = computed(() => Router.routesParams?.value[route.path]);
 
-    async function updateResolvedRouteParams() {
-        params.value = await resolveRouteParameters();
-
-        Router.updateRouteParams(params.value);
-    }
-
-    async function resolveRouteParameters(): Promise<Record<string, unknown>> {
-        const resolvedParams: Record<string, unknown> = { ...route.params };
-
-        for (const [paramName, paramValue] of Object.entries(route.params)) {
-            resolvedParams[paramName] = await Router.resolveBinding(paramName, paramValue, resolvedParams);
-        }
-
-        return resolvedParams;
-    }
-
-    onBeforeRouteUpdate(() => updateResolvedRouteParams());
-    updateResolvedRouteParams();
-
-    return () => h(pageComponent, params.value);
+    return () => h(pageComponent, pageParams.value);
 }
 
-function enhanceRouteComponent(pageComponent: ConcreteComponent): Component {
+function defineRouteComponent(pageComponent: ConcreteComponent): Component {
     return defineComponent({
         setup: () => setupPageComponent(pageComponent),
     });
 }
 
-export function defineRoute(route: AerogelRoute): RouteRecordRaw {
+function enhanceRouteComponent(route: AerogelRoute): void {
+    if (!route.component) {
+        return;
+    }
+
     if (typeof route.component === 'function') {
         const lazyComponent = route.component as () => Promise<{ default: ConcreteComponent }>;
 
         route.component = async () => {
             const { default: component } = await lazyComponent();
 
-            return enhanceRouteComponent(component);
+            return defineRouteComponent(component);
         };
-    } else if (route.component) {
-        route.component = enhanceRouteComponent(route.component as ConcreteComponent);
+
+        return;
     }
+
+    route.component = defineRouteComponent(route.component);
+}
+
+function enhanceRouteNavigationGuard(guard: NavigationGuardWithThis<undefined>): NavigationGuardWithThis<undefined> {
+    return async function(this, ...args) {
+        await App.ready;
+
+        return guard.call(this, ...args);
+    };
+}
+
+function enhanceRouteNavigationGuards(route: AerogelRoute): void {
+    if (!route.beforeEnter) {
+        return;
+    }
+
+    if (Array.isArray(route.beforeEnter)) {
+        route.beforeEnter = route.beforeEnter.map(enhanceRouteNavigationGuard);
+
+        return;
+    }
+
+    route.beforeEnter = enhanceRouteNavigationGuard(route.beforeEnter);
+}
+
+export function defineRoute(route: AerogelRoute): RouteRecordRaw {
+    enhanceRouteComponent(route);
+    enhanceRouteNavigationGuards(route);
 
     return route;
 }

@@ -47,7 +47,7 @@ export class ErrorsService extends Service {
             throw error;
         }
 
-        if (!App.isMounted) {
+        if (!App.isMounted()) {
             const startupError = await this.createStartupErrorReport(error);
 
             if (startupError) {

@@ -1,11 +1,11 @@
 import Aerogel from 'virtual:aerogel';
 
 import { bootServices } from '@aerogel/core';
+import { createRouter, createWebHistory } from 'vue-router';
 import type { Plugin } from '@aerogel/core';
 import type { RouteRecordRaw } from 'vue-router';
 
 import Router from './services/Router';
-import { createAppRouter } from './router';
 import type { RouteBindings } from './services/Router';
 
 const services = { $router: Router };
@@ -25,13 +25,13 @@ export type RoutingServices = typeof services;
 export default function routing(options: Options): Plugin {
     return {
         async install(app) {
-            const router = createAppRouter({
+            const router = createRouter({
                 routes: options.routes,
-                basePath: options.basePath ?? Aerogel.basePath,
+                history: createWebHistory(options.basePath ?? Aerogel.basePath),
             });
 
-            app.use(router);
             Router.use(router, options);
+            app.use(router);
 
             await bootServices(app, services);
         },
