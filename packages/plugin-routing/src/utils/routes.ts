@@ -4,8 +4,8 @@ import { useRoute } from 'vue-router';
 import type { Component, ConcreteComponent } from 'vue';
 import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
 
-import Router from './services/Router';
-import type { RouteBindings } from './services/Router';
+import Router from '../services/Router';
+import type { RouteBindings } from '../services/Router';
 
 export type AerogelRoute = RouteRecordRaw;
 
