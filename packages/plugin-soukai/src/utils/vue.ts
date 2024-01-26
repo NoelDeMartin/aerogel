@@ -32,6 +32,8 @@ export function computedModel<T extends Model | null | undefined>(compute: () =>
 
         return {
             get: () => tap(value, () => track()),
+
+            // eslint-disable-next-line no-console
             set: () => console.warn('Computed model ref was not set (they are immutable).'),
         };
     }) as ComputedRef<T>;
