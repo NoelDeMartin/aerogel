@@ -9,7 +9,7 @@
         "build": "rm -rf dist && npm run build:support && npm run build:plugin && npm run build:types",
         "build:plugin": "esbuild src/plugin/index.ts --format=cjs --bundle --sourcemap --outfile=dist/plugin.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/plugin",
         "build:support": "esbuild src/support/index.ts --format=cjs --bundle --sourcemap --outfile=dist/index.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/command",
-        "build:types": "noeldemartin-build-types && sed -i \"1i\\/// <reference types=\\\"@simonsmith/cypress-image-snapshot/command\\\" />\" ./dist/aerogel-cypress.d.ts",
+        "build:types": "noeldemartin-build-types && ./scripts/fix-types.sh",
         "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src"
     },
