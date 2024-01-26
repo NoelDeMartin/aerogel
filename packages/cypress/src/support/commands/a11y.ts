@@ -12,16 +12,24 @@ export function press(label: string, selector: string = 'button:visible, a:visib
     cy.contains(selector, label).click();
 }
 
-export function see(text: string, options?: SeeOptions): void;
-export function see(text: string, selector: string, options?: SeeOptions): void;
-export function see(text: string, selectorOrOptions: string | SeeOptions = {}, options: SeeOptions = {}): void {
+export function see<E extends Node = HTMLElement>(text: string, options?: SeeOptions): Cypress.Chainable<JQuery<E>>;
+export function see<E extends Node = HTMLElement>(
+    text: string,
+    selector: string,
+    options?: SeeOptions
+): Cypress.Chainable<JQuery<E>>;
+export function see<E extends Node = HTMLElement>(
+    text: string,
+    selectorOrOptions: string | SeeOptions = {},
+    options: SeeOptions = {},
+): Cypress.Chainable<JQuery<E>> {
     const { srOnly, ...baseOptions } = typeof selectorOrOptions === 'string' ? options : selectorOrOptions;
     const element =
         typeof selectorOrOptions === 'string'
-            ? cy.contains(selectorOrOptions, text, baseOptions)
+            ? cy.contains<E>(selectorOrOptions, text, baseOptions)
             : cy.a11yGet(text, baseOptions);
 
-    srOnly ? element.should('exist') : element.scrollIntoView().should('be.visible');
+    return srOnly ? element.should('exist') : element.scrollIntoView().should('be.visible');
 }
 
 export function seeImage(text: string): void {
