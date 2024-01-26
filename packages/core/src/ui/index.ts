@@ -8,6 +8,7 @@ import AGAlertModal from '../components/modals/AGAlertModal.vue';
 import AGConfirmModal from '../components/modals/AGConfirmModal.vue';
 import AGErrorReportModal from '../components/modals/AGErrorReportModal.vue';
 import AGLoadingModal from '../components/modals/AGLoadingModal.vue';
+import AGPromptModal from '../components/modals/AGPromptModal.vue';
 import AGSnackbar from '../components/snackbars/AGSnackbar.vue';
 import AGStartupCrash from '../components/lib/AGStartupCrash.vue';
 import type { UIComponent } from './UI';
@@ -26,6 +27,7 @@ export default definePlugin({
             [UIComponents.ConfirmModal]: AGConfirmModal,
             [UIComponents.ErrorReportModal]: AGErrorReportModal,
             [UIComponents.LoadingModal]: AGLoadingModal,
+            [UIComponents.PromptModal]: AGPromptModal,
             [UIComponents.Snackbar]: AGSnackbar,
             [UIComponents.StartupCrash]: AGStartupCrash,
         };

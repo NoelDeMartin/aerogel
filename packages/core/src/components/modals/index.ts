@@ -1,26 +1,17 @@
-import AGAlertModal from './AGAlertModal.vue';
-import AGConfirmModal from './AGConfirmModal.vue';
-import AGErrorReportModalButtons from './AGErrorReportModalButtons.vue';
-import AGErrorReportModalTitle from './AGErrorReportModalTitle.vue';
-import AGLoadingModal from './AGLoadingModal.vue';
-import AGModal from './AGModal.vue';
-import AGModalTitle from './AGModalTitle.vue';
-import AGModalContext from './AGModalContext.vue';
-
 export * from './AGAlertModal';
 export * from './AGConfirmModal';
 export * from './AGErrorReportModal';
 export * from './AGLoadingModal';
 export * from './AGModal';
 export * from './AGModalContext';
+export * from './AGPromptModal';
 
-export {
-    AGAlertModal,
-    AGConfirmModal,
-    AGErrorReportModalButtons,
-    AGErrorReportModalTitle,
-    AGLoadingModal,
-    AGModal,
-    AGModalTitle,
-    AGModalContext,
-};
+export { default as AGAlertModal } from './AGAlertModal.vue';
+export { default as AGConfirmModal } from './AGConfirmModal.vue';
+export { default as AGErrorReportModalButtons } from './AGErrorReportModalButtons.vue';
+export { default as AGErrorReportModalTitle } from './AGErrorReportModalTitle.vue';
+export { default as AGLoadingModal } from './AGLoadingModal.vue';
+export { default as AGModal } from './AGModal.vue';
+export { default as AGModalContext } from './AGModalContext.vue';
+export { default as AGModalTitle } from './AGModalTitle.vue';
+export { default as AGPromptModal } from './AGPromptModal.vue';

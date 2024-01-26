@@ -5,10 +5,10 @@ import type { ObjectValues } from '@noeldemartin/utils';
 
 import Events from '@/services/Events';
 import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackbars';
+import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps, AGPromptModalProps } from '@/components';
 
 import Service from './UI.state';
 import type { Modal, ModalComponent, Snackbar } from './UI.state';
-import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps } from '@/components';
 
 interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
@@ -25,6 +25,7 @@ export const UIComponents = {
     ConfirmModal: 'confirm-modal',
     ErrorReportModal: 'error-report-modal',
     LoadingModal: 'loading-modal',
+    PromptModal: 'prompt-modal',
     Snackbar: 'snackbar',
     StartupCrash: 'startup-crash',
 } as const;
@@ -32,6 +33,14 @@ export const UIComponents = {
 export type UIComponent = ObjectValues<typeof UIComponents>;
 
 export interface ConfirmOptions {
+    acceptText?: string;
+    cancelText?: string;
+}
+
+export interface PromptOptions {
+    label?: string;
+    defaultValue?: string;
+    placeholder?: string;
     acceptText?: string;
     cancelText?: string;
 }
@@ -90,13 +99,44 @@ export class UIService extends Service {
             };
         };
 
-        const modal = await this.openModal<ModalComponent<{ message: string }, boolean>>(
+        const modal = await this.openModal<ModalComponent<AGConfirmModalProps, boolean>>(
             this.requireComponent(UIComponents.ConfirmModal),
             getProperties(),
         );
         const result = await modal.beforeClose;
 
         return result ?? false;
+    }
+
+    public async prompt(message: string, options?: PromptOptions): Promise<string | null>;
+    public async prompt(title: string, message: string, options?: PromptOptions): Promise<string | null>;
+    public async prompt(
+        messageOrTitle: string,
+        messageOrOptions?: string | PromptOptions,
+        options?: PromptOptions,
+    ): Promise<string | null> {
+        const getProperties = (): AGPromptModalProps => {
+            if (typeof messageOrOptions !== 'string') {
+                return {
+                    message: messageOrTitle,
+                    ...(messageOrOptions ?? {}),
+                };
+            }
+
+            return {
+                title: messageOrTitle,
+                message: messageOrOptions,
+                ...(options ?? {}),
+            };
+        };
+
+        const modal = await this.openModal<ModalComponent<AGPromptModalProps, string | null>>(
+            this.requireComponent(UIComponents.PromptModal),
+            getProperties(),
+        );
+        const result = await modal.beforeClose;
+
+        return result ?? null;
     }
 
     public async loading<T>(operation: Promise<T>): Promise<T>;

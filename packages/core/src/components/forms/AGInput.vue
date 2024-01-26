@@ -3,8 +3,9 @@
         ref="$input"
         class="relative flex flex-col items-center"
         :class="className"
-        :name="name"
+        v-bind="props"
     >
+        <AGHeadlessInputLabel class="sr-only" />
         <AGHeadlessInputInput
             v-bind="attrs"
             class="block w-full border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
@@ -19,18 +20,19 @@
 </template>
 
 <script setup lang="ts">
-import { componentRef, stringProp } from '@/utils/vue';
-
-import { useInputAttrs } from '@/utils';
+import { componentRef } from '@/utils/vue';
+import { useInputAttrs } from '@/utils/composition/forms';
+import { useInputProps } from '@/components/headless/forms/AGHeadlessInput';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
 
 import AGHeadlessInput from '../headless/forms/AGHeadlessInput.vue';
-import AGHeadlessInputInput from '../headless/forms/AGHeadlessInputInput.vue';
 import AGHeadlessInputError from '../headless/forms/AGHeadlessInputError.vue';
+import AGHeadlessInputInput from '../headless/forms/AGHeadlessInputInput.vue';
+import AGHeadlessInputLabel from '../headless/forms/AGHeadlessInputLabel.vue';
 
-defineProps({ name: stringProp() });
 defineOptions({ inheritAttrs: false });
 
+const props = defineProps(useInputProps());
 const $input = componentRef<IAGHeadlessInput>();
 const [attrs, className] = useInputAttrs();
 </script>
