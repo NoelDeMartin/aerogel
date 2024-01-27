@@ -1,19 +1,22 @@
 import { arrayRemove, tap } from '@noeldemartin/utils';
 import { onCleanMounted } from '@aerogel/core';
-import { customRef, onMounted, onScopeDispose, ref, watchEffect } from 'vue';
+import { customRef, getCurrentScope, onMounted, onScopeDispose, ref, watchEffect } from 'vue';
 import type { Model, ModelConstructor } from 'soukai';
 import type { ComputedRef, Ref } from 'vue';
+
+export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 
 export function computedModel<T extends Model | null | undefined>(compute: () => T): ComputedRef<T> {
     return customRef((track, trigger) => {
         let value: T;
         const modelListeners: Array<() => void> = [];
         const onModelUpdated = (model: Model) => model.id === value?.id && trigger();
-        const stopModelListeners = () => (
-            modelListeners.forEach((stop) => stop()), modelListeners.splice(0, modelListeners.length)
-        );
+        const stopModelListeners = () => {
+            modelListeners.forEach((stop) => stop());
+            modelListeners.splice(0, modelListeners.length);
+        };
 
-        onScopeDispose(stopModelListeners);
+        getCurrentScope() && onScopeDispose(stopModelListeners);
         watchEffect(() => {
             const newValue = compute();
 
@@ -24,7 +27,7 @@ export function computedModel<T extends Model | null | undefined>(compute: () =>
             value = newValue;
             trigger();
 
-            if (value) {
+            if (value && !modelListeners.length) {
                 modelListeners.push(value.static().on('updated', onModelUpdated));
                 modelListeners.push(value.static().on('relation-loaded', onModelUpdated));
             }
@@ -34,7 +37,32 @@ export function computedModel<T extends Model | null | undefined>(compute: () =>
             get: () => tap(value, () => track()),
 
             // eslint-disable-next-line no-console
-            set: () => console.warn('Computed model ref was not set (they are immutable).'),
+            set: () => console.warn('Computed model ref was not set (it is immutable).'),
+        };
+    }) as ComputedRef<T>;
+}
+
+export function computedModels<T>(modelClass: typeof Model, compute: () => T): ComputedRef<T> {
+    return customRef((track, trigger) => {
+        let value: T;
+        const recompute = () => ((value = compute()), trigger());
+        const modelListeners: Array<() => void> = [
+            modelClass.on('updated', recompute),
+            modelClass.on('relation-loaded', recompute),
+        ];
+        const stopModelListeners = () => {
+            modelListeners.forEach((stop) => stop());
+            modelListeners.splice(0, modelListeners.length);
+        };
+
+        getCurrentScope() && onScopeDispose(stopModelListeners);
+        watchEffect(recompute);
+
+        return {
+            get: () => tap(value, () => track()),
+
+            // eslint-disable-next-line no-console
+            set: () => console.warn('Computed models ref was not set (it is immutable).'),
         };
     }) as ComputedRef<T>;
 }
