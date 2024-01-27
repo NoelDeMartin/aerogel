@@ -21,7 +21,7 @@
                 <AGHeadlessSelectOption
                     v-for="(option, index) in $select?.options ?? []"
                     :key="index"
-                    :value="option.value"
+                    :value="option"
                     class="relative block cursor-default select-none truncate py-2 pl-3 pr-9"
                     selected-class="font-semibold"
                     unselected-class="font-normal"

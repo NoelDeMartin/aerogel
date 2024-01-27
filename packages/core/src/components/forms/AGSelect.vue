@@ -1,5 +1,10 @@
 <template>
-    <AGHeadlessSelect v-bind="props" ref="$select" as="div">
+    <AGHeadlessSelect
+        v-bind="props"
+        ref="$select"
+        as="div"
+        @update:model-value="$emit('update:modelValue', $event)"
+    >
         <AGHeadlessSelectLabel class="block text-sm font-medium leading-6 text-gray-900" />
         <div class="relative" :class="{ 'mt-2': $select?.label }">
             <AGHeadlessSelectButton
@@ -21,7 +26,7 @@
                 <AGHeadlessSelectOption
                     v-for="(option, index) in $select?.options ?? []"
                     :key="index"
-                    :value="option.value"
+                    :value="option"
                     class="relative block cursor-default select-none truncate py-2 pl-3 pr-9"
                     selected-class="font-semibold"
                     unselected-class="font-normal"
@@ -38,7 +43,7 @@
 import IconCheveronDown from '~icons/zondicons/cheveron-down';
 
 import { componentRef } from '@/utils/vue';
-import { useSelectProps } from '@/components/headless/forms/AGHeadlessSelect';
+import { useSelectEmits, useSelectProps } from '@/components/headless/forms/AGHeadlessSelect';
 import type { IAGHeadlessSelect } from '@/components/headless/forms/AGHeadlessSelect';
 
 import AGHeadlessSelect from '../headless/forms/AGHeadlessSelect.vue';
@@ -47,6 +52,8 @@ import AGHeadlessSelectError from '../headless/forms/AGHeadlessSelectError.vue';
 import AGHeadlessSelectLabel from '../headless/forms/AGHeadlessSelectLabel.vue';
 import AGHeadlessSelectOption from '../headless/forms/AGHeadlessSelectOption.vue';
 import AGHeadlessSelectOptions from '../headless/forms/AGHeadlessSelectOptions';
+
+defineEmits(useSelectEmits());
 
 const props = defineProps(useSelectProps());
 const $select = componentRef<IAGHeadlessSelect>();

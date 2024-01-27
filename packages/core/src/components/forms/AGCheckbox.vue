@@ -1,5 +1,10 @@
 <template>
-    <AGHeadlessInput ref="$input" :name="name" class="flex">
+    <AGHeadlessInput
+        ref="$input"
+        :name="name"
+        class="flex"
+        @update:model-value="$emit('update:modelValue', $event)"
+    >
         <AGHeadlessInputInput
             v-bind="$attrs"
             type="checkbox"
@@ -30,6 +35,7 @@ import AGHeadlessInputLabel from '../headless/forms/AGHeadlessInputLabel.vue';
 
 defineProps({ name: stringProp() });
 defineOptions({ inheritAttrs: false });
+defineEmits(['update:modelValue']);
 
 const $input = componentRef<IAGHeadlessInput>();
 </script>

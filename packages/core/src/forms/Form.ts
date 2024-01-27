@@ -18,6 +18,7 @@ export interface FormFieldDefinition<TType extends FormFieldType = FormFieldType
 
 export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
 export type FormFieldType = ObjectValues<typeof FormFieldTypes>;
+export type FormFieldValue = GetFormFieldValue<FormFieldType>;
 
 export type FormData<T> = {
     -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules>

@@ -1,7 +1,7 @@
 <template>
     <Listbox
         v-slot="{ value, open, disabled }: ComponentProps"
-        :model-value="selectedOption?.value"
+        :model-value="selectedOption"
         @update:model-value="update($event)"
     >
         <slot :value="value" :open="open" :disabled="disabled" />
@@ -10,38 +10,37 @@
 
 <script setup lang="ts">
 import { computed, inject, provide } from 'vue';
-import { isObject, toString, uuid } from '@noeldemartin/utils';
+import { toString, uuid } from '@noeldemartin/utils';
 import { Listbox } from '@headlessui/vue';
 
 import { mixedProp } from '@/utils/vue';
 import { translateWithDefault } from '@/lang/utils';
 import type Form from '@/forms/Form';
+import type { FormFieldValue } from '@/forms/Form';
 import type { ComponentProps } from '@/utils/vue';
 
-import { useSelectProps } from './AGHeadlessSelect';
-import type { IAGHeadlessSelect, IAGSelectOption, IAGSelectOptionValue } from './AGHeadlessSelect';
+import { useSelectEmits, useSelectProps } from './AGHeadlessSelect';
+import type { IAGHeadlessSelect } from './AGHeadlessSelect';
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(useSelectEmits());
 const props = defineProps({
-    modelValue: mixedProp<IAGSelectOptionValue>(),
+    modelValue: mixedProp<FormFieldValue>(),
     ...useSelectProps(),
+});
+const renderText = computed(() => {
+    if (typeof props.optionsText === 'function') {
+        return props.optionsText;
+    }
+
+    if (typeof props.optionsText === 'string') {
+        return (option: FormFieldValue): string => toString(option[props.optionsText as keyof FormFieldValue]);
+    }
+
+    return (option: FormFieldValue) => toString(option);
 });
 const form = inject<Form | null>('form', null);
 const noSelectionText = computed(() => props.noSelectionText ?? translateWithDefault('select.noSelection', '-'));
-const options = computed(() =>
-    props.options.map((value) => {
-        const option: IAGSelectOption = {
-            value,
-            text: toString(isObject(value) && 'text' in value ? value.text : value),
-        };
-
-        return option;
-    }));
-const selectedOption = computed(() => {
-    const selectedOptionValue = form && props.name ? form.getFieldValue(props.name) : props.modelValue;
-
-    return options.value.find((option) => option.value === selectedOptionValue);
-});
+const selectedOption = computed(() => (form && props.name ? form.getFieldValue(props.name) : props.modelValue));
 const errors = computed(() => {
     if (!form || !props.name) {
         return null;
@@ -50,7 +49,7 @@ const errors = computed(() => {
     return form.errors[props.name] ?? null;
 });
 
-function update(value: IAGSelectOptionValue) {
+function update(value: FormFieldValue) {
     if (form && props.name) {
         form.setFieldValue(props.name, value);
 
@@ -62,12 +61,14 @@ function update(value: IAGSelectOptionValue) {
 
 const api: IAGHeadlessSelect = {
     id: `select-${uuid()}`,
-    options,
     noSelectionText,
     selectedOption,
     errors,
+    options: computed(() => props.options),
     label: computed(() => props.label),
-    buttonText: computed(() => selectedOption.value?.text ?? noSelectionText.value),
+    buttonText: computed(() =>
+        selectedOption.value === null ? noSelectionText.value : renderText.value(selectedOption.value)),
+    renderText,
     update,
 };
 
