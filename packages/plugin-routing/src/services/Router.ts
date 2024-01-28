@@ -64,7 +64,7 @@ export class RouterService extends Service {
                     'path',
                     'query',
                     'hash',
-                ])),
+                ]) as RouteLocationRaw),
         );
         Events.on('login', async () => {
             if (!this.flashRoute) {
