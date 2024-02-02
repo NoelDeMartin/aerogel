@@ -14,7 +14,7 @@ export type UnrefServiceState<State extends ServiceState> = {
 };
 
 export type ComputedStateDefinition<TState extends ServiceState, TComputedState extends ServiceState> = {
-    [K in keyof TComputedState]: (state: TState) => TComputedState[K];
+    [K in keyof TComputedState]: (state: UnrefServiceState<TState>) => TComputedState[K];
 } & ThisType<{
     readonly [K in keyof TComputedState]: TComputedState[K];
 }>;
