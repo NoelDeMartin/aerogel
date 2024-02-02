@@ -48,13 +48,8 @@ export class CloudService extends Service {
     protected handlers: Map<SolidModelConstructor, CloudHandlerConfig> = new Map();
     protected engine: Engine | null = null;
 
-    protected async boot(): Promise<void> {
-        await Solid.booted;
-
-        Solid.isLoggedIn() && this.login(Solid.authenticator);
-
-        Events.on('login', ({ authenticator }) => this.login(authenticator));
-        Events.on('logout', () => this.logout());
+    public dismissSetup(): void {
+        this.setupDismissed = true;
     }
 
     public async syncIfOnline(model?: SolidModel): Promise<void> {
@@ -98,6 +93,21 @@ export class CloudService extends Service {
 
         handler.modelClass.on('created', (model) => this.createRemoteModel(model));
         handler.modelClass.on('updated', (model) => this.updateRemoteModel(model));
+
+        if (this.ready) {
+            return;
+        }
+
+        this.ready = !!handler.getLocalModels().find((model) => !model.url.startsWith('solid://'));
+    }
+
+    protected async boot(): Promise<void> {
+        await Solid.booted;
+
+        Solid.isLoggedIn() && this.login(Solid.authenticator);
+
+        Events.on('login', ({ authenticator }) => this.login(authenticator));
+        Events.on('logout', () => this.logout());
     }
 
     protected getLocalModels(): Iterable<SolidModel> {
