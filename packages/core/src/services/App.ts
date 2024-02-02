@@ -18,6 +18,12 @@ export class AppService extends Service {
         return this.mounted.isResolved();
     }
 
+    public async whenReady<T>(callback: () => T): Promise<T> {
+        const result = await this.ready.then(callback);
+
+        return result;
+    }
+
     public async reload(queryParameters?: Record<string, string | undefined>): Promise<void> {
         queryParameters && updateLocationQueryParameters(queryParameters);
 

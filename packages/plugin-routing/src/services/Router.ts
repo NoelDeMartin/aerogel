@@ -71,7 +71,9 @@ export class RouterService extends Service {
                 return;
             }
 
-            await this.replace(this.flashRoute);
+            const flashRoute = this.flashRoute;
+
+            App.whenReady(() => this.replace(flashRoute));
 
             this.flashRoute = null;
         });
