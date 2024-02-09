@@ -19,7 +19,7 @@ import {
 import { App, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { setEngine } from 'soukai';
-import { SolidACLAuthorization, SolidContainer, SolidTypeIndex } from 'soukai-solid';
+import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex } from 'soukai-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -27,8 +27,8 @@ import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 import AuthenticationCancelledError from '@/errors/AuthenticationCancelledError';
 import { ContainerAlreadyInUse } from '@/errors';
 import { getAuthenticator } from '@/auth';
-import type { AuthenticatorName } from '@/auth';
 import type Authenticator from '@/auth/Authenticator';
+import type { AuthenticatorName } from '@/auth';
 import type { AuthSession } from '@/auth/Authenticator';
 
 import Service from './Solid.state';
@@ -215,6 +215,18 @@ export class SolidService extends Service {
         await Events.emit('logout');
     }
 
+    public async whenLoggedIn<T>(callback: (session: AuthSession) => T): Promise<T> {
+        if (this.isLoggedIn()) {
+            return callback(this.session);
+        }
+
+        return new Promise((resolve) => {
+            const onLogin = (session: AuthSession) => resolve(callback(session));
+
+            Events.once('login', onLogin);
+        });
+    }
+
     public dismiss(): void {
         this.setState({ dismissed: true });
     }
@@ -245,7 +257,7 @@ export class SolidService extends Service {
 
     public async createPrivateContainer(options: {
         url: string;
-        name: string;
+        name?: string;
         registerFor?: SolidModelConstructor;
         reuseExisting?: boolean;
     }): Promise<SolidContainer> {
@@ -258,7 +270,7 @@ export class SolidService extends Service {
                 throw new ContainerAlreadyInUse(existingContainer);
             }
 
-            const container = existingContainer ?? new SolidContainer({ url: options.url, name: options.url });
+            const container = existingContainer ?? new SolidContainer({ url: options.url, name: options.name });
 
             await container.save();
 
@@ -371,6 +383,8 @@ export class SolidService extends Service {
                 App.plugin('@aerogel/offline-first') || setEngine(session.authenticator.engine);
 
                 SolidACLAuthorization.setEngine(session.authenticator.engine);
+                SolidTypeIndex.setEngine(session.authenticator.engine);
+                SolidDocument.setEngine(session.authenticator.engine);
 
                 await Events.emit('login', session);
             },

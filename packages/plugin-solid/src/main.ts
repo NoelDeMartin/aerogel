@@ -18,6 +18,7 @@ export { Solid };
 export * from './auth';
 export * from './components';
 export * from './errors';
+export * from './services/Solid';
 
 export interface Options {
     autoReconnect?: boolean;
