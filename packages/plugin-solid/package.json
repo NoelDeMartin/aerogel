@@ -32,13 +32,13 @@
     "peerDependencies": {
         "@aerogel/core": "*",
         "@aerogel/vite": "*",
-        "soukai-solid": "*",
-        "soukai": "*"
+        "soukai": "*",
+        "soukai-solid": "*"
     },
     "dependencies": {
         "@inrupt/solid-client-authn-browser": "^1.17.3",
-        "@noeldemartin/solid-utils": "0.3.0-next.5176c3d9efdc3cf9d06772d0c55c24b2eb49893a",
-        "@noeldemartin/utils": "0.5.1-next.6ecd7cf01a5bad8fbc0dc06312906c9700e79510",
+        "@noeldemartin/solid-utils": "0.4.0-next.852c9f9e65275fc2a2e67a9750784fb43a0fd64b",
+        "@noeldemartin/utils": "0.5.1-next.2d7bd2a91dcd708cae4fbef355bb57d00854589d",
         "vue": "^3.3.0"
     },
     "eslintConfig": {

@@ -24,7 +24,7 @@ export function defineServiceState<
     ComputedState extends ServiceState = {}
 >(options: {
     name: string;
-    initialState: State;
+    initialState: State | (() => State);
     persist?: (keyof State)[];
     computed?: ComputedStateDefinition<State, ComputedState>;
     serialize?: (state: Partial<State>) => Partial<State>;
@@ -44,7 +44,27 @@ export function defineServiceState<
         }
 
         protected getInitialState(): UnrefServiceState<State> {
-            return options.initialState;
+            if (typeof options.initialState === 'function') {
+                return options.initialState();
+            }
+
+            return Object.entries(options.initialState).reduce((state, [key, value]) => {
+                try {
+                    value = structuredClone(value);
+                } catch (error) {
+                    // eslint-disable-next-line no-console
+                    console.warn(
+                        `Could not clone '${key}' state from ${this.getName()} service, ` +
+                            'this may cause problems if you\'re using multiple instances of the service ' +
+                            '(for example, in unit tests).\n' +
+                            'To fix this problem, declare your initialState as a function instead.',
+                    );
+                }
+
+                state[key as keyof State] = value;
+
+                return state;
+            }, {} as UnrefServiceState<State>);
         }
 
         protected getComputedStateDefinition(): ComputedStateDefinition<UnrefServiceState<State>, ComputedState> {

@@ -39,7 +39,11 @@ export class ErrorsService extends Service {
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
-        if (App.development || App.testing) {
+        if (App.testing) {
+            throw error;
+        }
+
+        if (App.development) {
             this.logError(error);
         }
 

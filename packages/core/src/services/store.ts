@@ -1,16 +1,19 @@
+import { tap } from '@noeldemartin/utils';
 import { createPinia, defineStore, setActivePinia } from 'pinia';
 import type { DefineStoreOptions, Pinia, StateTree, Store, _GettersTree } from 'pinia';
 
 let _store: Pinia | null = null;
 
 function initializePiniaStore(): Pinia {
-    if (!_store) {
-        _store = createPinia();
+    return _store ?? resetPiniaStore();
+}
 
-        setActivePinia(_store);
-    }
+export function resetPiniaStore(): Pinia {
+    return tap(createPinia(), (store) => {
+        _store = store;
 
-    return _store;
+        setActivePinia(store);
+    });
 }
 
 export function getPiniaStore(): Pinia {

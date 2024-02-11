@@ -10,6 +10,7 @@ import { getPiniaStore } from './store';
 export * from './App';
 export * from './Events';
 export * from './Service';
+export * from './store';
 
 export { App, Events, Service };
 

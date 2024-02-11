@@ -12,6 +12,6 @@ export default defineServiceState({
     },
     computed: {
         development: (state) => state.environment === 'development',
-        testing: (state) => state.environment === 'testing',
+        testing: (state) => state.environment === 'test' || state.environment === 'testing',
     },
 });

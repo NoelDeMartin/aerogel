@@ -11,7 +11,8 @@
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types",
         "publish-next": "noeldemartin-publish-next",
-        "lint": "noeldemartin-lint src"
+        "lint": "noeldemartin-lint src",
+        "test": "vitest --run"
     },
     "engines": {
         "node": ">=18.x"
@@ -36,7 +37,8 @@
         "soukai-solid": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.5.1-next.6ecd7cf01a5bad8fbc0dc06312906c9700e79510",
+        "@noeldemartin/solid-utils": "0.4.0-next.852c9f9e65275fc2a2e67a9750784fb43a0fd64b",
+        "@noeldemartin/utils": "0.5.1-next.2d7bd2a91dcd708cae4fbef355bb57d00854589d",
         "vue": "^3.3.0"
     },
     "eslintConfig": {
