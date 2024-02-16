@@ -81,10 +81,12 @@ export class CloudService extends Service {
             this.status = CloudStatus.Syncing;
 
             try {
-                await this.fetchTypeIndex();
+                if (!model) {
+                    await this.fetchTypeIndex();
+                }
+
                 await this.pullChanges(model);
                 await this.pushChanges(model);
-
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
                 await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
@@ -95,10 +97,15 @@ export class CloudService extends Service {
     }
 
     public async registerHandler<T extends SolidModel>(handler: CloudHandlerConfig<T>): Promise<void> {
-        this.engine && getRemoteClass(handler.modelClass).setEngine(this.engine);
+        const engine = this.engine;
+
+        if (engine) {
+            const handlerClasses = [handler.modelClass, ...arrayFrom(handler.registerFor ?? [])];
+
+            handlerClasses.forEach((modelClass) => getRemoteClass(modelClass).setEngine(engine));
+        }
 
         this.handlers.set(handler.modelClass, handler);
-
         handler.modelClass.on('created', (model) => this.createRemoteModel(model));
         handler.modelClass.on('updated', (model) => this.updateRemoteModel(model));
     }
@@ -237,8 +244,10 @@ export class CloudService extends Service {
 
         getRemoteClass(Tombstone).setEngine(this.engine);
 
-        for (const modelClass of this.handlers.keys()) {
-            getRemoteClass(modelClass).setEngine(this.engine);
+        for (const handler of this.handlers.values()) {
+            const handlerClasses = [handler.modelClass, ...arrayFrom(handler.registerFor ?? [])];
+
+            handlerClasses.forEach((modelClass) => getRemoteClass(modelClass).setEngine(authenticator.engine));
         }
     }
 

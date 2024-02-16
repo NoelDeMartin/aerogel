@@ -5,6 +5,7 @@ import { FieldType, InMemoryEngine, bootModels, setEngine } from 'soukai';
 import { SolidContainer, SolidTypeRegistration, bootSolidModels, defineSolidModelSchema } from 'soukai-solid';
 import { Solid, SolidMock } from '@aerogel/plugin-solid';
 import type { Relation } from 'soukai';
+import type { SolidContainsRelation } from 'soukai-solid';
 
 import Cloud from './Cloud';
 
@@ -206,6 +207,43 @@ describe('Cloud', () => {
         expect(arrayFind(movies, 'name', 'Spirited Away')).toBeInstanceOf(Movie);
     });
 
+    it('Syncs container documents', async () => {
+        // Arrange - Mint urls
+        const containerUrl = fakeContainerUrl();
+        const documentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare responses
+        const server = SolidMock.server;
+
+        server.respondOnce(documentUrl, FakeResponse.notFound()); // Pull
+        server.respondOnce(documentUrl, FakeResponse.notFound()); // Tombstone check
+        server.respondOnce(documentUrl, FakeResponse.notFound()); // Check before create
+        server.respondOnce(documentUrl, FakeResponse.created()); // Create
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.create({ url: containerUrl });
+
+        await Cloud.launch();
+        await Cloud.setup();
+        await Cloud.registerHandler({
+            modelClass: MoviesContainer,
+            registerFor: Movie,
+            getLocalModels: () => [],
+        });
+
+        // Act
+        const movie = await container.relatedMovies.create({
+            url: `${documentUrl}#it`,
+            name: 'The Tale of Princess Kaguya',
+        });
+
+        await Cloud.sync(movie);
+
+        // Assert
+        expect(server.getRequests(documentUrl)).toHaveLength(4);
+        expect(server.getRequests()).toHaveLength(4);
+    });
+
     it('Leaves tombstones behind deleted models', async () => {
         // Arrange - Mint urls and prepare models
         const containerUrl = fakeContainerUrl();
@@ -301,6 +339,9 @@ const MovieSchema = defineSolidModelSchema({
 class Movie extends MovieSchema {}
 
 class MoviesContainer extends SolidContainer {
+
+    public declare movies?: Movie[];
+    public declare relatedMovies: SolidContainsRelation<this, Movie, typeof Movie>;
 
     public moviesRelationship(): Relation {
         return this.contains(Movie);
