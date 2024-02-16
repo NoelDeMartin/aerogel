@@ -44,4 +44,4 @@ export class CLIService {
 
 }
 
-export default facade(new CLIService());
+export default facade(CLIService);

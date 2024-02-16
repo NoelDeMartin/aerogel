@@ -5,4 +5,4 @@ export class <% service.name %>Service extends Service {
 
 }
 
-export default facade(new <% service.name %>Service());
+export default facade(<% service.name %>Service);

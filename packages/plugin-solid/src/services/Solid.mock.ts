@@ -13,14 +13,13 @@ export class SolidMockService extends SolidService {
     private privateTypeIndex: SolidTypeIndex | null = null;
 
     public init(): void {
-        const fetch = this.server.getFetch();
-        const engine = new SolidEngine(fetch);
+        const engine = new SolidEngine(this.server.fetch);
 
         this.setState('session', {
             user: mock(),
             authenticator: mock({
                 engine,
-                requireAuthenticatedFetch: () => fetch,
+                requireAuthenticatedFetch: () => this.server.fetch,
             }),
         } as unknown as AuthSession);
 
@@ -36,16 +35,10 @@ export class SolidMockService extends SolidService {
             registrations.forEach((registration) => typeIndex.relatedRegistrations.attach(registration))));
     }
 
-    public reset(): void {
-        this.setState('session', null);
-        this.privateTypeIndex = null;
-        this.server.reset();
-    }
-
     public findPrivateTypeIndex(): Promise<SolidTypeIndex | null> {
         return Promise.resolve(this.privateTypeIndex);
     }
 
 }
 
-export default facade(new SolidMockService());
+export default facade(SolidMockService);

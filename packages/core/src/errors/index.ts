@@ -10,16 +10,6 @@ export { Errors, ErrorSource, ErrorReport, ErrorReportLog };
 
 const services = { $errors: Errors };
 const frameworkHandler: ErrorHandler = (error) => {
-    if (!Errors.instance) {
-        // eslint-disable-next-line no-console
-        console.warn('Errors service hasn\'t been initialized properly!');
-
-        // eslint-disable-next-line no-console
-        console.error(error);
-
-        return true;
-    }
-
     Errors.report(error);
 
     return true;

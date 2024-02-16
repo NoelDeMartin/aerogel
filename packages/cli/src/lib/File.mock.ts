@@ -41,10 +41,6 @@ export class FileMockService extends FileService {
         this.virtualFilesystem[path] = contents;
     }
 
-    public reset(): void {
-        this.virtualFilesystem = {};
-    }
-
     public expectCreated(path: string, expectContent?: (contents: string) => void): Assertion<string> {
         expect(typeof this.virtualFilesystem[path] === 'string', `expected '${path}' file to have been created`).toBe(
             true,
@@ -63,4 +59,4 @@ export class FileMockService extends FileService {
 
 }
 
-export default facade(new FileMockService());
+export default facade(FileMockService);

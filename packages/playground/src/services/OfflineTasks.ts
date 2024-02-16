@@ -41,4 +41,4 @@ export class OfflineTasksService extends Service {
 
 }
 
-export default facade(new OfflineTasksService());
+export default facade(OfflineTasksService);

@@ -124,4 +124,4 @@ export class RouterService extends Service {
 
 export interface RouterService extends Omit<Router, 'currentRoute'> {}
 
-export default facade(new RouterService());
+export default facade(RouterService);

@@ -46,4 +46,4 @@ export class SolidTasksService extends Service {
 
 }
 
-export default facade(new SolidTasksService());
+export default facade(SolidTasksService);

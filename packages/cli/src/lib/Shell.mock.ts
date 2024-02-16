@@ -17,4 +17,4 @@ export class ShellServiceMock extends ShellService {
 
 }
 
-export default facade(new ShellServiceMock());
+export default facade(ShellServiceMock);

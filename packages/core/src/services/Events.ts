@@ -82,4 +82,4 @@ export class EventsService extends Service {
 
 }
 
-export default facade(new EventsService());
+export default facade(EventsService);

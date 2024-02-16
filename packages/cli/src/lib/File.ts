@@ -73,4 +73,4 @@ export class FileService {
 
 }
 
-export default facade(new FileService());
+export default facade(FileService);

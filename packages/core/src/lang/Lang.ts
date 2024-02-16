@@ -57,4 +57,4 @@ export class LangService extends Service {
 
 }
 
-export default facade(new LangService());
+export default facade(LangService);

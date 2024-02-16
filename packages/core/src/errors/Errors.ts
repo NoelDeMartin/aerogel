@@ -189,4 +189,4 @@ export class ErrorsService extends Service {
 
 }
 
-export default facade(new ErrorsService());
+export default facade(ErrorsService);

@@ -44,4 +44,4 @@ export class AppService extends Service {
 
 }
 
-export default facade(new AppService());
+export default facade(AppService);

@@ -419,7 +419,7 @@ export class SolidService extends Service {
 
 }
 
-export default facade(new SolidService());
+export default facade(SolidService);
 
 declare module '@aerogel/core' {
     export interface EventsPayload {

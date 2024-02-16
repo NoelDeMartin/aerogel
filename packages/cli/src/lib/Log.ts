@@ -92,4 +92,4 @@ export class LogService {
 
 }
 
-export default facade(new LogService());
+export default facade(LogService);

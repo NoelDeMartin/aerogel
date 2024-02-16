@@ -270,7 +270,7 @@ export class UIService extends Service {
 
 }
 
-export default facade(new UIService());
+export default facade(UIService);
 
 declare module '@/services/Events' {
     export interface EventsPayload {

@@ -35,7 +35,7 @@
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.14",
-        "@noeldemartin/utils": "0.5.1-next.2d7bd2a91dcd708cae4fbef355bb57d00854589d",
+        "@noeldemartin/utils": "0.5.1-next.49cc6c9b4a20930cbf922a949135981791acc5c3",
         "dompurify": "^3.0.3",
         "marked": "^5.0.4",
         "pinia": "^2.1.6",

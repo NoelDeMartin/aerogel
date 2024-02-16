@@ -24,14 +24,10 @@ export class LogServiceMock extends LogService {
         throw new Error(`Fail: ${message}`);
     }
 
-    public reset(): void {
-        this.logs = [];
-    }
-
     protected stdout(): void {
         //
     }
 
 }
 
-export default facade(new LogServiceMock());
+export default facade(LogServiceMock);

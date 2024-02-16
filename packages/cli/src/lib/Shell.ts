@@ -25,4 +25,4 @@ export class ShellService {
 
 }
 
-export default facade(new ShellService());
+export default facade(ShellService);

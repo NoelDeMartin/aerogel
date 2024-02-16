@@ -14,4 +14,4 @@ export class StartupService extends Service {
 
 }
 
-export default facade(new StartupService());
+export default facade(StartupService);

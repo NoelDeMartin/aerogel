@@ -11,14 +11,11 @@ import ShellMock from '@/lib/Shell.mock';
 
 setTestingNamespace(vi);
 
-File.setMockInstance(FileMock);
-Log.setMockInstance(LogMock);
-Shell.setMockInstance(ShellMock);
+File.setMockFacade(FileMock);
+Log.setMockFacade(LogMock);
+Shell.setMockFacade(ShellMock);
 
 beforeEach(() => {
-    FileMock.reset();
-    LogMock.reset();
-
     File.mock();
     Log.mock();
     Shell.mock();

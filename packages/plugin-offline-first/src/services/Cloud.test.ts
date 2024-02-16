@@ -3,10 +3,10 @@ import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/solid-utils';
 import { FakeResponse, arrayFind } from '@noeldemartin/utils';
 import { FieldType, InMemoryEngine, bootModels, setEngine } from 'soukai';
 import { SolidContainer, bootSolidModels, defineSolidModelSchema } from 'soukai-solid';
-import { SolidMock } from '@aerogel/plugin-solid';
+import { Solid, SolidMock } from '@aerogel/plugin-solid';
 import type { Relation } from 'soukai';
 
-import Cloud, { CloudService } from './Cloud';
+import Cloud from './Cloud';
 
 describe('Cloud', () => {
 
@@ -15,7 +15,8 @@ describe('Cloud', () => {
         bootModels({ Movie, MoviesContainer });
         setEngine(new InMemoryEngine());
 
-        Cloud.setInstance(new CloudService());
+        Solid.mock();
+        Cloud.reset();
     });
 
     it('Syncs containers', async () => {
