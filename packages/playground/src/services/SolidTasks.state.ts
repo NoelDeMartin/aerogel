@@ -4,9 +4,9 @@ import type { SolidContainer } from 'soukai-solid';
 
 export default defineServiceState({
     name: 'solid-tasks',
-    initialState: {
+    initialState: () => ({
         tasksContainer: new PromisedValue<SolidContainer>(),
-    },
+    }),
     computed: {
         ready: ({ tasksContainer }) => tasksContainer.isResolved(),
     },

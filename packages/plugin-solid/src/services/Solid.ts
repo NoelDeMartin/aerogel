@@ -277,7 +277,7 @@ export class SolidService extends Service {
             if (options.registerFor) {
                 const typeIndex = await this.findOrCreatePrivateTypeIndex();
 
-                await container.register(typeIndex.url, options.registerFor);
+                await container.register(typeIndex, options.registerFor);
             }
 
             return container;

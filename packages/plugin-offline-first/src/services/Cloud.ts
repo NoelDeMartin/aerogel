@@ -71,7 +71,7 @@ export class CloudService extends Service {
     }
 
     public async sync(model?: SolidModel): Promise<void> {
-        if (!Solid.isLoggedIn()) {
+        if (!Solid.isLoggedIn() || !this.ready) {
             return;
         }
 
@@ -392,7 +392,7 @@ export class CloudService extends Service {
 
         this.typeIndex ??= await Solid.findOrCreatePrivateTypeIndex();
 
-        await remoteModel.register(this.typeIndex.url, registeredChildren);
+        await remoteModel.register(this.typeIndex, registeredChildren);
     }
 
     protected async synchronizeModels(
@@ -478,7 +478,7 @@ export class CloudService extends Service {
 
 }
 
-export default facade(new CloudService());
+export default facade(CloudService);
 
 declare module '@aerogel/core' {
     export interface EventsPayload {
