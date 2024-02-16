@@ -15,7 +15,7 @@ describe('Generate Service command', () => {
 
         // Assert
         FileMock.expectCreated('src/services/FooBar.ts').toContain('class FooBarService extends Service');
-        FileMock.expectCreated('src/services/FooBar.ts').toContain('export default facade(new FooBarService());');
+        FileMock.expectCreated('src/services/FooBar.ts').toContain('export default facade(FooBarService);');
     });
 
 });
