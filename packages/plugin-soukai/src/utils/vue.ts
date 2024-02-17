@@ -47,6 +47,8 @@ export function computedModels<T>(modelClass: typeof Model, compute: () => T): C
         let value: T;
         const recompute = () => ((value = compute()), trigger());
         const modelListeners: Array<() => void> = [
+            modelClass.on('deleted', recompute),
+            modelClass.on('created', recompute),
             modelClass.on('updated', recompute),
             modelClass.on('relation-loaded', recompute),
         ];
