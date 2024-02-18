@@ -1,13 +1,6 @@
-import type { Closure } from '@noeldemartin/utils';
 import type { DiffSnapshotResult } from '@simonsmith/cypress-image-snapshot/types';
 
-type CommandOverride<T> = T extends Closure<infer TArgs, infer TResult>
-    ? (original: T, ...args: TArgs) => TResult
-    : never;
-
-function defineOverride<T>(override: CommandOverride<T>): CommandOverride<T> {
-    return override;
-}
+import { defineOverride } from './lib';
 
 export const matchImageSnapshot = defineOverride<Cypress.Chainable['matchImageSnapshot']>((original, ...args) => {
     if (Cypress.env('SNAPSHOTS')) {
