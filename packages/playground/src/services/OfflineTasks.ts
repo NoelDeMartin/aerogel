@@ -1,6 +1,5 @@
 import { Cloud } from '@aerogel/plugin-offline-first';
 import { facade } from '@noeldemartin/utils';
-import { Solid } from '@aerogel/plugin-solid';
 import { trackModelCollection } from '@aerogel/plugin-soukai';
 
 import OfflineTask from '@/models/OfflineTask';
@@ -27,8 +26,6 @@ export class OfflineTasksService extends Service {
             service: this,
             property: 'allTasks',
         });
-
-        Solid.whenLoggedIn(() => Cloud.ready || Cloud.setup());
     }
 
 }
