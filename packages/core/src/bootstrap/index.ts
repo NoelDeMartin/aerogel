@@ -17,8 +17,7 @@ export async function bootstrapApplication(app: App, options: AerogelOptions = {
 
     await installPlugins(plugins, app, options);
     await options.install?.(app);
-
-    Events.emit('application-ready');
+    await Events.emit('application-ready');
 }
 
 export async function bootstrap(rootComponent: Component, options: AerogelOptions = {}): Promise<void> {
@@ -29,11 +28,12 @@ export async function bootstrap(rootComponent: Component, options: AerogelOption
     app.mount('#app');
     app._container?.classList.remove('loading');
 
-    Events.emit('application-mounted');
+    await Events.emit('application-mounted');
 }
 
 declare module '@/services/Events' {
     export interface EventsPayload {
+        'application-ready': void;
         'application-mounted': void;
     }
 }

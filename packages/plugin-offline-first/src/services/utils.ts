@@ -1,5 +1,6 @@
 import { bootModels } from 'soukai';
 import { fail } from '@noeldemartin/utils';
+import { SolidContainsRelation } from 'soukai-solid';
 import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
 
@@ -24,6 +25,18 @@ function makeRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
 
         protected initialize(attributes: Attributes, exists: boolean): void {
             withLocalHistoryConfig(this._proxy.static(), () => super.initialize(attributes, exists));
+        }
+
+        protected initializeRelations(): void {
+            super.initializeRelations();
+
+            for (const relation of Object.values(this._relations)) {
+                if (!(relation instanceof SolidContainsRelation)) {
+                    continue;
+                }
+
+                relation.relatedClass = getRemoteClass(relation.relatedClass);
+            }
         }
 
         public fixMalformedAttributes(): void {
