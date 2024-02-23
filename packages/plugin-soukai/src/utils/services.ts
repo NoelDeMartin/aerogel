@@ -9,13 +9,16 @@ export async function trackModelCollection<TModel extends Model, TKey extends st
     options: {
         service: ModelService<TModel, TKey>;
         property: TKey;
+        transform?: (models: TModel[]) => TModel[];
     },
 ): Promise<void> {
     const { service, property: stateKey } = options;
+    const transform = options.transform ?? ((models) => models);
+    const update = (models: TModel[]) => service.setState(stateKey, transform(models));
 
-    modelClass.on('created', (model) => service.setState(stateKey, service.getState(stateKey).concat([model])));
-    modelClass.on('deleted', (model) => service.setState(stateKey, arrayWithout(service.getState(stateKey), model)));
-    modelClass.on('updated', () => service.setState(stateKey, service.getState(stateKey).slice(0)));
+    modelClass.on('created', (model) => update(service.getState(stateKey).concat([model])));
+    modelClass.on('deleted', (model) => update(arrayWithout(service.getState(stateKey), model)));
+    modelClass.on('updated', () => update(service.getState(stateKey).slice(0)));
 
     const models = await modelClass.all();
 
