@@ -37,7 +37,9 @@ export default function solid(options: Options = {}): Plugin {
             registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
 
-            Solid.autoReconnect = options.autoReconnect ?? Solid.autoReconnect;
+            if (!Solid.hasPersistedState()) {
+                Solid.autoReconnect = options.autoReconnect ?? Solid.autoReconnect;
+            }
 
             await bootServices(app, services);
         },

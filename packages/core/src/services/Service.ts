@@ -74,7 +74,7 @@ export function defineServiceState<
         protected serializePersistedState(state: Partial<State>): Partial<State> {
             return options.serialize?.(state) ?? state;
         }
-    
+
     } as unknown as Constructor<UnrefServiceState<State>> &
         Constructor<ComputedState> &
         Constructor<Service<UnrefServiceState<State>, ComputedState, Partial<UnrefServiceState<State>>>>;
@@ -91,7 +91,7 @@ export default class Service<
     protected _name: string;
     private _booted: PromisedValue<void>;
     private _computedStateKeys: Set<keyof State>;
-    private _store?: Store | false;
+    private _store: Store | false;
 
     constructor() {
         super();
@@ -128,6 +128,10 @@ export default class Service<
         }
 
         return this._booted;
+    }
+
+    public hasPersistedState(): boolean {
+        return Storage.has(this._name);
     }
 
     public hasState<P extends keyof State>(property: P): boolean {
