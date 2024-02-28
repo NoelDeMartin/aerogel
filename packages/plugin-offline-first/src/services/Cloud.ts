@@ -24,7 +24,6 @@ import {
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { expandIRI } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
-import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidTypeIndex } from 'soukai-solid';
@@ -75,9 +74,7 @@ export class CloudService extends Service {
 
         await dispatch(job);
         await Events.emit('cloud:migrated');
-
-        this.ready = true;
-
+        await this.setReady(true);
         await this.sync();
     }
 
@@ -144,14 +141,22 @@ export class CloudService extends Service {
     protected async boot(): Promise<void> {
         await Solid.booted;
 
-        watchEffect(() => this.ready && Events.emit('cloud:ready'));
-
         Solid.isLoggedIn() && this.login(Solid.authenticator);
 
         Events.on('login', ({ authenticator }) => this.login(authenticator));
         Events.on('logout', () => this.logout());
         Events.once('application-ready', () => this.autoSetup());
         Events.once('application-mounted', () => this.sync());
+    }
+
+    protected async setReady(ready: boolean): Promise<void> {
+        if (this.ready || !ready) {
+            return;
+        }
+
+        await Events.emit('cloud:ready');
+
+        this.ready = true;
     }
 
     protected getLocalModels(): SolidModel[] {
@@ -221,7 +226,7 @@ export class CloudService extends Service {
             return;
         }
 
-        this.ready = !this.getLocalModels().some((model) => model.url.startsWith('solid://'));
+        await this.setReady(!this.getLocalModels().some((model) => model.url.startsWith('solid://')));
     }
 
     protected async getTypeIndex(): Promise<SolidTypeIndex | null> {
@@ -595,6 +600,12 @@ export class CloudService extends Service {
         for (const [url, localModel] of localModels) {
             if (synchronizedModelUrls.has(url)) {
                 continue;
+            }
+
+            if (localModel instanceof SolidContainer) {
+                for (const relation of this.getContainerRelations(localModel.static())) {
+                    await localModel.loadRelationIfUnloaded(relation);
+                }
             }
 
             const remoteModel = this.getRemoteModel(localModel, remoteModels);
