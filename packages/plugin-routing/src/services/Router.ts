@@ -1,15 +1,8 @@
 import { computed, shallowRef, unref } from 'vue';
-import { App, Events } from '@aerogel/core';
+import { App, EventListenerPriorities, Events } from '@aerogel/core';
 import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
 import type { ComputedRef, Ref } from 'vue';
-import type {
-    RouteLocationNormalized,
-    RouteLocationNormalizedLoaded,
-    RouteLocationRaw,
-    RouteParamValue,
-    RouteParams,
-    Router,
-} from 'vue-router';
+import type { RouteLocationNormalizedLoaded, RouteLocationRaw, RouteParamValue, RouteParams, Router } from 'vue-router';
 
 import Service from './Router.state';
 
@@ -53,30 +46,13 @@ export class RouterService extends Service {
         this.bindings = options.bindings ?? {};
 
         router.beforeEach(once(() => this.handleStatic404Redirect()));
-        router.beforeEach((to) => this.beforeNavigation(to));
+        router.beforeEach((to) => this.updateRouteParams(to.path, to.params));
     }
 
     protected async boot(): Promise<void> {
-        Events.on(
-            'before-login',
-            () =>
-                (this.flashRoute = objectOnly(this.currentRoute.value as unknown as Record<string, unknown>, [
-                    'path',
-                    'query',
-                    'hash',
-                ]) as RouteLocationRaw),
-        );
-        Events.on('login', async () => {
-            if (!this.flashRoute) {
-                return;
-            }
-
-            const flashRoute = this.flashRoute;
-
-            App.whenReady(() => this.replace(flashRoute));
-
-            this.flashRoute = null;
-        });
+        Events.on('before-login', () => this.storeFlashRoute());
+        Events.on('login', () => this.restoreFlashRoute());
+        Events.on('cloud:migrated', { priority: EventListenerPriorities.Low }, () => this.updateCurrentRouteParams());
     }
 
     protected __get(property: string): unknown {
@@ -85,16 +61,24 @@ export class RouterService extends Service {
             : super.__get(property);
     }
 
-    protected async beforeNavigation(route: RouteLocationNormalized): Promise<void> {
-        const resolvedParams: Record<string, unknown> = { ...route.params };
+    protected async updateCurrentRouteParams(): Promise<void> {
+        if (!this.currentRoute.value) {
+            return;
+        }
 
-        for (const [paramName, paramValue] of Object.entries(route.params)) {
+        await this.updateRouteParams(this.currentRoute.value.path, this.currentRoute.value.rawParams);
+    }
+
+    protected async updateRouteParams(path: string, params: RouteParams): Promise<void> {
+        const resolvedParams: Record<string, unknown> = { ...params };
+
+        for (const [paramName, paramValue] of Object.entries(params)) {
             resolvedParams[paramName] = await this.resolveBinding(paramName, paramValue, resolvedParams);
         }
 
         this.routesParams.value = {
             ...this.routesParams.value,
-            [route.path]: resolvedParams,
+            [path]: resolvedParams,
         };
     }
 
@@ -102,6 +86,26 @@ export class RouterService extends Service {
         const route = Storage.pull<RouteLocationRaw>('static-404-redirect');
 
         route && this.replace(route);
+    }
+
+    protected storeFlashRoute(): void {
+        this.flashRoute = objectOnly(this.currentRoute.value as unknown as Record<string, unknown>, [
+            'path',
+            'query',
+            'hash',
+        ]) as RouteLocationRaw;
+    }
+
+    protected async restoreFlashRoute(): Promise<void> {
+        if (!this.flashRoute) {
+            return;
+        }
+
+        const flashRoute = this.flashRoute;
+
+        App.whenReady(() => this.replace(flashRoute));
+
+        this.flashRoute = null;
     }
 
     protected async resolveBinding(

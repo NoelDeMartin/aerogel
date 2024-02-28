@@ -21,7 +21,7 @@ import {
     objectWithout,
     tap,
 } from '@noeldemartin/utils';
-import { Errors, Events, translateWithDefault } from '@aerogel/core';
+import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { expandIRI } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { watchEffect } from 'vue';
@@ -29,6 +29,8 @@ import type { Authenticator } from '@aerogel/plugin-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidTypeIndex } from 'soukai-solid';
 import type { Engine } from 'soukai';
+
+import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';
 
 import Service, { CloudStatus } from './Cloud.state';
 import { getLocalClass, getRemoteClass } from './utils';
@@ -53,6 +55,30 @@ export class CloudService extends Service {
 
             Events.once('cloud:ready', onReady);
         });
+    }
+
+    public async setup(): Promise<void> {
+        const job = new MigrateLocalDocuments();
+
+        for (const handler of [...this.handlers.values()]) {
+            if (!handler.getRemoteCollection) {
+                continue;
+            }
+
+            const localCollection = handler.modelClass.collection;
+            const remoteCollection = handler.getRemoteCollection();
+
+            handler.modelClass.collection = remoteCollection;
+
+            job.migrateCollection(localCollection, remoteCollection);
+        }
+
+        await dispatch(job);
+        await Events.emit('cloud:migrated');
+
+        this.ready = true;
+
+        await this.sync();
     }
 
     public dismissSetup(): void {
@@ -101,6 +127,14 @@ export class CloudService extends Service {
 
             handlerClasses.forEach((modelClass) => getRemoteClass(modelClass).setEngine(engine));
         }
+
+        this.whenReady(() => {
+            if (!handler.getRemoteCollection) {
+                return;
+            }
+
+            handler.modelClass.collection = handler.getRemoteCollection();
+        });
 
         this.handlers.set(handler.modelClass, handler);
         handler.modelClass.on('created', (model) => this.createRemoteModel(model));
@@ -617,6 +651,7 @@ export default facade(CloudService);
 declare module '@aerogel/core' {
     export interface EventsPayload {
         'cloud:ready': void;
+        'cloud:migrated': void;
         'cloud:sync-started': void;
         'cloud:sync-completed': void;
     }

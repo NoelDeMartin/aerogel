@@ -60,13 +60,3 @@ export function getLocalClass<T extends SolidModelConstructor>(remoteClass: T): 
 export function getRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
     return (remoteClasses.get(localClass) as T) ?? makeRemoteClass(localClass);
 }
-
-export function setRemoteCollection(localClass: typeof SolidModel, collection: string): void {
-    localClass.collection = collection;
-
-    const remoteClass = remoteClasses.get(localClass);
-
-    if (remoteClass) {
-        remoteClass.collection = collection;
-    }
-}

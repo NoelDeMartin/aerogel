@@ -1,4 +1,5 @@
 import { arrayWithout } from '@noeldemartin/utils';
+import { Events } from '@aerogel/core';
 import type { Model, ModelConstructor } from 'soukai';
 import type { Service } from '@aerogel/core';
 
@@ -19,8 +20,7 @@ export async function trackModelCollection<TModel extends Model, TKey extends st
     modelClass.on('created', (model) => update(service.getState(stateKey).concat([model])));
     modelClass.on('deleted', (model) => update(arrayWithout(service.getState(stateKey), model)));
     modelClass.on('updated', () => update(service.getState(stateKey).slice(0)));
+    Events.on('cloud:migrated', async () => update(await modelClass.all()));
 
-    const models = await modelClass.all();
-
-    service.setState(stateKey, models);
+    update(await modelClass.all());
 }

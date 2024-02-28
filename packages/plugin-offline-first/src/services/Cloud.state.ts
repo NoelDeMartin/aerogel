@@ -16,6 +16,7 @@ export interface CloudHandlerConfig<T extends SolidModel = SolidModel> {
     modelClass: SolidModelConstructor<T>;
     registerFor?: SolidModelConstructor | SolidModelConstructor[];
     getLocalModels(): T[];
+    getRemoteCollection?(): string;
 }
 
 export default defineServiceState({
