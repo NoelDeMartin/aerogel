@@ -10,7 +10,7 @@ import { objectWithoutEmpty } from '@noeldemartin/utils';
 
 import { booleanProp, objectProp, stringProp } from '@/utils/vue';
 
-const { href, url, route, routeParams, routeQuery, submit } = defineProps({
+const props = defineProps({
     href: stringProp(),
     url: stringProp(),
     route: stringProp(),
@@ -20,32 +20,32 @@ const { href, url, route, routeParams, routeQuery, submit } = defineProps({
 });
 
 const component = computed(() => {
-    if (route) {
+    if (props.route) {
         return {
             tag: 'router-link',
             props: {
                 to: objectWithoutEmpty({
-                    name: route,
-                    params: routeParams,
-                    query: routeQuery,
+                    name: props.route,
+                    params: props.routeParams,
+                    query: props.routeQuery,
                 }),
             },
         };
     }
 
-    if (href || url) {
+    if (props.href || props.url) {
         return {
             tag: 'a',
             props: {
                 target: '_blank',
-                href: href || url,
+                href: props.href || props.url,
             },
         };
     }
 
     return {
         tag: 'button',
-        props: { type: submit ? 'submit' : 'button' },
+        props: { type: props.submit ? 'submit' : 'button' },
     };
 });
 </script>
