@@ -40,7 +40,8 @@
         "cypress-solid": "^0.1.2"
     },
     "devDependencies": {
-        "esbuild": "^0.19.4"
+        "esbuild": "^0.19.4",
+        "@aerogel/plugin-soukai": "*"
     },
     "eslintConfig": {
         "extends": [

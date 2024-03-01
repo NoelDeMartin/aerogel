@@ -6,5 +6,6 @@ export * from './jobs';
 export * from './lang';
 export * from './plugins';
 export * from './services';
+export * from './testing';
 export * from './ui';
 export * from './utils';

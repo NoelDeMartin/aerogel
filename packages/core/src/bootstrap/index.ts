@@ -6,6 +6,7 @@ import errors from '@/errors';
 import Events from '@/services/Events';
 import lang from '@/lang';
 import services from '@/services';
+import testing from '@/testing';
 import ui from '@/ui';
 import { installPlugins } from '@/plugins';
 import type { AerogelOptions } from '@/bootstrap/options';
@@ -13,7 +14,7 @@ import type { AerogelOptions } from '@/bootstrap/options';
 export { AerogelOptions };
 
 export async function bootstrapApplication(app: App, options: AerogelOptions = {}): Promise<void> {
-    const plugins = [directives, errors, lang, services, ui, ...(options.plugins ?? [])];
+    const plugins = [testing, directives, errors, lang, services, ui, ...(options.plugins ?? [])];
 
     await installPlugins(plugins, app, options);
     await options.install?.(app);
