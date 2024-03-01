@@ -26,7 +26,7 @@ import { expandIRI } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
-import type { SolidTypeIndex } from 'soukai-solid';
+import type { SolidModelConstructor, SolidTypeIndex } from 'soukai-solid';
 import type { Engine } from 'soukai';
 
 import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';
@@ -120,9 +120,7 @@ export class CloudService extends Service {
         const engine = this.engine;
 
         if (engine) {
-            const handlerClasses = [handler.modelClass, ...arrayFrom(handler.registerFor ?? [])];
-
-            handlerClasses.forEach((modelClass) => getRemoteClass(modelClass).setEngine(engine));
+            this.getRelatedClasses(handler).forEach((modelClass) => getRemoteClass(modelClass).setEngine(engine));
         }
 
         this.whenReady(() => {
@@ -171,6 +169,23 @@ export class CloudService extends Service {
         return remoteModels.get(localModel.url) ?? this.cloneLocalModel(localModel);
     }
 
+    protected getRelatedClasses(handler: CloudHandlerConfig): SolidModelConstructor[] {
+        const relatedClasses = new Set<SolidModelConstructor>();
+        const instance = handler.modelClass.instance();
+
+        relatedClasses.add(handler.modelClass);
+
+        for (const relation of handler.modelClass.relations) {
+            if (handler.modelClass.reservedRelations.includes(relation)) {
+                continue;
+            }
+
+            relatedClasses.add(instance.requireRelation(relation).relatedClass);
+        }
+
+        return [...relatedClasses.values()];
+    }
+
     protected getSameDocumentRelations(modelClass: typeof SolidModel): string[] {
         if (!CloudService.sameDocumentRelations.has(modelClass)) {
             CloudService.sameDocumentRelations.set(
@@ -188,6 +203,36 @@ export class CloudService extends Service {
         }
 
         return CloudService.sameDocumentRelations.get(modelClass) ?? [];
+    }
+
+    protected async loadChildren(model: SolidModel): Promise<void> {
+        if (!(model instanceof SolidContainer)) {
+            return;
+        }
+
+        for (const relation of this.getContainerRelations(model.static())) {
+            const children = arrayFilter(arrayFrom(await model.loadRelationIfUnloaded(relation)));
+
+            for (const child of children) {
+                await this.loadChildren(child as SolidModel);
+            }
+        }
+    }
+
+    protected async saveModelAndChildren(model: SolidModel): Promise<void> {
+        await model.save();
+
+        if (!(model instanceof SolidContainer)) {
+            return;
+        }
+
+        const children = this.getContainerRelations(model.static())
+            .map((relation) => model.getRelationModels(relation) ?? [])
+            .flat();
+
+        for (const child of children) {
+            await this.saveModelAndChildren(child);
+        }
     }
 
     protected getContainerRelations(modelClass: typeof SolidModel): string[] {
@@ -209,13 +254,19 @@ export class CloudService extends Service {
         return CloudService.containerRelations.get(modelClass) ?? [];
     }
 
-    protected hasDirtyDocuments(model: SolidModel): boolean {
+    protected isDirtyOrHasDirtyChildren(model: SolidModel): boolean {
+        if (model.isDirty()) {
+            return true;
+        }
+
         if (!(model instanceof SolidContainer)) {
             return false;
         }
 
         const relationHasDirtyModels = (relation: string) => {
-            return model.getRelationModels(relation)?.some((relatedModel) => relatedModel.isDirty());
+            return model
+                .getRelationModels(relation)
+                ?.some((relatedModel) => this.isDirtyOrHasDirtyChildren(relatedModel));
         };
 
         return this.getContainerRelations(model.static()).some(relationHasDirtyModels);
@@ -375,7 +426,7 @@ export class CloudService extends Service {
             const remoteModel = remoteModels.require(localModel.url);
 
             await SolidModel.synchronize(localModel, remoteModel);
-            await localModel.save();
+            await this.saveModelAndChildren(localModel);
         }
     }
 
@@ -386,9 +437,8 @@ export class CloudService extends Service {
         getRemoteClass(Tombstone).setEngine(this.engine);
 
         for (const handler of this.handlers.values()) {
-            const handlerClasses = [handler.modelClass, ...arrayFrom(handler.registerFor ?? [])];
-
-            handlerClasses.forEach((modelClass) => getRemoteClass(modelClass).setEngine(authenticator.engine));
+            this.getRelatedClasses(handler).forEach((modelClass) =>
+                getRemoteClass(modelClass).setEngine(authenticator.engine));
         }
     }
 
@@ -422,7 +472,7 @@ export class CloudService extends Service {
 
         this.setState({
             dirtyRemoteModels: map(
-                remoteModels.getItems().filter((model) => model.isDirty() || this.hasDirtyDocuments(model)),
+                remoteModels.getItems().filter((model) => this.isDirtyOrHasDirtyChildren(model)),
                 'url',
             ),
             remoteOperationUrls: remoteModels.getItems().reduce((urls, model) => {
@@ -455,18 +505,7 @@ export class CloudService extends Service {
                 return;
             }
 
-            await remoteModel.save();
-
-            if (remoteModel instanceof SolidContainer) {
-                const containerModels = this.getContainerRelations(remoteModel.static())
-                    .map((relation) => remoteModel.getRelationModels(relation) ?? [])
-                    .flat();
-
-                for (const model of containerModels) {
-                    await model.save();
-                }
-            }
-
+            await this.saveModelAndChildren(remoteModel);
             await this.updateTypeRegistrations(remoteModel);
         }
 
@@ -521,9 +560,7 @@ export class CloudService extends Service {
                 if (remoteClass.rdfsClasses.includes(expandIRI('ldp:Container'))) {
                     const container = await remoteClass.find(registration.instanceContainer);
 
-                    for (const relation of this.getContainerRelations(remoteClass)) {
-                        await container?.loadRelation(relation);
-                    }
+                    container && (await this.loadChildren(container));
 
                     return container;
                 }
@@ -591,7 +628,7 @@ export class CloudService extends Service {
 
             await SolidModel.synchronize(localModel, remoteModel);
             await this.reconcileInconsistencies(localModel, remoteModel);
-            await localModel.save();
+            await this.saveModelAndChildren(localModel);
 
             localModels.add(localModel);
             synchronizedModelUrls.add(localModel.url);
@@ -602,11 +639,7 @@ export class CloudService extends Service {
                 continue;
             }
 
-            if (localModel instanceof SolidContainer) {
-                for (const relation of this.getContainerRelations(localModel.static())) {
-                    await localModel.loadRelationIfUnloaded(relation);
-                }
-            }
+            await this.loadChildren(localModel);
 
             const remoteModel = this.getRemoteModel(localModel, remoteModels);
 
