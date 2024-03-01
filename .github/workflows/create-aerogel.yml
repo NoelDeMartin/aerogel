@@ -28,11 +28,6 @@ jobs:
                   npm pack
                   cd ../../
 
-                  cd packages/cypress
-                  npm run build
-                  npm pack
-                  cd ../../
-
                   cd packages/plugin-i18n
                   npm run build
                   npm pack
@@ -44,6 +39,11 @@ jobs:
                   cd ../../
 
                   cd packages/plugin-solid
+                  npm run build
+                  npm pack
+                  cd ../../
+
+                  cd packages/cypress
                   npm run build
                   npm pack
                   cd ../../
