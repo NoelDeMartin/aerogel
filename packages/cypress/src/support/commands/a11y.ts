@@ -4,8 +4,8 @@ export type SeeOptions = Partial<
     }
 >;
 
-export function dontSee(text: string): void {
-    cy.contains(text).should('not.exist');
+export function dontSee(text: string, options?: Cypress.Timeoutable): void {
+    cy.contains(text, options).should('not.exist');
 }
 
 export function press(label: string, selector: string = 'button:visible, a:visible, label:visible'): void {
