@@ -8,11 +8,11 @@ export * from './testing';
 export * from './utils';
 
 function setupTestingRuntime(): void {
-    if (!window.testingRuntime) {
+    if (!globalThis.testingRuntime) {
         return;
     }
 
-    Object.assign(window.testingRuntime, testingRuntime);
+    Object.assign(globalThis.testingRuntime, testingRuntime);
 }
 
 export interface Options {

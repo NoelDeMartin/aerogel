@@ -37,7 +37,7 @@ export default defineServiceState({
         user: (state) => state.session?.user ?? state.previousSession?.profile ?? null,
         authenticator: (state) => state.session?.authenticator ?? null,
         fetch(): Fetch {
-            return this.authenticator?.getAuthenticatedFetch() ?? window.fetch.bind(window);
+            return this.authenticator?.getAuthenticatedFetch() ?? globalThis.fetch.bind(globalThis);
         },
         error(state): ErrorSource | null {
             if (state.loginStartupError) {

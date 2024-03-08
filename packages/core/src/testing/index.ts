@@ -13,14 +13,13 @@ export default definePlugin({
             return;
         }
 
-        window.testingRuntime = {
+        globalThis.testingRuntime = {
             on: ((...args: GetClosureArgs<(typeof Events)['on']>) => Events.on(...args)) as (typeof Events)['on'],
         };
     },
 });
 
 declare global {
-    interface Window {
-        testingRuntime?: AerogelTestingRuntime;
-    }
+    // eslint-disable-next-line no-var
+    var testingRuntime: AerogelTestingRuntime | undefined;
 }
