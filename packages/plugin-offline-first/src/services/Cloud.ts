@@ -132,8 +132,8 @@ export class CloudService extends Service {
 
         Solid.isLoggedIn() && this.login(Solid.authenticator);
 
-        Events.on('login', ({ authenticator }) => this.login(authenticator));
-        Events.on('logout', () => this.logout());
+        Events.on('auth:login', ({ authenticator }) => this.login(authenticator));
+        Events.on('auth:logout', () => this.logout());
         Events.once('application-ready', () => this.autoSetup());
         Events.once('application-mounted', () => this.sync());
     }

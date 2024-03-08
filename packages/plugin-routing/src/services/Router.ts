@@ -50,8 +50,8 @@ export class RouterService extends Service {
     }
 
     protected async boot(): Promise<void> {
-        Events.on('before-login', () => this.storeFlashRoute());
-        Events.on('login', () => this.restoreFlashRoute());
+        Events.on('auth:before-login', () => this.storeFlashRoute());
+        Events.on('auth:login', () => this.restoreFlashRoute());
         Events.on('cloud:migrated', { priority: EventListenerPriorities.Low }, () => this.updateCurrentRouteParams());
     }
 

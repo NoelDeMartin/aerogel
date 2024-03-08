@@ -274,10 +274,12 @@ export default facade(UIService);
 
 declare module '@/services/Events' {
     export interface EventsPayload {
-        'modal-will-close': { modal: Modal; result?: unknown };
-        'modal-closed': { modal: Modal; result?: unknown };
         'close-modal': { id: string; result?: unknown };
         'hide-modal': { id: string };
+        'hide-overlays-backdrop': void;
+        'modal-closed': { modal: Modal; result?: unknown };
+        'modal-will-close': { modal: Modal; result?: unknown };
         'show-modal': { id: string };
+        'show-overlays-backdrop': void;
     }
 }

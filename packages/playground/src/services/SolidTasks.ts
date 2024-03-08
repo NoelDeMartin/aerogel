@@ -11,7 +11,7 @@ import Service from './SolidTasks.state';
 export class SolidTasksService extends Service {
 
     protected async boot(): Promise<void> {
-        Events.on('login', async (session) => {
+        Events.on('auth:login', async (session) => {
             const container = await this.findOrCreateTasksContainer(session);
 
             SolidTask.setEngine(Solid.requireAuthenticator().engine);

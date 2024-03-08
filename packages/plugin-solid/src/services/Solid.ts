@@ -153,7 +153,7 @@ export class SolidService extends Service {
                 }),
             });
 
-            await Events.emit('before-login');
+            await Events.emit('auth:before-login');
 
             // This should redirect away from the app, so in most cases
             // the rest of the code won't be reached.
@@ -212,7 +212,7 @@ export class SolidService extends Service {
         this.setState({ previousSession: null });
         this.isLoggedIn() && (await this.authenticator.logout());
 
-        await Events.emit('logout');
+        await Events.emit('auth:logout');
     }
 
     public async whenLoggedIn<T>(callback: (session: AuthSession) => T): Promise<T> {
@@ -223,7 +223,7 @@ export class SolidService extends Service {
         return new Promise((resolve) => {
             const onLogin = (session: AuthSession) => resolve(callback(session));
 
-            Events.once('login', onLogin);
+            Events.once('auth:login', onLogin);
         });
     }
 
@@ -386,7 +386,7 @@ export class SolidService extends Service {
                 SolidTypeIndex.setEngine(session.authenticator.engine);
                 SolidDocument.setEngine(session.authenticator.engine);
 
-                await Events.emit('login', session);
+                await Events.emit('auth:login', session);
             },
             onSessionFailed: async (loginUrl, error) => {
                 this.setState({
@@ -399,7 +399,7 @@ export class SolidService extends Service {
                 });
             },
             onSessionEnded: () => this.setState({ session: null }),
-            onAuthenticatedFetchReady: (fetch) => Events.emit('authenticated-fetch-ready', fetch),
+            onAuthenticatedFetchReady: (fetch) => Events.emit('auth:fetch-ready', fetch),
         });
 
         await authenticator.boot();
@@ -423,9 +423,9 @@ export default facade(SolidService);
 
 declare module '@aerogel/core' {
     export interface EventsPayload {
-        'authenticated-fetch-ready': Fetch;
-        'before-login': void;
-        login: AuthSession;
-        logout: void;
+        'auth:fetch-ready': Fetch;
+        'auth:before-login': void;
+        'auth:login': AuthSession;
+        'auth:logout': void;
     }
 }
