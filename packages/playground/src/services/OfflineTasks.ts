@@ -11,10 +11,7 @@ export class OfflineTasksService extends Service {
 
     protected async boot(): Promise<void> {
         await Cloud.booted;
-        await Cloud.registerHandler({
-            modelClass: OfflineTask,
-            getLocalModels: () => this.allTasks,
-        });
+        await Cloud.register(OfflineTask);
 
         Cloud.whenReady(async () => {
             const tasksContainer = await SolidTasks.tasksContainer;

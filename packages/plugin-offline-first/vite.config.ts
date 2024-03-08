@@ -14,6 +14,7 @@ export default defineConfig({
             // TODO not sure why it doesn't work without this :/
             '@aerogel/core': resolve(__dirname, '../core/dist/aerogel-core.esm.js'),
             '@aerogel/plugin-solid': resolve(__dirname, '../plugin-solid/dist/aerogel-plugin-solid.esm.js'),
+            '@aerogel/plugin-soukai': resolve(__dirname, '../plugin-soukai/dist/aerogel-plugin-soukai.esm.js'),
         },
     },
     plugins: [Aerogel()],

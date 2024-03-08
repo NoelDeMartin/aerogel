@@ -1,4 +1,4 @@
-import { fakeDocumentUrl } from '@noeldemartin/solid-utils';
+import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/solid-utils';
 import { FakeServer, facade, mock } from '@noeldemartin/utils';
 import { SolidACLAuthorization, SolidDocument, SolidEngine, SolidTypeIndex } from 'soukai-solid';
 
@@ -16,7 +16,10 @@ export class SolidMockService extends SolidService {
         const engine = new SolidEngine(this.server.fetch);
 
         this.setState('session', {
-            user: mock({ privateTypeIndexUrl: fakeDocumentUrl() }),
+            user: mock({
+                privateTypeIndexUrl: fakeDocumentUrl(),
+                storageUrls: [fakeContainerUrl()],
+            }),
             authenticator: mock({
                 engine,
                 requireAuthenticatedFetch: () => this.server.fetch,

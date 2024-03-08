@@ -1,8 +1,9 @@
 import { beforeEach, expect, vi } from 'vitest';
 import { mock, resetAsyncMemo, setTestingNamespace, tap } from '@noeldemartin/utils';
 import { resetPiniaStore } from '@aerogel/core';
-import { sparqlEquals } from '@noeldemartin/solid-utils';
+import { resetTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid, SolidMock } from '@aerogel/plugin-solid';
+import { sparqlEquals } from '@noeldemartin/solid-utils';
 
 setTestingNamespace(vi);
 Solid.setMockFacade(SolidMock);
@@ -19,6 +20,7 @@ tap(globalThis, (global: any) => {
 beforeEach(() => {
     resetAsyncMemo();
     resetPiniaStore();
+    resetTrackedModels();
 });
 
 expect.extend({

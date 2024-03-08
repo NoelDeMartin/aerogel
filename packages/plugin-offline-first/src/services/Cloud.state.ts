@@ -12,21 +12,14 @@ export const CloudStatus = {
 
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
-export interface CloudHandlerConfig<T extends SolidModel = SolidModel> {
-    modelClass: SolidModelConstructor<T>;
-    registerFor?: SolidModelConstructor | SolidModelConstructor[];
-    getLocalModels(): T[];
-    getRemoteCollection?(): string;
-}
-
 export default defineServiceState({
     name: 'cloud',
     persist: ['ready'],
     initialState: () => ({
         dirtyRemoteModels: map([], 'url') as ObjectsMap<SolidModel>,
-        handlers: new Map() as Map<SolidModelConstructor, CloudHandlerConfig>,
         localModelUpdates: {} as Record<string, number>,
         ready: false,
+        registeredModels: new Set<SolidModelConstructor>(),
         remoteOperationUrls: {} as Record<string, string[]>,
         setupDismissed: false,
         status: CloudStatus.Disconnected as TCloudStatus,

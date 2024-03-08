@@ -33,6 +33,7 @@
     "peerDependencies": {
         "@aerogel/core": "*",
         "@aerogel/plugin-solid": "*",
+        "@aerogel/plugin-soukai": "*",
         "soukai": "*",
         "soukai-solid": "*"
     },

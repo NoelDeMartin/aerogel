@@ -23,12 +23,12 @@ describe('Cloud', () => {
 
     it('Syncs containers', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = fakeContainerUrl();
+        const parentContainerUrl = SolidMock.requireUser().storageUrls[0];
         const remoteContainerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const localContainerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
 
         // Arrange - Prepare models
-        const localContainer = await MoviesContainer.at(parentContainerUrl).create({
+        await MoviesContainer.at(parentContainerUrl).create({
             url: localContainerUrl,
             name: 'Local Movies',
         });
@@ -77,12 +77,8 @@ describe('Cloud', () => {
 
         // Arrange - Prepare service
         await Cloud.launch();
+        await Cloud.register(MoviesContainer);
         await Events.emit('application-ready');
-        await Cloud.registerHandler({
-            modelClass: MoviesContainer,
-            registerFor: Movie,
-            getLocalModels: () => [localContainer],
-        });
 
         // Act
         await Cloud.sync();
@@ -117,7 +113,7 @@ describe('Cloud', () => {
 
     it('Syncs container documents', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = fakeContainerUrl();
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const localDocumentUrl = fakeDocumentUrl({ containerUrl });
         const remoteDocumentUrl = fakeDocumentUrl({ containerUrl });
@@ -194,12 +190,8 @@ describe('Cloud', () => {
 
         // Arrange - Prepare service
         await Cloud.launch();
+        await Cloud.register(MoviesContainer);
         await Events.emit('application-ready');
-        await Cloud.registerHandler({
-            modelClass: MoviesContainer,
-            registerFor: Movie,
-            getLocalModels: () => [container],
-        });
 
         // Act
         await Cloud.sync();
@@ -219,12 +211,12 @@ describe('Cloud', () => {
 
     it('Syncs documents', async () => {
         // Arrange - Mint urls
-        const containerUrl = fakeContainerUrl();
+        const containerUrl = Solid.requireUser().storageUrls[0];
         const remoteDocumentUrl = fakeDocumentUrl({ containerUrl });
         const localDocumentUrl = fakeDocumentUrl({ containerUrl });
 
         // Arrange - Prepare models
-        const localMovie = await Movie.at(containerUrl).create({
+        await Movie.at(containerUrl).create({
             url: `${localDocumentUrl}#it`,
             name: 'The Tale of Princess Kaguya',
         });
@@ -290,11 +282,8 @@ describe('Cloud', () => {
 
         // Arrange - Prepare service
         await Cloud.launch();
+        await Cloud.register(Movie);
         await Events.emit('application-ready');
-        await Cloud.registerHandler({
-            modelClass: Movie,
-            getLocalModels: () => [localMovie],
-        });
 
         // Act
         await Cloud.sync();
@@ -314,7 +303,7 @@ describe('Cloud', () => {
 
     it('Syncs individual container documents', async () => {
         // Arrange - Mint urls
-        const containerUrl = fakeContainerUrl();
+        const containerUrl = Solid.requireUser().storageUrls[0];
         const documentUrl = fakeDocumentUrl({ containerUrl });
 
         // Arrange - Prepare models
@@ -330,12 +319,8 @@ describe('Cloud', () => {
 
         // Arrange - Prepare service
         await Cloud.launch();
+        await Cloud.register(MoviesContainer);
         await Events.emit('application-ready');
-        await Cloud.registerHandler({
-            modelClass: MoviesContainer,
-            registerFor: Movie,
-            getLocalModels: () => [],
-        });
 
         // Act
         const movie = await container.relatedMovies.create({
@@ -352,7 +337,7 @@ describe('Cloud', () => {
 
     it('Creates containers with documents', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = fakeContainerUrl();
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl });
 
@@ -387,12 +372,8 @@ describe('Cloud', () => {
 
         // Arrange - Prepare service
         await Cloud.launch();
+        await Cloud.register(MoviesContainer);
         await Events.emit('application-ready');
-        await Cloud.registerHandler({
-            modelClass: MoviesContainer,
-            registerFor: Movie,
-            getLocalModels: () => [container],
-        });
 
         // Act
         await Cloud.sync();
@@ -407,7 +388,7 @@ describe('Cloud', () => {
 
     it('Leaves tombstones behind deleted models', async () => {
         // Arrange - Mint urls and prepare models
-        const containerUrl = fakeContainerUrl();
+        const containerUrl = Solid.requireUser().storageUrls[0];
         const documentUrl = fakeDocumentUrl({ containerUrl });
         const movie = await Movie.at(containerUrl).create({ url: `${documentUrl}#it`, name: 'Spirited Away' });
         const movieTurtle = (await movie.toTurtle()).replaceAll(documentUrl, '');
@@ -456,11 +437,8 @@ describe('Cloud', () => {
 
         // Arrange - Prepare service
         await Cloud.launch();
+        await Cloud.register(Movie);
         await Events.emit('application-ready');
-        await Cloud.registerHandler({
-            modelClass: Movie,
-            getLocalModels: () => [movie],
-        });
 
         // Act
         await movie.softDelete();
