@@ -1,6 +1,9 @@
 describe('Error Handling', () => {
 
-    beforeEach(() => cy.visit('/errors'));
+    beforeEach(() => {
+        cy.disableErrorHandling();
+        cy.visit('/errors');
+    });
 
     it('Handles runtime errors', () => {
         // Error with stack trace

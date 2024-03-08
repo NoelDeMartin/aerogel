@@ -1,23 +1,21 @@
 import { map } from '@noeldemartin/utils';
 import { Events } from '@aerogel/core';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, shallowRef, triggerRef, watchEffect } from 'vue';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
-import type { ComputedRef } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 import type { Service } from '@aerogel/core';
 
 let trackedModels: WeakMap<ModelConstructor, ComputedRef<Model[]>> = new WeakMap();
 
-async function initializeModelCollectionRef<T extends Model>(
-    modelClass: ModelConstructor<T>,
-): Promise<ComputedRef<T[]>> {
-    const modelsMap = ref(map([] as T[], 'id'));
+async function initializeModelCollectionRef<T extends Model>(modelClass: ModelConstructor<T>): Promise<Ref<T[]>> {
+    const modelsMap = shallowRef(map([] as T[], 'id'));
     const modelsArray = computed(() => modelsMap.value.getItems());
 
     trackedModels.set(modelClass, modelsArray);
 
-    modelClass.on('created', (model) => modelsMap.value.add(model));
-    modelClass.on('deleted', (model) => modelsMap.value.delete(model));
-    modelClass.on('updated', (model) => modelsMap.value.add(model));
+    modelClass.on('created', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
+    modelClass.on('deleted', (model) => (modelsMap.value.delete(model), triggerRef(modelsMap)));
+    modelClass.on('updated', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
     Events.on('cloud:migrated', async () => (modelsMap.value = map(await modelClass.all(), 'id')));
 
     modelsMap.value = map(await modelClass.all(), 'id');

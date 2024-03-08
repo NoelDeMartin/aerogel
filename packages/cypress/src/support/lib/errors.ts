@@ -10,6 +10,10 @@ export function setupErrorListener(): void {
     Cypress.on('window:before:load', (window) => {
         window.__aerogelEvents__ = {
             error: ({ error, message }) => {
+                if (window.__aerogelDisableErrorHandling__) {
+                    return;
+                }
+
                 if (!isError(error)) {
                     throw new Error(message ?? toString(error));
                 }
