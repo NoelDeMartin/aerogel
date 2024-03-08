@@ -1,6 +1,11 @@
 import { arrayFilter } from '@noeldemartin/utils';
-import { expandIRI } from '@noeldemartin/solid-utils';
-import { SolidContainer, SolidContainsRelation, SolidModel, isSolidDocumentRelation } from 'soukai-solid';
+import {
+    SolidContainer,
+    SolidContainsRelation,
+    SolidModel,
+    isContainerClass,
+    isSolidDocumentRelation,
+} from 'soukai-solid';
 import type { SolidContainerConstructor, SolidModelConstructor } from 'soukai-solid';
 
 const containerRelations: WeakMap<typeof SolidModel, string[]> = new WeakMap();
@@ -73,14 +78,6 @@ export function getSameDocumentRelations(modelClass: typeof SolidModel): string[
     }
 
     return sameDocumentRelations.get(modelClass) ?? [];
-}
-
-export function isContainer(model: SolidModel): model is SolidContainer {
-    return model instanceof SolidContainer;
-}
-
-export function isContainerClass(modelClass: SolidModelConstructor): modelClass is SolidContainerConstructor {
-    return modelClass.rdfsClasses.includes(expandIRI('ldp:Container'));
 }
 
 export function isDirtyOrHasDirtyChildren(model: SolidModel): boolean {
