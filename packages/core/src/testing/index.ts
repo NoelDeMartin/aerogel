@@ -1,6 +1,11 @@
+import type { GetClosureArgs } from '@noeldemartin/utils';
+
+import Events from '@/services/Events';
 import { definePlugin } from '@/plugins';
 
-export interface AerogelTestingRuntime {}
+export interface AerogelTestingRuntime {
+    on: (typeof Events)['on'];
+}
 
 export default definePlugin({
     async install() {
@@ -8,7 +13,9 @@ export default definePlugin({
             return;
         }
 
-        window.testingRuntime = {};
+        window.testingRuntime = {
+            on: ((...args: GetClosureArgs<(typeof Events)['on']>) => Events.on(...args)) as (typeof Events)['on'],
+        };
     },
 });
 

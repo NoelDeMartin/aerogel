@@ -6,6 +6,14 @@ export interface EventsPayload {}
 export interface EventListenerOptions {
     priority: number;
 }
+export interface AerogelEventsWindow {
+    __aerogelEvents__?: Partial<{
+        [Event in EventWithoutPayload]: () => unknown;
+    }> &
+        Partial<{
+            [Event in EventWithPayload]: EventListener<EventsPayload[Event]>;
+        }>;
+}
 
 export type EventListener<T = unknown> = (payload: T) => unknown;
 export type UnknownEvent<T> = T extends keyof EventsPayload ? never : T;
@@ -27,6 +35,11 @@ export const EventListenerPriorities = {
 export class EventsService extends Service {
 
     private listeners: Record<string, { priorities: number[]; handlers: Record<number, EventListener[]> }> = {};
+
+    protected async boot(): Promise<void> {
+        Object.entries(window.__aerogelEvents__ ?? {}).forEach(([event, listener]) =>
+            this.on(event as string, listener as EventListener));
+    }
 
     public emit<Event extends EventWithoutPayload>(event: Event): Promise<void>;
     public emit<Event extends EventWithPayload>(event: Event, payload: EventsPayload[Event]): Promise<void>;
@@ -141,3 +154,7 @@ export class EventsService extends Service {
 }
 
 export default facade(EventsService);
+
+declare global {
+    interface Window extends AerogelEventsWindow {}
+}

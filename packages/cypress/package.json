@@ -37,11 +37,11 @@
     "dependencies": {
         "@noeldemartin/utils": "0.5.1-next.49cc6c9b4a20930cbf922a949135981791acc5c3",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
-        "cypress-solid": "^0.1.2"
+        "cypress-solid": "0.1.3-next.a5ff442a8112abf45061cfa7cc9f147e83d57b6f"
     },
     "devDependencies": {
-        "esbuild": "^0.19.4",
-        "@aerogel/plugin-soukai": "*"
+        "@aerogel/plugin-soukai": "*",
+        "esbuild": "^0.19.4"
     },
     "eslintConfig": {
         "extends": [

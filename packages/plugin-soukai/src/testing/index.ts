@@ -5,5 +5,5 @@ export { testingRuntime };
 export type SoukaiTestingRuntime = typeof testingRuntime;
 
 declare module '@aerogel/core' {
-    interface AerogelTestingRuntime extends SoukaiTestingRuntime {}
+    export interface AerogelTestingRuntime extends SoukaiTestingRuntime {}
 }

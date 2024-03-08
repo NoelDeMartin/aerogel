@@ -7,6 +7,7 @@ import { translateWithDefault } from '@/lang/utils';
 
 import Service from './Errors.state';
 import { Colors } from '@/components/constants';
+import { Events } from '@/services';
 import type { AGErrorReportModalProps } from '@/components/modals/AGErrorReportModal';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
 import type { ModalComponent } from '@/ui/UI.state';
@@ -39,6 +40,8 @@ export class ErrorsService extends Service {
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
+        await Events.emit('error', { error, message });
+
         if (App.testing) {
             throw error;
         }
@@ -114,22 +117,6 @@ export class ErrorsService extends Service {
         });
     }
 
-    public getErrorMessage(error: ErrorSource): string {
-        if (typeof error === 'string') {
-            return error;
-        }
-
-        if (error instanceof Error || error instanceof JSError) {
-            return error.message;
-        }
-
-        if (isObject(error)) {
-            return toString(error['message'] ?? error['description'] ?? 'Unknown error object');
-        }
-
-        return translateWithDefault('errors.unknown', 'Unknown Error');
-    }
-
     private logError(error: unknown): void {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -190,3 +177,9 @@ export class ErrorsService extends Service {
 }
 
 export default facade(ErrorsService);
+
+declare module '@/services/Events' {
+    export interface EventsPayload {
+        error: { error: ErrorSource; message?: string };
+    }
+}

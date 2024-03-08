@@ -6,6 +6,7 @@ import { definePlugin } from '@/plugins';
 import Errors from './Errors';
 import { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
 
+export * from './utils';
 export { Errors, ErrorSource, ErrorReport, ErrorReportLog };
 
 const services = { $errors: Errors };
