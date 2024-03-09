@@ -2,6 +2,7 @@
     <input
         :id="input.id"
         ref="$input"
+        :name="name"
         :type="type"
         :value="value"
         :aria-invalid="input.errors ? 'true' : 'false'"
@@ -26,6 +27,7 @@ const input = injectReactiveOrFail<IAGHeadlessInput>(
     'input',
     '<AGHeadlessInputInput> must be a child of a <AGHeadlessInput>',
 );
+const name = computed(() => input.name ?? undefined);
 const value = computed(() => input.value);
 const checked = computed(() => {
     if (props.type !== 'checkbox') {
