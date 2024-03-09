@@ -167,7 +167,7 @@ export class UIService extends Service {
         const snackbar: Snackbar = {
             id: uuid(),
             properties: { message, ...options },
-            component: options.component ?? markRaw(this.requireComponent(UIComponents.Snackbar)),
+            component: markRaw(options.component ?? this.requireComponent(UIComponents.Snackbar)),
         };
 
         this.setState('snackbars', this.snackbars.concat(snackbar));
