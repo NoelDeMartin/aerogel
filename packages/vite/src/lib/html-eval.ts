@@ -9,12 +9,14 @@ export function css(this: HTMLEvalScope, path: string): string {
     return `<style>${this.readFile(path)}</style>`;
 }
 
-export function favicons(options: { maskIconColor?: string } = {}): string {
+export function favicons(this: HTMLEvalScope, options: { maskIconColor?: string } = {}): string {
+    const maskIconColor = options.maskIconColor ?? '#000000';
+
     return `
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="${options.maskIconColor ?? '#000000'}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="${this.app.basePath}apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="${this.app.basePath}favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="${this.app.basePath}favicon-16x16.png" />
+        <link rel="mask-icon" href="${this.app.basePath}safari-pinned-tab.svg" color="${maskIconColor}" />
     `;
 }
 
