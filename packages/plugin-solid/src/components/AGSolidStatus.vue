@@ -12,14 +12,10 @@
             <div class="flex flex-col gap-3">
                 <AGMarkdown
                     :text="
-                        $td(
-                            'solid.loggedIn',
-                            {
-                                userName: $solid.user.name ?? $solid.user.webId,
-                                userWebId: $solid.user.webId,
-                            },
-                            'You are logged in as [{userName}]({userWebId})'
-                        )
+                        $td('solid.loggedIn', 'You are logged in as [{userName}]({userWebId})', {
+                            userName: $solid.user.name ?? $solid.user.webId,
+                            userWebId: $solid.user.webId,
+                        })
                     "
                 />
                 <AGButton @click="$solid.logout()">

@@ -5,14 +5,10 @@
             <div v-else class="flex flex-col gap-3">
                 <AGMarkdown
                     :text="
-                        $td(
-                            'solid.loggedIn',
-                            {
-                                userName: session.user.name ?? session.user.webId,
-                                userWebId: session.user.webId,
-                            },
-                            'You are logged in as [{userName}]({userWebId})'
-                        )
+                        $td('solid.loggedIn', 'You are logged in as [{userName}]({userWebId})', {
+                            userName: session.user.name ?? session.user.webId,
+                            userWebId: session.user.webId,
+                        })
                     "
                 />
                 <AGButton @click="$cloud.sync(), $emit('sync')">
