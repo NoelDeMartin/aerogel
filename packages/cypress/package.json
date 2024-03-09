@@ -9,10 +9,18 @@
         "build": "rm -rf dist && npm run build:support && npm run build:plugin && npm run build:types",
         "build:plugin": "esbuild src/plugin/index.ts --format=cjs --bundle --sourcemap --outfile=dist/plugin.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/plugin",
         "build:support": "esbuild src/support/index.ts --format=cjs --bundle --sourcemap --outfile=dist/index.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/command",
-        "build:types": "noeldemartin-build-types && ./scripts/fix-types.sh",
+        "build:types": "noeldemartin-build-types && ./scripts/fix-types.sh && ./scripts/build-config-types.js",
         "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src"
     },
+    "files": [
+        "dist",
+        "src",
+        "config.d.ts",
+        "config.js",
+        "support.d.ts",
+        "support.js"
+    ],
     "engines": {
         "node": ">=18.x"
     },
@@ -37,7 +45,7 @@
     "dependencies": {
         "@noeldemartin/utils": "0.5.1-next.49cc6c9b4a20930cbf922a949135981791acc5c3",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
-        "cypress-solid": "0.1.3-next.a5ff442a8112abf45061cfa7cc9f147e83d57b6f"
+        "cypress-solid": "0.1.3-next.eafa6541274a7f7721b724d942b06e9c8439006b"
     },
     "devDependencies": {
         "@aerogel/plugin-soukai": "*",
