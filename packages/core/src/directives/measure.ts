@@ -8,14 +8,13 @@ export interface ElementSize {
 export type MeasureDirectiveListener = (size: ElementSize) => unknown;
 
 export default defineDirective({
-    mounted(element: HTMLElement, { value, modifiers }) {
+    mounted(element: HTMLElement, { value }) {
         const listener = typeof value === 'function' ? (value as MeasureDirectiveListener) : null;
         const sizes = element.getBoundingClientRect();
 
-        if (modifiers.css) {
-            element.style.setProperty('--width', `${sizes.width}px`);
-            element.style.setProperty('--height', `${sizes.height}px`);
-        }
+        // TODO guard with modifiers.css once typed properly
+        element.style.setProperty('--width', `${sizes.width}px`);
+        element.style.setProperty('--height', `${sizes.height}px`);
 
         listener?.({ width: sizes.width, height: sizes.height });
     },
