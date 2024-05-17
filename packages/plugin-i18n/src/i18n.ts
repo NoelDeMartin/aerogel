@@ -28,5 +28,5 @@ export async function createAppI18n(options: Options): Promise<I18n<{}, {}, {}, 
     const lazyMessages = messageLoaders[locale] ?? fail<LazyMessages>(`Missing messages for '${locale}' locale`);
     const messages = { [locale]: await lazyMessages() } as I18nOptions['messages'];
 
-    return createI18n({ legacy: false, locale, fallbackLocale, messages });
+    return createI18n({ legacy: false, warnHtmlMessage: false, locale, fallbackLocale, messages });
 }
