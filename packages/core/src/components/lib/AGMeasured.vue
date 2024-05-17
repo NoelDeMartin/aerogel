@@ -1,5 +1,5 @@
 <template>
-    <component :is="as" v-measure="() => (measured = true)" :class="{ '!invisible !absolute !w-auto': !measured }">
+    <component :is="as" v-measure.css="() => (measured = true)" :class="{ '!invisible !absolute !w-auto': !measured }">
         <slot />
     </component>
 </template>
