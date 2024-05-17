@@ -10,6 +10,8 @@ const builtInDirectives: Record<string, Directive> = {
     'measure': measure,
 };
 
+export * from './measure';
+
 export default definePlugin({
     install(app, options) {
         const directives = {
