@@ -20,7 +20,10 @@ function firstQueryMatch(subject: Cypress.PrevSubject, ...queries: Query[]): Cyp
     return null;
 }
 
-export function getAriaDescription(element: HTMLElement): string | null {
+// TODO this should be typed as HTMLElement, but it's throwing a compilation error when generating
+// the types with rpt2.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+export function getAriaDescription(element: any): string | null {
     if (element.ariaDescription) {
         return element.ariaDescription;
     }
