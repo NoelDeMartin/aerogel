@@ -1,5 +1,7 @@
-import { prepareQuery, queryAlias } from './helpers';
+import { getAriaDescription, prepareQuery, queryAlias } from './helpers';
 import type { Query, QueryOptions } from './helpers';
+
+export type AriaInputQueryOptions = QueryOptions & { description?: string };
 
 export function a11yGet(this: Cypress.Command, text: string, options: QueryOptions = {}): Query {
     // TODO read from aria-labelledby and ignore aria-hidden
@@ -10,7 +12,7 @@ export function a11yGet(this: Cypress.Command, text: string, options: QueryOptio
     return (subject) => query.execute(subject, getByContent, getByAriaLabel);
 }
 
-export function ariaInput(this: Cypress.Command, label: string, options: QueryOptions = {}): Query {
+export function ariaInput(this: Cypress.Command, label: string, options: AriaInputQueryOptions = {}): Query {
     const query = prepareQuery(this, options);
     const getDocument = query.subquery<Document>('document');
     const getByContent = query.subquery('contains', label);
@@ -28,7 +30,13 @@ export function ariaInput(this: Cypress.Command, label: string, options: QueryOp
         return cy.$$(null as unknown as string);
     };
 
-    return (subject) => query.execute(subject, getInputByContent, getInputByAriaLabel);
+    return (subject) => {
+        const match = query.execute(subject, getInputByContent, getInputByAriaLabel);
+
+        return options.description
+            ? match.filter((_, input) => getAriaDescription(input) === options.description)
+            : match;
+    };
 }
 
 export function ariaLabel(this: Cypress.Command, label: string, options: QueryOptions = {}): Query {

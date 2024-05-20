@@ -20,6 +20,20 @@ function firstQueryMatch(subject: Cypress.PrevSubject, ...queries: Query[]): Cyp
     return null;
 }
 
+export function getAriaDescription(element: HTMLElement): string | null {
+    if (element.ariaDescription) {
+        return element.ariaDescription;
+    }
+
+    const describedBy = element.getAttribute('aria-describedby');
+
+    if (!describedBy) {
+        return null;
+    }
+
+    return element.ownerDocument.getElementById(describedBy)?.innerText.trim() ?? null;
+}
+
 export function prepareQuery(command: Cypress.Command, options: QueryOptions = {}): CustomQuery {
     const log = options.log !== false && Cypress.log({ timeout: options.timeout });
     const logElement: ($element: Cypress.JQueryWithSelector | null) => void = ($element) => {
