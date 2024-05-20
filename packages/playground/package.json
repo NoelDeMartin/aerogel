@@ -35,7 +35,6 @@
         "@aerogel/cypress": "*",
         "@aerogel/histoire": "*",
         "@aerogel/vite": "*",
-        "@inrupt/solid-client-authn-core": "^1.17.2",
         "@solid/community-server": "^7.0.1",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
