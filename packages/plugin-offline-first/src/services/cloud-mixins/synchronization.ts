@@ -149,7 +149,7 @@ export default class CloudSynchronization {
     }
 
     protected async updateTypeRegistrations(this: CloudService, remoteModel: SolidModel): Promise<void> {
-        if (!isContainer(remoteModel)) {
+        if (!isContainer(remoteModel) || !this.isRegisteredModel(remoteModel)) {
             return;
         }
 

@@ -138,6 +138,18 @@ export default class CloudMirroring {
         return remoteModels.get(localModel.url) ?? this.cloneLocalModel(localModel);
     }
 
+    protected isRegisteredModel(this: CloudService, model: SolidModel): boolean {
+        for (const modelClass of this.registeredModels) {
+            const models = getTrackedModels(modelClass);
+
+            if (models.some((registeredModel) => registeredModel.url === model.url)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private makeRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
         const self = this;
         const LocalClass = localClass as typeof SolidModel;
