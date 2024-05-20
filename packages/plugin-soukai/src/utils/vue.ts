@@ -6,7 +6,7 @@ import type { ComputedRef, Ref } from 'vue';
 
 export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 
-export function computedModel<T extends Model | null | undefined>(compute: () => T): ComputedRef<T> {
+export function computedModel<T extends Model | null | undefined>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
         const modelListeners: Array<() => void> = [];
@@ -39,7 +39,7 @@ export function computedModel<T extends Model | null | undefined>(compute: () =>
             // eslint-disable-next-line no-console
             set: () => console.warn('Computed model ref was not set (it is immutable).'),
         };
-    }) as ComputedRef<T>;
+    });
 }
 
 export function computedModels<T>(modelClass: typeof Model, compute: () => T): ComputedRef<T> {
