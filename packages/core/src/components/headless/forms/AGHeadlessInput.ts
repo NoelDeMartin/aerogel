@@ -7,6 +7,7 @@ export interface IAGHeadlessInput {
     id: string;
     name: ComputedRef<string | null>;
     label: ComputedRef<string | null>;
+    description: ComputedRef<string | boolean | null>;
     value: ComputedRef<string | number | boolean | null>;
     errors: DeepReadonly<Ref<string[] | null>>;
     update(value: string | number | boolean | null): void;
@@ -15,6 +16,7 @@ export interface IAGHeadlessInput {
 export const inputProps = {
     name: stringProp(),
     label: stringProp(),
+    description: stringProp(),
 };
 
 export function useInputProps(): typeof inputProps {

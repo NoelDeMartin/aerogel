@@ -13,6 +13,7 @@
                 'ring-1 ring-red-500': $input?.errors,
             }"
         />
+        <AGHeadlessInputDescription />
         <div class="absolute bottom-0 left-0 translate-y-full">
             <AGHeadlessInputError class="mt-1 text-sm text-red-500" />
         </div>
@@ -26,6 +27,7 @@ import { useInputProps } from '@/components/headless/forms/AGHeadlessInput';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
 
 import AGHeadlessInput from '../headless/forms/AGHeadlessInput.vue';
+import AGHeadlessInputDescription from '../headless/forms/AGHeadlessInputDescription.vue';
 import AGHeadlessInputError from '../headless/forms/AGHeadlessInputError.vue';
 import AGHeadlessInputInput from '../headless/forms/AGHeadlessInputInput.vue';
 import AGHeadlessInputLabel from '../headless/forms/AGHeadlessInputLabel.vue';

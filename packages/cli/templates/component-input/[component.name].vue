@@ -2,6 +2,7 @@
     <AGHeadlessInput v-bind="props">
         <AGHeadlessInputLabel />
         <AGHeadlessInputInput v-bind="attrs" />
+        <AGHeadlessInputDescription />
         <AGHeadlessInputError />
     </AGHeadlessInput>
 </template>

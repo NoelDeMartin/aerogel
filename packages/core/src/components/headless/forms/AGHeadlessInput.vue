@@ -33,6 +33,7 @@ const api: IAGHeadlessInput = {
     id: `input-${uuid()}`,
     name: computed(() => props.name),
     label: computed(() => props.label),
+    description: computed(() => props.description),
     value: computed(() => {
         if (form && props.name) {
             return form.getFieldValue(props.name) as string | number | boolean | null;

@@ -16,6 +16,7 @@
                 <i-zondicons-exclamation-solid class="h-5 w-5 text-red-500" />
             </div>
         </div>
+        <AGHeadlessInputDescription class="mt-2 text-sm text-gray-600" />
         <AGHeadlessInputError class="mt-2 text-sm text-red-600" />
     </AGHeadlessInput>
 </template>

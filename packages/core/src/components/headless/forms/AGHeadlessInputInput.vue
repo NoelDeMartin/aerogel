@@ -6,7 +6,9 @@
         :type="type"
         :value="value"
         :aria-invalid="input.errors ? 'true' : 'false'"
-        :aria-describedby="input.errors ? `${input.id}-error` : undefined"
+        :aria-describedby="
+            input.errors ? `${input.id}-error` : input.description ? `${input.id}-description` : undefined
+        "
         :checked="checked"
         @input="update"
     >
