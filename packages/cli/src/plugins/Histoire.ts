@@ -6,6 +6,7 @@ import Template from '@/lib/Template';
 import { isLinkedLocalApp } from '@/lib/utils/app';
 import { packagePath, templatePath } from '@/lib/utils/paths';
 import type { Editor } from '@/lib/Editor';
+import { formatCodeBlock } from '@noeldemartin/utils';
 
 export class Histoire extends Plugin {
 
@@ -78,10 +79,17 @@ export class Histoire extends Plugin {
         File.write(
             'package.json',
             packageJson.replace(
-                '"lint": "noeldemartin-lint src",',
+                '"lint": "noeldemartin-lint src cypress",',
                 this.installedPatchPackage
-                    ? '"histoire": "histoire dev", "lint": "noeldemartin-lint src", "postinstall": "patch-package",'
-                    : '"histoire": "histoire dev", "lint": "noeldemartin-lint src",',
+                    ? formatCodeBlock(`
+                        "histoire": "histoire dev",
+                        "lint": "noeldemartin-lint cypress src",
+                        "postinstall": "patch-package",
+                    `)
+                    : formatCodeBlock(`
+                        "histoire": "histoire dev",
+                        "lint": "noeldemartin-lint cypress src",
+                    `),
             ),
         );
 

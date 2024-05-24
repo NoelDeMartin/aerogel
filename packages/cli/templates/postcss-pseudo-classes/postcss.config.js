@@ -6,7 +6,7 @@ const plugins = {
 if (process.env.NODE_ENV === 'development') {
     plugins['postcss-pseudo-classes'] = {
         blacklist: [],
-        restrictTo: ['hover', 'focus-visible', 'focus'],
+        restrictTo: ['focus', 'focus-visible', 'focus-within', 'hover'],
         allCombinations: true,
         preserveBeforeAfter: false,
     };
