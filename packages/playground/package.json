@@ -26,8 +26,8 @@
         "@noeldemartin/utils": "0.5.1-next.49cc6c9b4a20930cbf922a949135981791acc5c3",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
-        "soukai": "0.5.2-next.ecad9581e04f67b41bb059982377a18aae246906",
-        "soukai-solid": "0.5.2-next.8f7bc0370988a9c900a8f27b7018dc3f3253cd6c",
+        "soukai": "0.5.2-next.a2a7fe744e9d9662ca334b0a2f26c26c4b2e731b",
+        "soukai-solid": "0.5.2-next.300b5018b4c04551654786c2a50d04a50b2aa6ec",
         "tailwindcss": "^3.3.2"
     },
     "devDependencies": {

@@ -127,6 +127,10 @@ export default class CloudSynchronization {
 
                 const remoteClass = this.getRemoteClass(registeredModel.modelClass);
 
+                if (!registration.instanceContainer) {
+                    return null;
+                }
+
                 if (isContainerClass(remoteClass)) {
                     const container = await remoteClass.find(registration.instanceContainer);
 
