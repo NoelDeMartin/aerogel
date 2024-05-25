@@ -28,6 +28,7 @@ export function computedModel<T extends Model | null | undefined>(compute: () =>
             trigger();
 
             if (value && !modelListeners.length) {
+                modelListeners.push(value.static().on('modified', onModelUpdated));
                 modelListeners.push(value.static().on('updated', onModelUpdated));
                 modelListeners.push(value.static().on('relation-loaded', onModelUpdated));
             }
@@ -50,6 +51,7 @@ export function computedModels<T>(modelClass: typeof Model, compute: () => T): C
             modelClass.on('deleted', recompute),
             modelClass.on('created', recompute),
             modelClass.on('updated', recompute),
+            modelClass.on('modified', recompute),
             modelClass.on('relation-loaded', recompute),
         ];
         const stopModelListeners = () => {
