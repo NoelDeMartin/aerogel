@@ -236,11 +236,15 @@ export class SolidService extends Service {
     }
 
     public async findPrivateTypeIndex(): Promise<SolidTypeIndex | null> {
-        const user = this.requireUser();
+        const { webId, privateTypeIndexUrl } = this.requireUser();
         const engine = this.requireAuthenticator().engine;
 
-        return asyncMemo(`${user.webId}-privateTypeIndex`, () =>
-            SolidTypeIndex.withEngine(engine).find(user.privateTypeIndexUrl));
+        if (!privateTypeIndexUrl) {
+            return null;
+        }
+
+        return asyncMemo(`${webId}-privateTypeIndex`, () =>
+            SolidTypeIndex.withEngine(engine).find(privateTypeIndexUrl));
     }
 
     public async findOrCreatePublicTypeIndex(): Promise<SolidTypeIndex> {
@@ -248,11 +252,14 @@ export class SolidService extends Service {
     }
 
     protected async findPublicTypeIndex(): Promise<SolidTypeIndex | null> {
-        const user = this.requireUser();
+        const { webId, publicTypeIndexUrl } = this.requireUser();
         const engine = this.requireAuthenticator().engine;
 
-        return asyncMemo(`${user.webId}-publicTypeIndex`, () =>
-            SolidTypeIndex.withEngine(engine).find(user.publicTypeIndexUrl));
+        if (!publicTypeIndexUrl) {
+            return null;
+        }
+
+        return asyncMemo(`${webId}-publicTypeIndex`, () => SolidTypeIndex.withEngine(engine).find(publicTypeIndexUrl));
     }
 
     public async createPrivateContainer(options: {
