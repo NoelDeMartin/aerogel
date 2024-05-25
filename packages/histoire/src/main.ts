@@ -1,5 +1,7 @@
+import { bootSolidModels } from 'soukai-solid';
 import { bootstrapApplication } from '@aerogel/core';
 import { defineSetupVue3 } from '@histoire/plugin-vue';
+import { InMemoryEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
 import { monkeyPatch, stringToSlug } from '@noeldemartin/utils';
 import type { AerogelOptions } from '@aerogel/core';
 import type { Vue3StorySetupHandler } from '@histoire/plugin-vue';
@@ -8,13 +10,15 @@ import components from './components';
 
 export type Options = Pick<AerogelOptions, 'components' | 'plugins'> & {
     messages?: Record<string, unknown>;
+    models?: Record<string, Record<string, unknown>>;
     setup?: Vue3StorySetupHandler;
+    solid?: boolean;
 };
 
 export function defineSetupAerogel(options: Options): Vue3StorySetupHandler {
     return defineSetupVue3(async (histoireOptions) => {
         const { app, story, variant } = histoireOptions;
-        const { messages, setup, ...aerogelOptions } = options;
+        const { messages, solid, models, setup, ...aerogelOptions } = options;
 
         aerogelOptions.plugins ??= [];
 
@@ -23,6 +27,10 @@ export function defineSetupAerogel(options: Options): Vue3StorySetupHandler {
 
             aerogelOptions.plugins.push(i18n({ messages }));
         }
+
+        solid && bootSolidModels();
+        models && bootModelsFromViteGlob(models);
+        models && setEngine(new InMemoryEngine());
 
         await bootstrapApplication(app, aerogelOptions);
 
