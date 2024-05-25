@@ -1,4 +1,4 @@
-import { arrayFrom, stringToSlug } from '@noeldemartin/utils';
+import { arrayFilter, arrayFrom, stringToSlug } from '@noeldemartin/utils';
 import { Node, SyntaxKind } from 'ts-morph';
 import type { ArrayLiteralExpression, CallExpression, SourceFile } from 'ts-morph';
 
@@ -13,6 +13,7 @@ import type { CommandOptions } from '@/commands/Command';
 
 export interface Options {
     button?: boolean;
+    checkbox?: boolean;
     input?: boolean;
     story?: boolean;
 }
@@ -28,6 +29,10 @@ export class GenerateComponentCommand extends Command {
     protected static options: CommandOptions = {
         button: {
             description: 'Create a custom button',
+            type: 'boolean',
+        },
+        checkbox: {
+            description: 'Create a custom checkbox',
             type: 'boolean',
         },
         input: {
@@ -51,8 +56,10 @@ export class GenerateComponentCommand extends Command {
     }
 
     protected async validate(): Promise<void> {
-        if (this.options.button && this.options.input) {
-            Log.fail('Cannot use both \'button\' and \'input\' flags!');
+        const components = arrayFilter([this.options.button, this.options.input, this.options.checkbox]).length;
+
+        if (components > 1) {
+            Log.fail('Can only use one of \'button\', \'input\', or \'checkbox\' flags!');
         }
     }
 
@@ -97,7 +104,9 @@ export class GenerateComponentCommand extends Command {
                 ? 'component-input'
                 : this.options.button
                     ? 'component-button'
-                    : 'component';
+                    : this.options.checkbox
+                        ? 'component-checkbox'
+                        : 'component';
             const componentFiles = Template.instantiate(templatePath(templateName), `src/components/${directoryName}`, {
                 component: {
                     name: componentName,
@@ -119,7 +128,9 @@ export class GenerateComponentCommand extends Command {
                 ? 'component-input-story'
                 : this.options.button
                     ? 'component-button-story'
-                    : 'component-story';
+                    : this.options.checkbox
+                        ? 'component-checkbox-story'
+                        : 'component-story';
             const storyFiles = Template.instantiate(templatePath(templateName), `src/components/${directoryName}`, {
                 component: {
                     name: componentName,

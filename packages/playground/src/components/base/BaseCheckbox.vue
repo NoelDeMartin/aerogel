@@ -4,6 +4,7 @@
         :name="name"
         class="relative flex items-start"
         :class="className"
+        :label="label"
     >
         <div class="flex h-6 items-center">
             <AGHeadlessInputInput
