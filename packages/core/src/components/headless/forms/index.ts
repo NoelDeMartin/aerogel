@@ -8,6 +8,7 @@ export { default as AGHeadlessInputDescription } from './AGHeadlessInputDescript
 export { default as AGHeadlessInputError } from './AGHeadlessInputError.vue';
 export { default as AGHeadlessInputInput } from './AGHeadlessInputInput.vue';
 export { default as AGHeadlessInputLabel } from './AGHeadlessInputLabel.vue';
+export { default as AGHeadlessInputTextArea } from './AGHeadlessInputTextArea.vue';
 export { default as AGHeadlessSelect } from './AGHeadlessSelect.vue';
 export { default as AGHeadlessSelectButton } from './AGHeadlessSelectButton.vue';
 export { default as AGHeadlessSelectError } from './AGHeadlessSelectError.vue';
