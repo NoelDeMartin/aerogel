@@ -9,7 +9,7 @@
 import { computed, inject, provide, readonly } from 'vue';
 import { uuid } from '@noeldemartin/utils';
 
-import { mixedProp, stringProp } from '@/utils/vue';
+import { stringProp } from '@/utils/vue';
 import type Form from '@/forms/Form';
 
 import { useInputProps } from './AGHeadlessInput';
@@ -18,7 +18,6 @@ import type { IAGHeadlessInput } from './AGHeadlessInput';
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
     as: stringProp('div'),
-    modelValue: mixedProp<string | number | boolean>([String, Number, Boolean]),
     ...useInputProps(),
 });
 const errors = computed(() => {

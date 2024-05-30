@@ -1,5 +1,5 @@
-import { MagicObject } from '@noeldemartin/utils';
-import { computed, reactive, readonly, ref } from 'vue';
+import { MagicObject, arrayRemove } from '@noeldemartin/utils';
+import { computed, nextTick, reactive, readonly, ref } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 
@@ -44,6 +44,8 @@ export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.Strin
 
 const validForms: WeakMap<Form, ComputedRef<boolean>> = new WeakMap();
 
+export type FormListener = (input: string) => unknown;
+
 export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {
 
     public errors: DeepReadonly<UnwrapNestedRefs<FormErrors<Fields>>>;
@@ -52,6 +54,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     private _data: FormData<Fields>;
     private _submitted: Ref<boolean>;
     private _errors: FormErrors<Fields>;
+    private _listeners: Record<string, FormListener[]> = {};
 
     constructor(fields: Fields) {
         super();
@@ -112,6 +115,23 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         this._submitted.value = true;
 
         return this.validate();
+    }
+
+    public on(event: string, listener: FormListener): () => void {
+        this._listeners[event] ??= [];
+        this._listeners[event]?.push(listener);
+
+        return () => this.off(event, listener);
+    }
+
+    public off(event: string, listener: FormListener): void {
+        arrayRemove(this._listeners[event] ?? [], listener);
+    }
+
+    public async focus(input: string): Promise<void> {
+        await nextTick();
+
+        this._listeners['focus']?.forEach((listener) => listener(input));
     }
 
     protected __get(property: string): unknown {

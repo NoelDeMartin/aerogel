@@ -1,53 +1,40 @@
 <template>
-    <input
+    <textarea
         :id="input.id"
-        ref="$input"
+        ref="$textArea"
         :name="name"
-        :type="type"
         :value="value"
         :aria-invalid="input.errors ? 'true' : 'false'"
         :aria-describedby="
             input.errors ? `${input.id}-error` : input.description ? `${input.id}-description` : undefined
         "
-        :checked="checked"
         @input="update"
-    >
+    />
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { injectReactiveOrFail, stringProp } from '@/utils';
+import { injectReactiveOrFail } from '@/utils';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
 
 import { onFormFocus } from './composition';
 
-const props = defineProps({
-    type: stringProp('text'),
-});
-
-const $input = ref<HTMLInputElement>();
+const $textArea = ref<HTMLTextAreaElement>();
 const input = injectReactiveOrFail<IAGHeadlessInput>(
     'input',
-    '<AGHeadlessInputInput> must be a child of a <AGHeadlessInput>',
+    '<AGHeadlessInputTextArea> must be a child of a <AGHeadlessInput>',
 );
 const name = computed(() => input.name ?? undefined);
-const value = computed(() => input.value);
-const checked = computed(() => {
-    if (props.type !== 'checkbox') {
-        return;
-    }
-
-    return !!value.value;
-});
+const value = computed(() => input.value as string);
 
 function update() {
-    if (!$input.value) {
+    if (!$textArea.value) {
         return;
     }
 
-    input.update(props.type === 'checkbox' ? $input.value.checked : $input.value.value);
+    input.update($textArea.value.value);
 }
 
-onFormFocus(input, () => $input.value?.focus());
+onFormFocus(input, () => $textArea.value?.focus());
 </script>

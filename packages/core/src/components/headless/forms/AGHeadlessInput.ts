@@ -1,6 +1,6 @@
 import type { ComputedRef, DeepReadonly, ExtractPropTypes, Ref } from 'vue';
 
-import { stringProp } from '@/utils';
+import { mixedProp, stringProp } from '@/utils';
 import { extractComponentProps } from '@/components/utils';
 
 export interface IAGHeadlessInput {
@@ -17,6 +17,7 @@ export const inputProps = {
     name: stringProp(),
     label: stringProp(),
     description: stringProp(),
+    modelValue: mixedProp<string | number | boolean>([String, Number, Boolean]),
 };
 
 export function useInputProps(): typeof inputProps {
