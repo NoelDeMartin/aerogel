@@ -10,8 +10,10 @@
         "build": "rm dist -rf && npm run build:js && npm run build:types",
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types",
+        "lint": "noeldemartin-lint src",
         "publish-next": "noeldemartin-publish-next",
-        "lint": "noeldemartin-lint src"
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose"
     },
     "engines": {
         "node": ">=18.x"
@@ -34,8 +36,13 @@
         "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.5.1-next.49cc6c9b4a20930cbf922a949135981791acc5c3",
+        "@noeldemartin/utils": "0.5.1-next.f797bb85b7a8fd6eec199f7673738a3288fbe5c7",
         "vue": "^3.3.0"
+    },
+    "devDependencies": {
+        "@aerogel/core": "*",
+        "@aerogel/vite": "*",
+        "soukai": "0.5.2-next.a2a7fe744e9d9662ca334b0a2f26c26c4b2e731b"
     },
     "eslintConfig": {
         "extends": [

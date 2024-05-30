@@ -1,3 +1,3 @@
-import { Model } from 'soukai';
+import Model from './User.schema';
 
 export default class User extends Model {}
