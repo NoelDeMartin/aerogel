@@ -47,7 +47,8 @@ export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.Strin
 
 const validForms: WeakMap<Form, ComputedRef<boolean>> = new WeakMap();
 
-export type FormListener = (input: string) => unknown;
+export type SubmitFormListener = () => unknown;
+export type FocusFormListener = (input: string) => unknown;
 
 export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {
 
@@ -57,7 +58,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     private _data: FormData<Fields>;
     private _submitted: Ref<boolean>;
     private _errors: FormErrors<Fields>;
-    private _listeners: Record<string, FormListener[]> = {};
+    private _listeners: { focus?: FocusFormListener[]; submit?: SubmitFormListener[] } = {};
 
     constructor(fields: Fields) {
         super();
@@ -117,17 +118,28 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     public submit(): boolean {
         this._submitted.value = true;
 
-        return this.validate();
+        const valid = this.validate();
+
+        valid && this._listeners['submit']?.forEach((listener) => listener());
+
+        return valid;
     }
 
-    public on(event: string, listener: FormListener): () => void {
+    public on(event: 'focus', listener: FocusFormListener): () => void;
+    public on(event: 'submit', listener: SubmitFormListener): () => void;
+    public on(event: 'focus' | 'submit', listener: FocusFormListener | SubmitFormListener): () => void {
         this._listeners[event] ??= [];
-        this._listeners[event]?.push(listener);
 
-        return () => this.off(event, listener);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this._listeners[event]?.push(listener as any);
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return () => this.off(event as any, listener);
     }
 
-    public off(event: string, listener: FormListener): void {
+    public off(event: 'focus', listener: FocusFormListener): void;
+    public off(event: 'submit', listener: SubmitFormListener): void;
+    public off(event: 'focus' | 'submit', listener: FocusFormListener | SubmitFormListener): void {
         arrayRemove(this._listeners[event] ?? [], listener);
     }
 
