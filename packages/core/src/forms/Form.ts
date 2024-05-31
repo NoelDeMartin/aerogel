@@ -8,6 +8,7 @@ export const FormFieldTypes = {
     Number: 'number',
     Boolean: 'boolean',
     Object: 'object',
+    Date: 'date',
 } as const;
 
 export interface FormFieldDefinition<TType extends FormFieldType = FormFieldType, TRules extends string = string> {
@@ -40,6 +41,8 @@ export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.Strin
     ? boolean
     : TType extends typeof FormFieldTypes.Object
     ? object
+    : TType extends typeof FormFieldTypes.Date
+    ? Date
     : never;
 
 const validForms: WeakMap<Form, ComputedRef<boolean>> = new WeakMap();

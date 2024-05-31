@@ -35,7 +35,7 @@ const api: IAGHeadlessInput = {
     description: computed(() => props.description),
     value: computed(() => {
         if (form && props.name) {
-            return form.getFieldValue(props.name) as string | number | boolean | null;
+            return form.getFieldValue(props.name);
         }
 
         return props.modelValue;

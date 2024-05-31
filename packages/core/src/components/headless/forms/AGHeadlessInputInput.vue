@@ -4,7 +4,6 @@
         ref="$input"
         :name="name"
         :type="type"
-        :value="value"
         :aria-invalid="input.errors ? 'true' : 'false'"
         :aria-describedby="
             input.errors ? `${input.id}-error` : input.description ? `${input.id}-description` : undefined
@@ -15,10 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 
 import { injectReactiveOrFail, stringProp } from '@/utils';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
+import type { FormFieldValue } from '@/forms/Form';
 
 import { onFormFocus } from './composition';
 
@@ -46,8 +46,36 @@ function update() {
         return;
     }
 
-    input.update(props.type === 'checkbox' ? $input.value.checked : $input.value.value);
+    input.update(getValue());
+}
+
+function getValue(): FormFieldValue | null {
+    if (!$input.value) {
+        return null;
+    }
+
+    switch (props.type) {
+        case 'checkbox':
+            return $input.value.checked;
+        case 'date':
+            return $input.value.valueAsDate;
+        default:
+            return $input.value.value;
+    }
 }
 
 onFormFocus(input, () => $input.value?.focus());
+watchEffect(() => {
+    if (!$input.value) {
+        return;
+    }
+
+    if (props.type === 'date') {
+        $input.value.valueAsDate = value.value as Date;
+
+        return;
+    }
+
+    $input.value.value = value.value as string;
+});
 </script>

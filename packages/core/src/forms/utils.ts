@@ -8,12 +8,27 @@ export function booleanInput(defaultValue?: boolean): FormFieldDefinition<typeof
     };
 }
 
+export function dateInput(defaultValue?: Date): FormFieldDefinition<typeof FormFieldTypes.Date> {
+    return {
+        default: defaultValue,
+        type: FormFieldTypes.Date,
+    };
+}
+
 export function requiredBooleanInput(
     defaultValue?: boolean,
 ): FormFieldDefinition<typeof FormFieldTypes.Boolean, 'required'> {
     return {
         default: defaultValue,
         type: FormFieldTypes.Boolean,
+        rules: 'required',
+    };
+}
+
+export function requiredDateInput(defaultValue?: Date): FormFieldDefinition<typeof FormFieldTypes.Date> {
+    return {
+        default: defaultValue,
+        type: FormFieldTypes.Date,
         rules: 'required',
     };
 }
