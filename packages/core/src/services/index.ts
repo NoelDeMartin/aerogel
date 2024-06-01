@@ -3,16 +3,18 @@ import type { App as VueApp } from 'vue';
 import { definePlugin } from '@/plugins';
 
 import App from './App';
+import Cache from './Cache';
 import Events from './Events';
 import Service from './Service';
 import { getPiniaStore } from './store';
 
 export * from './App';
+export * from './Cache';
 export * from './Events';
 export * from './Service';
 export * from './store';
 
-export { App, Events, Service };
+export { App, Cache, Events, Service };
 
 const defaultServices = {
     $app: App,
