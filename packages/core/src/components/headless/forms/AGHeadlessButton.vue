@@ -1,5 +1,5 @@
 <template>
-    <component :is="component.tag" v-bind="component.props">
+    <component :is="component.as" v-bind="component.props">
         <slot />
     </component>
 </template>
@@ -11,6 +11,7 @@ import { objectWithoutEmpty } from '@noeldemartin/utils';
 import { booleanProp, objectProp, stringProp } from '@/utils/vue';
 
 const props = defineProps({
+    as: objectProp(),
     href: stringProp(),
     url: stringProp(),
     route: stringProp(),
@@ -20,9 +21,13 @@ const props = defineProps({
 });
 
 const component = computed(() => {
+    if (props.as) {
+        return { as: props.as, props: {} };
+    }
+
     if (props.route) {
         return {
-            tag: 'router-link',
+            as: 'router-link',
             props: {
                 to: objectWithoutEmpty({
                     name: props.route,
@@ -35,7 +40,7 @@ const component = computed(() => {
 
     if (props.href || props.url) {
         return {
-            tag: 'a',
+            as: 'a',
             props: {
                 target: '_blank',
                 href: props.href || props.url,
@@ -44,7 +49,7 @@ const component = computed(() => {
     }
 
     return {
-        tag: 'button',
+        as: 'button',
         props: { type: props.submit ? 'submit' : 'button' },
     };
 });
