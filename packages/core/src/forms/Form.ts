@@ -96,6 +96,10 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return this._data[field] as unknown as GetFormFieldValue<Fields[T]['type']>;
     }
 
+    public data(): FormData<Fields> {
+        return { ...this._data };
+    }
+
     public validate(): boolean {
         const errors = Object.entries(this._fields).reduce((formErrors, [name, definition]) => {
             formErrors[name] = this.getFieldErrors(name, definition);
