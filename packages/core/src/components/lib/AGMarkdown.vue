@@ -34,8 +34,8 @@ const html = computed(() => {
 });
 const root = () =>
     h(props.as ?? (props.inline ? 'span' : 'div'), {
-        class: props.inline ? '' : 'prose',
         innerHTML: html.value,
         ...attrs,
+        class: `${attrs.class ?? ''} ${props.inline ? '' : 'prose'}`,
     });
 </script>
