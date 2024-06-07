@@ -43,6 +43,7 @@ export interface PromptOptions {
     placeholder?: string;
     acceptText?: string;
     cancelText?: string;
+    trim?: boolean;
 }
 
 export interface ShowSnackbarOptions {
@@ -115,6 +116,7 @@ export class UIService extends Service {
         messageOrOptions?: string | PromptOptions,
         options?: PromptOptions,
     ): Promise<string | null> {
+        const trim = options?.trim ?? true;
         const getProperties = (): AGPromptModalProps => {
             if (typeof messageOrOptions !== 'string') {
                 return {
@@ -134,7 +136,8 @@ export class UIService extends Service {
             this.requireComponent(UIComponents.PromptModal),
             getProperties(),
         );
-        const result = await modal.beforeClose;
+        const rawResult = await modal.beforeClose;
+        const result = trim ? rawResult?.trim() : rawResult;
 
         return result ?? null;
     }
