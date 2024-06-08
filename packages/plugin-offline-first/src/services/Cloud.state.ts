@@ -1,5 +1,4 @@
 import { defineServiceState } from '@aerogel/core';
-import { Solid } from '@aerogel/plugin-solid';
 import { map } from '@noeldemartin/utils';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
@@ -28,6 +27,11 @@ export default defineServiceState({
         disconnected: ({ status }) => status === CloudStatus.Disconnected,
         online: ({ status }) => status === CloudStatus.Online,
         syncing: ({ status }) => status === CloudStatus.Syncing,
-        setupPending: ({ ready, setupDismissed }) => Solid.isLoggedIn() && !ready && !setupDismissed,
+        localChanges({ localModelUpdates }) {
+            return Object.values(localModelUpdates).reduce((total, count) => total + count, 0);
+        },
+        dirty(): boolean {
+            return this.localChanges > 0;
+        },
     },
 });
