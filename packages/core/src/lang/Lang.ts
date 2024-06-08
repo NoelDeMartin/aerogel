@@ -4,8 +4,8 @@ import App from '@/services/App';
 import Service from '@/services/Service';
 
 export interface LangProvider {
-    translate(key: string, parameters?: Record<string, unknown>): string;
-    translateWithDefault(key: string, defaultMessage: string, parameters?: Record<string, unknown>): string;
+    translate(key: string, parameters?: Record<string, unknown> | number): string;
+    translateWithDefault(key: string, defaultMessage: string, parameters?: Record<string, unknown> | number): string;
 }
 
 export class LangService extends Service {
@@ -35,11 +35,15 @@ export class LangService extends Service {
         this.provider = provider;
     }
 
-    public translate(key: string, parameters?: Record<string, unknown>): string {
+    public translate(key: string, parameters?: Record<string, unknown> | number): string {
         return this.provider.translate(key, parameters) ?? key;
     }
 
-    public translateWithDefault(key: string, defaultMessage: string, parameters: Record<string, unknown> = {}): string {
+    public translateWithDefault(
+        key: string,
+        defaultMessage: string,
+        parameters: Record<string, unknown> | number = {},
+    ): string {
         return this.provider.translateWithDefault(key, defaultMessage, parameters);
     }
 

@@ -6,14 +6,14 @@
 import { computed, h, useAttrs } from 'vue';
 
 import { renderMarkdown } from '@/utils/markdown';
-import { booleanProp, objectProp, stringProp } from '@/utils/vue';
+import { booleanProp, mixedProp, stringProp } from '@/utils/vue';
 import { translate } from '@/lang';
 
 const props = defineProps({
     as: stringProp(),
     inline: booleanProp(),
     langKey: stringProp(),
-    langParams: objectProp<Record<string, unknown>>(),
+    langParams: mixedProp<number | Record<string, unknown>>(),
     text: stringProp(),
 });
 
