@@ -17,6 +17,8 @@ import { computed } from 'vue';
 
 import Solid from '@/services/Solid';
 
+import AGSolidImage from './AGSolidImage.vue';
+
 const userInitials = computed(() => {
     const name = Solid.user?.name ?? '?';
 
