@@ -36,7 +36,7 @@
         "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.5.1-next.49cc6c9b4a20930cbf922a949135981791acc5c3",
+        "@noeldemartin/utils": "0.5.1-next.4fd89de2cbde6c7e1cfa4d5f9bdac234e9cd3d98",
         "chalk": "^4.1.2",
         "commander": "^11.0.0",
         "mustache": "^4.2.0",

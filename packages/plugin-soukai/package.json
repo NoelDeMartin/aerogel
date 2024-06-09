@@ -36,7 +36,7 @@
         "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.5.1-next.f797bb85b7a8fd6eec199f7673738a3288fbe5c7",
+        "@noeldemartin/utils": "0.5.1-next.4fd89de2cbde6c7e1cfa4d5f9bdac234e9cd3d98",
         "vue": "^3.3.0"
     },
     "devDependencies": {
