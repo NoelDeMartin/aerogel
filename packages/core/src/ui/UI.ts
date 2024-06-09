@@ -4,6 +4,7 @@ import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
 
 import Events from '@/services/Events';
+import type { Color } from '@/components/constants';
 import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackbars';
 import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps, AGPromptModalProps } from '@/components';
 
@@ -34,7 +35,9 @@ export type UIComponent = ObjectValues<typeof UIComponents>;
 
 export interface ConfirmOptions {
     acceptText?: string;
+    acceptColor?: Color;
     cancelText?: string;
+    cancelColor?: Color;
 }
 
 export interface PromptOptions {
@@ -42,7 +45,9 @@ export interface PromptOptions {
     defaultValue?: string;
     placeholder?: string;
     acceptText?: string;
+    acceptColor?: Color;
     cancelText?: string;
+    cancelColor?: Color;
     trim?: boolean;
 }
 

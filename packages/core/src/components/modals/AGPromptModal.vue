@@ -6,10 +6,10 @@
             <AGInput name="draft" :placeholder="placeholder" :label="label" />
 
             <div class="mt-2 flex flex-row-reverse gap-2">
-                <AGButton submit>
+                <AGButton :color="acceptColor" submit>
                     {{ renderedAcceptText }}
                 </AGButton>
-                <AGButton color="secondary" @click="close()">
+                <AGButton :color="cancelColor" @click="close()">
                     {{ renderedCancelText }}
                 </AGButton>
             </div>

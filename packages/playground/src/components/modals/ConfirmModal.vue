@@ -3,10 +3,10 @@
         <AGMarkdown :text="message" />
 
         <div class="mt-4 flex flex-row-reverse gap-2">
-            <BaseButton @click="close(true)">
+            <BaseButton :color="acceptColor" @click="close(true)">
                 {{ renderedAcceptText }}
             </BaseButton>
-            <BaseButton color="clear" @click="close(false)">
+            <BaseButton :color="cancelColor" @click="close(false)">
                 {{ renderedCancelText }}
             </BaseButton>
         </div>

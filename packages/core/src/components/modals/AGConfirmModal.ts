@@ -1,18 +1,24 @@
 import { computed } from 'vue';
 import type { ExtractPropTypes } from 'vue';
-import type { ObjectWithoutEmpty } from '@noeldemartin/utils';
+import type { ObjectWithoutEmpty, SubPartial } from '@noeldemartin/utils';
 
-import { requiredStringProp, stringProp } from '@/utils';
+import { Colors } from '@/components/constants';
+import { enumProp, requiredStringProp, stringProp } from '@/utils';
 import { translateWithDefault } from '@/lang';
 
 export const confirmModalProps = {
     title: stringProp(),
     message: requiredStringProp(),
     acceptText: stringProp(),
+    acceptColor: enumProp(Colors, Colors.Primary),
     cancelText: stringProp(),
+    cancelColor: enumProp(Colors, Colors.Clear),
 };
 
-export type AGConfirmModalProps = ObjectWithoutEmpty<ExtractPropTypes<typeof confirmModalProps>>;
+export type AGConfirmModalProps = SubPartial<
+    ObjectWithoutEmpty<ExtractPropTypes<typeof confirmModalProps>>,
+    'acceptColor' | 'cancelColor'
+>;
 
 export function useConfirmModalProps(): typeof confirmModalProps {
     return confirmModalProps;

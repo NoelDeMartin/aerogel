@@ -1,8 +1,9 @@
 import { computed } from 'vue';
 import type { ExtractPropTypes } from 'vue';
-import type { ObjectWithoutEmpty } from '@noeldemartin/utils';
+import type { ObjectWithoutEmpty, SubPartial } from '@noeldemartin/utils';
 
-import { requiredStringProp, stringProp } from '@/utils';
+import { Colors } from '@/components/constants';
+import { enumProp, requiredStringProp, stringProp } from '@/utils';
 import { translateWithDefault } from '@/lang';
 
 export const promptModalProps = {
@@ -12,10 +13,15 @@ export const promptModalProps = {
     defaultValue: stringProp(),
     placeholder: stringProp(),
     acceptText: stringProp(),
+    acceptColor: enumProp(Colors, Colors.Primary),
     cancelText: stringProp(),
+    cancelColor: enumProp(Colors, Colors.Clear),
 };
 
-export type AGPromptModalProps = ObjectWithoutEmpty<ExtractPropTypes<typeof promptModalProps>>;
+export type AGPromptModalProps = SubPartial<
+    ObjectWithoutEmpty<ExtractPropTypes<typeof promptModalProps>>,
+    'acceptColor' | 'cancelColor'
+>;
 
 export function usePromptModalProps(): typeof promptModalProps {
     return promptModalProps;
