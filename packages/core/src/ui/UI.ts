@@ -142,7 +142,7 @@ export class UIService extends Service {
             getProperties(),
         );
         const rawResult = await modal.beforeClose;
-        const result = trim ? rawResult?.trim() : rawResult;
+        const result = trim && typeof rawResult === 'string' ? rawResult?.trim() : rawResult;
 
         return result ?? null;
     }
