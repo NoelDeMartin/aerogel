@@ -1,5 +1,4 @@
 import Vue from '@vitejs/plugin-vue';
-import { execSync } from 'child_process';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -8,6 +7,7 @@ import type { Plugin } from 'vite';
 
 import { generate404Assets } from '@/lib/404';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@/lib/solid';
+import { getSourceHash } from '@/lib/git';
 import { guessMediaType } from '@/lib/media-types';
 import { loadPackageInfo } from '@/lib/package-parser';
 import { renderHTML } from '@/lib/html';
@@ -40,7 +40,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
     const app: AppInfo = {
         name: options.name ?? 'App',
         version: '?',
-        sourceHash: execSync('git rev-parse HEAD').toString(),
+        sourceHash: getSourceHash(),
         description: options.description,
         basePath: '/',
         baseUrl: options.baseUrl,
