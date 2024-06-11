@@ -11,7 +11,9 @@
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types && cp src/types/virtual.d.ts dist",
         "lint": "noeldemartin-lint src",
-        "publish-next": "noeldemartin-publish-next"
+        "publish-next": "noeldemartin-publish-next",
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose"
     },
     "engines": {
         "node": ">=18.x"

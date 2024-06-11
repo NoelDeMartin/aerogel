@@ -9,8 +9,10 @@ describe('HTML helpers', () => {
 
     const app: AppInfo = {
         name: 'My App',
+        version: '0.1.0',
         basePath: '/site/',
         themeColor: '#654321',
+        sourceHash: '123456',
     };
 
     it('Evaluates app info', () => {

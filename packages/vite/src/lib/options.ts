@@ -9,10 +9,12 @@ export interface Options {
 
 export interface AppInfo {
     name: string;
-    description?: string;
+    version: string;
     basePath: string;
+    themeColor: string;
+    sourceHash: string;
+    description?: string;
     baseUrl?: string;
     sourceUrl?: string;
-    themeColor: string;
     plugins?: string[];
 }

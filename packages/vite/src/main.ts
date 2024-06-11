@@ -1,4 +1,5 @@
 import Vue from '@vitejs/plugin-vue';
+import { execSync } from 'child_process';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -38,6 +39,8 @@ export function AerogelResolver(): ComponentResolver {
 export default function Aerogel(options: Options = {}): Plugin[] {
     const app: AppInfo = {
         name: options.name ?? 'App',
+        version: '?',
+        sourceHash: execSync('git rev-parse HEAD').toString(),
         description: options.description,
         basePath: '/',
         baseUrl: options.baseUrl,
@@ -47,6 +50,8 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         'virtual:aerogel'() {
             const virtual: VirtualAerogel = {
                 environment: process.env.NODE_ENV ?? 'development',
+                version: app.version,
+                sourceHash: app.sourceHash,
                 basePath: app.basePath,
                 sourceUrl: app.sourceUrl,
             };

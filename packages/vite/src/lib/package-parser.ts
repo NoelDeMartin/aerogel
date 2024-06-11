@@ -4,6 +4,7 @@ import { objectWithoutEmpty } from '@noeldemartin/utils';
 import type { AppInfo } from '@/lib/options';
 
 interface PackageJson {
+    version: string;
     repository?: string | { type: string; url: string };
     dependencies?: Record<string, string>;
 }
@@ -33,6 +34,7 @@ export function loadPackageInfo(app: AppInfo, packageJsonPath: string): void {
 
     const packageJson = JSON.parse(readFileSync(packageJsonPath).toString()) as PackageJson;
     const parsed: Partial<AppInfo> = objectWithoutEmpty({
+        version: packageJson.version,
         sourceUrl: getSourceUrl(packageJson),
         plugins: getPlugins(packageJson),
     });
