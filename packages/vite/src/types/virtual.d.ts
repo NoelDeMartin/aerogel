@@ -1,5 +1,6 @@
 declare module 'virtual:aerogel' {
     export interface VirtualAerogel {
+        name: string;
         environment: 'production' | 'development' | 'testing' | 'test' | string;
         version: string;
         basePath: string;

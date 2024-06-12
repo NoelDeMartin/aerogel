@@ -1,5 +1,5 @@
 import { App } from '@aerogel/core';
-import { computed, defineComponent, h } from 'vue';
+import { computed, defineComponent, h, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import type { Component, ConcreteComponent } from 'vue';
 import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
@@ -7,18 +7,33 @@ import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
 import Router from '../services/Router';
 import type { RouteBindings } from '../services/Router';
 
-export type AerogelRoute = RouteRecordRaw;
+export type AerogelRoute = RouteRecordRaw & {
+    title?: string | ((params: Record<string, unknown>) => string | undefined | null);
+};
 
-function setupPageComponent(pageComponent: ConcreteComponent) {
+function setupPageComponent(pageComponent: ConcreteComponent, routeConfig: AerogelRoute) {
     const route = useRoute();
     const pageParams = computed(() => Router.routesParams?.value[route.path]);
+    const routeTitle = computed(() => {
+        if (!routeConfig?.title || !pageParams.value) {
+            return null;
+        }
+
+        if (typeof routeConfig.title === 'string') {
+            return routeConfig.title;
+        }
+
+        return routeConfig.title(pageParams.value);
+    });
+
+    watchEffect(() => updateRouteTitle(routeTitle.value));
 
     return () => h(pageComponent, pageParams.value);
 }
 
-function defineRouteComponent(pageComponent: ConcreteComponent): Component {
+function defineRouteComponent(pageComponent: ConcreteComponent, route: AerogelRoute): Component {
     return defineComponent({
-        setup: () => setupPageComponent(pageComponent),
+        setup: () => setupPageComponent(pageComponent, route),
     });
 }
 
@@ -33,13 +48,13 @@ function enhanceRouteComponent(route: AerogelRoute): void {
         route.component = async () => {
             const { default: component } = await lazyComponent();
 
-            return defineRouteComponent(component);
+            return defineRouteComponent(component, route);
         };
 
         return;
     }
 
-    route.component = defineRouteComponent(route.component);
+    route.component = defineRouteComponent(route.component, route);
 }
 
 function enhanceRouteNavigationGuard(guard: NavigationGuardWithThis<undefined>): NavigationGuardWithThis<undefined> {
@@ -62,6 +77,16 @@ function enhanceRouteNavigationGuards(route: AerogelRoute): void {
     }
 
     route.beforeEnter = enhanceRouteNavigationGuard(route.beforeEnter);
+}
+
+function updateRouteTitle(title?: string | null): void {
+    if (!title) {
+        document.title = App.name;
+
+        return;
+    }
+
+    document.title = `${title} | ${App.name}`;
 }
 
 export function defineRoute(route: AerogelRoute): RouteRecordRaw {

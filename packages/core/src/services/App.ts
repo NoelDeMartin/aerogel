@@ -1,3 +1,5 @@
+import Aerogel from 'virtual:aerogel';
+
 import { PromisedValue, facade, forever, updateLocationQueryParameters } from '@noeldemartin/utils';
 
 import Events from '@/services/Events';
@@ -7,6 +9,7 @@ import Service from './App.state';
 
 export class AppService extends Service {
 
+    public readonly name = Aerogel.name;
     public readonly ready = new PromisedValue<void>();
     public readonly mounted = new PromisedValue<void>();
 

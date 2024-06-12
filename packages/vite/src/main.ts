@@ -49,6 +49,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
     const virtualHandlers: Record<string, () => string> = {
         'virtual:aerogel'() {
             const virtual: VirtualAerogel = {
+                name: app.name,
                 environment: process.env.NODE_ENV ?? 'development',
                 version: app.version,
                 sourceHash: app.sourceHash,
