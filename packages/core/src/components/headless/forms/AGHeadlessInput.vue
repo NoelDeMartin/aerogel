@@ -6,11 +6,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, provide, readonly } from 'vue';
+import { computed, inject, provide, readonly, ref } from 'vue';
 import { uuid } from '@noeldemartin/utils';
+import type { Ref } from 'vue';
 
 import { stringProp } from '@/utils/vue';
 import type Form from '@/forms/Form';
+import type { __HasElement } from '@/components/interfaces';
 
 import { useInputProps } from './AGHeadlessInput';
 import type { IAGHeadlessInput } from './AGHeadlessInput';
@@ -20,6 +22,7 @@ const props = defineProps({
     as: stringProp('div'),
     ...useInputProps(),
 });
+const $el = ref<HTMLElement>();
 const errors = computed(() => {
     if (!form || !props.name) {
         return null;
@@ -28,7 +31,8 @@ const errors = computed(() => {
     return form.errors[props.name] ?? null;
 });
 const form = inject<Form | null>('form', null);
-const api: IAGHeadlessInput = {
+const api: IAGHeadlessInput & __HasElement = {
+    $el: readonly($el) as Readonly<Ref<HTMLElement>>,
     id: `input-${uuid()}`,
     name: computed(() => props.name),
     label: computed(() => props.label),
@@ -49,6 +53,9 @@ const api: IAGHeadlessInput = {
         }
 
         emit('update:modelValue', value);
+    },
+    __setElement(element) {
+        $el.value = element;
     },
 };
 

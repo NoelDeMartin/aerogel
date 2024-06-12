@@ -13,10 +13,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 
-import { injectReactiveOrFail } from '@/utils';
+import { injectReactiveOrFail } from '@/utils/vue';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
+import type { __HasElement } from '@/components/interfaces';
 
 import { onFormFocus } from './composition';
 
@@ -36,5 +37,6 @@ function update() {
     input.update($textArea.value.value);
 }
 
+watchEffect(() => (input as unknown as __HasElement).__setElement($textArea.value));
 onFormFocus(input, () => $textArea.value?.focus());
 </script>

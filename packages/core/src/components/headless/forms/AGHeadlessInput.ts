@@ -3,8 +3,9 @@ import type { ComputedRef, DeepReadonly, ExtractPropTypes, Ref } from 'vue';
 import { mixedProp, stringProp } from '@/utils';
 import { extractComponentProps } from '@/components/utils';
 import type { FormFieldValue } from '@/forms/Form';
+import type { HasElement } from '@/components/interfaces';
 
-export interface IAGHeadlessInput {
+export interface IAGHeadlessInput extends HasElement {
     id: string;
     name: ComputedRef<string | null>;
     label: ComputedRef<string | null>;
