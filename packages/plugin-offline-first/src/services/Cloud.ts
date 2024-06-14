@@ -3,6 +3,7 @@ import { Semaphore, after, facade, fail, map, mixed } from '@noeldemartin/utils'
 import { Solid } from '@aerogel/plugin-solid';
 import { Tombstone, isContainerClass } from 'soukai-solid';
 import { trackModelCollection } from '@aerogel/plugin-soukai';
+import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
@@ -18,6 +19,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
 
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
+    protected pollingInterval: NodeJS.Timeout | null = null;
 
     public async whenReady<T>(callback: () => T): Promise<T> {
         if (this.ready) {
@@ -108,7 +110,19 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         Events.on('auth:login', ({ authenticator }) => this.login(authenticator));
         Events.on('auth:logout', () => this.logout());
         Events.once('application-ready', () => this.autoSetup());
-        Events.once('application-mounted', () => this.sync());
+        Events.once('application-mounted', () => this.startupSync && this.sync());
+
+        watchEffect(() => {
+            this.pollingInterval && clearInterval(this.pollingInterval);
+
+            if (!this.pollingEnabled) {
+                this.pollingInterval = null;
+
+                return;
+            }
+
+            this.pollingInterval = setInterval(() => this.sync(), this.pollingMinutes * 60 * 1000);
+        });
     }
 
     protected requireEngine(): Engine {
