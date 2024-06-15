@@ -9,7 +9,7 @@ export default defineServiceState({
     name: 'solid',
     persist: ['autoReconnect', 'dismissed', 'previousSession', 'profiles', 'staleProfiles'],
     initialState: {
-        autoReconnect: false,
+        autoReconnect: true,
         dismissed: false,
         ignorePreviousSessionError: false,
         loginStartupError: null as ErrorSource | null,

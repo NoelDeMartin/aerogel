@@ -186,6 +186,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             dirtyRemoteModels: map([], 'url'),
             localModelUpdates: {},
             remoteOperationUrls: {},
+            startupSync: true,
         });
     }
 

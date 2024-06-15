@@ -21,9 +21,9 @@ export default defineServiceState({
         registeredModels: new Set<SolidModelConstructor>(),
         remoteOperationUrls: {} as Record<string, string[]>,
         setupDismissed: false,
-        startupSync: false,
+        startupSync: true,
         status: CloudStatus.Disconnected as TCloudStatus,
-        pollingEnabled: false,
+        pollingEnabled: true,
         pollingMinutes: 10,
     }),
     computed: {
