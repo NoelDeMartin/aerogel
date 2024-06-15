@@ -8,7 +8,10 @@ export function dontSee(text: string, options?: Cypress.Timeoutable): void {
     cy.contains(text, options).should('not.exist');
 }
 
-export function press(label: string, selector: string = 'button:visible, a:visible, label:visible'): void {
+export function press(
+    label: string,
+    selector: string = 'button:visible, a:visible, label:visible, details:visible',
+): void {
     cy.contains(selector, label).click();
 }
 
