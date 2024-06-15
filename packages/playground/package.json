@@ -12,7 +12,7 @@
         "dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid-data",
         "histoire": "histoire dev",
         "lint": "noeldemartin-lint src cypress",
-        "test:serve-app": "vite --port 5001 --mode testing",
+        "test:serve-app": "vite --port 5001 --mode testing --host",
         "test:serve-pod": "community-solid-server -l warn"
     },
     "dependencies": {

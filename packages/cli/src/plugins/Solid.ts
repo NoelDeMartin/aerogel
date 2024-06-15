@@ -59,8 +59,8 @@ export class Solid extends Plugin {
                         '"dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid-data",',
                 )
                 .replace(
-                    '"test:serve-app": "vite --port 5001 --mode testing"',
-                    '"test:serve-app": "vite --port 5001 --mode testing",\n' +
+                    '"test:serve-app": "vite --port 5001 --mode testing --host"',
+                    '"test:serve-app": "vite --port 5001 --mode testing --host",\n' +
                         '"test:serve-pod": "community-solid-server -l warn"',
                 ),
         );
