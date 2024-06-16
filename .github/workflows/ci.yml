@@ -16,7 +16,8 @@ jobs:
               with:
                   key: build-${{ github.sha }}
                   path: |
-                      .cache/**/*
+                      ~/.npm/**/*
+                      ~/.cache/**/*
                       packages/*/dist/**
                       node_modules/**/*
                       packages/*/node_modules/**/*
@@ -33,7 +34,8 @@ jobs:
               with:
                   key: build-${{ github.sha }}
                   path: |
-                      .cache/**/*
+                      ~/.npm/**/*
+                      ~/.cache/**/*
                       packages/*/dist/**
                       node_modules/**/*
                       packages/*/node_modules/**/*
@@ -51,7 +53,8 @@ jobs:
               with:
                   key: build-${{ github.sha }}
                   path: |
-                      .cache/**/*
+                      ~/.npm/**/*
+                      ~/.cache/**/*
                       packages/*/dist/**
                       node_modules/**/*
                       packages/*/node_modules/**/*
@@ -69,7 +72,8 @@ jobs:
               with:
                   key: build-${{ github.sha }}
                   path: |
-                      .cache/**/*
+                      ~/.npm/**/*
+                      ~/.cache/**/*
                       packages/*/dist/**
                       node_modules/**/*
                       packages/*/node_modules/**/*
