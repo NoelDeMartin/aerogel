@@ -1,4 +1,4 @@
-import { MagicObject, PromisedValue, Storage, isEmpty, objectDeepClone, objectOnly } from '@noeldemartin/utils';
+import { MagicObject, PromisedValue, Storage, fail, isEmpty, objectDeepClone, objectOnly } from '@noeldemartin/utils';
 import type { Constructor } from '@noeldemartin/utils';
 import type { MaybeRef } from 'vue';
 import type { Store } from 'pinia';
@@ -91,7 +91,7 @@ export default class Service<
     protected _name: string;
     private _booted: PromisedValue<void>;
     private _computedStateKeys: Set<keyof State>;
-    private _store: Store | false;
+    private _store: Store<string, State, ComputedState, {}> | false;
 
     constructor() {
         super();
@@ -248,6 +248,14 @@ export default class Service<
         }
 
         Storage.set(this._name, objectOnly(this.getState(), persist));
+    }
+
+    protected requireStore(): Store<string, State, ComputedState, {}> {
+        if (!this._store) {
+            return fail(`Failed getting '${this._name}' store`);
+        }
+
+        return this._store;
     }
 
 }

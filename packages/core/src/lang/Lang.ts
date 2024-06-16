@@ -1,9 +1,14 @@
 import { facade } from '@noeldemartin/utils';
 
-import App from '@/services/App';
-import Service from '@/services/Service';
+import DefaultLangProvider from './DefaultLangProvider';
+import Service from './Lang.state';
 
 export interface LangProvider {
+    getLocale(): string;
+    setLocale(locale: string): Promise<void>;
+    getFallbackLocale(): string;
+    setFallbackLocale(fallbackLocale: string): Promise<void>;
+    getLocales(): string[];
     translate(key: string, parameters?: Record<string, unknown> | number): string;
     translateWithDefault(key: string, defaultMessage: string, parameters?: Record<string, unknown> | number): string;
 }
@@ -15,24 +20,18 @@ export class LangService extends Service {
     constructor() {
         super();
 
-        this.provider = {
-            translate: (key) => {
-                // eslint-disable-next-line no-console
-                App.development && console.warn('Lang provider is missing');
-
-                return key;
-            },
-            translateWithDefault: (_, defaultMessage) => {
-                // eslint-disable-next-line no-console
-                App.development && console.warn('Lang provider is missing');
-
-                return defaultMessage;
-            },
-        };
+        this.provider = new DefaultLangProvider(
+            this.getState('locale') ?? this.getBrowserLocale(),
+            this.getState('fallbackLocale'),
+        );
     }
 
-    public setProvider(provider: LangProvider): void {
+    public async setProvider(provider: LangProvider): Promise<void> {
         this.provider = provider;
+        this.locales = provider.getLocales();
+
+        await provider.setLocale(this.locale ?? this.getBrowserLocale());
+        await provider.setFallbackLocale(this.fallbackLocale);
     }
 
     public translate(key: string, parameters?: Record<string, unknown> | number): string {
@@ -45,6 +44,26 @@ export class LangService extends Service {
         parameters: Record<string, unknown> | number = {},
     ): string {
         return this.provider.translateWithDefault(key, defaultMessage, parameters);
+    }
+
+    protected async boot(): Promise<void> {
+        this.requireStore().$subscribe(
+            async () => {
+                await this.provider.setLocale(this.locale ?? this.getBrowserLocale());
+                await this.provider.setFallbackLocale(this.fallbackLocale);
+
+                this.locale
+                    ? document.querySelector('html')?.setAttribute('lang', this.locale)
+                    : document.querySelector('html')?.removeAttribute('lang');
+            },
+            { immediate: true },
+        );
+    }
+
+    protected getBrowserLocale(): string {
+        const locales = this.getState('locales');
+
+        return navigator.languages.find((locale) => locales.includes(locale)) ?? 'en';
     }
 
 }
