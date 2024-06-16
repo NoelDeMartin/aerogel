@@ -14,7 +14,7 @@
         "lint": "noeldemartin-lint src cypress",
         "test": "vitest --run",
         "test:ci": "vitest --run --reporter verbose",
-        "test:serve-app": "vite --port 5001 --mode testing --host"
+        "test:serve-app": "vite --port 5001 --mode testing"
     },
     "dependencies": {
         "@aerogel/core": "<% &dependencies.aerogelCore %>",
