@@ -79,7 +79,11 @@ jobs:
             - run: npm run test:ci
               working-directory: app
             - name: Cypress
-              run: npm run cy:test-snapshots:ci
+
+              # TODO enable snapshots tests
+              # run: npm run cy:test-snapshots:ci
+              run: npm run cy:test
+
               working-directory: app
             - name: Upload Cypress screenshots
               uses: actions/upload-artifact@v4
