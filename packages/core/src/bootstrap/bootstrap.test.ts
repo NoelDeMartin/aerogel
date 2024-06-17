@@ -11,7 +11,6 @@ import { bootstrap } from './index';
 describe('Aerogel', () => {
 
     beforeEach(() => {
-        vi.stubGlobal('document', { getElementById: () => null });
         vi.mock('vue', async () => {
             const vue = (await vi.importActual('vue')) as Object;
 
