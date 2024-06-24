@@ -46,6 +46,12 @@ export class LangService extends Service {
         return this.provider.translateWithDefault(key, defaultMessage, parameters);
     }
 
+    public getBrowserLocale(): string {
+        const locales = this.getState('locales');
+
+        return navigator.languages.find((locale) => locales.includes(locale)) ?? 'en';
+    }
+
     protected async boot(): Promise<void> {
         this.requireStore().$subscribe(
             async () => {
@@ -58,12 +64,6 @@ export class LangService extends Service {
             },
             { immediate: true },
         );
-    }
-
-    protected getBrowserLocale(): string {
-        const locales = this.getState('locales');
-
-        return navigator.languages.find((locale) => locales.includes(locale)) ?? 'en';
     }
 
 }
