@@ -8,11 +8,10 @@
 <script setup lang="ts">
 import { computed, inject, provide, readonly, ref } from 'vue';
 import { uuid } from '@noeldemartin/utils';
-import type { Ref } from 'vue';
 
 import { stringProp } from '@/utils/vue';
 import type Form from '@/forms/Form';
-import type { __HasElement } from '@/components/interfaces';
+import type { __SetsElement } from '@/components/interfaces';
 
 import { useInputProps } from './AGHeadlessInput';
 import type { IAGHeadlessInput } from './AGHeadlessInput';
@@ -31,8 +30,8 @@ const errors = computed(() => {
     return form.errors[props.name] ?? null;
 });
 const form = inject<Form | null>('form', null);
-const api: IAGHeadlessInput & __HasElement = {
-    $el: readonly($el) as Readonly<Ref<HTMLElement>>,
+const api: IAGHeadlessInput & __SetsElement = {
+    $el,
     id: `input-${uuid()}`,
     name: computed(() => props.name),
     label: computed(() => props.label),

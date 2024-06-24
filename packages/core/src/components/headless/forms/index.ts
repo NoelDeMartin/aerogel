@@ -1,4 +1,5 @@
 export * from './composition';
+export * from './AGHeadlessButton';
 export * from './AGHeadlessInput';
 export * from './AGHeadlessSelect';
 export * from './AGHeadlessSelectOption';

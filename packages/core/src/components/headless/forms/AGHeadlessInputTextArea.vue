@@ -17,7 +17,7 @@ import { computed, ref, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@/utils/vue';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
-import type { __HasElement } from '@/components/interfaces';
+import type { __SetsElement } from '@/components/interfaces';
 
 import { onFormFocus } from './composition';
 
@@ -37,6 +37,6 @@ function update() {
     input.update($textArea.value.value);
 }
 
-watchEffect(() => (input as unknown as __HasElement).__setElement($textArea.value));
+watchEffect(() => (input as unknown as __SetsElement).__setElement($textArea.value));
 onFormFocus(input, () => $textArea.value?.focus());
 </script>

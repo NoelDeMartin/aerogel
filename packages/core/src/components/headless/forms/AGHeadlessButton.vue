@@ -1,5 +1,5 @@
 <template>
-    <component :is="component.as" v-bind="component.props">
+    <component :is="component.as" ref="$root" v-bind="component.props">
         <slot />
     </component>
 </template>
@@ -9,6 +9,9 @@ import { computed } from 'vue';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 
 import { booleanProp, objectProp, stringProp } from '@/utils/vue';
+import { elementRef } from '@/components/composition';
+
+import type { IAGHeadlessButton } from './AGHeadlessButton';
 
 const props = defineProps({
     as: objectProp(),
@@ -20,6 +23,7 @@ const props = defineProps({
     submit: booleanProp(),
 });
 
+const $root = elementRef();
 const component = computed(() => {
     if (props.as) {
         return { as: props.as, props: {} };
@@ -53,4 +57,6 @@ const component = computed(() => {
         props: { type: props.submit ? 'submit' : 'button' },
     };
 });
+
+defineExpose<IAGHeadlessButton>({ $el: $root });
 </script>

@@ -17,7 +17,7 @@
 import { computed, ref, watchEffect } from 'vue';
 
 import { injectReactiveOrFail, stringProp } from '@/utils/vue';
-import type { __HasElement } from '@/components/interfaces';
+import type { __SetsElement } from '@/components/interfaces';
 import type { FormFieldValue } from '@/forms/Form';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
 
@@ -66,7 +66,7 @@ function getValue(): FormFieldValue | null {
 }
 
 onFormFocus(input, () => $input.value?.focus());
-watchEffect(() => (input as unknown as __HasElement).__setElement($input.value));
+watchEffect(() => (input as unknown as __SetsElement).__setElement($input.value));
 watchEffect(() => {
     if (!$input.value) {
         return;
