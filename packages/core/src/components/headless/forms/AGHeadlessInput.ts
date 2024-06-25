@@ -11,6 +11,7 @@ export interface IAGHeadlessInput extends HasElement {
     label: ComputedRef<string | null>;
     description: ComputedRef<string | boolean | null>;
     value: ComputedRef<FormFieldValue | null>;
+    required: ComputedRef<boolean | null>;
     errors: DeepReadonly<Ref<string[] | null>>;
     update(value: FormFieldValue | null): void;
 }

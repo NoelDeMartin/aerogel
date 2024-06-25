@@ -4,6 +4,7 @@
         ref="$input"
         :name="name"
         :type="type"
+        :required="input.required ?? undefined"
         :aria-invalid="input.errors ? 'true' : 'false'"
         :aria-describedby="
             input.errors ? `${input.id}-error` : input.description ? `${input.id}-description` : undefined

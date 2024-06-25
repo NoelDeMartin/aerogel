@@ -44,6 +44,13 @@ const api: IAGHeadlessInput & __SetsElement = {
         return props.modelValue;
     }),
     errors: readonly(errors),
+    required: computed(() => {
+        if (!props.name || !form) {
+            return null;
+        }
+
+        return form.getFieldRules(props.name).includes('required');
+    }),
     update(value) {
         if (form && props.name) {
             form.setFieldValue(props.name, value);

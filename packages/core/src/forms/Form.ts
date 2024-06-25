@@ -96,6 +96,10 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return this._data[field] as unknown as GetFormFieldValue<Fields[T]['type']>;
     }
 
+    public getFieldRules<T extends keyof Fields>(field: T): string[] {
+        return this._fields[field]?.rules?.split('|') ?? [];
+    }
+
     public data(): FormData<Fields> {
         return { ...this._data };
     }

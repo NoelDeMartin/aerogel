@@ -3,6 +3,7 @@
         :id="input.id"
         ref="$textArea"
         :name="name"
+        :required="input.required ?? undefined"
         :value="value"
         :aria-invalid="input.errors ? 'true' : 'false'"
         :aria-describedby="
