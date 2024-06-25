@@ -55,4 +55,32 @@ describe('Form', () => {
         expect(form.name).toBeNull();
     });
 
+    it('trims values', () => {
+        // Arrange
+        const form = useForm({
+            trimmed: {
+                type: FormFieldTypes.String,
+                rules: 'required',
+            },
+            untrimmed: {
+                type: FormFieldTypes.String,
+                rules: 'required',
+                trim: false,
+            },
+        });
+
+        // Act
+        form.trimmed = '   ';
+        form.untrimmed = '   ';
+
+        form.submit();
+
+        // Assert
+        expect(form.valid).toBe(false);
+        expect(form.submitted).toBe(true);
+        expect(form.trimmed).toEqual('');
+        expect(form.untrimmed).toEqual('   ');
+        expect(form.errors).toEqual({ trimmed: ['required'], untrimmed: null });
+    });
+
 });

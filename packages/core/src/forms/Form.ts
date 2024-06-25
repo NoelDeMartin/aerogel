@@ -1,4 +1,4 @@
-import { MagicObject, arrayRemove } from '@noeldemartin/utils';
+import { MagicObject, arrayRemove, fail, toString } from '@noeldemartin/utils';
 import { computed, nextTick, reactive, readonly, ref } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
@@ -13,6 +13,7 @@ export const FormFieldTypes = {
 
 export interface FormFieldDefinition<TType extends FormFieldType = FormFieldType, TRules extends string = string> {
     type: TType;
+    trim?: boolean;
     default?: GetFormFieldValue<TType>;
     rules?: TRules;
 }
@@ -85,7 +86,13 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     }
 
     public setFieldValue<T extends keyof Fields>(field: T, value: FormData<Fields>[T]): void {
-        this._data[field] = value;
+        const definition =
+            this._fields[field] ?? fail<FormFieldDefinition>(`Trying to set undefined '${toString(field)}' field`);
+
+        this._data[field] =
+            definition.type === FormFieldTypes.String && (definition.trim ?? true)
+                ? (toString(value).trim() as FormData<Fields>[T])
+                : value;
 
         if (this._submitted.value) {
             this.validate();
@@ -162,7 +169,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
             return super.__get(property);
         }
 
-        return this._data[property];
+        return this.getFieldValue(property);
     }
 
     protected __set(property: string, value: unknown): void {
@@ -172,7 +179,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
             return;
         }
 
-        Object.assign(this._data, { [property]: value });
+        this.setFieldValue(property, value as FormData<Fields>[string]);
     }
 
     private getFieldErrors(name: keyof Fields, definition: FormFieldDefinition): string[] | null {
