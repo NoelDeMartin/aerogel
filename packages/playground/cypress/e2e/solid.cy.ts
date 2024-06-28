@@ -38,8 +38,8 @@ describe('Solid', () => {
 
         // Log out
         cy.press('logout');
-        cy.contains('[role="dialog"]', 'Are you sure you want to log out?').within(() => {
-            cy.press('OK');
+        cy.contains('[role="dialog"]', 'Log out from this device?').within(() => {
+            cy.press('Log out');
         });
         cy.dontSee('You are logged in');
         cy.see('Login');
