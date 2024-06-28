@@ -14,6 +14,14 @@ import {
 import type { Model, ModelConstructor } from 'soukai';
 import type { ComputedRef, Ref } from 'vue';
 
+function isSoftDeleted(model: Model): boolean {
+    if (!('isSoftDeleted' in model)) {
+        return false;
+    }
+
+    return (model as { isSoftDeleted(): boolean }).isSoftDeleted();
+}
+
 function mapModels<T extends Model>(
     models: unknown,
     existingMap?: Map<string, T>,
@@ -74,14 +82,20 @@ function reactiveComputedModels<T>(modelClass: typeof Model, compute: () => T): 
     const shallowModels = shallowComputedModels(modelClass, compute);
     const reactiveModels = computed(() => {
         if (isArray(shallowModels.value)) {
-            return shallowModels.value.map((shallowModel) => reactive(shallowModel)) as T;
+            return shallowModels.value
+                .filter((shadowModel) => !isSoftDeleted(shadowModel))
+                .map((shallowModel) => reactive(shallowModel)) as T;
         }
 
         if (isObject(shallowModels.value)) {
             return Object.entries(shallowModels.value).reduce((models, [name, value]) => {
-                models[name as keyof T] = isArray(value)
-                    ? (value.map((shallowModel) => reactive(shallowModel)) as T[keyof T])
-                    : (reactive(value as Model) as T[keyof T]);
+                if (isArray(value)) {
+                    models[name as keyof T] = value
+                        .filter((shadowModel) => !isSoftDeleted(shadowModel))
+                        .map((shallowModel) => reactive(shallowModel)) as T[keyof T];
+                } else if (!isSoftDeleted(value as Model)) {
+                    models[name as keyof T] = reactive(value as Model) as T[keyof T];
+                }
 
                 return models;
             }, {} as T);
