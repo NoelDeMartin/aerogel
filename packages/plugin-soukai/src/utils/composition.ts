@@ -11,7 +11,7 @@ import {
     ref,
     watchEffect,
 } from 'vue';
-import type { Model, ModelConstructor } from 'soukai';
+import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
 import type { ComputedRef, Ref } from 'vue';
 
 function isSoftDeleted(model: Model): boolean {
@@ -173,4 +173,14 @@ export function useModelCollection<T extends Model>(modelClass: ModelConstructor
     });
 
     return models;
+}
+
+export function useModelEvent<TModel extends Model, TEvent extends keyof ModelEvents>(
+    modelClass: ModelConstructor<TModel>,
+    event: TEvent,
+    listener: ModelListener<TModel, TEvent>,
+): void {
+    const cleanUp = modelClass.on(event, listener);
+
+    onUnmounted(cleanUp);
 }
