@@ -41,6 +41,9 @@ describe('Solid', () => {
         cy.contains('[role="dialog"]', 'Log out from this device?').within(() => {
             cy.press('Log out');
         });
+
+        cy.dontSee('Logging out');
+        cy.visit('/solid');
         cy.dontSee('You are logged in');
         cy.see('Login');
     });
