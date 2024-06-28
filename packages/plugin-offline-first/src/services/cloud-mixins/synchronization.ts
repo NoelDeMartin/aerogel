@@ -187,7 +187,15 @@ export default class CloudSynchronization {
     }
 
     protected async saveModelAndChildren(this: CloudService, model: SolidModel): Promise<void> {
-        await model.save();
+        if (model.isSoftDeleted()) {
+            model.enableHistory();
+            model.enableTombstone();
+            await model.delete();
+
+            return;
+        }
+
+        model.save();
 
         if (!(model instanceof SolidContainer)) {
             return;

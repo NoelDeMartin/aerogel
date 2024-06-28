@@ -37,38 +37,8 @@ describe('Cloud', () => {
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(
-            typeIndexUrl,
-            FakeResponse.success(`
-                @prefix solid: <http://www.w3.org/ns/solid/terms#>.
-                @prefix schema: <https://schema.org/>.
-
-                <${typeIndexUrl}> a solid:TypeIndex .
-
-                <#movies>
-                     a solid:TypeRegistration ;
-                     solid:forClass schema:Movie ;
-                     solid:instanceContainer <${remoteContainerUrl}> .
-            `),
-        );
-
-        server.respond(
-            remoteContainerUrl,
-            FakeResponse.success(`
-                @prefix dc: <http://purl.org/dc/terms/>.
-                @prefix ldp: <http://www.w3.org/ns/ldp#>.
-                @prefix posix: <http://www.w3.org/ns/posix/stat#>.
-                @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-                @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-
-                <./> a ldp:Container, ldp:BasicContainer, ldp:Resource;
-                    rdfs:label "Remote Movies";
-                    dc:created "2024-02-05T12:28:42Z"^^xsd:dateTime;
-                    dc:modified "2024-02-05T12:28:42Z"^^xsd:dateTime;
-                    posix:mtime 1707136122.
-            `),
-        );
-
+        server.respond(typeIndexUrl, typeIndexResponse(remoteContainerUrl));
+        server.respond(remoteContainerUrl, containerResponse('Remote Movies'));
         server.respondOnce(localContainerUrl, FakeResponse.notFound()); // Tombstone check
         server.respondOnce(localContainerUrl, FakeResponse.notFound()); // Check before create
         server.respondOnce(localContainerUrl, FakeResponse.created()); // Create
@@ -124,67 +94,15 @@ describe('Cloud', () => {
             name: 'Remote Movies',
         });
 
-        await container.relatedMovies.create({
-            url: `${localDocumentUrl}#it`,
-            name: 'The Tale of Princess Kaguya',
-        });
+        await container.relatedMovies.create({ url: `${localDocumentUrl}#it`, name: 'The Tale of Princess Kaguya' });
 
         // Arrange - Prepare responses
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(
-            typeIndexUrl,
-            FakeResponse.success(`
-                @prefix solid: <http://www.w3.org/ns/solid/terms#>.
-                @prefix schema: <https://schema.org/>.
-
-                <${typeIndexUrl}> a solid:TypeIndex .
-
-                <#movies>
-                     a solid:TypeRegistration ;
-                     solid:forClass schema:Movie ;
-                     solid:instanceContainer <${containerUrl}> .
-            `),
-        );
-
-        server.respond(
-            containerUrl,
-            FakeResponse.success(`
-                @prefix dc: <http://purl.org/dc/terms/>.
-                @prefix ldp: <http://www.w3.org/ns/ldp#>.
-                @prefix posix: <http://www.w3.org/ns/posix/stat#>.
-                @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-                @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-
-                <./> a ldp:Container, ldp:BasicContainer, ldp:Resource;
-                    rdfs:label "Remote Movies";
-                    dc:created "2024-02-05T12:28:42Z"^^xsd:dateTime;
-                    dc:modified "2024-02-05T12:28:42Z"^^xsd:dateTime;
-                    ldp:contains <${remoteDocumentUrl}>;
-                    posix:mtime 1707136122.
-            `),
-        );
-
-        server.respond(
-            remoteDocumentUrl,
-            FakeResponse.success(`
-                @prefix schema: <https://schema.org/>.
-                @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-                @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
-
-                <#it>
-                    a schema:Movie;
-                    schema:datePublished "2001-07-20T00:00:00Z"^^xsd:dateTime;
-                    schema:name "Spirited Away".
-
-                <#it-metadata> a crdt:Metadata;
-                    crdt:resource <#it>;
-                    crdt:createdAt "2024-02-10T00:00:00Z"^^xsd:dateTime;
-                    crdt:updatedAt "2024-02-10T00:00:00Z"^^xsd:dateTime.
-            `),
-        );
-
+        server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
+        server.respond(containerUrl, containerResponse('Remote Movies', [remoteDocumentUrl]));
+        server.respond(remoteDocumentUrl, movieResponse('Spirited Away'));
         server.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Check before create
         server.respondOnce(localDocumentUrl, FakeResponse.created()); // Create
 
@@ -225,57 +143,9 @@ describe('Cloud', () => {
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(
-            typeIndexUrl,
-            FakeResponse.success(`
-                @prefix solid: <http://www.w3.org/ns/solid/terms#>.
-                @prefix schema: <https://schema.org/>.
-
-                <${typeIndexUrl}> a solid:TypeIndex .
-
-                <#movies>
-                     a solid:TypeRegistration ;
-                     solid:forClass schema:Movie ;
-                     solid:instanceContainer <${containerUrl}> .
-            `),
-        );
-
-        server.respond(
-            containerUrl,
-            FakeResponse.success(`
-                @prefix dc: <http://purl.org/dc/terms/>.
-                @prefix ldp: <http://www.w3.org/ns/ldp#>.
-                @prefix posix: <http://www.w3.org/ns/posix/stat#>.
-                @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-                @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-
-                <./> a ldp:Container, ldp:BasicContainer, ldp:Resource;
-                    rdfs:label "Movies";
-                    dc:created "2024-02-05T12:28:42Z"^^xsd:dateTime;
-                    dc:modified "2024-02-05T12:28:42Z"^^xsd:dateTime;
-                    ldp:contains <${remoteDocumentUrl}>;
-                    posix:mtime 1707136122.
-            `),
-        );
-        server.respond(
-            remoteDocumentUrl,
-            FakeResponse.success(`
-                @prefix schema: <https://schema.org/>.
-                @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-                @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
-
-                <#it>
-                    a schema:Movie;
-                    schema:datePublished "2001-07-20T00:00:00Z"^^xsd:dateTime;
-                    schema:name "Spirited Away".
-
-                <#it-metadata> a crdt:Metadata;
-                    crdt:resource <#it>;
-                    crdt:createdAt "2024-02-10T00:00:00Z"^^xsd:dateTime;
-                    crdt:updatedAt "2024-02-10T00:00:00Z"^^xsd:dateTime.
-            `),
-        );
-
+        server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
+        server.respond(containerUrl, containerResponse('Movies', [remoteDocumentUrl]));
+        server.respond(remoteDocumentUrl, movieResponse('Spirited Away'));
         server.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Tombstone check
         server.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Check before create
         server.respondOnce(localDocumentUrl, FakeResponse.created()); // Create
@@ -386,50 +256,23 @@ describe('Cloud', () => {
         expect(server.getRequests()).toHaveLength(10);
     });
 
-    it('Leaves tombstones behind deleted models', async () => {
-        // Arrange - Mint urls and prepare models
-        const containerUrl = Solid.requireUser().storageUrls[0];
+    testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl });
-        const movie = await Movie.at(containerUrl).create({ url: `${documentUrl}#it`, name: 'Spirited Away' });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({ url: containerUrl, name: 'Movies' });
+        const movie = await container.relatedMovies.create({ url: `${documentUrl}#it`, name: 'Spirited Away' });
         const movieTurtle = (await movie.toTurtle()).replaceAll(documentUrl, '');
 
         // Arrange - Prepare responses
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(
-            typeIndexUrl,
-            FakeResponse.success(`
-                @prefix solid: <http://www.w3.org/ns/solid/terms#>.
-                @prefix schema: <https://schema.org/>.
-
-                <${typeIndexUrl}> a solid:TypeIndex .
-
-                <#movies>
-                     a solid:TypeRegistration ;
-                     solid:forClass schema:Movie ;
-                     solid:instanceContainer <${containerUrl}> .
-            `),
-        );
-
-        server.respond(
-            containerUrl,
-            FakeResponse.success(`
-                @prefix dc: <http://purl.org/dc/terms/>.
-                @prefix ldp: <http://www.w3.org/ns/ldp#>.
-                @prefix posix: <http://www.w3.org/ns/posix/stat#>.
-                @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-                @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-
-                <./> a ldp:Container, ldp:BasicContainer, ldp:Resource;
-                    rdfs:label "Movies";
-                    dc:created "2024-02-16T12:28:42Z"^^xsd:dateTime;
-                    dc:modified "2024-02-16T12:28:42Z"^^xsd:dateTime;
-                    ldp:contains <${documentUrl}>;
-                    posix:mtime 1707136122.
-            `),
-        );
-
+        server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
+        server.respond(containerUrl, containerResponse('Movies', [documentUrl]));
         server.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Pull
         server.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Model GET before delete
         server.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Client GET before update
@@ -437,7 +280,7 @@ describe('Cloud', () => {
 
         // Arrange - Prepare service
         await Cloud.launch();
-        await Cloud.register(Movie);
+        await registerModels();
         await Events.emit('application-ready');
 
         // Act
@@ -486,4 +329,72 @@ class MoviesContainer extends SolidContainer {
         return this.contains(Movie);
     }
 
+}
+
+function testVariants<T>(description: string, variants: Record<string, T>, test: (variant: T) => unknown): void {
+    for (const [name, data] of Object.entries(variants)) {
+        it(`[${name}] ${description}`, () => test(data));
+    }
+}
+
+function testRegisterVariants(description: string, test: (registerModels: () => unknown) => unknown): void {
+    testVariants(
+        description,
+        {
+            'model registration': () => Cloud.register(Movie),
+            'container registration': () => Cloud.register(MoviesContainer),
+        },
+        test,
+    );
+}
+
+function typeIndexResponse(containerUrl: string): Response {
+    const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+
+    return FakeResponse.success(`
+        @prefix solid: <http://www.w3.org/ns/solid/terms#>.
+        @prefix schema: <https://schema.org/>.
+
+        <${typeIndexUrl}> a solid:TypeIndex .
+
+        <#movies>
+             a solid:TypeRegistration ;
+             solid:forClass schema:Movie ;
+             solid:instanceContainer <${containerUrl}> .
+    `);
+}
+
+function containerResponse(name: string = 'Movies', documentUrls: string[] = []): Response {
+    return FakeResponse.success(`
+        @prefix dc: <http://purl.org/dc/terms/>.
+        @prefix ldp: <http://www.w3.org/ns/ldp#>.
+        @prefix posix: <http://www.w3.org/ns/posix/stat#>.
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+        <./> a ldp:Container, ldp:BasicContainer, ldp:Resource;
+            rdfs:label "${name}";
+            dc:created "2024-02-05T12:28:42Z"^^xsd:dateTime;
+            dc:modified "2024-02-05T12:28:42Z"^^xsd:dateTime;
+            ${documentUrls.map((url) => `ldp:contains <${url}>;`)}
+            posix:mtime 1707136122.
+    `);
+}
+
+function movieResponse(title: string): Response {
+    return FakeResponse.success(`
+        @prefix schema: <https://schema.org/>.
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+        @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+
+        <#it>
+            a schema:Movie;
+            schema:datePublished "2001-07-20T00:00:00Z"^^xsd:dateTime;
+            schema:name "${title}".
+
+        <#it-metadata> a crdt:Metadata;
+            crdt:resource <#it>;
+            crdt:createdAt "2024-02-10T00:00:00Z"^^xsd:dateTime;
+            crdt:updatedAt "2024-02-10T00:00:00Z"^^xsd:dateTime.
+    `);
 }
