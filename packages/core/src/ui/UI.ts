@@ -9,6 +9,7 @@ import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackb
 import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps, AGPromptModalProps } from '@/components';
 
 import Service from './UI.state';
+import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
 import type { Modal, ModalComponent, Snackbar } from './UI.state';
 
 interface ModalCallbacks<T = unknown> {
@@ -235,6 +236,7 @@ export class UIService extends Service {
     protected async boot(): Promise<void> {
         this.watchModalEvents();
         this.watchMountedEvent();
+        this.watchWindowMedia();
     }
 
     private watchModalEvents(): void {
@@ -278,6 +280,12 @@ export class UIService extends Service {
 
             splash.remove();
         });
+    }
+
+    private watchWindowMedia(): void {
+        const media = window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`);
+
+        media.addEventListener('change', () => this.setState({ layout: getCurrentLayout() }));
     }
 
 }

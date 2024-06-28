@@ -16,6 +16,7 @@ import type { UIComponent } from './UI';
 const services = { $ui: UI };
 
 export * from './UI';
+export * from './utils';
 export { default as UI } from './UI';
 
 export type UIServices = typeof services;

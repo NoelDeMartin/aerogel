@@ -2,6 +2,8 @@ import type { Component } from 'vue';
 
 import { defineServiceState } from '@/services/Service';
 
+import { Layouts, getCurrentLayout } from './utils';
+
 export interface Modal<T = unknown> {
     id: string;
     properties: Record<string, unknown>;
@@ -28,5 +30,10 @@ export default defineServiceState({
     initialState: {
         modals: [] as Modal[],
         snackbars: [] as Snackbar[],
+        layout: getCurrentLayout(),
+    },
+    computed: {
+        mobile: ({ layout }) => layout === Layouts.Mobile,
+        desktop: ({ layout }) => layout === Layouts.Desktop,
     },
 });
