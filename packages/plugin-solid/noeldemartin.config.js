@@ -1,2 +1,5 @@
 /** @type {import('@noeldemartin/scripts').Config} */
-module.exports = { vue: true };
+module.exports = {
+    vue: true,
+    icons: true,
+};

@@ -6,13 +6,16 @@
             alt=""
             class="absolute inset-0 h-full w-full rounded-full"
         />
-        <span class="text-sm font-semibold tracking-wider text-gray-500" aria-hidden="true">
+        <span v-else-if="userInitials" class="text-sm font-semibold tracking-wider text-gray-500" aria-hidden="true">
             {{ userInitials }}
         </span>
+        <IconAnonymous v-else class="h-6 w-6 text-gray-500" />
     </div>
 </template>
 
 <script setup lang="ts">
+import IconAnonymous from '~icons/ooui/user-anonymous';
+
 import { computed } from 'vue';
 
 import Solid from '@/services/Solid';
@@ -20,9 +23,10 @@ import Solid from '@/services/Solid';
 import AGSolidImage from './AGSolidImage.vue';
 
 const userInitials = computed(() => {
-    const name = Solid.user?.name ?? '?';
+    const name = Solid.user?.name ?? '';
 
     return name
+        .trim()
         .split(' ')
         .map((part) => part[0]?.toUpperCase())
         .join('')
