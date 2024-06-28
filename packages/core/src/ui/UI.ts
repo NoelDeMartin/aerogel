@@ -147,9 +147,12 @@ export class UIService extends Service {
         return result ?? null;
     }
 
-    public async loading<T>(operation: Promise<T>): Promise<T>;
-    public async loading<T>(message: string, operation: Promise<T>): Promise<T>;
-    public async loading<T>(messageOrOperation: string | Promise<T>, operation?: Promise<T>): Promise<T> {
+    public async loading<T>(operation: Promise<T> | (() => T)): Promise<T>;
+    public async loading<T>(message: string, operation: Promise<T> | (() => T)): Promise<T>;
+    public async loading<T>(
+        messageOrOperation: string | Promise<T> | (() => T),
+        operation?: Promise<T> | (() => T),
+    ): Promise<T> {
         const getProperties = (): AGLoadingModalProps => {
             if (typeof messageOrOperation !== 'string') {
                 return {};
@@ -161,7 +164,8 @@ export class UIService extends Service {
         const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), getProperties());
 
         try {
-            operation = typeof messageOrOperation === 'string' ? (operation as Promise<T>) : messageOrOperation;
+            operation = typeof messageOrOperation === 'string' ? (operation as () => T) : messageOrOperation;
+            operation = typeof operation === 'function' ? Promise.resolve(operation()) : operation;
 
             const [result] = await Promise.all([operation, after({ seconds: 1 })]);
 

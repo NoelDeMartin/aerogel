@@ -16,6 +16,7 @@ async function initializeModelCollectionRef<T extends Model>(modelClass: ModelCo
     modelClass.on('created', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
     modelClass.on('deleted', (model) => (modelsMap.value.delete(model), triggerRef(modelsMap)));
     modelClass.on('updated', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
+    Events.on('auth:logout', () => (modelsMap.value = map([] as T[], 'id')));
     Events.on('cloud:migrated', async () => (modelsMap.value = map(await modelClass.all(), 'id')));
 
     modelsMap.value = map(await modelClass.all(), 'id');

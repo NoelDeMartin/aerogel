@@ -16,7 +16,7 @@ import {
     tap,
     urlRoot,
 } from '@noeldemartin/utils';
-import { App, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
+import { App, Colors, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { setEngine } from 'soukai';
 import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex } from 'soukai-solid';
@@ -199,7 +199,22 @@ export class SolidService extends Service {
     public async logout(force: boolean = false): Promise<void> {
         const confirmLogout =
             force ||
-            (await UI.confirm(translateWithDefault('solid.logoutConfirm', 'Are you sure you want to log out?')));
+            (await UI.confirm(
+                translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?'),
+                translateWithDefault(
+                    'solid.logoutConfirmMessage',
+                    'Logging out will remove all the data from this device, ' +
+                        'but you\'ll still have it in your Solid POD.',
+                ),
+                {
+                    acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
+                    acceptColor: Colors.Danger,
+                    cancelText: translateWithDefault(
+                        'solid.logoutConfirmCancel',
+                        translateWithDefault('ui.cancel', 'Cancel'),
+                    ),
+                },
+            ));
 
         if (!confirmLogout) {
             return;
@@ -209,10 +224,12 @@ export class SolidService extends Service {
             return;
         }
 
-        this.setState({ previousSession: null });
-        this.isLoggedIn() && (await this.authenticator.logout());
+        await UI.loading(translateWithDefault('solid.logoutOngoing', 'Logging out...'), async () => {
+            this.setState({ previousSession: null });
+            this.isLoggedIn() && (await this.authenticator.logout());
 
-        await Events.emit('auth:logout');
+            await Events.emit('auth:logout');
+        });
     }
 
     public async whenLoggedIn<T>(callback: (session: AuthSession) => T): Promise<T> {
