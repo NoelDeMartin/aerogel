@@ -11,5 +11,6 @@ import { stringProp } from '@/utils/vue';
 
 defineProps({ as: stringProp('span') });
 
+// TODO use v-measure.css
 const measured = ref(false);
 </script>
