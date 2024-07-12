@@ -23,10 +23,10 @@ export function setupErrorListener(): void {
                 }
 
                 if (message) {
-                    error.message = `${message}: ${error.message}`;
+                    error = new Error(message, { cause: error });
                 }
 
-                knownErrors.add(error);
+                knownErrors.add(error as Error);
 
                 throw error;
             },
