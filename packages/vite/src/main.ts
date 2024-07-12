@@ -113,6 +113,15 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                             type: guessMediaType(src),
                         })),
             }),
+            workbox: {
+                maximumFileSizeToCacheInBytes: 10000000,
+                additionalManifestEntries: [
+                    '/apple-touch-icon.png',
+                    '/favicon-32x32.png',
+                    '/favicon-16x16.png',
+                    '/safari-pinned-tab.svg',
+                ],
+            },
         }),
         AerogelPlugin,
     ].flat();
