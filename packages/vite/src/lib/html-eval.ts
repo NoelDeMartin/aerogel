@@ -10,7 +10,7 @@ export function css(this: HTMLEvalScope, path: string): string {
 }
 
 export function favicons(this: HTMLEvalScope, options: { maskIconColor?: string } = {}): string {
-    const maskIconColor = options.maskIconColor ?? '#000000';
+    const maskIconColor = options.maskIconColor ?? this.app.themeColor;
 
     return `
         <link rel="apple-touch-icon" sizes="180x180" href="${this.app.basePath}apple-touch-icon.png" />
