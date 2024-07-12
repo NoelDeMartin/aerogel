@@ -18,9 +18,7 @@ export * from './auth';
 export * from './components';
 export * from './errors';
 export * from './services/Solid';
-export * from './services/Solid.mock';
 export { Solid };
-export { default as SolidMock } from './services/Solid.mock';
 
 export interface Options {
     autoReconnect?: boolean;

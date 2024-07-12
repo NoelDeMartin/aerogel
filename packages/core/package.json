@@ -43,7 +43,7 @@
     },
     "devDependencies": {
         "@aerogel/vite": "*",
-        "@histoire/plugin-vue": "^0.17.6",
+        "@histoire/plugin-vue": "0.17.6",
         "@types/dompurify": "^3.0.2",
         "@types/marked": "^5.0.0",
         "tailwindcss": "^3.3.5"

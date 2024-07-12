@@ -24,7 +24,8 @@ tap(globalThis, (global: any) => {
 beforeEach(async () => {
     const { resetPiniaStore } = await import('@aerogel/core');
     const { resetTrackedModels } = await import('@aerogel/plugin-soukai');
-    const { Solid, SolidMock } = await import('@aerogel/plugin-solid');
+    const { Solid } = await import('@aerogel/plugin-solid');
+    const { default: SolidMock } = await import('./mocks/Solid.mock');
 
     Solid.setMockFacade(SolidMock);
 

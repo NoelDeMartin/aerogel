@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Events } from '@aerogel/core';
-import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/solid-utils';
+import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
 import { FakeResponse, arrayFind } from '@noeldemartin/utils';
 import { FieldType, InMemoryEngine, bootModels, setEngine } from 'soukai';
-import { Solid, SolidMock } from '@aerogel/plugin-solid';
+import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer, SolidTypeRegistration, bootSolidModels, defineSolidModelSchema } from 'soukai-solid';
 import type { Relation } from 'soukai';
 import type { SolidContainsRelation } from 'soukai-solid';
+
+import SolidMock from '@/testing/mocks/Solid.mock';
 
 import Cloud from './Cloud';
 
