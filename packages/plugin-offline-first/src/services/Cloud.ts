@@ -182,11 +182,12 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
 
     protected logout(): void {
         this.setState({
-            status: CloudStatus.Disconnected,
             dirtyRemoteModels: map([], 'url'),
             localModelUpdates: {},
+            ready: false,
             remoteOperationUrls: {},
             startupSync: true,
+            status: CloudStatus.Disconnected,
         });
     }
 
