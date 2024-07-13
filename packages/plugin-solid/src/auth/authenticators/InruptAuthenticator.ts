@@ -1,8 +1,15 @@
 import { Storage, after, fail } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
-import type { ILoginInputOptions, handleIncomingRedirect, login, logout } from '@inrupt/solid-client-authn-browser';
+import type {
+    ILoginInputOptions,
+    events,
+    handleIncomingRedirect,
+    login,
+    logout,
+} from '@inrupt/solid-client-authn-browser';
 
 import Authenticator from '@/auth/Authenticator';
+import AuthenticationFailedError from '@/errors/AuthenticationFailedError';
 import type { AuthSession } from '@/auth/Authenticator';
 
 import AerogelSolid from 'virtual:aerogel-solid';
@@ -11,13 +18,14 @@ const STORAGE_KEY = 'inrupt-authenticator';
 
 export default class InruptAuthenticator extends Authenticator {
 
+    private _events!: typeof events;
     private _fetch!: Fetch;
     private _login!: typeof login;
     private _logout!: typeof logout;
     private _handleIncomingRedirect!: typeof handleIncomingRedirect;
 
     public async login(loginUrl: string): Promise<AuthSession> {
-        Storage.set<boolean>(STORAGE_KEY, true);
+        Storage.set<string>(STORAGE_KEY, loginUrl);
 
         const options: ILoginInputOptions = {
             oidcIssuer: loginUrl,
@@ -43,20 +51,28 @@ export default class InruptAuthenticator extends Authenticator {
     }
 
     protected async restoreSession(): Promise<void> {
-        const { fetch, handleIncomingRedirect, login, logout } = await import('./InruptAuthenticator.lazy');
+        const { events, fetch, handleIncomingRedirect, login, logout } = await import('./InruptAuthenticator.lazy');
 
         this._fetch = fetch;
         this._login = login;
         this._logout = logout;
+        this._events = events;
         this._handleIncomingRedirect = handleIncomingRedirect;
 
         await this.loginFromRedirect();
     }
 
     protected async loginFromRedirect(): Promise<void> {
-        if (!Storage.has(STORAGE_KEY)) {
+        const loginUrl = Storage.get<string>(STORAGE_KEY);
+        if (!loginUrl) {
             return;
         }
+
+        this._events().on('error', (error: string | null, errorDescription?: string | null) => {
+            error ??= 'Error using Inrupt Authenticator method';
+
+            this.failSession(loginUrl, new AuthenticationFailedError(error, errorDescription));
+        });
 
         const session = await this._handleIncomingRedirect(window.location.href);
 
