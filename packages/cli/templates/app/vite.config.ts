@@ -7,6 +7,7 @@ import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
 
 export default defineConfig({
+    build: { sourcemap: true },
     publicDir: resolve(__dirname, './src/assets/public/'),
     plugins: [
         Aerogel({ name: '<% app.name %>' }),
