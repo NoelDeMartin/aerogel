@@ -44,7 +44,9 @@ export default class I18nLangProvider implements LangProvider {
     }
 
     public translateWithDefault(key: string, defaultMessage: string, parameters?: Record<string, unknown>): string {
-        return this.i18n.t(key, parameters ?? {}, { default: defaultMessage, missingWarn: false });
+        const message = this.i18n.t(key, parameters ?? {}, { missingWarn: false });
+
+        return message === key ? defaultMessage : message;
     }
 
 }
