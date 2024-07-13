@@ -27,7 +27,7 @@ export class Solid extends Plugin {
     protected async installNpmDependencies(): Promise<void> {
         await Shell.run('npm install soukai-solid@next --save-exact');
         await Shell.run('npm install @noeldemartin/solid-utils@next --save-exact');
-        await Shell.run('npm install @solid/community-server@7 --save');
+        await Shell.run('npm install @solid/community-server@~7.0 --save-dev');
         await super.installNpmDependencies();
     }
 
