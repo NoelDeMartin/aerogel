@@ -236,7 +236,7 @@ export class UIService extends Service {
     protected async boot(): Promise<void> {
         this.watchModalEvents();
         this.watchMountedEvent();
-        this.watchWindowMedia();
+        this.watchViewportBreakpoints();
     }
 
     private watchModalEvents(): void {
@@ -266,13 +266,17 @@ export class UIService extends Service {
 
     private watchMountedEvent(): void {
         Events.once('application-mounted', async () => {
-            const splash = document.getElementById('splash');
+            if (!globalThis.document || !globalThis.getComputedStyle) {
+                return;
+            }
+
+            const splash = globalThis.document.getElementById('splash');
 
             if (!splash) {
                 return;
             }
 
-            if (window.getComputedStyle(splash).opacity !== '0') {
+            if (globalThis.getComputedStyle(splash).opacity !== '0') {
                 splash.style.opacity = '0';
 
                 await after({ ms: 600 });
@@ -282,8 +286,12 @@ export class UIService extends Service {
         });
     }
 
-    private watchWindowMedia(): void {
-        const media = window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`);
+    private watchViewportBreakpoints(): void {
+        if (!globalThis.matchMedia) {
+            return;
+        }
+
+        const media = globalThis.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`);
 
         media.addEventListener('change', () => this.setState({ layout: getCurrentLayout() }));
     }

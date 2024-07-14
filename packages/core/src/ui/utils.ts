@@ -8,7 +8,7 @@ export const Layouts = {
 export type Layout = (typeof Layouts)[keyof typeof Layouts];
 
 export function getCurrentLayout(): Layout {
-    if (window.innerWidth > MOBILE_BREAKPOINT) {
+    if (globalThis.innerWidth > MOBILE_BREAKPOINT) {
         return Layouts.Desktop;
     }
 

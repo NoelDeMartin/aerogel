@@ -5,12 +5,6 @@ import { beforeEach, vi } from 'vitest';
 tap(globalThis, (global: any) => {
     global.jest = vi;
     global.navigator = { languages: ['en'] };
-    global.window = mock<Window>({
-        matchMedia: () =>
-            mock<MediaQueryList>({
-                addEventListener: () => null,
-            }),
-    });
     global.localStorage = mock<Storage>({
         getItem: () => null,
         setItem: () => null,

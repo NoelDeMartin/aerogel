@@ -53,6 +53,10 @@ export class LangService extends Service {
     }
 
     protected async boot(): Promise<void> {
+        if (!globalThis.document) {
+            return;
+        }
+
         this.requireStore().$subscribe(
             async () => {
                 await this.provider.setLocale(this.locale ?? this.getBrowserLocale());

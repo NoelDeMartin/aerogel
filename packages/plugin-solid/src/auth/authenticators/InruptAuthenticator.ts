@@ -74,7 +74,7 @@ export default class InruptAuthenticator extends Authenticator {
             this.failSession(loginUrl, new AuthenticationFailedError(error, errorDescription));
         });
 
-        const session = await this._handleIncomingRedirect(window.location.href);
+        const session = await this._handleIncomingRedirect(globalThis.location.href);
 
         Storage.remove(STORAGE_KEY);
 

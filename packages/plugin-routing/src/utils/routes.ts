@@ -80,13 +80,17 @@ function enhanceRouteNavigationGuards(route: AerogelRoute): void {
 }
 
 function updateRouteTitle(title?: string | null): void {
+    if (!globalThis.document) {
+        return;
+    }
+
     if (!title) {
-        document.title = App.name;
+        globalThis.document.title = App.name;
 
         return;
     }
 
-    document.title = `${title} | ${App.name}`;
+    globalThis.document.title = `${title} | ${App.name}`;
 }
 
 export function defineRoute(route: AerogelRoute): RouteRecordRaw {
