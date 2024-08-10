@@ -73,6 +73,13 @@ export function injectOrFail<T>(key: InjectionKey<T> | string, errorMessage?: st
     return inject(key) ?? fail(errorMessage ?? `Could not resolve '${key}' injection key`);
 }
 
+export function listenerProp<T extends Function = Function>(): OptionalProp<T | null> {
+    return {
+        type: Function as PropType<T>,
+        default: null,
+    };
+}
+
 export function mixedProp<T>(type?: PropType<T>): OptionalProp<T | null>;
 export function mixedProp<T>(type: PropType<T>, defaultValue: T): OptionalProp<T>;
 export function mixedProp<T>(type?: PropType<T>, defaultValue?: T): OptionalProp<T | null> {
