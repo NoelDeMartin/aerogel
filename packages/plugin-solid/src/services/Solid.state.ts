@@ -5,11 +5,13 @@ import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { AuthSession } from '@/auth/Authenticator';
 import type { AuthenticatorName } from '@/auth';
 
+export const DEFAULT_STATE = { autoReconnect: true };
+
 export default defineServiceState({
     name: 'solid',
     persist: ['autoReconnect', 'dismissed', 'previousSession', 'profiles', 'staleProfiles'],
     initialState: {
-        autoReconnect: true,
+        autoReconnect: DEFAULT_STATE.autoReconnect,
         dismissed: false,
         ignorePreviousSessionError: false,
         loginStartupError: null as ErrorSource | null,

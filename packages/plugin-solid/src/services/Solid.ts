@@ -31,7 +31,7 @@ import type Authenticator from '@/auth/Authenticator';
 import type { AuthenticatorName } from '@/auth';
 import type { AuthSession } from '@/auth/Authenticator';
 
-import Service from './Solid.state';
+import Service, { DEFAULT_STATE } from './Solid.state';
 
 export type LoginOptions = {
     authenticator?: AuthenticatorName;
@@ -225,10 +225,14 @@ export class SolidService extends Service {
         }
 
         await UI.loading(translateWithDefault('solid.logoutOngoing', 'Logging out...'), async () => {
-            this.setState({ previousSession: null });
+            this.setState({
+                previousSession: null,
+                ...DEFAULT_STATE,
+            });
             this.isLoggedIn() && (await this.authenticator.logout());
 
             await Events.emit('auth:logout');
+            await Events.emit('auth:after-logout');
         });
     }
 
@@ -451,5 +455,6 @@ declare module '@aerogel/core' {
         'auth:before-login': void;
         'auth:login': AuthSession;
         'auth:logout': void;
+        'auth:after-logout': void;
     }
 }

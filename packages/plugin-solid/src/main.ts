@@ -3,6 +3,7 @@ import { bootSolidModels } from 'soukai-solid';
 import type { Plugin } from '@aerogel/core';
 
 import Solid from '@/services/Solid';
+import { DEFAULT_STATE } from '@/services/Solid.state';
 import {
     authenticators as baseAuthenticators,
     getAuthenticator,
@@ -35,8 +36,10 @@ export default function solid(options: Options = {}): Plugin {
             registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
 
-            if (!Solid.hasPersistedState()) {
-                Solid.autoReconnect = options.autoReconnect ?? Solid.autoReconnect;
+            if (typeof options.autoReconnect === 'boolean') {
+                DEFAULT_STATE.autoReconnect = options.autoReconnect;
+
+                Solid.hasPersistedState() || (Solid.autoReconnect = options.autoReconnect);
             }
 
             await bootServices(app, services);

@@ -189,9 +189,13 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             dirtyRemoteModels: map([], 'url'),
             localModelUpdates: {},
             ready: false,
+            modelCollections: {},
             remoteOperationUrls: {},
+            setupDismissed: false,
             startupSync: true,
             status: CloudStatus.Disconnected,
+            pollingEnabled: true,
+            pollingMinutes: 10,
         });
     }
 
