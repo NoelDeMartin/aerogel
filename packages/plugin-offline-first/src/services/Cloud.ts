@@ -2,7 +2,7 @@ import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { Semaphore, after, facade, fail, map, mixed } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { Tombstone, isContainerClass } from 'soukai-solid';
-import { trackModelCollection } from '@aerogel/plugin-soukai';
+import { trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
@@ -94,12 +94,16 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             modelClass.collection = this.getRemoteContainersCollection();
         });
 
-        await trackModelCollection(modelClass, {
+        await trackModels(modelClass, {
             created: (model) => this.createRemoteModel(model),
             updated: (model) => this.updateRemoteModel(model),
         });
 
         this.registeredModels.add(modelClass);
+
+        for (const collection of this.modelCollections[modelClass.modelName] ?? []) {
+            await trackModelsCollection(modelClass, collection);
+        }
     }
 
     protected async boot(): Promise<void> {

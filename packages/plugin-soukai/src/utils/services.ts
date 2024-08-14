@@ -1,34 +1,57 @@
-import { map } from '@noeldemartin/utils';
+import { map, required } from '@noeldemartin/utils';
 import { Events } from '@aerogel/core';
 import { computed, shallowRef, triggerRef, watchEffect } from 'vue';
-import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
 import type { ComputedRef, Ref } from 'vue';
+import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
+import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Service } from '@aerogel/core';
 
-let trackedModels: WeakMap<ModelConstructor, ComputedRef<Model[]>> = new WeakMap();
+interface TrackedModelData<T extends object = Model> {
+    modelsMap: Ref<ObjectsMap<T>>;
+    modelsArray: ComputedRef<T[]>;
+    collectionsSet: Set<string>;
+}
 
-async function initializeModelCollectionRef<T extends Model>(modelClass: ModelConstructor<T>): Promise<Ref<T[]>> {
+let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
+
+async function initializedTrackedModelsData<T extends Model>(
+    modelClass: ModelConstructor<T>,
+): Promise<TrackedModelData<T>> {
     const modelsMap = shallowRef(map([] as T[], 'id'));
     const modelsArray = computed(() => modelsMap.value.getItems());
+    const collectionsSet = new Set<string>([modelClass.collection]);
+    const data = { modelsMap, modelsArray, collectionsSet };
+    const refresh = async () => {
+        const models = map([] as T[], 'id');
 
-    trackedModels.set(modelClass, modelsArray);
+        for (const collection of collectionsSet) {
+            const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
 
+            collectionModels.forEach((model) => models.add(model));
+        }
+
+        modelsMap.value = models;
+    };
+
+    trackedModels.set(modelClass, data);
     modelClass.on('created', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
     modelClass.on('deleted', (model) => (modelsMap.value.delete(model), triggerRef(modelsMap)));
     modelClass.on('updated', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
     Events.on('auth:logout', () => (modelsMap.value = map([] as T[], 'id')));
-    Events.on('cloud:migrated', async () => (modelsMap.value = map(await modelClass.all(), 'id')));
+    Events.on('cloud:migrated', () => refresh());
 
-    modelsMap.value = map(await modelClass.all(), 'id');
+    await refresh();
 
-    return modelsArray;
+    return data;
 }
 
-async function getModelCollectionRef<T extends Model>(modelClass: ModelConstructor<T>): Promise<ComputedRef<T[]>> {
-    return (trackedModels.get(modelClass) as ComputedRef<T[]>) ?? (await initializeModelCollectionRef<T>(modelClass));
+async function getTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): Promise<TrackedModelData<T>> {
+    return (
+        (trackedModels.get(modelClass) as TrackedModelData<T>) ?? (await initializedTrackedModelsData<T>(modelClass))
+    );
 }
 
-export type TrackOptions<TModel extends Model, TKey extends string> = {
+export type TrackOptions<TModel extends Model = Model, TKey extends string = string> = {
     service?: ModelService<TModel, TKey>;
     property?: TKey;
     transform?: (models: TModel[]) => TModel[];
@@ -41,26 +64,45 @@ export type ModelService<TModel extends Model = Model, TKey extends string = str
 }>;
 
 export function getTrackedModels<T extends Model>(modelClass: ModelConstructor<T>): T[] {
-    return (trackedModels.get(modelClass)?.value as T[]) ?? [];
+    return (trackedModels.get(modelClass)?.modelsArray.value as T[]) ?? [];
 }
 
 export function resetTrackedModels(): void {
     trackedModels = new WeakMap();
 }
 
-export async function trackModelCollection<TModel extends Model, TKey extends string>(
+export async function trackModelsCollection(modelClass: ModelConstructor, collection: string): Promise<void> {
+    const modelData = required(
+        trackedModels.get(modelClass),
+        'Failed tracking models collection, please track the model first using trackModels()',
+    );
+
+    if (modelData.collectionsSet.has(collection)) {
+        return;
+    }
+
+    modelData.collectionsSet.add(collection);
+
+    const models = modelData.modelsArray.value;
+    const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
+
+    collectionModels.forEach((model) => models.push(model));
+    modelData.modelsMap.value = map(models, 'id');
+}
+
+export async function trackModels<TModel extends Model, TKey extends string>(
     modelClass: ModelConstructor<TModel>,
     options?: TrackOptions<TModel, TKey>,
 ): Promise<void> {
     const { service, property: stateKey, transform: optionsTransform, ...eventListeners } = options ?? {};
     const transform = optionsTransform ?? ((models) => models);
-    const collectionsRef = await getModelCollectionRef<TModel>(modelClass);
+    const modelData = await getTrackedModelsData<TModel>(modelClass);
 
     for (const [event, listener] of Object.entries(eventListeners)) {
         modelClass.on(event as keyof ModelEvents, listener as ModelListener<TModel, keyof ModelEvents>);
     }
 
     if (service && stateKey) {
-        watchEffect(() => service.setState(stateKey, transform(collectionsRef.value)));
+        watchEffect(() => service.setState(stateKey, transform(modelData.modelsArray.value)));
     }
 }

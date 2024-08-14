@@ -1,8 +1,16 @@
-import { arrayEquals, arrayFilter, arrayFrom, map, objectWithout } from '@noeldemartin/utils';
+import {
+    arrayEquals,
+    arrayFilter,
+    arrayFrom,
+    map,
+    objectWithout,
+    requireUrlParentDirectory,
+} from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
+import { trackModelsCollection } from '@aerogel/plugin-soukai';
 import type { ObjectsMap } from '@noeldemartin/utils';
-import type { SolidContainsRelation, SolidTypeIndex } from 'soukai-solid';
+import type { SolidContainsRelation, SolidModelConstructor, SolidTypeIndex } from 'soukai-solid';
 
 import type { CloudService } from '@/services/Cloud';
 
@@ -121,23 +129,26 @@ export default class CloudSynchronization {
                         arrayEquals(rdfsClasses, registration.forClass) && !!registration.instanceContainer,
                 );
 
-                if (!registeredModel) {
+                if (!registeredModel || !registration.instanceContainer) {
                     return;
                 }
 
                 const remoteClass = this.getRemoteClass(registeredModel.modelClass);
 
-                if (!registration.instanceContainer) {
-                    return null;
-                }
-
                 if (isContainerClass(remoteClass)) {
+                    await this.trackModelsCollection(
+                        registeredModel.modelClass,
+                        requireUrlParentDirectory(registration.instanceContainer),
+                    );
+
                     const container = await remoteClass.find(registration.instanceContainer);
 
                     container && (await this.loadChildren(container));
 
                     return container;
                 }
+
+                await this.trackModelsCollection(registeredModel.modelClass, registration.instanceContainer);
 
                 return remoteClass.from(registration.instanceContainer).all();
             }),
@@ -150,6 +161,23 @@ export default class CloudSynchronization {
         const remoteModel = await this.getRemoteClass(localModel.static()).find(localModel.url);
 
         return this.completeRemoteModels([localModel], arrayFilter([remoteModel]));
+    }
+
+    protected async trackModelsCollection(
+        this: CloudService,
+        modelClass: SolidModelConstructor,
+        collection: string,
+    ): Promise<void> {
+        if (this.modelCollections[modelClass.modelName]?.includes(collection)) {
+            return;
+        }
+
+        this.setState('modelCollections', {
+            ...this.modelCollections,
+            [modelClass.modelName]: (this.modelCollections[modelClass.modelName] ?? []).concat(collection),
+        });
+
+        await trackModelsCollection(modelClass, collection);
     }
 
     protected async updateTypeRegistrations(this: CloudService, remoteModel: SolidModel): Promise<void> {

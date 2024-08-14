@@ -13,11 +13,12 @@ export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
 export default defineServiceState({
     name: 'cloud',
-    persist: ['ready', 'startupSync', 'pollingEnabled', 'pollingMinutes'],
+    persist: ['ready', 'modelCollections', 'startupSync', 'pollingEnabled', 'pollingMinutes'],
     initialState: () => ({
         dirtyRemoteModels: map([], 'url') as ObjectsMap<SolidModel>,
         localModelUpdates: {} as Record<string, number>,
         ready: false,
+        modelCollections: {} as Record<string, string[]>,
         registeredModels: new Set<SolidModelConstructor>(),
         remoteOperationUrls: {} as Record<string, string[]>,
         setupDismissed: false,

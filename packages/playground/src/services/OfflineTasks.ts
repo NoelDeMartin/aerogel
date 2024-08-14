@@ -1,6 +1,6 @@
 import { Cloud } from '@aerogel/plugin-offline-first';
 import { facade } from '@noeldemartin/utils';
-import { trackModelCollection } from '@aerogel/plugin-soukai';
+import { trackModels } from '@aerogel/plugin-soukai';
 
 import OfflineTask from '@/models/OfflineTask';
 import SolidTasks from '@/services/SolidTasks';
@@ -19,7 +19,7 @@ export class OfflineTasksService extends Service {
             OfflineTask.collection = tasksContainer.url;
         });
 
-        await trackModelCollection(OfflineTask, {
+        await trackModels(OfflineTask, {
             service: this,
             property: 'allTasks',
         });
