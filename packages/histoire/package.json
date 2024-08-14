@@ -41,15 +41,11 @@
     },
     "dependencies": {
         "@histoire/plugin-vue": "0.17.6",
-        "@noeldemartin/utils": "0.5.1-next.4fd89de2cbde6c7e1cfa4d5f9bdac234e9cd3d98"
+        "@noeldemartin/utils": "0.5.1-next.82707467527729a9fe7c2155959beb4b5ea30b81"
     },
     "eslintConfig": {
         "extends": [
             "@noeldemartin/eslint-config-vue"
         ]
-    },
-    "devDependencies": {
-        "soukai": "0.5.2-next.16ec8f43c45b9b61da91876fe3731c7525344fee",
-        "soukai-solid": "0.5.2-next.4031be426c72ea7afdccef42a18f3bbac3b4f96f"
     }
 }
