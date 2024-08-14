@@ -51,6 +51,10 @@ async function getTrackedModelsData<T extends Model>(modelClass: ModelConstructo
     );
 }
 
+export interface TrackCollectionsOptions {
+    refresh?: boolean;
+}
+
 export type TrackOptions<TModel extends Model = Model, TKey extends string = string> = {
     service?: ModelService<TModel, TKey>;
     property?: TKey;
@@ -71,7 +75,21 @@ export function resetTrackedModels(): void {
     trackedModels = new WeakMap();
 }
 
-export async function trackModelsCollection(modelClass: ModelConstructor, collection: string): Promise<void> {
+export function ignoreModelsCollection(modelClass: ModelConstructor, collection: string): void {
+    const modelData = required(
+        trackedModels.get(modelClass),
+        'Failed ignoring models collection, please track the model first using trackModels()',
+    );
+
+    modelData.collectionsSet.delete(collection);
+}
+
+export async function trackModelsCollection(
+    modelClass: ModelConstructor,
+    collection: string,
+    options: TrackCollectionsOptions = {},
+): Promise<void> {
+    const refresh = options.refresh ?? true;
     const modelData = required(
         trackedModels.get(modelClass),
         'Failed tracking models collection, please track the model first using trackModels()',
@@ -83,11 +101,13 @@ export async function trackModelsCollection(modelClass: ModelConstructor, collec
 
     modelData.collectionsSet.add(collection);
 
-    const models = modelData.modelsArray.value;
-    const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
+    if (refresh) {
+        const models = modelData.modelsArray.value;
+        const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
 
-    collectionModels.forEach((model) => models.push(model));
-    modelData.modelsMap.value = map(models, 'id');
+        collectionModels.forEach((model) => models.push(model));
+        modelData.modelsMap.value = map(models, 'id');
+    }
 }
 
 export async function trackModels<TModel extends Model, TKey extends string>(

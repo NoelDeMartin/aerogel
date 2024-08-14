@@ -83,6 +83,10 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
     }
 
     public async register(modelClass: SolidModelConstructor, options: RegisterOptions = {}): Promise<void> {
+        if (this.registeredModels.find((registered) => modelClass === registered.modelClass)) {
+            return;
+        }
+
         const engine = this.engine;
 
         if (engine) {
@@ -103,7 +107,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             updated: (model) => this.updateRemoteModel(model),
         });
 
-        this.registeredModels.add(modelClass);
+        this.registeredModels.push({ modelClass, path: options.path });
 
         for (const collection of this.modelCollections[modelClass.modelName] ?? []) {
             await trackModelsCollection(modelClass, collection);
@@ -150,17 +154,17 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
     protected async migrateLocalDocuments(): Promise<void> {
         const job = new MigrateLocalDocuments();
 
-        for (const modelClass of this.registeredModels) {
+        for (const { modelClass, path } of this.registeredModels) {
             if (!isContainerClass(modelClass)) {
                 continue;
             }
 
             const localCollection = modelClass.collection;
-            const remoteCollection = this.getRemoteContainersCollection();
+            const remoteCollection = this.getRemoteContainersCollection(path);
 
             modelClass.collection = remoteCollection;
 
-            job.migrateCollection(localCollection, remoteCollection);
+            job.migrateCollection(modelClass, localCollection, remoteCollection);
         }
 
         await dispatch(job);
@@ -176,7 +180,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
 
     protected login(authenticator: Authenticator): void {
         const relatedClasses = [...this.registeredModels]
-            .map((modelClass) => this.getRelatedClasses(modelClass))
+            .map(({ modelClass }) => this.getRelatedClasses(modelClass))
             .flat()
             .concat([Tombstone]);
 

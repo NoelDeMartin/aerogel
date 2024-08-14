@@ -108,7 +108,7 @@ export default class CloudSynchronization {
             return [];
         }
 
-        const registeredModels = [...this.registeredModels].map((modelClass) => {
+        const registeredModels = [...this.registeredModels].map(({ modelClass }) => {
             const registeredChildren = isContainerClass(modelClass)
                 ? this.getContainerRegisteredClasses(modelClass)
                 : [];

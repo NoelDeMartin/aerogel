@@ -1,14 +1,26 @@
 import { Job } from '@aerogel/core';
 import { requireEngine } from 'soukai';
 import { requireUrlParentDirectory } from '@noeldemartin/utils';
+import { ignoreModelsCollection, trackModelsCollection } from '@aerogel/plugin-soukai';
 import type { EngineDocument, IndexedDBEngine } from 'soukai';
+import type { SolidModelConstructor } from 'soukai-solid';
+
+interface Migration {
+    modelClass: SolidModelConstructor;
+    local: string;
+    remote: string;
+}
 
 export default class MigrateLocalDocuments extends Job {
 
-    private collections: Record<string, string> = {};
+    private migrations: Migration[] = [];
 
-    public migrateCollection(local: string, remote: string): void {
-        this.collections[local] = remote;
+    public migrateCollection(modelClass: SolidModelConstructor, local: string, remote: string): void {
+        this.migrations.push({
+            modelClass,
+            local,
+            remote,
+        });
     }
 
     public async run(): Promise<void> {
@@ -24,6 +36,11 @@ export default class MigrateLocalDocuments extends Job {
                 await engine.create(requireUrlParentDirectory(url), this.migrateDocumentUrls(document), url);
                 await engine.delete(collection, id);
             }
+        }
+
+        for (const { modelClass, local, remote } of this.migrations) {
+            ignoreModelsCollection(modelClass, local);
+            trackModelsCollection(modelClass, remote, { refresh: false });
         }
     }
 
@@ -46,12 +63,12 @@ export default class MigrateLocalDocuments extends Job {
     }
 
     protected migrateUrl(url: string): string {
-        for (const [localCollection, remoteCollection] of Object.entries(this.collections)) {
-            if (!url.startsWith(localCollection)) {
+        for (const { local, remote } of this.migrations) {
+            if (!url.startsWith(local)) {
                 continue;
             }
 
-            return url.replace(localCollection, remoteCollection);
+            return url.replace(local, remote);
         }
 
         return url;

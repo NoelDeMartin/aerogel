@@ -9,6 +9,11 @@ export const CloudStatus = {
     Syncing: 'syncing',
 } as const;
 
+export interface ModelRegistration {
+    modelClass: SolidModelConstructor;
+    path?: string;
+}
+
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
 export default defineServiceState({
@@ -19,7 +24,7 @@ export default defineServiceState({
         localModelUpdates: {} as Record<string, number>,
         ready: false,
         modelCollections: {} as Record<string, string[]>,
-        registeredModels: new Set<SolidModelConstructor>(),
+        registeredModels: [] as ModelRegistration[],
         remoteOperationUrls: {} as Record<string, string[]>,
         setupDismissed: false,
         startupSync: true,

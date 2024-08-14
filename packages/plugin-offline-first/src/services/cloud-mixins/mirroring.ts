@@ -1,5 +1,13 @@
 import { bootModels } from 'soukai';
-import { fail, isInstanceOf, map, objectWithout, tap, urlResolveDirectory } from '@noeldemartin/utils';
+import {
+    fail,
+    isInstanceOf,
+    map,
+    objectWithout,
+    requireUrlParentDirectory,
+    tap,
+    urlResolveDirectory,
+} from '@noeldemartin/utils';
 import { getTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
 import {
@@ -10,6 +18,7 @@ import {
     SolidContainsRelation,
     SolidModel,
     Tombstone,
+    isContainer,
 } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
@@ -22,7 +31,7 @@ export default class CloudMirroring {
     private remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
     private localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
 
-    protected createRemoteModel(this: CloudService, localModel: SolidModel): void {
+    protected async createRemoteModel(this: CloudService, localModel: SolidModel): Promise<void> {
         const remoteModel = this.cloneLocalModel(localModel);
         const dirtyRemoteModels = map(this.dirtyRemoteModels.getItems(), 'url');
 
@@ -35,6 +44,11 @@ export default class CloudMirroring {
                 [localModel.url]: 1,
             },
         });
+
+        await this.trackModelsCollection(
+            localModel.static(),
+            isContainer(localModel) ? requireUrlParentDirectory(localModel.url) : urlResolveDirectory(localModel.url),
+        );
     }
 
     protected async updateRemoteModel(this: CloudService, localModel: SolidModel): Promise<void> {
@@ -119,7 +133,7 @@ export default class CloudMirroring {
     }
 
     protected getLocalModels(this: CloudService): SolidModel[] {
-        return [...this.registeredModels].map((modelClass) => getTrackedModels(modelClass)).flat();
+        return [...this.registeredModels].map(({ modelClass }) => getTrackedModels(modelClass)).flat();
     }
 
     protected getRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
@@ -143,7 +157,7 @@ export default class CloudMirroring {
     }
 
     protected isRegisteredModel(this: CloudService, model: SolidModel): boolean {
-        for (const modelClass of this.registeredModels) {
+        for (const { modelClass } of this.registeredModels) {
             const models = getTrackedModels(modelClass);
 
             if (models.some((registeredModel) => registeredModel.url === model.url)) {
