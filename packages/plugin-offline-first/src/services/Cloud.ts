@@ -15,6 +15,10 @@ import CloudMirroring from './cloud-mixins/mirroring';
 import CloudSynchronization from './cloud-mixins/synchronization';
 import Service, { CloudStatus } from './Cloud.state';
 
+export interface RegisterOptions {
+    path?: string;
+}
+
 export class CloudService extends mixed(Service, [CloudSynchronization, CloudMirroring, CloudInference]) {
 
     protected asyncLock: Semaphore = new Semaphore();
@@ -78,7 +82,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         });
     }
 
-    public async register(modelClass: SolidModelConstructor): Promise<void> {
+    public async register(modelClass: SolidModelConstructor, options: RegisterOptions = {}): Promise<void> {
         const engine = this.engine;
 
         if (engine) {
@@ -91,7 +95,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
                 return;
             }
 
-            modelClass.collection = this.getRemoteContainersCollection();
+            modelClass.collection = this.getRemoteContainersCollection(options.path);
         });
 
         await trackModels(modelClass, {

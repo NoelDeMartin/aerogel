@@ -1,5 +1,5 @@
 import { bootModels } from 'soukai';
-import { fail, isInstanceOf, map, objectWithout, tap } from '@noeldemartin/utils';
+import { fail, isInstanceOf, map, objectWithout, tap, urlResolveDirectory } from '@noeldemartin/utils';
 import { getTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
 import {
@@ -126,8 +126,12 @@ export default class CloudMirroring {
         return (this.remoteClasses.get(localClass) as T) ?? this.makeRemoteClass(localClass);
     }
 
-    protected getRemoteContainersCollection(): string {
-        return Solid.requireUser().storageUrls[0];
+    protected getRemoteContainersCollection(path?: string): string {
+        const rootStorage = Solid.requireUser().storageUrls[0];
+
+        return path
+            ? urlResolveDirectory((path.startsWith('/') ? rootStorage.slice(0, -1) : rootStorage) + path)
+            : rootStorage;
     }
 
     protected getRemoteModel(
