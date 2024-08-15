@@ -37,8 +37,8 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         });
     }
 
-    public async setup(): Promise<void> {
-        await this.migrateLocalDocuments();
+    public async setup(modelUrlMappings?: WeakMap<SolidModelConstructor, Record<string, string>>): Promise<void> {
+        await this.migrateLocalDocuments(modelUrlMappings);
         await Events.emit('cloud:migrated');
         await this.setReady(true);
         await this.sync();
@@ -114,6 +114,18 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         }
     }
 
+    public requireRemoteCollection(modelClass: SolidModelConstructor): string {
+        for (const registration of this.registeredModels) {
+            if (modelClass !== registration.modelClass) {
+                continue;
+            }
+
+            return this.getRemoteContainersCollection(registration.path);
+        }
+
+        throw new Error(`Failed resolving remote collection for '${modelClass.modelName}' model`);
+    }
+
     protected async boot(): Promise<void> {
         await Solid.booted;
 
@@ -151,12 +163,20 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         this.ready = true;
     }
 
-    protected async migrateLocalDocuments(): Promise<void> {
+    protected async migrateLocalDocuments(
+        modelUrlMappings?: WeakMap<SolidModelConstructor, Record<string, string>>,
+    ): Promise<void> {
+        modelUrlMappings ??= new WeakMap();
+
         const job = new MigrateLocalDocuments();
 
         for (const { modelClass, path } of this.registeredModels) {
             if (!isContainerClass(modelClass)) {
                 continue;
+            }
+
+            for (const [local, remote] of Object.entries(modelUrlMappings.get(modelClass) ?? {})) {
+                job.migrateUrl(modelClass, local, remote);
             }
 
             const localCollection = modelClass.collection;
