@@ -39,18 +39,22 @@
                 <AGButton v-if="$solid.wasLoggedIn()" class="mt-3" @click="$solid.reconnect({ force: true })">
                     {{ $td('solid.reconnect', 'Reconnect') }}
                 </AGButton>
-                <AGMarkdown
-                    v-if="$solid.previousSession?.error"
+                <p
+                    v-if="$solid.previousSession?.error || $solid.loginStartupError"
                     class="mt-1 self-center text-sm text-red-800"
-                    :text="$td('solid.previousLoginError', 'Previous login attempt failed')"
-                />
+                >
+                    <AGMarkdown :text="$td('solid.previousLoginError', 'Previous login attempt failed')" inline />
+                    <AGLink @click="$errors.inspect($solid.previousSession?.error || $solid.loginStartupError)">
+                        ({{ $td('errors.viewDetails', 'View details') }})
+                    </AGLink>
+                </p>
             </div>
         </slot>
     </div>
 </template>
 
 <script setup lang="ts">
-import { AGButton, AGForm, AGInput, AGMarkdown, requiredStringInput, useForm } from '@aerogel/core';
+import { AGButton, AGForm, AGInput, AGLink, AGMarkdown, requiredStringInput, useForm } from '@aerogel/core';
 
 const form = useForm({ url: requiredStringInput() });
 </script>

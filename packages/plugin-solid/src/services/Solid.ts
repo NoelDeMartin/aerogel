@@ -226,9 +226,13 @@ export class SolidService extends Service {
 
         await UI.loading(translateWithDefault('solid.logoutOngoing', 'Logging out...'), async () => {
             this.setState({
+                dismissed: false,
+                ignorePreviousSessionError: false,
+                loginStartupError: null,
                 previousSession: null,
                 ...DEFAULT_STATE,
             });
+
             this.isLoggedIn() && (await this.authenticator.logout());
 
             await Events.emit('auth:logout');
