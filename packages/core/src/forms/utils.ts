@@ -1,17 +1,25 @@
 import { FormFieldTypes } from './Form';
 import type { FormFieldDefinition } from './Form';
 
-export function booleanInput(defaultValue?: boolean): FormFieldDefinition<typeof FormFieldTypes.Boolean> {
+export function booleanInput(
+    defaultValue?: boolean,
+    options: { rules?: string } = {},
+): FormFieldDefinition<typeof FormFieldTypes.Boolean> {
     return {
         default: defaultValue,
         type: FormFieldTypes.Boolean,
+        rules: options.rules,
     };
 }
 
-export function dateInput(defaultValue?: Date): FormFieldDefinition<typeof FormFieldTypes.Date> {
+export function dateInput(
+    defaultValue?: Date,
+    options: { rules?: string } = {},
+): FormFieldDefinition<typeof FormFieldTypes.Date> {
     return {
         default: defaultValue,
         type: FormFieldTypes.Date,
+        rules: options.rules,
     };
 }
 
@@ -53,16 +61,24 @@ export function requiredStringInput(
     };
 }
 
-export function numberInput(defaultValue?: number): FormFieldDefinition<typeof FormFieldTypes.Number> {
+export function numberInput(
+    defaultValue?: number,
+    options: { rules?: string } = {},
+): FormFieldDefinition<typeof FormFieldTypes.Number> {
     return {
         default: defaultValue,
         type: FormFieldTypes.Number,
+        rules: options.rules,
     };
 }
 
-export function stringInput(defaultValue?: string): FormFieldDefinition<typeof FormFieldTypes.String> {
+export function stringInput(
+    defaultValue?: string,
+    options: { rules?: string } = {},
+): FormFieldDefinition<typeof FormFieldTypes.String> {
     return {
         default: defaultValue,
         type: FormFieldTypes.String,
+        rules: options.rules,
     };
 }

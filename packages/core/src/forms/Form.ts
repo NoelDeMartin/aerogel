@@ -1,5 +1,6 @@
-import { MagicObject, arrayRemove, fail, toString } from '@noeldemartin/utils';
 import { computed, nextTick, reactive, readonly, ref } from 'vue';
+import { MagicObject, arrayRemove, fail, toString } from '@noeldemartin/utils';
+import { validate } from './validation';
 import type { ObjectValues } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 
@@ -184,9 +185,15 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
 
     private getFieldErrors(name: keyof Fields, definition: FormFieldDefinition): string[] | null {
         const errors = [];
+        const value = this._data[name];
+        const rules = definition.rules?.split('|') ?? [];
 
-        if (definition.rules?.includes('required') && !this._data[name]) {
-            errors.push('required');
+        for (const rule of rules) {
+            if (rule !== 'required' && (value === null || value === undefined)) {
+                continue;
+            }
+
+            errors.push(...validate(value, rule));
         }
 
         return errors.length > 0 ? errors : null;

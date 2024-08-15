@@ -4,6 +4,7 @@ import type { Plugin } from '@aerogel/core';
 
 import Solid from '@/services/Solid';
 import { DEFAULT_STATE } from '@/services/Solid.state';
+import { defineFormValidationRules } from '@/forms/validation';
 import {
     authenticators as baseAuthenticators,
     getAuthenticator,
@@ -34,6 +35,7 @@ export default function solid(options: Options = {}): Plugin {
         async install(app) {
             bootSolidModels();
             registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
+            defineFormValidationRules();
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
 
             if (typeof options.autoReconnect === 'boolean') {
