@@ -63,14 +63,14 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
 
         await this.asyncLock.run(async () => {
             const start = Date.now();
+            const models = arrayFrom(modelOrModels);
 
             this.status = CloudStatus.Syncing;
+            this.clearAutoPushModels(models);
 
-            await Events.emit('cloud:sync-started');
+            await Events.emit('cloud:sync-started', models);
 
             try {
-                const models = arrayFrom(modelOrModels);
-
                 await this.pullChanges(models);
                 await this.pushChanges(models);
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
@@ -79,7 +79,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             } finally {
                 this.status = CloudStatus.Online;
 
-                await Events.emit('cloud:sync-completed');
+                await Events.emit('cloud:sync-completed', models);
             }
         });
     }
@@ -248,7 +248,7 @@ declare module '@aerogel/core' {
     export interface EventsPayload {
         'cloud:migrated': void;
         'cloud:ready': void;
-        'cloud:sync-completed': void;
-        'cloud:sync-started': void;
+        'cloud:sync-completed': SolidModel[];
+        'cloud:sync-started': SolidModel[];
     }
 }

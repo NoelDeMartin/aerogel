@@ -57,6 +57,12 @@ export default class CloudMirroring {
         return promise as Promise<T>;
     }
 
+    protected clearAutoPushModels(models: SolidModel[]): void {
+        for (const model of models) {
+            this.autoPushModels.delete(model);
+        }
+    }
+
     protected async createRemoteModel(this: CloudService, localModel: SolidModel): Promise<void> {
         const remoteModel = this.cloneLocalModel(localModel);
         const dirtyRemoteModels = map(this.dirtyRemoteModels.getItems(), 'url');
@@ -320,7 +326,13 @@ export default class CloudMirroring {
                     return;
                 }
 
-                this.syncIfOnline(this.consumeAutoPushModels());
+                const models = this.consumeAutoPushModels();
+
+                if (models.length === 0) {
+                    return;
+                }
+
+                this.syncIfOnline(models);
             });
     }
 

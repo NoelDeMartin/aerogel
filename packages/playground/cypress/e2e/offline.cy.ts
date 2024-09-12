@@ -27,7 +27,6 @@ describe('Offline First', () => {
         cy.get('@updateTask.all').should('have.length', 0);
 
         // Sync tasks
-        cy.press('Sync');
         cy.see('Syncing...');
         cy.dontSee('Syncing...');
 
@@ -44,7 +43,6 @@ describe('Offline First', () => {
         cy.get('@deleteTask.all').should('have.length', 0);
 
         // Sync tasks
-        cy.press('Sync');
         cy.see('Syncing...');
         cy.dontSee('Syncing...');
 
