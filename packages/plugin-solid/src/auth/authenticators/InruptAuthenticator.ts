@@ -68,10 +68,14 @@ export default class InruptAuthenticator extends Authenticator {
             return;
         }
 
-        this._events().on('error', (error: string | null, errorDescription?: string | null) => {
+        this._events().on('error', (error: string | null, errorDescription?: string | Error | null) => {
             error ??= 'Error using Inrupt Authenticator method';
 
-            this.failSession(loginUrl, new AuthenticationFailedError(error, errorDescription));
+            if (typeof errorDescription === 'object') {
+                this.failSession(loginUrl, new AuthenticationFailedError(error, null, { cause: errorDescription }));
+            } else {
+                this.failSession(loginUrl, new AuthenticationFailedError(error, errorDescription));
+            }
         });
 
         const session = await this._handleIncomingRedirect(globalThis.location.href);
