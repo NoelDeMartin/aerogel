@@ -320,7 +320,7 @@ export default class CloudMirroring {
                     return;
                 }
 
-                this.syncIfOnline({ models: this.consumeAutoPushModels() });
+                this.syncIfOnline(this.consumeAutoPushModels());
             });
     }
 
