@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { Events } from '@aerogel/core';
 import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
 import { FakeResponse, arrayFind } from '@noeldemartin/utils';
-import { FieldType, InMemoryEngine, bootModels, setEngine } from 'soukai';
+import { FieldType, InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
+import { resetTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer, SolidTypeRegistration, bootSolidModels, defineSolidModelSchema } from 'soukai-solid';
 import type { Relation } from 'soukai';
@@ -18,6 +19,8 @@ describe('Cloud', () => {
         bootSolidModels();
         bootModels({ Movie, MoviesContainer });
         setEngine(new InMemoryEngine());
+        resetTrackedModels();
+        resetModelListeners();
 
         Solid.mock();
         Cloud.reset();
@@ -309,6 +312,21 @@ describe('Cloud', () => {
         `);
     });
 
+    testRegisterVariants('Tracks model updates', async (registerModels) => {
+        // Arrange
+        const container = await MoviesContainer.create({ name: 'Movies' });
+        const movie = await container.relatedMovies.create({ name: 'The Boy and The Heron' });
+
+        await registerModels();
+
+        // Act
+        await movie.update({ releaseDate: new Date('2023-07-14') });
+        await container.relatedMovies.create({ name: 'The Tale of Princess Kaguya' });
+
+        // Assert
+        expect(Cloud.localChanges).toEqual(2);
+    });
+
 });
 
 const MovieSchema = defineSolidModelSchema({
@@ -317,6 +335,10 @@ const MovieSchema = defineSolidModelSchema({
     tombstone: false,
     fields: {
         name: FieldType.String,
+        releaseDate: {
+            type: FieldType.Date,
+            rdfProperty: 'schema:datePublished',
+        },
     },
 });
 

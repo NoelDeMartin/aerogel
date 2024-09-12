@@ -20,6 +20,7 @@ export default defineServiceState({
     name: 'cloud',
     persist: ['ready', 'modelCollections', 'startupSync', 'pollingEnabled', 'pollingMinutes'],
     initialState: () => ({
+        autoPush: true,
         dirtyRemoteModels: map([], 'url') as ObjectsMap<SolidModel>,
         localModelUpdates: {} as Record<string, number>,
         ready: false,

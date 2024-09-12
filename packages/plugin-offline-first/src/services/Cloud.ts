@@ -1,12 +1,12 @@
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
-import { Semaphore, after, facade, fail, map, mixed } from '@noeldemartin/utils';
+import { Semaphore, after, arrayFrom, facade, fail, map, mixed } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { Tombstone, isContainerClass } from 'soukai-solid';
 import { trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
-import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
+import type { SolidContainsRelation, SolidModel, SolidModelConstructor } from 'soukai-solid';
 
 import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';
 
@@ -48,15 +48,15 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         this.setupDismissed = true;
     }
 
-    public async syncIfOnline(model?: SolidModel): Promise<void> {
+    public async syncIfOnline(modelOrModels: SolidModel | SolidModel[] = []): Promise<void> {
         if (!this.online) {
             return;
         }
 
-        await this.sync(model);
+        await this.sync(modelOrModels);
     }
 
-    public async sync(model?: SolidModel): Promise<void> {
+    public async sync(modelOrModels: SolidModel | SolidModel[] = []): Promise<void> {
         if (!Solid.isLoggedIn() || !this.ready) {
             return;
         }
@@ -69,8 +69,10 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             await Events.emit('cloud:sync-started');
 
             try {
-                await this.pullChanges(model);
-                await this.pushChanges(model);
+                const models = arrayFrom(modelOrModels);
+
+                await this.pullChanges(models);
+                await this.pushChanges(models);
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
                 await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
@@ -106,6 +108,17 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             created: (model) => this.createRemoteModel(model),
             updated: (model) => this.updateRemoteModel(model),
         });
+
+        if (isContainerClass(modelClass)) {
+            this.getContainerRelations(modelClass).forEach((relation) => {
+                const relatedClass = modelClass
+                    .instance()
+                    .requireRelation<SolidContainsRelation>(relation).relatedClass;
+
+                relatedClass.on('created', (model) => this.createRemoteModel(model));
+                relatedClass.on('updated', (model) => this.updateRemoteModel(model));
+            });
+        }
 
         this.registeredModels.push({ modelClass, path: options.path });
 

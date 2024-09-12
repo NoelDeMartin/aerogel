@@ -1,5 +1,7 @@
 import { bootModels } from 'soukai';
 import {
+    after,
+    arrayRemove,
     fail,
     isInstanceOf,
     map,
@@ -30,6 +32,30 @@ export default class CloudMirroring {
 
     private remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
     private localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
+    private autoPushModels: Set<SolidModel> = new Set();
+    private autoPushPromises: Promise<unknown>[] = [];
+
+    public async autoPushAfter<T = void>(
+        this: CloudService,
+        operationOrPromise: Promise<T> | (() => Promise<T>),
+    ): Promise<T> {
+        const enabled = this.autoPush && this.ready;
+        const promise = typeof operationOrPromise === 'function' ? operationOrPromise() : operationOrPromise;
+
+        if (!enabled) {
+            return promise;
+        }
+
+        this.autoPushPromises.push(promise);
+
+        promise.then(() => arrayRemove(this.autoPushPromises, promise));
+
+        if (this.autoPushPromises.length === 1) {
+            this.scheduleAutoPush();
+        }
+
+        return promise as Promise<T>;
+    }
 
     protected async createRemoteModel(this: CloudService, localModel: SolidModel): Promise<void> {
         const remoteModel = this.cloneLocalModel(localModel);
@@ -45,13 +71,23 @@ export default class CloudMirroring {
             },
         });
 
-        await this.trackModelsCollection(
-            localModel.static(),
-            isContainer(localModel) ? requireUrlParentDirectory(localModel.url) : urlResolveDirectory(localModel.url),
-        );
+        if (this.isRegisteredModelClass(localModel.static())) {
+            await this.trackModelsCollection(
+                localModel.static(),
+                isContainer(localModel)
+                    ? requireUrlParentDirectory(localModel.url)
+                    : urlResolveDirectory(localModel.url),
+            );
+        }
+
+        this.autoPushModel(localModel);
     }
 
     protected async updateRemoteModel(this: CloudService, localModel: SolidModel): Promise<void> {
+        if (isContainer(localModel)) {
+            return;
+        }
+
         const remoteModel = this.getRemoteModel(localModel, this.dirtyRemoteModels);
         const modelUpdates = this.localModelUpdates[localModel.url] ?? 0;
 
@@ -73,6 +109,8 @@ export default class CloudMirroring {
                     [localModel.url]: modelUpdates + 1,
                 },
         });
+
+        this.autoPushModel(localModel);
     }
 
     protected cloneLocalModel(this: CloudService, localModel: SolidModel): SolidModel {
@@ -168,6 +206,16 @@ export default class CloudMirroring {
         return false;
     }
 
+    protected isRemoteModel(this: CloudService, model: SolidModel): boolean {
+        return this.localClasses.has(model.static());
+    }
+
+    protected isRegisteredModelClass(this: CloudService, modelClass: SolidModelConstructor): boolean {
+        return this.registeredModels.some(
+            ({ modelClass: registeredModelClass }) => registeredModelClass === modelClass,
+        );
+    }
+
     private makeRemoteClass<T extends SolidModelConstructor>(localClass: T): T {
         const self = this;
         const LocalClass = localClass as typeof SolidModel;
@@ -260,6 +308,56 @@ export default class CloudMirroring {
         return (
             (this.localClasses.get(remoteClass) as T) ?? fail(`Couldn't find local class for ${remoteClass.modelName}`)
         );
+    }
+
+    private scheduleAutoPush(this: CloudService): void {
+        Promise.all(this.autoPushPromises)
+            .then(() => after())
+            .then(() => {
+                if (this.autoPushPromises.length !== 0) {
+                    this.scheduleAutoPush();
+
+                    return;
+                }
+
+                this.syncIfOnline({ models: this.consumeAutoPushModels() });
+            });
+    }
+
+    private autoPushModel(this: CloudService, model: SolidModel): void {
+        if (!this.autoPush || !this.ready) {
+            return;
+        }
+
+        this.autoPushModels.add(model);
+        this.autoPushAfter(after({ seconds: 1 }));
+    }
+
+    private consumeAutoPushModels(this: CloudService): SolidModel[] {
+        const models: SolidModel[] = [];
+        const children: Set<SolidModel> = new Set();
+
+        for (const model of this.autoPushModels) {
+            if (!isContainer(model)) {
+                continue;
+            }
+
+            this.autoPushModels.delete(model);
+            this.getContainedModels(model).forEach((child) => children.add(child));
+            models.push(model);
+        }
+
+        for (const model of this.autoPushModels) {
+            this.autoPushModels.delete(model);
+
+            if (children.has(model)) {
+                continue;
+            }
+
+            models.push(model);
+        }
+
+        return models;
     }
 
 }

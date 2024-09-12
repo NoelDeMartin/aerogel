@@ -26,10 +26,10 @@ export default class CloudSynchronization {
         return this.typeIndex;
     }
 
-    protected async pullChanges(this: CloudService, localModel?: SolidModel): Promise<void> {
-        const localModels = map(localModel ? [localModel] : this.getLocalModels(), 'url');
-        const remoteModelsArray = localModel
-            ? await this.fetchRemoteModelsForLocal(localModel)
+    protected async pullChanges(this: CloudService, models?: SolidModel[]): Promise<void> {
+        const localModels = map(models ?? this.getLocalModels(), 'url');
+        const remoteModelsArray = models
+            ? await this.fetchRemoteModelsForLocal(models)
             : await this.fetchRemoteModels(localModels.getItems());
         const remoteModels = map(remoteModelsArray, (model) => {
             if (model instanceof Tombstone) {
@@ -62,10 +62,11 @@ export default class CloudSynchronization {
         });
     }
 
-    protected async pushChanges(this: CloudService, localModel?: SolidModel): Promise<void> {
+    protected async pushChanges(this: CloudService, models?: SolidModel[]): Promise<void> {
+        const modelUrls = models?.map((model) => model.url);
         const remoteModels = this.dirtyRemoteModels
             .getItems()
-            .filter((model) => !localModel || model.url === localModel.url);
+            .filter((model) => !modelUrls || modelUrls.includes(model.url));
 
         for (const remoteModel of remoteModels) {
             if (remoteModel.isSoftDeleted()) {
@@ -81,8 +82,8 @@ export default class CloudSynchronization {
         }
 
         this.setState({
-            dirtyRemoteModels: localModel
-                ? this.dirtyRemoteModels.filter((_, url) => url !== localModel.url)
+            dirtyRemoteModels: modelUrls
+                ? this.dirtyRemoteModels.filter((_, url) => !modelUrls.includes(url))
                 : map([], 'url'),
             remoteOperationUrls: remoteModels.reduce((urls, model) => {
                 const operationUrls = model
@@ -97,7 +98,7 @@ export default class CloudSynchronization {
 
                 return urls;
             }, this.remoteOperationUrls),
-            localModelUpdates: localModel ? objectWithout(this.localModelUpdates, localModel.url) : {},
+            localModelUpdates: modelUrls ? objectWithout(this.localModelUpdates, modelUrls) : {},
         });
     }
 
@@ -157,10 +158,16 @@ export default class CloudSynchronization {
         return this.completeRemoteModels(localModels, arrayFilter(remoteModels).flat());
     }
 
-    protected async fetchRemoteModelsForLocal(this: CloudService, localModel: SolidModel): Promise<SolidModel[]> {
-        const remoteModel = await this.getRemoteClass(localModel.static()).find(localModel.url);
+    protected async fetchRemoteModelsForLocal(this: CloudService, models: SolidModel[]): Promise<SolidModel[]> {
+        const remoteModels = [];
 
-        return this.completeRemoteModels([localModel], arrayFilter([remoteModel]));
+        for (const localModel of models) {
+            const remoteModel = await this.getRemoteClass(localModel.static()).find(localModel.url);
+
+            remoteModel && remoteModels.push(remoteModel);
+        }
+
+        return this.completeRemoteModels(models, remoteModels);
     }
 
     protected async trackModelsCollection(
@@ -215,7 +222,7 @@ export default class CloudSynchronization {
     }
 
     protected async saveModelAndChildren(this: CloudService, model: SolidModel): Promise<void> {
-        if (model.isSoftDeleted()) {
+        if (this.isRemoteModel(model) && model.isSoftDeleted()) {
             model.enableHistory();
             model.enableTombstone();
             await model.delete();
@@ -223,7 +230,7 @@ export default class CloudSynchronization {
             return;
         }
 
-        model.save();
+        await model.save();
 
         if (!(model instanceof SolidContainer)) {
             return;

@@ -48,6 +48,15 @@ export default class CloudInference {
         return this.containerRelations.get(modelClass) ?? [];
     }
 
+    protected getContainedModels(model: SolidContainer): SolidModel[] {
+        const relations = this.getContainerRelations(model.static());
+
+        return relations.reduce(
+            (models, relation) => models.concat(model.getRelationModels(relation) ?? []),
+            [] as SolidModel[],
+        );
+    }
+
     protected getRelatedClasses(modelClass: SolidModelConstructor): SolidModelConstructor[] {
         const relatedClasses = new Set<SolidModelConstructor>();
         const instance = modelClass.instance();
