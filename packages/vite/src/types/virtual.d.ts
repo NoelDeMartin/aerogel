@@ -22,7 +22,7 @@ declare module 'virtual:aerogel-solid' {
         '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld';
         client_id: string;
         client_name: string;
-        redirect_uris: string[];
+        redirect_uris: [string, ...string[]];
         client_uri: string;
         logo_uri?: string;
         scope: string;
