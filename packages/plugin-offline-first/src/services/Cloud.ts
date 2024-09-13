@@ -48,7 +48,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         this.setupDismissed = true;
     }
 
-    public async syncIfOnline(modelOrModels: SolidModel | SolidModel[] = []): Promise<void> {
+    public async syncIfOnline(modelOrModels?: SolidModel | SolidModel[]): Promise<void> {
         if (!this.online) {
             return;
         }
@@ -56,16 +56,17 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         await this.sync(modelOrModels);
     }
 
-    public async sync(modelOrModels: SolidModel | SolidModel[] = []): Promise<void> {
+    public async sync(modelOrModels?: SolidModel | SolidModel[]): Promise<void> {
         if (!Solid.isLoggedIn() || !this.ready) {
             return;
         }
 
         await this.asyncLock.run(async () => {
             const start = Date.now();
-            const models = arrayFrom(modelOrModels);
+            const models = modelOrModels && arrayFrom(modelOrModels);
 
             this.status = CloudStatus.Syncing;
+
             this.clearAutoPushModels(models);
 
             await Events.emit('cloud:sync-started', models);
@@ -248,7 +249,7 @@ declare module '@aerogel/core' {
     export interface EventsPayload {
         'cloud:migrated': void;
         'cloud:ready': void;
-        'cloud:sync-completed': SolidModel[];
-        'cloud:sync-started': SolidModel[];
+        'cloud:sync-completed': SolidModel[] | undefined;
+        'cloud:sync-started': SolidModel[] | undefined;
     }
 }

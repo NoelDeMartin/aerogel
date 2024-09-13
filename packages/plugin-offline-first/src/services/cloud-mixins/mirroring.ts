@@ -57,7 +57,13 @@ export default class CloudMirroring {
         return promise as Promise<T>;
     }
 
-    protected clearAutoPushModels(models: SolidModel[]): void {
+    protected clearAutoPushModels(models?: SolidModel[]): void {
+        if (!models) {
+            this.autoPushModels = new Set();
+
+            return;
+        }
+
         for (const model of models) {
             this.autoPushModels.delete(model);
         }

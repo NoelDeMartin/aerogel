@@ -12,7 +12,8 @@
         "build:types": "noeldemartin-build-types",
         "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src",
-        "test": "vitest --run"
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose"
     },
     "engines": {
         "node": ">=18.x"
