@@ -4,7 +4,7 @@ import { UI, UIComponents } from '@aerogel/core';
 
 import AlertModal from './components/modals/AlertModal.vue';
 
-import './assets/css/styles.css';
+import './assets/css/main.css';
 
 export const setupVue3 = defineSetupAerogel({
     messages: import.meta.glob('@/lang/*.yaml'),

@@ -2,7 +2,7 @@ import i18n from '@aerogel/plugin-i18n';
 import soukai from '@aerogel/plugin-soukai';
 import { bootstrap } from '@aerogel/core';
 
-import './assets/css/styles.css';
+import './assets/css/main.css';
 import App from './App.vue';
 
 bootstrap(App, {
