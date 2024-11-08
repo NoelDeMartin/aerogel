@@ -1,4 +1,4 @@
-import { bootServices } from '@aerogel/core';
+import { bootServices, registerErrorHandler } from '@aerogel/core';
 import { bootSolidModels } from 'soukai-solid';
 import type { Plugin } from '@aerogel/core';
 
@@ -11,6 +11,7 @@ import {
     registerAuthenticators,
     setDefaultAuthenticator,
 } from '@/auth';
+import { AuthenticationFailedError } from '@/errors';
 import type Authenticator from '@/auth/Authenticator';
 import type { AuthenticatorName } from '@/auth';
 
@@ -37,6 +38,13 @@ export default function solid(options: Options = {}): Plugin {
             registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
             defineFormValidationRules();
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
+            registerErrorHandler((error) => {
+                if (!(error instanceof AuthenticationFailedError)) {
+                    return;
+                }
+
+                return error.description ? `${error.message} (${error.description})` : error.message;
+            });
 
             if (typeof options.autoReconnect === 'boolean') {
                 DEFAULT_STATE.autoReconnect = options.autoReconnect;

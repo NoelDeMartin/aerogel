@@ -2,7 +2,23 @@ import { JSError, isObject, toString } from '@noeldemartin/utils';
 import { translateWithDefault } from '@/lang/utils';
 import type { ErrorSource } from './Errors.state';
 
+const handlers: ErrorHandler[] = [];
+
+export type ErrorHandler = (error: ErrorSource) => string | undefined;
+
+export function registerErrorHandler(handler: ErrorHandler): void {
+    handlers.push(handler);
+}
+
 export function getErrorMessage(error: ErrorSource): string {
+    for (const handler of handlers) {
+        const result = handler(error);
+
+        if (result) {
+            return result;
+        }
+    }
+
     if (typeof error === 'string') {
         return error;
     }
