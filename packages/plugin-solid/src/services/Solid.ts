@@ -157,7 +157,7 @@ export class SolidService extends Service {
 
             // This should redirect away from the app, so in most cases
             // the rest of the code won't be reached.
-            await authenticator.login(oidcIssuerUrl);
+            await authenticator.login(oidcIssuerUrl, profile);
 
             return true;
         } catch (error) {

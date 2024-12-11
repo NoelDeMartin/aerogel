@@ -36,7 +36,7 @@ export default abstract class Authenticator {
     private listeners: FluentArray<AuthenticatorListener> = arr<AuthenticatorListener>([]);
     private _engine?: SolidEngine;
 
-    public abstract login(loginUrl: string, user?: SolidUserProfile): Promise<AuthSession>;
+    public abstract login(loginUrl: string, user?: SolidUserProfile | null): Promise<AuthSession>;
 
     public abstract logout(): Promise<void>;
 
