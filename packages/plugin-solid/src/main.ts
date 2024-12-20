@@ -1,6 +1,7 @@
-import { bootServices, registerErrorHandler } from '@aerogel/core';
+import { Events, bootServices, registerErrorHandler } from '@aerogel/core';
 import { bootSolidModels } from 'soukai-solid';
 import type { Plugin } from '@aerogel/core';
+import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import Solid from '@/services/Solid';
 import { DEFAULT_STATE } from '@/services/Solid.state';
@@ -27,6 +28,7 @@ export interface Options {
     autoReconnect?: boolean;
     authenticators?: Record<string, Authenticator>;
     defaultAuthenticator?: AuthenticatorName;
+    onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): Promise<unknown> | unknown;
 }
 
 export type SolidServices = typeof services;
@@ -50,6 +52,12 @@ export default function solid(options: Options = {}): Plugin {
                 DEFAULT_STATE.autoReconnect = options.autoReconnect;
 
                 Solid.hasPersistedState() || (Solid.autoReconnect = options.autoReconnect);
+            }
+
+            if (options.onUserProfileLoaded) {
+                Events.on('solid:user-profile-loaded', ([user, store]) => {
+                    options.onUserProfileLoaded?.(user, store);
+                });
             }
 
             await bootServices(app, services);

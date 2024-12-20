@@ -22,7 +22,7 @@ import { setEngine } from 'soukai';
 import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex } from 'soukai-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import AuthenticationCancelledError from '@/errors/AuthenticationCancelledError';
 import { ContainerAlreadyInUse } from '@/errors';
@@ -72,14 +72,29 @@ export class SolidService extends Service {
     public async getUserProfile(url: string, required: true): Promise<SolidUserProfile>;
     public async getUserProfile(url: string, required?: false): Promise<SolidUserProfile | null>;
     public async getUserProfile(url: string, required: boolean = false): Promise<SolidUserProfile | null> {
+        let profileStore: SolidStore | null = null;
+
         return (
             this.profiles[url] ??
             tap(
                 await fetchLoginUserProfile(url, {
                     fetch: this.fetch,
                     required,
+                    onLoaded(store) {
+                        profileStore = store;
+                    },
                 }),
-                (profile) => profile && this.rememberProfile(profile),
+                async (profile) => {
+                    if (!profile) {
+                        return;
+                    }
+
+                    if (profileStore) {
+                        await Events.emit('solid:user-profile-loaded', [profile, profileStore]);
+                    }
+
+                    this.rememberProfile(profile);
+                },
             )
         );
     }
@@ -460,5 +475,6 @@ declare module '@aerogel/core' {
         'auth:login': AuthSession;
         'auth:logout': void;
         'auth:after-logout': void;
+        'solid:user-profile-loaded': [SolidUserProfile, SolidStore];
     }
 }
