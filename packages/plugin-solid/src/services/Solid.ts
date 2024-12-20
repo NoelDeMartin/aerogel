@@ -73,6 +73,7 @@ export class SolidService extends Service {
     public async getUserProfile(url: string, required?: false): Promise<SolidUserProfile | null>;
     public async getUserProfile(url: string, required: boolean = false): Promise<SolidUserProfile | null> {
         let profileStore: SolidStore | null = null;
+        const usingAuthenticatedFetch = !!this.authenticator?.getAuthenticatedFetch();
 
         return (
             this.profiles[url] ??
@@ -94,6 +95,10 @@ export class SolidService extends Service {
                     }
 
                     this.rememberProfile(profile);
+
+                    if (!usingAuthenticatedFetch) {
+                        this.setState({ staleProfiles: arrayUnique(this.staleProfiles.concat([profile.webId])) });
+                    }
                 },
             )
         );
@@ -419,7 +424,7 @@ export class SolidService extends Service {
                     },
                 });
 
-                if (session.user.cloaked || this.staleProfiles.includes(session.user.webId)) {
+                if (this.staleProfiles.includes(session.user.webId)) {
                     await this.refreshUserProfile();
                 }
 
