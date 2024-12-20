@@ -46,7 +46,7 @@
         "prettier": "^2.8.8",
         "prettier-eslint-cli": "^7.1.0",
         "prettier-plugin-tailwindcss": "^0.2.8",
-        "soukai": "0.5.2-next.ba95358704751aeb2faef9b2bb4e58bede2c764d",
+        "soukai": "0.5.2-next.26947ce0d23c9cb22aedb591ad36dde357b9906f",
         "soukai-solid": "0.5.2-next.c8e51620dd240521cb1a339487049e5573baaad3",
         "typescript": "~5.0.4",
         "unplugin-icons": "^0.17.1",
