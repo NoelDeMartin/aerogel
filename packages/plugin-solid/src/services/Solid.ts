@@ -291,7 +291,7 @@ export class SolidService extends Service {
         return (await this.findPublicTypeIndex()) ?? (await this.createPublicTypeIndex());
     }
 
-    protected async findPublicTypeIndex(): Promise<SolidTypeIndex | null> {
+    public async findPublicTypeIndex(): Promise<SolidTypeIndex | null> {
         const { webId, publicTypeIndexUrl } = this.requireUser();
         const engine = this.requireAuthenticator().engine;
 

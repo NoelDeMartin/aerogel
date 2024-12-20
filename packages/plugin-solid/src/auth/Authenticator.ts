@@ -31,10 +31,10 @@ export default abstract class Authenticator {
 
     public name!: AuthenticatorName;
 
-    private authenticatedFetch?: Fetch;
-    private booted?: PromisedValue<void>;
-    private listeners: FluentArray<AuthenticatorListener> = arr<AuthenticatorListener>([]);
-    private _engine?: SolidEngine;
+    protected authenticatedFetch?: Fetch;
+    protected booted?: PromisedValue<void>;
+    protected listeners: FluentArray<AuthenticatorListener> = arr<AuthenticatorListener>([]);
+    protected _engine?: SolidEngine;
 
     public abstract login(loginUrl: string, user?: SolidUserProfile | null): Promise<AuthSession>;
 
