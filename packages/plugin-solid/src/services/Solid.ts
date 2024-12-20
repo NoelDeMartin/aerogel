@@ -419,11 +419,7 @@ export class SolidService extends Service {
                     },
                 });
 
-                if (
-                    session.user.cloaked ||
-                    !session.user.writableProfileUrl ||
-                    this.staleProfiles.includes(session.user.webId)
-                ) {
+                if (session.user.cloaked || this.staleProfiles.includes(session.user.webId)) {
                     await this.refreshUserProfile();
                 }
 
