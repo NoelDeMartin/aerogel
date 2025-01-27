@@ -1,4 +1,4 @@
-import '@aerogel/histoire/dist/styles.css';
+import '@aerogel/histoire/dist/main.css';
 import { defineSetupAerogel } from '@aerogel/histoire';
 import { UI, UIComponents } from '@aerogel/core';
 

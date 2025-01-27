@@ -11,7 +11,7 @@
         "build:js": "noeldemartin-build-javascript",
         "build:types": "noeldemartin-build-types",
         "build:plugin": "esbuild src/plugin.ts --format=cjs --bundle --external:@histoire/plugin-vue > dist/plugin.js",
-        "build:styles": "cp src/assets/styles.css dist",
+        "build:styles": "cp src/assets/main.css dist",
         "publish-next": "noeldemartin-publish-next",
         "lint": "noeldemartin-lint src"
     },
