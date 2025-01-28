@@ -164,7 +164,13 @@ export default class CloudSynchronization {
         for (const localModel of models) {
             const remoteModel = await this.getRemoteClass(localModel.static()).find(localModel.url);
 
-            remoteModel && remoteModels.push(remoteModel);
+            if (!remoteModel) {
+                continue;
+            }
+
+            isContainer(remoteModel) && (await this.loadChildren(remoteModel));
+
+            remoteModels.push(remoteModel);
         }
 
         return this.completeRemoteModels(models, remoteModels);
@@ -232,7 +238,7 @@ export default class CloudSynchronization {
 
         await model.save();
 
-        if (!(model instanceof SolidContainer)) {
+        if (!isContainer(model)) {
             return;
         }
 

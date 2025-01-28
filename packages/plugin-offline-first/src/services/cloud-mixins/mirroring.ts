@@ -4,7 +4,6 @@ import {
     arrayRemove,
     fail,
     isInstanceOf,
-    map,
     objectWithout,
     requireUrlParentDirectory,
     tap,
@@ -15,16 +14,16 @@ import { Solid } from '@aerogel/plugin-solid';
 import {
     Metadata,
     Operation,
+    PropertyOperation,
     SolidACLAuthorization,
     SolidContainer,
     SolidContainsRelation,
-    SolidModel,
     Tombstone,
     isContainer,
 } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
-import type { SolidModelConstructor } from 'soukai-solid';
+import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
 
 import type { CloudService } from '@/services/Cloud';
 
@@ -70,13 +69,7 @@ export default class CloudMirroring {
     }
 
     protected async createRemoteModel(this: CloudService, localModel: SolidModel): Promise<void> {
-        const remoteModel = this.cloneLocalModel(localModel);
-        const dirtyRemoteModels = map(this.dirtyRemoteModels.getItems(), 'url');
-
-        dirtyRemoteModels.add(remoteModel);
-
         this.setState({
-            dirtyRemoteModels,
             localModelUpdates: {
                 ...this.localModelUpdates,
                 [localModel.url]: 1,
@@ -96,22 +89,11 @@ export default class CloudMirroring {
     }
 
     protected async updateRemoteModel(this: CloudService, localModel: SolidModel): Promise<void> {
-        if (isContainer(localModel)) {
+        if (this.ignoreModelUpdates(localModel)) {
             return;
         }
 
-        const remoteModel = this.getRemoteModel(localModel, this.dirtyRemoteModels);
         const modelUpdates = this.localModelUpdates[localModel.url] ?? 0;
-
-        await SolidModel.synchronize(localModel, remoteModel);
-
-        if (!this.dirtyRemoteModels.hasKey(remoteModel.url)) {
-            const dirtyRemoteModels = map(this.dirtyRemoteModels.getItems(), 'url');
-
-            dirtyRemoteModels.add(remoteModel);
-
-            this.setState({ dirtyRemoteModels });
-        }
 
         this.setState({
             localModelUpdates: localModel.isSoftDeleted()
@@ -172,6 +154,22 @@ export default class CloudMirroring {
         const tombstones = await RemoteTombstone.all({ $in: missingModelDocumentUrls });
 
         return remoteModels.concat(tombstones);
+    }
+
+    protected ignoreModelUpdates(this: CloudService, localModel: SolidModel): boolean {
+        const updatedAt = localModel.metadata.updatedAt?.getTime();
+
+        return !localModel.operations.some((operation) => {
+            if (operation.date.getTime() !== updatedAt) {
+                return false;
+            }
+
+            if (!(operation instanceof PropertyOperation)) {
+                return true;
+            }
+
+            return !localModel.ignoreRdfPropertyHistory(operation.property, true);
+        });
     }
 
     protected getLocalModel(

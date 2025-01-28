@@ -43,11 +43,15 @@ describe('Cloud', () => {
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
         server.respond(typeIndexUrl, typeIndexResponse(remoteContainerUrl));
-        server.respond(remoteContainerUrl, containerResponse('Remote Movies'));
+        server.respond(remoteContainerUrl, containerResponse({ name: 'Remote Movies' }));
         server.respondOnce(localContainerUrl, FakeResponse.notFound()); // Tombstone check
         server.respondOnce(localContainerUrl, FakeResponse.notFound()); // Check before create
         server.respondOnce(localContainerUrl, FakeResponse.created()); // Create
-        server.respondOnce(localContainerUrl, FakeResponse.success()); // Read described-by header
+        server.respondOnce(
+            // Read described-by header
+            localContainerUrl,
+            FakeResponse.success('<> a <http://www.w3.org/ns/ldp#Container> .'),
+        );
         server.respondOnce(`${localContainerUrl}.meta`, FakeResponse.success()); // Update meta
 
         // Arrange - Prepare service
@@ -106,7 +110,15 @@ describe('Cloud', () => {
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
         server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
-        server.respond(containerUrl, containerResponse('Remote Movies', [remoteDocumentUrl]));
+        server.respond(
+            containerUrl,
+            containerResponse({
+                name: 'Remote Movies',
+                documentUrls: [remoteDocumentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+            }),
+        );
         server.respond(remoteDocumentUrl, movieResponse('Spirited Away'));
         server.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Check before create
         server.respondOnce(localDocumentUrl, FakeResponse.created()); // Create
@@ -149,7 +161,7 @@ describe('Cloud', () => {
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
         server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
-        server.respond(containerUrl, containerResponse('Movies', [remoteDocumentUrl]));
+        server.respond(containerUrl, containerResponse({ name: 'Movies', documentUrls: [remoteDocumentUrl] }));
         server.respond(remoteDocumentUrl, movieResponse('Spirited Away'));
         server.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Tombstone check
         server.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Check before create
@@ -174,6 +186,119 @@ describe('Cloud', () => {
         expect(movies).toHaveLength(2);
         expect(arrayFind(movies, 'name', 'The Tale of Princess Kaguya')).toBeInstanceOf(Movie);
         expect(arrayFind(movies, 'name', 'Spirited Away')).toBeInstanceOf(Movie);
+    });
+
+    it('Syncs individual container updates', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const movieDocumentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({
+            url: containerUrl,
+            name: 'Movies',
+        });
+
+        const movie = await container.relatedMovies.create({
+            url: `${movieDocumentUrl}#it`,
+            name: 'The Tale of Princess Kaguya',
+        });
+
+        // Arrange - Prepare responses
+        const server = SolidMock.server;
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+        const typeIndexTurtle = `<${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .`;
+
+        server.respondOnce(typeIndexUrl, FakeResponse.success(typeIndexTurtle)); // Initial fetch
+        server.respondOnce(typeIndexUrl, FakeResponse.success(typeIndexTurtle)); // Check before update
+        server.respondOnce(typeIndexUrl, FakeResponse.success()); // Update
+
+        server.respondOnce(containerUrl, FakeResponse.notFound()); // Tombstone check
+        server.respondOnce(containerUrl, FakeResponse.notFound()); // Check before create
+        server.respondOnce(containerUrl, FakeResponse.created()); // Create
+        server.respondOnce(
+            // Read described-by header
+            containerUrl,
+            FakeResponse.success('<> a <http://www.w3.org/ns/ldp#Container> .'),
+        );
+        server.respondOnce(`${containerUrl}.meta`, FakeResponse.success()); // Update meta
+
+        server.respondOnce(movieDocumentUrl, FakeResponse.notFound()); // Check before create
+        server.respondOnce(movieDocumentUrl, FakeResponse.created()); // Create
+
+        server.respondOnce(
+            containerUrl,
+            containerResponse({
+                name: 'Movies',
+                documentUrls: [movieDocumentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+            }),
+        ); // Sync
+        server.respondOnce(movieDocumentUrl, FakeResponse.success(await movie.toTurtle())); // Sync children
+        server.respondOnce(
+            containerUrl,
+            containerResponse({
+                name: 'Movies',
+                documentUrls: [movieDocumentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+            }),
+        ); // Before update
+        server.respondOnce(`${containerUrl}.meta`, FakeResponse.success()); // Update
+
+        // Arrange - Prepare service
+        await Cloud.launch();
+        await Cloud.register(MoviesContainer);
+        await Events.emit('application-ready');
+
+        // Arrange - Initial sync
+        await Cloud.sync();
+
+        // Act
+        await container.update({ name: 'Great Movies' });
+        await Cloud.sync(container);
+
+        // Assert
+        expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
+        expect(server.getRequests(containerUrl)).toHaveLength(6);
+        expect(server.getRequests(`${containerUrl}.meta`)).toHaveLength(2);
+        expect(server.getRequests(movieDocumentUrl)).toHaveLength(3);
+        expect(server.getRequests()).toHaveLength(14);
+
+        expect(server.getRequests('PATCH', `${containerUrl}.meta`)[1]?.body).toEqualSparql(`
+            DELETE DATA {
+                @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+                @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+                @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+                <${containerUrl}> rdfs:label "Movies" .
+                <${containerUrl}#metadata> crdt:updatedAt "[[createdAt][.*]]"^^xsd:dateTime .
+            } ;
+            INSERT DATA {
+                @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+                @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+                @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+                <${containerUrl}> rdfs:label "Great Movies" .
+                <${containerUrl}#metadata> crdt:updatedAt "[[updatedAt][.*]]"^^xsd:dateTime .
+
+                <${containerUrl}#operation-[[.*]]>
+                    a crdt:SetPropertyOperation ;
+                    crdt:resource <${containerUrl}> ;
+                    crdt:date "[[createdAt][.*]]"^^xsd:dateTime ;
+                    crdt:property rdfs:label ;
+                    crdt:value "Movies" .
+
+                <${containerUrl}#operation-[[.*]]>
+                    a crdt:SetPropertyOperation ;
+                    crdt:resource <${containerUrl}> ;
+                    crdt:date "[[updatedAt][.*]]"^^xsd:dateTime ;
+                    crdt:property rdfs:label ;
+                    crdt:value "Great Movies" .
+            } .
+        `);
     });
 
     it('Syncs individual container documents', async () => {
@@ -239,7 +364,11 @@ describe('Cloud', () => {
         server.respondOnce(containerUrl, FakeResponse.notFound()); // Tombstone check
         server.respondOnce(containerUrl, FakeResponse.notFound()); // Check before create
         server.respondOnce(containerUrl, FakeResponse.created()); // Create
-        server.respondOnce(containerUrl, FakeResponse.success()); // Read described-by header
+        server.respondOnce(
+            // Read described-by header
+            containerUrl,
+            FakeResponse.success('<> a <http://www.w3.org/ns/ldp#Container> .'),
+        );
         server.respondOnce(`${containerUrl}.meta`, FakeResponse.success()); // Update meta
 
         server.respondOnce(documentUrl, FakeResponse.notFound()); // Check before create
@@ -277,7 +406,15 @@ describe('Cloud', () => {
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
         server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
-        server.respond(containerUrl, containerResponse('Movies', [documentUrl]));
+        server.respond(
+            containerUrl,
+            containerResponse({
+                name: 'Movies',
+                documentUrls: [documentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+            }),
+        );
         server.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Pull
         server.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Model GET before delete
         server.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Client GET before update
@@ -346,6 +483,10 @@ class Movie extends MovieSchema {}
 
 class MoviesContainer extends SolidContainer {
 
+    public static history = true;
+    public static timestamps = true;
+    public static tombstone = false;
+
     public declare movies?: Movie[];
     public declare relatedMovies: SolidContainsRelation<this, Movie, typeof Movie>;
 
@@ -388,13 +529,21 @@ function typeIndexResponse(containerUrl: string): Response {
     `);
 }
 
-function containerResponse(name: string = 'Movies', documentUrls: string[] = []): Response {
+function containerResponse(
+    options: { name?: string; documentUrls?: string[]; createdAt?: Date; updatedAt?: Date } = {},
+): Response {
+    const name = options.name ?? 'Movies';
+    const documentUrls = options.documentUrls ?? [];
+    const createdAt = options.createdAt ?? new Date();
+    const updatedAt = options.updatedAt ?? new Date();
+
     return FakeResponse.success(`
         @prefix dc: <http://purl.org/dc/terms/>.
         @prefix ldp: <http://www.w3.org/ns/ldp#>.
         @prefix posix: <http://www.w3.org/ns/posix/stat#>.
         @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
         @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+        @prefix crdt: <https://vocab.noeldemartin.com/crdt/>.
 
         <./> a ldp:Container, ldp:BasicContainer, ldp:Resource;
             rdfs:label "${name}";
@@ -402,6 +551,12 @@ function containerResponse(name: string = 'Movies', documentUrls: string[] = [])
             dc:modified "2024-02-05T12:28:42Z"^^xsd:dateTime;
             ${documentUrls.map((url) => `ldp:contains <${url}>;`)}
             posix:mtime 1707136122.
+
+        <#metadata>
+            a crdt:Metadata ;
+            crdt:resource <./> ;
+            crdt:createdAt "${createdAt.toISOString()}"^^xsd:dateTime ;
+            crdt:updatedAt "${updatedAt.toISOString()}"^^xsd:dateTime .
     `);
 }
 
