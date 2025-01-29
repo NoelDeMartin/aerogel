@@ -65,8 +65,12 @@ export function prepareQuery(command: Cypress.Command, options: QueryOptions = {
 
             return $element ?? cy.$$(null as unknown as string);
         },
-        subquery: <T>(...args: [string, ...ClosureArgs]) =>
-            cy.now(...args, { log: false, timeout: options.timeout }) as Query<T>,
+        subquery: <T>(...args: [string, ...ClosureArgs]) => {
+            return cy.now(
+                ...args,
+                options.timeout ? { log: false, timeout: options.timeout } : { log: false },
+            ) as Query<T>;
+        },
     };
 }
 
