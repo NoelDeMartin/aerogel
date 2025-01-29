@@ -341,7 +341,7 @@ export default class CloudMirroring {
     }
 
     private autoPushModel(this: CloudService, model: SolidModel): void {
-        if (!this.autoPush || !this.ready) {
+        if (!this.autoPush || !this.ready || this.syncing) {
             return;
         }
 
