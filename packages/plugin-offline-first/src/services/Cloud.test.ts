@@ -238,7 +238,7 @@ describe('Cloud', () => {
         ); // Sync
         server.respondOnce(movieDocumentUrl, FakeResponse.success(await movie.toTurtle())); // Sync children
         server.respondOnce(
-            containerUrl,
+            `${containerUrl}.meta`,
             containerResponse({
                 name: 'Movies',
                 documentUrls: [movieDocumentUrl],
@@ -262,8 +262,8 @@ describe('Cloud', () => {
 
         // Assert
         expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
-        expect(server.getRequests(containerUrl)).toHaveLength(6);
-        expect(server.getRequests(`${containerUrl}.meta`)).toHaveLength(2);
+        expect(server.getRequests(containerUrl)).toHaveLength(5);
+        expect(server.getRequests(`${containerUrl}.meta`)).toHaveLength(3);
         expect(server.getRequests(movieDocumentUrl)).toHaveLength(3);
         expect(server.getRequests()).toHaveLength(14);
 
@@ -552,7 +552,7 @@ function containerResponse(
             ${documentUrls.map((url) => `ldp:contains <${url}>;`)}
             posix:mtime 1707136122.
 
-        <#metadata>
+        <./#metadata>
             a crdt:Metadata ;
             crdt:resource <./> ;
             crdt:createdAt "${createdAt.toISOString()}"^^xsd:dateTime ;

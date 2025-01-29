@@ -123,7 +123,7 @@ export default class CloudMirroring {
         );
 
         return tap(localModel.clone({ constructors }), (model) => {
-            this.cleanRemoteModel(model);
+            this.cleanRemoteModelClone(model);
         });
     }
 
@@ -273,13 +273,8 @@ export default class CloudMirroring {
         return RemoteClass;
     }
 
-    private cleanRemoteModel(this: CloudService, remoteModel: SolidModel): void {
-        const remoteOperationUrls = this.remoteOperationUrls[remoteModel.url];
-
-        if (!remoteOperationUrls) {
-            return;
-        }
-
+    private cleanRemoteModelClone(this: CloudService, remoteModel: SolidModel): void {
+        const remoteOperationUrls = this.remoteOperationUrls[remoteModel.url] ?? [];
         const relatedModels = remoteModel
             .getRelatedModels()
             .filter(
@@ -288,23 +283,44 @@ export default class CloudMirroring {
                     !isInstanceOf(model, SolidContainer) &&
                     !isInstanceOf(model, Metadata) &&
                     !isInstanceOf(model, Operation),
-            );
+            )
+            .concat([remoteModel]);
 
         for (const relatedModel of relatedModels) {
-            const operations = relatedModel.operations ?? [];
+            if (!relatedModel.operations || relatedModel.operations.length === 0) {
+                continue;
+            }
 
-            relatedModel.setRelationModels(
-                'operations',
-                operations.filter((operation) => {
-                    if (!remoteOperationUrls.includes(operation.url)) {
-                        return false;
-                    }
+            const operations = (relatedModel.operations ?? []).filter((operation) => {
+                return (
+                    !(operation instanceof PropertyOperation) ||
+                    !relatedModel.ignoreRdfPropertyHistory(operation.property, true)
+                );
+            });
 
-                    operation.cleanDirty(true);
+            if (!operations.some((operation) => !operation.isInception(relatedModel))) {
+                relatedModel.setRelationModels('operations', []);
 
-                    return true;
-                }),
-            );
+                continue;
+            }
+
+            const existingOperations = operations.filter((operation) => {
+                if (!remoteOperationUrls.includes(operation.url)) {
+                    return false;
+                }
+
+                operation.cleanDirty(true);
+
+                return true;
+            });
+
+            if (existingOperations.length === 0) {
+                relatedModel.setRelationModels('operations', operations);
+
+                continue;
+            }
+
+            relatedModel.setRelationModels('operations', existingOperations);
             relatedModel.rebuildAttributesFromHistory();
             relatedModel.cleanDirty(true);
             relatedModel.metadata.cleanDirty(true);
