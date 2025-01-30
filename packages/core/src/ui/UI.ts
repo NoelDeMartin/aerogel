@@ -34,11 +34,17 @@ export const UIComponents = {
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
 
+export type ConfirmCheckboxes = Record<string, { label: string; default?: boolean; required?: boolean }>;
+
 export interface ConfirmOptions {
     acceptText?: string;
     acceptColor?: Color;
     cancelText?: string;
     cancelColor?: Color;
+}
+
+export interface ConfirmOptionsWithCheckboxes<T extends ConfirmCheckboxes = ConfirmCheckboxes> extends ConfirmOptions {
+    checkboxes?: T;
 }
 
 export interface PromptOptions {
@@ -84,13 +90,18 @@ export class UIService extends Service {
         this.openModal(this.requireComponent(UIComponents.AlertModal), getProperties());
     }
 
+    /* eslint-disable max-len */
     public async confirm(message: string, options?: ConfirmOptions): Promise<boolean>;
     public async confirm(title: string, message: string, options?: ConfirmOptions): Promise<boolean>;
+    public async confirm<T extends ConfirmCheckboxes>(message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
+    public async confirm<T extends ConfirmCheckboxes>(title: string, message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
+    /* eslint-enable max-len */
+
     public async confirm(
         messageOrTitle: string,
-        messageOrOptions?: string | ConfirmOptions,
-        options?: ConfirmOptions,
-    ): Promise<boolean> {
+        messageOrOptions?: string | ConfirmOptions | ConfirmOptionsWithCheckboxes,
+        options?: ConfirmOptions | ConfirmOptionsWithCheckboxes,
+    ): Promise<boolean | [boolean, Record<string, boolean>]> {
         const getProperties = (): AGConfirmModalProps => {
             if (typeof messageOrOptions !== 'string') {
                 return {
@@ -105,14 +116,33 @@ export class UIService extends Service {
                 ...(options ?? {}),
             };
         };
-
-        const modal = await this.openModal<ModalComponent<AGConfirmModalProps, boolean>>(
-            this.requireComponent(UIComponents.ConfirmModal),
-            getProperties(),
-        );
+        const properties = getProperties();
+        const modal = await this.openModal<
+            ModalComponent<AGConfirmModalProps, boolean | [boolean, Record<string, boolean>]>
+        >(this.requireComponent(UIComponents.ConfirmModal), properties);
         const result = await modal.beforeClose;
 
-        return result ?? false;
+        const confirmed = typeof result === 'object' ? result[0] : result ?? false;
+        const checkboxes =
+            typeof result === 'object'
+                ? result[1]
+                : Object.entries(properties.checkboxes ?? {}).reduce(
+                    (values, [checkbox, { default: defaultValue }]) => ({
+                        [checkbox]: defaultValue ?? false,
+                        ...values,
+                    }),
+                      {} as Record<string, boolean>,
+                );
+
+        for (const [name, checkbox] of Object.entries(properties.checkboxes ?? {})) {
+            if (!checkbox.required || checkboxes[name]) {
+                continue;
+            }
+
+            return [false, checkboxes];
+        }
+
+        return 'checkboxes' in properties ? [confirmed, checkboxes] : confirmed;
     }
 
     public async prompt(message: string, options?: PromptOptions): Promise<string | null>;

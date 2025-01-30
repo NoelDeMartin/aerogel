@@ -1,8 +1,9 @@
 import Aerogel from 'virtual:aerogel';
 
 import { createApp } from 'vue';
-import type { App, Component } from 'vue';
+import type { App as AppInstance, Component } from 'vue';
 
+import App from '@/services/App';
 import directives from '@/directives';
 import errors from '@/errors';
 import Events from '@/services/Events';
@@ -15,8 +16,10 @@ import type { AerogelOptions } from '@/bootstrap/options';
 
 export { AerogelOptions };
 
-export async function bootstrapApplication(app: App, options: AerogelOptions = {}): Promise<void> {
+export async function bootstrapApplication(app: AppInstance, options: AerogelOptions = {}): Promise<void> {
     const plugins = [testing, directives, errors, lang, services, ui, ...(options.plugins ?? [])];
+
+    App.instance = app;
 
     await installPlugins(plugins, app, options);
     await options.install?.(app);

@@ -65,6 +65,6 @@ export default function solid(options: Options = {}): Plugin {
     };
 }
 
-declare module '@vue/runtime-core' {
-    interface ComponentCustomProperties extends SolidServices {}
+declare module '@aerogel/core' {
+    interface Services extends SolidServices {}
 }

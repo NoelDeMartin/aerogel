@@ -122,12 +122,6 @@ export class SolidService extends Service {
     }
 
     public async login(loginUrl: string, options: LoginOptions = {}): Promise<boolean> {
-        const authenticatorName = options.authenticator ?? this.preferredAuthenticator ?? 'default';
-        const handleLoginError =
-            options.onError ??
-            ((error: ErrorSource) =>
-                App.isMounted() ? Errors.report(error) : this.setState({ loginStartupError: error }));
-
         if (App.development && loginUrl === 'dev') {
             loginUrl = 'http://localhost:3000';
         }
@@ -145,63 +139,9 @@ export class SolidService extends Service {
             throw new Error('Authentication already in progress');
         }
 
-        const staleTimeout = setTimeout(() => (this.loginStale = true), 10000);
-        const initialState = {
-            dismissed: this.dismissed,
-            ignorePreviousSessionError: this.ignorePreviousSessionError,
-            previousSession: this.previousSession,
-        };
-        this.loginOngoing = true;
-
-        try {
-            const profile = await this.getUserProfile(loginUrl);
-            const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
-            const authenticator = await this.bootAuthenticator(authenticatorName);
-            const { domain: loginDomain } = requireUrlParse(loginUrl);
-
-            this.setState({
-                dismissed: false,
-                ignorePreviousSessionError: true,
-                previousSession: objectWithoutEmpty({
-                    profile,
-                    loginUrl,
-                    authenticator: authenticatorName,
-                    error: translateWithDefault(
-                        'auth.stuckConnecting',
-                        `We didn't hear back from the identity provider at \`${loginDomain}\`, maybe try reconnecting?`,
-                    ),
-                }),
-            });
-
-            await Events.emit('auth:before-login');
-
-            // This should redirect away from the app, so in most cases
-            // the rest of the code won't be reached.
-            await authenticator.login(oidcIssuerUrl, profile);
-
-            return true;
-        } catch (error) {
-            this.setState(initialState);
-
-            if (error instanceof AuthenticationCancelledError) {
-                return false;
-            }
-
-            if (options.fallbackUrl) {
-                return after().then(() => this.login(options.fallbackUrl ?? '', objectWithout(options, 'fallbackUrl')));
-            }
-
-            handleLoginError(error);
-
-            return false;
-        } finally {
-            clearTimeout(staleTimeout);
-
-            this.setState({
-                loginOngoing: false,
-                loginStale: false,
-            });
-        }
+        return UI.loading(translateWithDefault('solid.loggingIn', 'Logging in...'), () => {
+            return this.attemptLogin(loginUrl, options);
+        });
     }
 
     public async reconnect(options: ReconnectOptions = {}): Promise<void> {
@@ -217,15 +157,30 @@ export class SolidService extends Service {
     }
 
     public async logout(force: boolean = false): Promise<void> {
-        const confirmLogout =
-            force ||
-            (await UI.confirm(
-                translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?'),
-                translateWithDefault(
-                    'solid.logoutConfirmMessage',
-                    'Logging out will remove all the data from this device, ' +
-                        'but you\'ll still have it in your Solid POD.',
-                ),
+        const isCloudReady = !App.plugin('@aerogel/offline-first') || !!App.service('$cloud')?.ready;
+        const hasLocalChanges = !App.plugin('@aerogel/offline-first') || !!App.service('$cloud')?.dirty;
+        const [confirmLogout, options] = force
+            ? [true, { wipeLocalData: isCloudReady }]
+            : await UI.confirm(
+                isCloudReady
+                    ? translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?')
+                    : translateWithDefault('solid.disconnectConfirmTitle', 'Disconnect account?'),
+                isCloudReady
+                    ? hasLocalChanges
+                        ? translateWithDefault(
+                            'solid.logoutConfirmMessageWithLocalChanges',
+                            'There are some changes that haven\'t been synchronized and will be lost, ' +
+                                    'but the rest of the data will remain in your Solid POD.',
+                        )
+                        : translateWithDefault(
+                            'solid.logoutConfirmMessage',
+                            'Logging out will remove all the data from this device, ' +
+                                    'but you\'ll still have it in your Solid POD.',
+                        )
+                    : translateWithDefault(
+                        'solid.disconnectConfirmMessage',
+                        'You\'ll need to introduce logging details again to connect to your Solid POD.',
+                    ),
                 {
                     acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
                     acceptColor: Colors.Danger,
@@ -233,8 +188,30 @@ export class SolidService extends Service {
                         'solid.logoutConfirmCancel',
                         translateWithDefault('ui.cancel', 'Cancel'),
                     ),
+                    checkboxes: isCloudReady
+                        ? hasLocalChanges
+                            ? {
+                                wipeLocalData: {
+                                    label: translateWithDefault(
+                                        'solid.logoutConfirmWipeNotice',
+                                        'I understand that changes that haven\'t been synchronized will be lost.',
+                                    ),
+                                    default: false,
+                                    required: true,
+                                },
+                            }
+                            : undefined
+                        : {
+                            wipeLocalData: {
+                                label: translateWithDefault(
+                                    'solid.logoutConfirmWipe',
+                                    'Also remove all existing data (tasks, lists, etc.)',
+                                ),
+                                default: false,
+                            },
+                        },
                 },
-            ));
+            );
 
         if (!confirmLogout) {
             return;
@@ -255,7 +232,7 @@ export class SolidService extends Service {
 
             this.isLoggedIn() && (await this.authenticator.logout());
 
-            await Events.emit('auth:logout');
+            await Events.emit('auth:logout', { wipeLocalData: options.wipeLocalData ?? true });
             await Events.emit('auth:after-logout');
         });
     }
@@ -385,6 +362,71 @@ export class SolidService extends Service {
         });
     }
 
+    protected async attemptLogin(loginUrl: string, options: LoginOptions): Promise<boolean> {
+        const authenticatorName = options.authenticator ?? this.preferredAuthenticator ?? 'default';
+        const handleLoginError =
+            options.onError ??
+            ((error: ErrorSource) =>
+                App.isMounted() ? Errors.report(error) : this.setState({ loginStartupError: error }));
+        const staleTimeout = setTimeout(() => (this.loginStale = true), 10000);
+        const initialState = {
+            dismissed: this.dismissed,
+            ignorePreviousSessionError: this.ignorePreviousSessionError,
+            previousSession: this.previousSession,
+        };
+        this.loginOngoing = true;
+
+        try {
+            const profile = await this.getUserProfile(loginUrl);
+            const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
+            const authenticator = await this.bootAuthenticator(authenticatorName);
+            const { domain: loginDomain } = requireUrlParse(loginUrl);
+
+            this.setState({
+                dismissed: false,
+                ignorePreviousSessionError: true,
+                previousSession: objectWithoutEmpty({
+                    profile,
+                    loginUrl,
+                    authenticator: authenticatorName,
+                    error: translateWithDefault(
+                        'auth.stuckConnecting',
+                        `We didn't hear back from the identity provider at \`${loginDomain}\`, maybe try reconnecting?`,
+                    ),
+                }),
+            });
+
+            await Events.emit('auth:before-login');
+
+            // This should redirect away from the app, so in most cases
+            // the rest of the code won't be reached.
+            await authenticator.login(oidcIssuerUrl, profile);
+
+            return true;
+        } catch (error) {
+            this.setState(initialState);
+
+            if (error instanceof AuthenticationCancelledError) {
+                return false;
+            }
+
+            if (options.fallbackUrl) {
+                return after().then(() => this.login(options.fallbackUrl ?? '', objectWithout(options, 'fallbackUrl')));
+            }
+
+            handleLoginError(error);
+
+            return false;
+        } finally {
+            clearTimeout(staleTimeout);
+
+            this.setState({
+                loginOngoing: false,
+                loginStale: false,
+            });
+        }
+    }
+
     private async restorePreviousSession(): Promise<void> {
         if (!this.previousSession) {
             return;
@@ -474,7 +516,7 @@ declare module '@aerogel/core' {
         'auth:fetch-ready': Fetch;
         'auth:before-login': void;
         'auth:login': AuthSession;
-        'auth:logout': void;
+        'auth:logout': { wipeLocalData: boolean };
         'auth:after-logout': void;
         'solid:user-profile-loaded': [SolidUserProfile, SolidStore];
     }

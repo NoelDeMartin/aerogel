@@ -38,6 +38,6 @@ export default function routing(options: Options): Plugin {
     };
 }
 
-declare module '@vue/runtime-core' {
-    interface ComponentCustomProperties extends RoutingServices {}
+declare module '@aerogel/core' {
+    interface Services extends RoutingServices {}
 }

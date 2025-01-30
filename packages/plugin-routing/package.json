@@ -39,7 +39,8 @@
         "vue-router": "4.4.0"
     },
     "devDependencies": {
-        "@aerogel/core": "*"
+        "@aerogel/core": "*",
+        "@aerogel/plugin-solid": "*"
     },
     "eslintConfig": {
         "extends": [

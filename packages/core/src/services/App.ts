@@ -4,6 +4,7 @@ import { PromisedValue, facade, forever, updateLocationQueryParameters } from '@
 
 import Events from '@/services/Events';
 import type { Plugin } from '@/plugins';
+import type { Services } from '@/services';
 
 import Service from './App.state';
 
@@ -38,6 +39,10 @@ export class AppService extends Service {
 
     public plugin<T extends Plugin = Plugin>(name: string): T | null {
         return (this.plugins[name] as T) ?? null;
+    }
+
+    public service<T extends keyof Services>(name: T): Services[T] | null {
+        return this.instance?.config.globalProperties[name] ?? null;
     }
 
     protected async boot(): Promise<void> {

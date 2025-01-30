@@ -20,6 +20,6 @@ export default function offlineFirst(): Plugin {
     };
 }
 
-declare module '@vue/runtime-core' {
-    interface ComponentCustomProperties extends OfflineFirstServices {}
+declare module '@aerogel/core' {
+    interface Services extends OfflineFirstServices {}
 }

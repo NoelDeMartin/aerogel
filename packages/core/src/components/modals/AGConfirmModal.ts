@@ -1,10 +1,11 @@
 import { computed } from 'vue';
 import type { ExtractPropTypes } from 'vue';
-import type { ObjectWithoutEmpty, SubPartial } from '@noeldemartin/utils';
+import type { ObjectWithout, SubPartial } from '@noeldemartin/utils';
 
 import { Colors } from '@/components/constants';
-import { enumProp, requiredStringProp, stringProp } from '@/utils';
+import { enumProp, objectProp, requiredStringProp, stringProp } from '@/utils';
 import { translateWithDefault } from '@/lang';
+import type { ConfirmCheckboxes } from '@/ui';
 
 export const confirmModalProps = {
     title: stringProp(),
@@ -13,10 +14,11 @@ export const confirmModalProps = {
     acceptColor: enumProp(Colors, Colors.Primary),
     cancelText: stringProp(),
     cancelColor: enumProp(Colors, Colors.Clear),
+    checkboxes: objectProp<ConfirmCheckboxes>(),
 };
 
 export type AGConfirmModalProps = SubPartial<
-    ObjectWithoutEmpty<ExtractPropTypes<typeof confirmModalProps>>,
+    ObjectWithout<ExtractPropTypes<typeof confirmModalProps>, null | undefined>,
     'acceptColor' | 'cancelColor'
 >;
 
