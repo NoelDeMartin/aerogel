@@ -1,2 +1,1 @@
-// Import type definitions
-import '../../../plugin-solid/src/main';
+/// <reference types="@aerogel/plugin-solid" />

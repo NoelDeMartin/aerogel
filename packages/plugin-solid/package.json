@@ -41,6 +41,9 @@
         "@noeldemartin/utils": "0.5.1-next.8877300615e6d56d7b5dfe508524589287835f23",
         "vue": "^3.3.0"
     },
+    "devDependencies": {
+        "@aerogel/plugin-offline-first": "0.0.0-next.cdd166d45dc23b4ffaf9b6e1c2a51db790c6b0d1"
+    },
     "eslintConfig": {
         "extends": [
             "@noeldemartin/eslint-config-vue"

@@ -1,2 +1,1 @@
-// Import type definitions
-import '../../../plugin-offline-first/src/main';
+/// <reference types="@aerogel/plugin-offline-first" />
