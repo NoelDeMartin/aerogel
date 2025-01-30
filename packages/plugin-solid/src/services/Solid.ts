@@ -37,6 +37,7 @@ export type LoginOptions = {
     authenticator?: AuthenticatorName;
     onError?(error: ErrorSource): unknown;
     fallbackUrl?: string;
+    loading?: boolean;
 };
 
 export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
@@ -139,6 +140,10 @@ export class SolidService extends Service {
             throw new Error('Authentication already in progress');
         }
 
+        if (!options.loading) {
+            return this.attemptLogin(loginUrl, options);
+        }
+
         return UI.loading(translateWithDefault('solid.loggingIn', 'Logging in...'), () => {
             return this.attemptLogin(loginUrl, options);
         });
@@ -153,6 +158,7 @@ export class SolidService extends Service {
         await this.login(this.previousSession.loginUrl, {
             authenticator: this.previousSession.authenticator,
             ...loginOptions,
+            loading: loginOptions.loading ?? false,
         });
     }
 

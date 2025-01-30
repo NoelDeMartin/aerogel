@@ -1,12 +1,12 @@
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
-import { Semaphore, after, arrayFrom, facade, fail, map, mixed } from '@noeldemartin/utils';
+import { Semaphore, after, facade, fail, isArray, map, mixed } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
-import { Tombstone, isContainerClass } from 'soukai-solid';
+import { SolidModel, Tombstone, isContainerClass } from 'soukai-solid';
 import { trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
-import type { SolidContainsRelation, SolidModel, SolidModelConstructor } from 'soukai-solid';
+import type { SolidContainsRelation, SolidModelConstructor } from 'soukai-solid';
 
 import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';
 
@@ -17,6 +17,12 @@ import Service, { CloudStatus } from './Cloud.state';
 
 export interface RegisterOptions {
     path?: string;
+}
+
+export interface SyncOptions {
+    refreshUserProfile?: boolean;
+    model?: SolidModel;
+    models?: SolidModel[];
 }
 
 export class CloudService extends mixed(Service, [CloudSynchronization, CloudMirroring, CloudInference]) {
@@ -48,22 +54,34 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         this.setupDismissed = true;
     }
 
-    public async syncIfOnline(modelOrModels?: SolidModel | SolidModel[]): Promise<void> {
+    public async syncIfOnline(options?: SyncOptions): Promise<void>;
+    public async syncIfOnline(model: SolidModel): Promise<void>;
+    public async syncIfOnline(models: SolidModel[]): Promise<void>;
+    public async syncIfOnline(config: SyncOptions | SolidModel | SolidModel[] = {}): Promise<void> {
         if (!this.online) {
             return;
         }
 
-        await this.sync(modelOrModels);
+        await this.sync(config as SyncOptions);
     }
 
-    public async sync(modelOrModels?: SolidModel | SolidModel[]): Promise<void> {
+    public async sync(options?: SyncOptions): Promise<void>;
+    public async sync(model: SolidModel): Promise<void>;
+    public async sync(models: SolidModel[]): Promise<void>;
+    public async sync(config: SyncOptions | SolidModel | SolidModel[] = {}): Promise<void> {
+        const options = isArray(config)
+            ? { models: config }
+            : config instanceof SolidModel
+                ? { model: config }
+                : config;
+
         if (!Solid.isLoggedIn() || !this.ready) {
             return;
         }
 
         await this.asyncLock.run(async () => {
             const start = Date.now();
-            const models = modelOrModels && arrayFrom(modelOrModels);
+            const models = options.model ? [options.model] : options.models;
 
             this.status = CloudStatus.Syncing;
 
@@ -72,6 +90,10 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             await Events.emit('cloud:sync-started', models);
 
             try {
+                if (options.refreshUserProfile) {
+                    await Solid.refreshUserProfile();
+                }
+
                 await this.pullChanges(models);
                 await this.pushChanges(models);
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
