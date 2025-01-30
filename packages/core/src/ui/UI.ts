@@ -3,6 +3,7 @@ import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
 
+import App from '@/services/App';
 import Events from '@/services/Events';
 import type { Color } from '@/components/constants';
 import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackbars';
@@ -137,6 +138,11 @@ export class UIService extends Service {
         for (const [name, checkbox] of Object.entries(properties.checkboxes ?? {})) {
             if (!checkbox.required || checkboxes[name]) {
                 continue;
+            }
+
+            if (confirmed && App.development) {
+                // eslint-disable-next-line no-console
+                console.warn(`Confirmed confirm modal was suppressed because required '${name}' checkbox was missing`);
             }
 
             return [false, checkboxes];
