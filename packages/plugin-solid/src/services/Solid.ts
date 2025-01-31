@@ -446,7 +446,7 @@ export class SolidService extends Service {
             return;
         }
 
-        await this.reconnect();
+        await this.reconnect({ force: this.forcingReconnect() });
     }
 
     private reconnectOnStartup(): boolean {
@@ -455,6 +455,10 @@ export class SolidService extends Service {
         }
 
         return this.autoReconnect;
+    }
+
+    private forcingReconnect(): boolean {
+        return hasLocationQueryParameter('autoReconnect') && parseBoolean(getLocationQueryParameter('autoReconnect'));
     }
 
     private async bootAuthenticator(name: AuthenticatorName): Promise<Authenticator> {
@@ -488,6 +492,7 @@ export class SolidService extends Service {
                 this.setState({
                     session: null,
                     previousSession: {
+                        profile: this.previousSession?.profile,
                         authenticator: authenticator.name,
                         loginUrl,
                         error,
