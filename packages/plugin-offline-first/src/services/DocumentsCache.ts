@@ -7,14 +7,17 @@ export class DocumentsCacheService extends Service {
 
     private cache = new IndexedDBMap<{ modifiedAt: number }>('documents-cache');
 
-    public async isFresh(documentUrl: string, modifiedAt: number): Promise<boolean> {
+    public async isFresh(documentUrl: string, modifiedAt: Date | number): Promise<boolean> {
         const meta = await this.cache.get(documentUrl);
+        const modifiedAtTime = typeof modifiedAt !== 'number' ? modifiedAt.getTime() : modifiedAt;
 
-        return !!meta?.modifiedAt && meta.modifiedAt === modifiedAt;
+        return !!meta?.modifiedAt && meta.modifiedAt >= modifiedAtTime;
     }
 
-    public async remember(documentUrl: string, modifiedAt: number): Promise<void> {
-        await this.cache.set(documentUrl, { modifiedAt });
+    public async remember(documentUrl: string, modifiedAt: Date | number): Promise<void> {
+        await this.cache.set(documentUrl, {
+            modifiedAt: typeof modifiedAt !== 'number' ? modifiedAt.getTime() : modifiedAt,
+        });
     }
 
     public async forget(documentUrl: string): Promise<void> {

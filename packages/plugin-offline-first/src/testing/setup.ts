@@ -1,3 +1,5 @@
+import 'fake-indexeddb/auto';
+
 import { beforeEach, expect, vi } from 'vitest';
 import { mock, resetAsyncMemo, setTestingNamespace, tap } from '@noeldemartin/utils';
 

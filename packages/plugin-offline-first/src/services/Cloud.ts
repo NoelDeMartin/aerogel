@@ -1,5 +1,5 @@
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
-import { Semaphore, after, facade, fail, isArray, map, mixed } from '@noeldemartin/utils';
+import { Semaphore, after, facade, fail, isArray, map } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainerClass } from 'soukai-solid';
 import { trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
@@ -8,11 +8,18 @@ import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
 import type { SolidContainsRelation, SolidModelConstructor } from 'soukai-solid';
 
+import {
+    createRemoteModel,
+    getLocalModels,
+    getRemoteClass,
+    getRemoteContainersCollection,
+    updateRemoteModel,
+} from '@/lib/mirroring';
 import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';
+import Sync from '@/jobs/Sync';
+import SyncQueue from '@/lib/SyncQueue';
+import { getContainerRelations, getRelatedClasses } from '@/lib/inference';
 
-import CloudInference from './cloud-mixins/inference';
-import CloudMirroring from './cloud-mixins/mirroring';
-import CloudSynchronization from './cloud-mixins/synchronization';
 import Service, { CloudStatus } from './Cloud.state';
 
 export interface RegisterOptions {
@@ -25,7 +32,7 @@ export interface SyncOptions {
     models?: SolidModel[];
 }
 
-export class CloudService extends mixed(Service, [CloudSynchronization, CloudMirroring, CloudInference]) {
+export class CloudService extends Service {
 
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
@@ -85,7 +92,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
 
             this.status = CloudStatus.Syncing;
 
-            this.clearAutoPushModels(models);
+            SyncQueue.clear(models);
 
             await Events.emit('cloud:sync-started', models);
 
@@ -94,8 +101,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
                     await Solid.refreshUserProfile();
                 }
 
-                await this.pullChanges(models);
-                await this.pushChanges(models);
+                await dispatch(new Sync(models));
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
                 await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
@@ -115,8 +121,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         const engine = this.engine;
 
         if (engine) {
-            this.getRelatedClasses(modelClass).forEach((relatedClass) =>
-                this.getRemoteClass(relatedClass).setEngine(engine));
+            getRelatedClasses(modelClass).forEach((relatedClass) => getRemoteClass(relatedClass).setEngine(engine));
         }
 
         this.whenReady(() => {
@@ -124,22 +129,22 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
                 return;
             }
 
-            modelClass.collection = this.getRemoteContainersCollection(options.path);
+            modelClass.collection = getRemoteContainersCollection(options.path);
         });
 
         await trackModels(modelClass, {
-            created: (model) => this.createRemoteModel(model),
-            updated: (model) => this.updateRemoteModel(model),
+            created: (model) => createRemoteModel(model),
+            updated: (model) => updateRemoteModel(model),
         });
 
         if (isContainerClass(modelClass)) {
-            this.getContainerRelations(modelClass).forEach((relation) => {
+            getContainerRelations(modelClass).forEach((relation) => {
                 const relatedClass = modelClass
                     .instance()
                     .requireRelation<SolidContainsRelation>(relation).relatedClass;
 
-                relatedClass.on('created', (model) => this.createRemoteModel(model));
-                relatedClass.on('updated', (model) => this.updateRemoteModel(model));
+                relatedClass.on('created', (model) => createRemoteModel(model));
+                relatedClass.on('updated', (model) => updateRemoteModel(model));
             });
         }
 
@@ -156,7 +161,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
                 continue;
             }
 
-            return this.getRemoteContainersCollection(registration.path);
+            return getRemoteContainersCollection(registration.path);
         }
 
         throw new Error(`Failed resolving remote collection for '${modelClass.modelName}' model`);
@@ -216,7 +221,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             }
 
             const localCollection = modelClass.collection;
-            const remoteCollection = this.getRemoteContainersCollection(path);
+            const remoteCollection = getRemoteContainersCollection(path);
 
             modelClass.collection = remoteCollection;
 
@@ -231,12 +236,12 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
             return;
         }
 
-        await this.setReady(!this.getLocalModels().some((model) => model.url.startsWith('solid://')));
+        await this.setReady(!getLocalModels().some((model) => model.url.startsWith('solid://')));
     }
 
     protected login(authenticator: Authenticator): void {
         const relatedClasses = [...this.registeredModels]
-            .map(({ modelClass }) => this.getRelatedClasses(modelClass))
+            .map(({ modelClass }) => getRelatedClasses(modelClass))
             .flat()
             .concat([Tombstone]);
 
@@ -244,7 +249,7 @@ export class CloudService extends mixed(Service, [CloudSynchronization, CloudMir
         this.engine = authenticator.engine;
 
         for (const relatedClass of relatedClasses) {
-            this.getRemoteClass(relatedClass).setEngine(this.engine);
+            getRemoteClass(relatedClass).setEngine(this.engine);
         }
     }
 

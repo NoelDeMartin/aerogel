@@ -390,6 +390,105 @@ describe('Cloud', () => {
         expect(server.getRequests()).toHaveLength(10);
     });
 
+    it('Skips pulling fresh documents', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const freshDocumentUrl = fakeDocumentUrl({ containerUrl });
+        const staleDocumentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({
+            url: containerUrl,
+            name: 'Movies',
+        });
+
+        await container.relatedMovies.create({
+            url: `${freshDocumentUrl}#it`,
+            name: 'The Tale of Princess Kaguya',
+        });
+
+        await container.relatedMovies.create({
+            url: `${staleDocumentUrl}#it`,
+            name: 'Jingle All the Way',
+        });
+
+        // Arrange - Prepare responses
+        const now = Date.now();
+        const server = SolidMock.server;
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+        const typeIndexTurtle = `
+            <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
+
+            <#movies>
+                a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
+                <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Movie> ;
+                <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
+        `;
+
+        server.respondOnce(typeIndexUrl, FakeResponse.success(typeIndexTurtle)); // Initial fetch
+        server.respondOnce(
+            containerUrl,
+            containerResponse({
+                documentUrls: [freshDocumentUrl, staleDocumentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+                append: `
+                    <${freshDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+                    <${staleDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+                `,
+            }),
+        ); // Container
+        server.respondOnce(freshDocumentUrl, movieResponse('The Tale of Princess Kaguya')); // First movie
+        server.respondOnce(staleDocumentUrl, movieResponse('Jingle All the Way')); // Second movie
+
+        server.respondOnce(
+            containerUrl,
+            containerResponse({
+                documentUrls: [freshDocumentUrl, staleDocumentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+                append: `
+                    <${freshDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+                    <${staleDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now + 1000).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+                `,
+            }),
+        ); // Container
+        server.respondOnce(staleDocumentUrl, movieResponse('Jingle All the Way')); // Second movie
+
+        // Arrange - Prepare service
+        await Cloud.launch();
+        await Cloud.register(MoviesContainer);
+        await Events.emit('application-ready');
+
+        // Arrange - Initial sync
+        await Cloud.sync();
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        expect(server.getRequests(typeIndexUrl)).toHaveLength(1);
+        expect(server.getRequests(containerUrl)).toHaveLength(2);
+        expect(server.getRequests(freshDocumentUrl)).toHaveLength(1);
+        expect(server.getRequests(staleDocumentUrl)).toHaveLength(2);
+        expect(server.getRequests()).toHaveLength(6);
+    });
+
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
@@ -530,7 +629,7 @@ function typeIndexResponse(containerUrl: string): Response {
 }
 
 function containerResponse(
-    options: { name?: string; documentUrls?: string[]; createdAt?: Date; updatedAt?: Date } = {},
+    options: { name?: string; documentUrls?: string[]; createdAt?: Date; updatedAt?: Date; append?: string } = {},
 ): Response {
     const name = options.name ?? 'Movies';
     const documentUrls = options.documentUrls ?? [];
@@ -549,7 +648,7 @@ function containerResponse(
             rdfs:label "${name}";
             dc:created "2024-02-05T12:28:42Z"^^xsd:dateTime;
             dc:modified "2024-02-05T12:28:42Z"^^xsd:dateTime;
-            ${documentUrls.map((url) => `ldp:contains <${url}>;`)}
+            ${documentUrls.length > 0 ? `ldp:contains ${documentUrls.map((url) => `<${url}>`).join(',')};` : ''}
             posix:mtime 1707136122.
 
         <./#metadata>
@@ -557,6 +656,8 @@ function containerResponse(
             crdt:resource <./> ;
             crdt:createdAt "${createdAt.toISOString()}"^^xsd:dateTime ;
             crdt:updatedAt "${updatedAt.toISOString()}"^^xsd:dateTime .
+
+        ${options.append ?? ''}
     `);
 }
 
