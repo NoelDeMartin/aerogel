@@ -4,9 +4,11 @@ import {
     isInstanceOf,
     objectWithout,
     requireUrlParentDirectory,
+    required,
     tap,
     urlResolveDirectory,
 } from '@noeldemartin/utils';
+import { App } from '@aerogel/core';
 import { getTrackedModels, trackModelsCollection as trackSoukaiModelsCollection } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
 import {
@@ -23,7 +25,6 @@ import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
 
-import Cloud from '@/services/Cloud';
 import SyncQueue from '@/lib/SyncQueue';
 import { getContainerRelations } from '@/lib/inference';
 
@@ -31,6 +32,7 @@ interface CloneOptions {
     clean?: boolean;
 }
 
+const Cloud = required(() => App.service('$cloud'));
 const remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
 const localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
 

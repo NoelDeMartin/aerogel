@@ -1,5 +1,5 @@
-import { arrayEquals, arrayFilter, map, objectWithout, requireUrlParentDirectory } from '@noeldemartin/utils';
-import { Job } from '@aerogel/core';
+import { App, Job } from '@aerogel/core';
+import { arrayEquals, arrayFilter, map, objectWithout, requireUrlParentDirectory, required } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -25,8 +25,8 @@ import {
     trackModelsCollection,
 } from '@/lib/mirroring';
 import DocumentsCache from '@/services/DocumentsCache';
-import Cloud from '@/services/Cloud';
 
+const Cloud = required(() => App.service('$cloud'));
 const typeIndexes: WeakMap<SolidUserProfile, SolidTypeIndex | null> = new WeakMap();
 
 export default class Sync extends Job {

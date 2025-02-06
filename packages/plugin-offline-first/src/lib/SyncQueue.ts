@@ -1,8 +1,10 @@
-import { after, arrayRemove, facade } from '@noeldemartin/utils';
+import { after, arrayRemove, facade, required } from '@noeldemartin/utils';
+import { App } from '@aerogel/core';
 import { type SolidModel, isContainer } from 'soukai-solid';
 
-import Cloud from '@/services/Cloud';
 import { getContainedModels } from '@/lib/inference';
+
+const Cloud = required(() => App.service('$cloud'));
 
 class SyncQueue {
 

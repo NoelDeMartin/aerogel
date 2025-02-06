@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Events } from '@aerogel/core';
+import { App, Events } from '@aerogel/core';
 import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
-import { FakeResponse, arrayFind } from '@noeldemartin/utils';
+import { FakeResponse, arrayFind, mock } from '@noeldemartin/utils';
 import { FieldType, InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
 import { resetTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer, SolidTypeRegistration, bootSolidModels, defineSolidModelSchema } from 'soukai-solid';
+import type { App as AppInstance } from 'vue';
 import type { Relation } from 'soukai';
 import type { SolidContainsRelation } from 'soukai-solid';
 
@@ -21,6 +22,8 @@ describe('Cloud', () => {
         setEngine(new InMemoryEngine());
         resetTrackedModels();
         resetModelListeners();
+
+        App.instance = mock<AppInstance>({ config: { globalProperties: { $cloud: Cloud } } });
 
         Solid.mock();
         Cloud.reset();
