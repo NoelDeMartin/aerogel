@@ -56,11 +56,11 @@ jobs:
               working-directory: app
               run: |
                   # Disable eslint in parent folder
-                  sed -i '60d' ../package.json
-                  sed -i '60d' ../package.json
-                  sed -i '60d' ../package.json
-                  sed -i '60d' ../package.json
-                  sed -i '60d' ../package.json
+                  sed -i '63d' ../package.json
+                  sed -i '63d' ../package.json
+                  sed -i '63d' ../package.json
+                  sed -i '63d' ../package.json
+                  sed -i '63d' ../package.json
 
                   # Install plugin
                   npx gel install solid
