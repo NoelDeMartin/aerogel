@@ -63,11 +63,10 @@ export default class Sync extends Job {
     protected async getTypeIndex(options: { create?: boolean } = {}): Promise<SolidTypeIndex | null> {
         const user = Solid.requireUser();
 
-        if (!typeIndexes.has(user)) {
-            typeIndexes.set(
-                user,
-                await (options.create ? Solid.findOrCreatePrivateTypeIndex() : Solid.findPrivateTypeIndex()),
-            );
+        if (options.create && !typeIndexes.get(user)) {
+            typeIndexes.set(user, await Solid.findOrCreatePrivateTypeIndex());
+        } else if (!typeIndexes.has(user)) {
+            typeIndexes.set(user, await Solid.findPrivateTypeIndex());
         }
 
         return typeIndexes.get(user) ?? null;
