@@ -2,7 +2,7 @@ import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { Semaphore, after, facade, fail, isArray, map } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainerClass } from 'soukai-solid';
-import { trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
+import { trackModels } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
@@ -13,6 +13,7 @@ import {
     getLocalModels,
     getRemoteClass,
     getRemoteContainersCollection,
+    trackModelsCollection,
     updateRemoteModel,
 } from '@/lib/mirroring';
 import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';

@@ -1,9 +1,17 @@
 import { App, Job } from '@aerogel/core';
-import { arrayEquals, arrayFilter, map, objectWithout, requireUrlParentDirectory, required } from '@noeldemartin/utils';
+import {
+    arrayEquals,
+    arrayFilter,
+    arrayFrom,
+    map,
+    objectWithout,
+    requireUrlParentDirectory,
+    required,
+} from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
-import type { SolidContainer, SolidContainsRelation, SolidTypeIndex } from 'soukai-solid';
+import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidTypeIndex } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import {
@@ -25,6 +33,7 @@ import {
     trackModelsCollection,
 } from '@/lib/mirroring';
 import DocumentsCache from '@/services/DocumentsCache';
+import { lazy } from '@/lib/utils';
 
 const Cloud = required(() => App.service('$cloud'));
 const typeIndexes: WeakMap<SolidUserProfile, SolidTypeIndex | null> = new WeakMap();
@@ -33,17 +42,37 @@ export default class Sync extends Job {
 
     protected models?: SolidModel[];
     protected localModels: ObjectsMap<SolidModel>;
+    protected rootLocalModels: SolidModel[];
 
     constructor(models?: SolidModel[]) {
         super();
 
         this.models = models;
-        this.localModels = map(this.models ?? getLocalModels(), 'url');
+        this.localModels = map([], 'url');
+        this.rootLocalModels = [];
+
+        for (const localModel of this.models ?? getLocalModels()) {
+            this.rootLocalModels.push(localModel);
+
+            this.addLocalModel(localModel);
+        }
     }
 
     public async run(): Promise<void> {
         await this.pullChanges();
         await this.pushChanges();
+    }
+
+    protected addLocalModel(localModel: SolidModel): void {
+        if (this.localModels.hasKey(localModel.url)) {
+            return;
+        }
+
+        this.localModels.add(localModel);
+
+        for (const relatedModel of localModel.getRelatedModels()) {
+            this.addLocalModel(relatedModel);
+        }
     }
 
     protected async getTypeIndex(options: { create: true }): Promise<SolidTypeIndex>;
@@ -187,7 +216,7 @@ export default class Sync extends Job {
             }),
         );
 
-        return completeRemoteModels(this.localModels.getItems(), arrayFilter(remoteModels).flat());
+        return completeRemoteModels(this.rootLocalModels, arrayFilter(remoteModels).flat());
     }
 
     protected async fetchRemoteModelsForLocal(models: SolidModel[]): Promise<SolidModel[]> {
@@ -233,61 +262,124 @@ export default class Sync extends Job {
             return;
         }
 
-        for (const relation of getContainerRelations(model.static())) {
-            const children = await this.loadContainedModels(model, relation);
+        const children = await this.loadContainedModels(model);
 
-            for (const child of children) {
-                await this.loadChildren(child);
-            }
+        for (const child of children) {
+            await this.loadChildren(child);
         }
     }
 
-    protected async loadContainedModels(model: SolidContainer, relation: string): Promise<SolidModel[]> {
-        const relationInstance = model.requireRelation<SolidContainsRelation>(relation);
+    protected async loadContainedModels(model: SolidContainer): Promise<SolidModel[]> {
+        if (!isRemoteModel(model)) {
+            const children = [];
 
-        if (relationInstance.loaded) {
-            return relationInstance.getLoadedModels();
+            for (const relation of getContainerRelations(model.static())) {
+                const relationModels =
+                    (await model.loadRelationIfUnloaded<SolidModel | SolidModel[] | null>(relation)) ?? [];
+
+                children.push(...arrayFrom(relationModels));
+            }
+
+            return children;
         }
 
-        const children = [];
+        const children: Record<string, SolidModel[]> = {};
         const documents = map(model.documents, 'url');
-        const relatedClass = relationInstance.relatedClass;
 
         for (const documentUrl of model.resourceUrls) {
-            const document = documents.get(documentUrl);
+            const documentChildren = await this.loadDocumentChildren(model, documentUrl, documents);
 
-            if (
-                document &&
-                (await DocumentsCache.isFresh(documentUrl, document.updatedAt ?? new Date())) &&
-                this.localModels.hasKey(model.url)
-            ) {
-                const relatedLocalModels = this.localModels.get(model.url)?.getRelationModels(relation) ?? [];
+            for (const [relation, documentModels] of Object.entries(documentChildren)) {
+                children[relation] ??= [];
 
-                for (const relatedLocalModel of relatedLocalModels) {
-                    if (relatedLocalModel.getDocumentUrl() !== documentUrl) {
-                        continue;
-                    }
+                children[relation].push(...documentModels);
+            }
+        }
 
-                    children.push(cloneLocalModel(relatedLocalModel, { clean: true }));
-                }
+        for (const [relation, relationModels] of Object.entries(children)) {
+            model.setRelationModels(relation, relationModels);
+        }
+
+        return Object.values(children).flat();
+    }
+
+    protected async loadDocumentChildren(
+        model: SolidModel,
+        documentUrl: string,
+        documents: ObjectsMap<SolidDocument>,
+    ): Promise<Record<string, SolidModel[]>> {
+        const document = documents.get(documentUrl);
+
+        if (
+            document &&
+            (await DocumentsCache.isFresh(document.url, document.updatedAt ?? new Date())) &&
+            this.localModels.hasKey(model.url)
+        ) {
+            return this.loadDocumentChildrenFromLocal(model, document);
+        }
+
+        return this.loadDocumentChildrenFromRemote(model, documentUrl);
+    }
+
+    protected async loadDocumentChildrenFromLocal(
+        model: SolidModel,
+        document: SolidDocument,
+    ): Promise<Record<string, SolidModel[]>> {
+        const children: Record<string, SolidModel[]> = {};
+
+        for (const relation of getContainerRelations(model.static())) {
+            const relationInstance = model.requireRelation<SolidContainsRelation>(relation);
+
+            if (relationInstance.loaded) {
+                children[relation] = relationInstance.getLoadedModels();
 
                 continue;
             }
 
-            const documentChildren = await relatedClass.from(model.url).all({
-                $in: [documentUrl],
-            });
+            const relatedLocalModels = this.localModels.get(model.url)?.getRelationModels(relation) ?? [];
 
-            if (!documentUrl.endsWith('/')) {
-                // For now, we're only caching non-container documents, given that not all POD providers
-                // will update a container's modification date when a child document is changed.
-                DocumentsCache.remember(documentUrl, new Date());
+            children[relation] = [];
+
+            for (const relatedLocalModel of relatedLocalModels) {
+                if (relatedLocalModel.getDocumentUrl() !== document.url) {
+                    continue;
+                }
+
+                children[relation].push(cloneLocalModel(relatedLocalModel, { clean: true }));
             }
-
-            children.push(...documentChildren);
         }
 
-        model.setRelationModels(relation, children);
+        return children;
+    }
+
+    protected async loadDocumentChildrenFromRemote(
+        model: SolidModel,
+        documentUrl: string,
+    ): Promise<Record<string, SolidModel[]>> {
+        const children: Record<string, SolidModel[]> = {};
+        const document = lazy(() => model.requireEngine().readOne(model.static('collection'), documentUrl));
+
+        for (const relation of getContainerRelations(model.static())) {
+            const relationInstance = model.requireRelation<SolidContainsRelation>(relation);
+
+            if (relationInstance.loaded) {
+                children[relation] = relationInstance.getLoadedModels();
+
+                continue;
+            }
+
+            const documentChildren = await relationInstance.relatedClass.createManyFromEngineDocuments({
+                [documentUrl]: await document(),
+            });
+
+            children[relation] = documentChildren;
+        }
+
+        if (!documentUrl.endsWith('/')) {
+            // For now, we're only caching non-container documents, given that not all POD providers
+            // will update a container's modification date when a child document is changed.
+            DocumentsCache.remember(documentUrl, new Date());
+        }
 
         return children;
     }
@@ -339,12 +431,13 @@ export default class Sync extends Job {
             await this.reconcileInconsistencies(localModel, remoteModel);
             await this.saveModelAndChildren(localModel);
 
-            this.localModels.add(localModel);
+            this.rootLocalModels.push(localModel);
+            this.addLocalModel(localModel);
             synchronizedModelUrls.add(localModel.url);
         }
 
-        for (const [url, localModel] of this.localModels) {
-            if (synchronizedModelUrls.has(url)) {
+        for (const localModel of this.rootLocalModels) {
+            if (synchronizedModelUrls.has(localModel.url)) {
                 continue;
             }
 

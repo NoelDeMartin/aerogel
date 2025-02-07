@@ -2,15 +2,18 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { App, Events } from '@aerogel/core';
 import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
 import { FakeResponse, arrayFind, mock } from '@noeldemartin/utils';
-import { FieldType, InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
+import { InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
 import { resetTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidContainer, SolidTypeRegistration, bootSolidModels, defineSolidModelSchema } from 'soukai-solid';
+import { SolidTypeRegistration, bootSolidModels } from 'soukai-solid';
 import type { App as AppInstance } from 'vue';
-import type { Relation } from 'soukai';
-import type { SolidContainsRelation } from 'soukai-solid';
 
+import Movie from '@/testing/stubs/Movie';
+import MoviesContainer from '@/testing/stubs/MoviesContainer';
 import SolidMock from '@/testing/mocks/Solid.mock';
+import Task from '@/testing/stubs/Task';
+import TasksList from '@/testing/stubs/TasksList';
+import Workspace from '@/testing/stubs/Workspace';
 
 import Cloud from './Cloud';
 
@@ -18,7 +21,7 @@ describe('Cloud', () => {
 
     beforeEach(() => {
         bootSolidModels();
-        bootModels({ Movie, MoviesContainer });
+        bootModels({ Movie, MoviesContainer, Task, TasksList, Workspace });
         setEngine(new InMemoryEngine());
         resetTrackedModels();
         resetModelListeners();
@@ -397,23 +400,41 @@ describe('Cloud', () => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const childContainerUrl = fakeContainerUrl({ baseUrl: containerUrl });
         const freshDocumentUrl = fakeDocumentUrl({ containerUrl });
         const staleDocumentUrl = fakeDocumentUrl({ containerUrl });
+        const freshChildDocumentUrl = fakeDocumentUrl({ containerUrl: childContainerUrl });
+        const staleChildDocumentUrl = fakeDocumentUrl({ containerUrl: childContainerUrl });
 
         // Arrange - Prepare models
-        const container = await MoviesContainer.at(parentContainerUrl).create({
+        const workspace = await Workspace.at(parentContainerUrl).create({
             url: containerUrl,
-            name: 'Movies',
+            name: 'Tasks',
         });
 
-        await container.relatedMovies.create({
+        const tasksList = await workspace.relatedLists.create({
+            url: childContainerUrl,
+            name: 'Child Tasks',
+        });
+
+        await workspace.relatedTasks.create({
             url: `${freshDocumentUrl}#it`,
-            name: 'The Tale of Princess Kaguya',
+            name: 'One',
         });
 
-        await container.relatedMovies.create({
+        await workspace.relatedTasks.create({
             url: `${staleDocumentUrl}#it`,
-            name: 'Jingle All the Way',
+            name: 'Two',
+        });
+
+        await tasksList.relatedTasks.create({
+            url: `${freshChildDocumentUrl}#it`,
+            name: 'Three',
+        });
+
+        await tasksList.relatedTasks.create({
+            url: `${staleChildDocumentUrl}#it`,
+            name: 'Four',
         });
 
         // Arrange - Prepare responses
@@ -423,9 +444,9 @@ describe('Cloud', () => {
         const typeIndexTurtle = `
             <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
 
-            <#movies>
+            <#tasks>
                 a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
-                <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Movie> ;
+                <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Action> ;
                 <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
         `;
 
@@ -433,9 +454,10 @@ describe('Cloud', () => {
         server.respondOnce(
             containerUrl,
             containerResponse({
-                documentUrls: [freshDocumentUrl, staleDocumentUrl],
-                createdAt: container.createdAt,
-                updatedAt: container.updatedAt,
+                name: 'Tasks',
+                documentUrls: [freshDocumentUrl, staleDocumentUrl, childContainerUrl],
+                createdAt: workspace.createdAt,
+                updatedAt: workspace.updatedAt,
                 append: `
                     <${freshDocumentUrl}>
                         a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
@@ -449,15 +471,38 @@ describe('Cloud', () => {
                 `,
             }),
         ); // Container
-        server.respondOnce(freshDocumentUrl, movieResponse('The Tale of Princess Kaguya')); // First movie
-        server.respondOnce(staleDocumentUrl, movieResponse('Jingle All the Way')); // Second movie
+        server.respondOnce(
+            childContainerUrl,
+            containerResponse({
+                name: 'Child Tasks',
+                documentUrls: [freshChildDocumentUrl, staleChildDocumentUrl],
+                createdAt: tasksList.createdAt,
+                updatedAt: tasksList.updatedAt,
+                append: `
+                    <${freshChildDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+                    <${staleChildDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+                `,
+            }),
+        ); // Child container
+        server.respondOnce(freshDocumentUrl, taskResponse('One'));
+        server.respondOnce(staleDocumentUrl, taskResponse('Two'));
+        server.respondOnce(freshChildDocumentUrl, taskResponse('Three'));
+        server.respondOnce(staleChildDocumentUrl, taskResponse('Four'));
 
         server.respondOnce(
             containerUrl,
             containerResponse({
-                documentUrls: [freshDocumentUrl, staleDocumentUrl],
-                createdAt: container.createdAt,
-                updatedAt: container.updatedAt,
+                name: 'Tasks',
+                documentUrls: [freshDocumentUrl, staleDocumentUrl, childContainerUrl],
+                createdAt: workspace.createdAt,
+                updatedAt: workspace.updatedAt,
                 append: `
                     <${freshDocumentUrl}>
                         a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
@@ -471,11 +516,34 @@ describe('Cloud', () => {
                 `,
             }),
         ); // Container
-        server.respondOnce(staleDocumentUrl, movieResponse('Jingle All the Way')); // Second movie
+        server.respondOnce(
+            childContainerUrl,
+            containerResponse({
+                name: 'Child Tasks',
+                documentUrls: [freshChildDocumentUrl, staleChildDocumentUrl],
+                createdAt: tasksList.createdAt,
+                updatedAt: tasksList.updatedAt,
+                append: `
+                    <${freshChildDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+                    <${staleChildDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now + 1000).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+                `,
+            }),
+        ); // Child container
+        server.respondOnce(staleDocumentUrl, taskResponse('Two'));
+        server.respondOnce(staleChildDocumentUrl, taskResponse('Four'));
 
         // Arrange - Prepare service
+        Cloud.ready = true;
+
         await Cloud.launch();
-        await Cloud.register(MoviesContainer);
+        await Cloud.register(Workspace);
         await Events.emit('application-ready');
 
         // Arrange - Initial sync
@@ -487,9 +555,12 @@ describe('Cloud', () => {
         // Assert
         expect(server.getRequests(typeIndexUrl)).toHaveLength(1);
         expect(server.getRequests(containerUrl)).toHaveLength(2);
+        expect(server.getRequests(childContainerUrl)).toHaveLength(2);
         expect(server.getRequests(freshDocumentUrl)).toHaveLength(1);
         expect(server.getRequests(staleDocumentUrl)).toHaveLength(2);
-        expect(server.getRequests()).toHaveLength(6);
+        expect(server.getRequests(freshChildDocumentUrl)).toHaveLength(1);
+        expect(server.getRequests(staleChildDocumentUrl)).toHaveLength(2);
+        expect(server.getRequests()).toHaveLength(11);
     });
 
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
@@ -568,36 +639,6 @@ describe('Cloud', () => {
 
 });
 
-const MovieSchema = defineSolidModelSchema({
-    rdfContext: 'https://schema.org/',
-    history: true,
-    tombstone: false,
-    fields: {
-        name: FieldType.String,
-        releaseDate: {
-            type: FieldType.Date,
-            rdfProperty: 'schema:datePublished',
-        },
-    },
-});
-
-class Movie extends MovieSchema {}
-
-class MoviesContainer extends SolidContainer {
-
-    public static history = true;
-    public static timestamps = true;
-    public static tombstone = false;
-
-    public declare movies?: Movie[];
-    public declare relatedMovies: SolidContainsRelation<this, Movie, typeof Movie>;
-
-    public moviesRelationship(): Relation {
-        return this.contains(Movie);
-    }
-
-}
-
 function testVariants<T>(description: string, variants: Record<string, T>, test: (variant: T) => unknown): void {
     for (const [name, data] of Object.entries(variants)) {
         it(`[${name}] ${description}`, () => test(data));
@@ -674,6 +715,23 @@ function movieResponse(title: string): Response {
             a schema:Movie;
             schema:datePublished "2001-07-20T00:00:00Z"^^xsd:dateTime;
             schema:name "${title}".
+
+        <#it-metadata> a crdt:Metadata;
+            crdt:resource <#it>;
+            crdt:createdAt "2024-02-10T00:00:00Z"^^xsd:dateTime;
+            crdt:updatedAt "2024-02-10T00:00:00Z"^^xsd:dateTime.
+    `);
+}
+
+function taskResponse(name: string): Response {
+    return FakeResponse.success(`
+        @prefix schema: <https://schema.org/>.
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+        @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+
+        <#it>
+            a schema:Action;
+            schema:name "${name}".
 
         <#it-metadata> a crdt:Metadata;
             crdt:resource <#it>;
