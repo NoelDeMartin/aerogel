@@ -278,22 +278,20 @@ export function cleanRemoteModelClone(remoteModel: SolidModel): void {
 
         if (!operations.some((operation) => !operation.isInception(relatedModel))) {
             relatedModel.setRelationModels('operations', []);
+            relatedModel.cleanDirty(true);
+            relatedModel.metadata.cleanDirty(true);
 
             continue;
         }
 
-        const existingOperations = operations.filter((operation) => {
-            if (!remoteOperationUrls.includes(operation.url)) {
-                return false;
-            }
+        const existingOperations = operations.filter((operation) => remoteOperationUrls.includes(operation.url));
 
-            operation.cleanDirty(true);
-
-            return true;
-        });
+        operations.forEach((operation) => operation.cleanDirty(true));
 
         if (existingOperations.length === 0) {
             relatedModel.setRelationModels('operations', operations);
+            relatedModel.cleanDirty(true);
+            relatedModel.metadata.cleanDirty(true);
 
             continue;
         }

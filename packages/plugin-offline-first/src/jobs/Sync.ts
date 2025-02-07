@@ -50,29 +50,12 @@ export default class Sync extends Job {
         this.models = models;
         this.localModels = map([], 'url');
         this.rootLocalModels = [];
-
-        for (const localModel of this.models ?? getLocalModels()) {
-            this.rootLocalModels.push(localModel);
-
-            this.addLocalModel(localModel);
-        }
     }
 
     public async run(): Promise<void> {
+        await this.indexLocalModels();
         await this.pullChanges();
         await this.pushChanges();
-    }
-
-    protected addLocalModel(localModel: SolidModel): void {
-        if (this.localModels.hasKey(localModel.url)) {
-            return;
-        }
-
-        this.localModels.add(localModel);
-
-        for (const relatedModel of localModel.getRelatedModels()) {
-            this.addLocalModel(relatedModel);
-        }
     }
 
     protected async getTypeIndex(options: { create: true }): Promise<SolidTypeIndex>;
@@ -88,6 +71,14 @@ export default class Sync extends Job {
         }
 
         return typeIndexes.get(user) ?? null;
+    }
+
+    protected async indexLocalModels(): Promise<void> {
+        for (const localModel of this.models ?? getLocalModels()) {
+            this.rootLocalModels.push(localModel);
+
+            await this.addLocalModel(localModel);
+        }
     }
 
     protected async pullChanges(): Promise<void> {
@@ -163,6 +154,22 @@ export default class Sync extends Job {
             }, Cloud.remoteOperationUrls),
             localModelUpdates: modelUrls ? objectWithout(Cloud.localModelUpdates, modelUrls) : {},
         });
+    }
+
+    protected async addLocalModel(localModel: SolidModel): Promise<void> {
+        if (this.localModels.hasKey(localModel.url)) {
+            return;
+        }
+
+        this.localModels.add(localModel);
+
+        for (const relation of getContainerRelations(localModel.static())) {
+            await localModel.loadRelationIfUnloaded(relation);
+        }
+
+        for (const relatedModel of localModel.getRelatedModels()) {
+            await this.addLocalModel(relatedModel);
+        }
     }
 
     protected async fetchRemoteModels(): Promise<SolidModel[]> {
@@ -424,9 +431,9 @@ export default class Sync extends Job {
             await SolidModel.synchronize(localModel, remoteModel);
             await this.reconcileInconsistencies(localModel, remoteModel);
             await this.saveModelAndChildren(localModel);
+            await this.addLocalModel(localModel);
 
             this.rootLocalModels.push(localModel);
-            this.addLocalModel(localModel);
             synchronizedModelUrls.add(localModel.url);
         }
 
