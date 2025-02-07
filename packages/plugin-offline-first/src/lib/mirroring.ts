@@ -36,6 +36,63 @@ const Cloud = required(() => App.service('$cloud'));
 const remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
 const localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
 
+function cleanRemoteModelClone(remoteModel: SolidModel): void {
+    const relatedModels = remoteModel.getRelatedModels().concat([remoteModel]);
+
+    for (const relatedModel of relatedModels) {
+        relatedModel.cleanDirty(true);
+    }
+}
+
+function fixRemoteModelClone(remoteModel: SolidModel): void {
+    const remoteOperationUrls = Cloud.remoteOperationUrls[remoteModel.url] ?? [];
+    const relatedModels = remoteModel
+        .getRelatedModels()
+        .filter(
+            (model) =>
+                !isInstanceOf(model, SolidACLAuthorization) &&
+                !isInstanceOf(model, SolidContainer) &&
+                !isInstanceOf(model, Metadata) &&
+                !isInstanceOf(model, Operation),
+        )
+        .concat([remoteModel]);
+
+    for (const relatedModel of relatedModels) {
+        if (!relatedModel.operations || relatedModel.operations.length === 0) {
+            continue;
+        }
+
+        const operations = (relatedModel.operations ?? []).filter((operation) => {
+            return (
+                !(operation instanceof PropertyOperation) ||
+                !relatedModel.ignoreRdfPropertyHistory(operation.property, true)
+            );
+        });
+
+        if (!operations.some((operation) => !operation.isInception(relatedModel))) {
+            relatedModel.setRelationModels('operations', []);
+
+            continue;
+        }
+
+        const existingOperations = operations.filter((operation) => remoteOperationUrls.includes(operation.url));
+
+        if (existingOperations.length === 0) {
+            relatedModel.setRelationModels('operations', operations);
+
+            continue;
+        }
+
+        relatedModel.setRelationModels('operations', existingOperations);
+        relatedModel.rebuildAttributesFromHistory();
+        relatedModel.cleanDirty(true);
+        relatedModel.metadata.cleanDirty(true);
+
+        relatedModel.setRelationModels('operations', operations);
+        relatedModel.rebuildAttributesFromHistory();
+    }
+}
+
 export async function createRemoteModel(localModel: SolidModel): Promise<void> {
     Cloud.setState({
         localModelUpdates: {
@@ -106,6 +163,8 @@ export function cloneLocalModel(localModel: SolidModel, options: CloneOptions = 
     );
 
     return tap(localModel.clone({ constructors }), (model) => {
+        fixRemoteModelClone(model);
+
         options.clean && cleanRemoteModelClone(model);
     });
 }
@@ -246,64 +305,6 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
     bootModels({ [`Remote${localClass.modelName}`]: RemoteClass });
 
     return RemoteClass;
-}
-
-export function cleanRemoteModelClone(remoteModel: SolidModel): void {
-    const remoteOperationUrls = Cloud.remoteOperationUrls[remoteModel.url] ?? [];
-    const relatedModels = remoteModel
-        .getRelatedModels()
-        .filter(
-            (model) =>
-                !isInstanceOf(model, SolidACLAuthorization) &&
-                !isInstanceOf(model, SolidContainer) &&
-                !isInstanceOf(model, Metadata) &&
-                !isInstanceOf(model, Operation),
-        )
-        .concat([remoteModel]);
-
-    for (const relatedModel of relatedModels) {
-        if (!relatedModel.operations || relatedModel.operations.length === 0) {
-            relatedModel.cleanDirty(true);
-            relatedModel.metadata.cleanDirty(true);
-
-            continue;
-        }
-
-        const operations = (relatedModel.operations ?? []).filter((operation) => {
-            return (
-                !(operation instanceof PropertyOperation) ||
-                !relatedModel.ignoreRdfPropertyHistory(operation.property, true)
-            );
-        });
-
-        if (!operations.some((operation) => !operation.isInception(relatedModel))) {
-            relatedModel.setRelationModels('operations', []);
-            relatedModel.cleanDirty(true);
-            relatedModel.metadata.cleanDirty(true);
-
-            continue;
-        }
-
-        const existingOperations = operations.filter((operation) => remoteOperationUrls.includes(operation.url));
-
-        operations.forEach((operation) => operation.cleanDirty(true));
-
-        if (existingOperations.length === 0) {
-            relatedModel.setRelationModels('operations', operations);
-            relatedModel.cleanDirty(true);
-            relatedModel.metadata.cleanDirty(true);
-
-            continue;
-        }
-
-        relatedModel.setRelationModels('operations', existingOperations);
-        relatedModel.rebuildAttributesFromHistory();
-        relatedModel.cleanDirty(true);
-        relatedModel.metadata.cleanDirty(true);
-
-        relatedModel.setRelationModels('operations', operations);
-        relatedModel.rebuildAttributesFromHistory();
-    }
 }
 
 export function getLocalClass<T extends SolidModelConstructor>(remoteClass: T): T {
