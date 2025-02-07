@@ -290,9 +290,9 @@ export default class Sync extends Job {
             const documentChildren = await this.loadDocumentChildren(model, documentUrl, documents);
 
             for (const [relation, documentModels] of Object.entries(documentChildren)) {
-                children[relation] ??= [];
+                const relationChildren = (children[relation] ??= []);
 
-                children[relation].push(...documentModels);
+                relationChildren.push(...documentModels);
             }
         }
 
@@ -338,15 +338,9 @@ export default class Sync extends Job {
 
             const relatedLocalModels = this.localModels.get(model.url)?.getRelationModels(relation) ?? [];
 
-            children[relation] = [];
-
-            for (const relatedLocalModel of relatedLocalModels) {
-                if (relatedLocalModel.getDocumentUrl() !== document.url) {
-                    continue;
-                }
-
-                children[relation].push(cloneLocalModel(relatedLocalModel, { clean: true }));
-            }
+            children[relation] = relatedLocalModels
+                .filter((relatedLocalModel) => relatedLocalModel.getDocumentUrl() === document.url)
+                .map((relatedLocalModel) => cloneLocalModel(relatedLocalModel, { clean: true }));
         }
 
         return children;
