@@ -1,8 +1,8 @@
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { Semaphore, after, facade, fail, isArray, map } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidModel, Tombstone, isContainerClass } from 'soukai-solid';
-import { trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
+import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
+import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
@@ -18,7 +18,7 @@ import {
 import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';
 import Sync from '@/jobs/Sync';
 import SyncQueue from '@/lib/SyncQueue';
-import { getContainerRelations, getRelatedClasses } from '@/lib/inference';
+import { getContainedModels, getContainerRelations, getRelatedClasses } from '@/lib/inference';
 
 import Service, { CloudStatus } from './Cloud.state';
 
@@ -102,6 +102,11 @@ export class CloudService extends Service {
                 }
 
                 await dispatch(new Sync(models));
+
+                while (this.dirty) {
+                    await dispatch(new Sync(this.getDirtyLocalModels()));
+                }
+
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
                 await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
@@ -188,6 +193,37 @@ export class CloudService extends Service {
 
             this.pollingInterval = setInterval(() => this.sync(), this.pollingMinutes * 60 * 1000);
         });
+    }
+
+    protected getDirtyLocalModels(): SolidModel[] {
+        const urls = Object.keys(this.localModelUpdates);
+        const dirtyLocalModels = [];
+
+        for (const { modelClass } of this.registeredModels) {
+            for (const model of getTrackedModels(modelClass)) {
+                dirtyLocalModels.push(...this.getModelsIn(urls, model));
+            }
+        }
+
+        return dirtyLocalModels;
+    }
+
+    protected getModelsIn(urls: string[], model: SolidModel): SolidModel[] {
+        const models = [];
+
+        if (urls.includes(model.url)) {
+            models.push(model);
+        }
+
+        if (isContainer(model)) {
+            models.push(
+                ...getContainedModels(model)
+                    .map((containedModel) => this.getModelsIn(urls, containedModel))
+                    .flat(),
+            );
+        }
+
+        return models;
     }
 
     protected requireEngine(): Engine {
