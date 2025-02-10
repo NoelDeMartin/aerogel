@@ -1,3 +1,4 @@
+import { toString } from '@noeldemartin/utils';
 import type { Composer } from 'vue-i18n';
 import type { LangProvider } from '@aerogel/core';
 
@@ -46,7 +47,13 @@ export default class I18nLangProvider implements LangProvider {
     public translateWithDefault(key: string, defaultMessage: string, parameters?: Record<string, unknown>): string {
         const message = this.i18n.t(key, parameters ?? {}, { missingWarn: false });
 
-        return message === key ? defaultMessage : message;
+        return message === key ? this.replaceParameters(defaultMessage, parameters) : message;
+    }
+
+    private replaceParameters(message: string, parameters: Record<string, unknown> = {}): string {
+        return Object.entries(parameters).reduce((text, [name, value]) => {
+            return text.replace(new RegExp(`\\{.*${name}[^}]*\\}`), toString(value));
+        }, message);
     }
 
 }
