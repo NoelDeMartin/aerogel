@@ -62,6 +62,11 @@ jobs:
                   sed -i '63d' ../package.json
                   sed -i '63d' ../package.json
 
+                  # Fix soukai
+                  # TODO remove this at some point... (Thanks, dependency hell)
+                  npm uninstall soukai
+                  npm install --save soukai@next -E
+
                   # Install plugin
                   npx gel install solid
 
