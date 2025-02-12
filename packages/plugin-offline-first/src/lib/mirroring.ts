@@ -302,6 +302,14 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
     remoteClasses.set(LocalClass, RemoteClass);
     localClasses.set(RemoteClass, LocalClass);
 
+    LocalClass.on('schema-updated', async (schema) => {
+        await RemoteClass.updateSchema({
+            ...schema,
+            timestamps: false,
+            history: false,
+        });
+    });
+
     bootModels({ [`Remote${localClass.modelName}`]: RemoteClass });
 
     return RemoteClass;
