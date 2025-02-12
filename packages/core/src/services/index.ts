@@ -36,7 +36,9 @@ export async function bootServices(app: VueApp, services: Record<string, Service
 
     Object.assign(app.config.globalProperties, services);
 
-    App.development && Object.assign(window, services);
+    if (App.development || App.testing) {
+        Object.assign(globalThis, services);
+    }
 }
 
 export default definePlugin({
