@@ -194,7 +194,8 @@ export default class Sync extends Job {
             typeIndex.registrations.map(async (registration) => {
                 const registeredModel = registeredModels.find(
                     ({ rdfsClasses }) =>
-                        arrayEquals(rdfsClasses, registration.forClass) && !!registration.instanceContainer,
+                        !!registration.instanceContainer &&
+                        rdfsClasses.some((rdfsClass) => registration.forClass.includes(rdfsClass)),
                 );
 
                 if (!registeredModel || !registration.instanceContainer) {
