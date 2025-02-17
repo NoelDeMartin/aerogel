@@ -53,6 +53,8 @@ export function generateSolidAssets(context: PluginContext, app: AppInfo, option
         fileName: 'clientid.jsonld',
         source: JSON.stringify(clientID),
     });
+
+    app.additionalManifestEntries.push('/clientid.jsonld');
 }
 
 export function generateSolidVirtualModule(app: AppInfo, options: Options): string {

@@ -13,6 +13,7 @@ export interface AppInfo {
     basePath: string;
     themeColor: string;
     sourceHash: string;
+    additionalManifestEntries: string[];
     description?: string;
     baseUrl?: string;
     sourceUrl?: string;
