@@ -13,6 +13,7 @@ describe('HTML helpers', () => {
         basePath: '/site/',
         themeColor: '#654321',
         sourceHash: '123456',
+        additionalManifestEntries: [],
     };
 
     it('Evaluates app info', () => {
