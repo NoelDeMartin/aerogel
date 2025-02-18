@@ -37,7 +37,7 @@ async function initializedTrackedModelsData<T extends Model>(
     modelClass.on('created', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
     modelClass.on('deleted', (model) => (modelsMap.value.delete(model), triggerRef(modelsMap)));
     modelClass.on('updated', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
-    Events.on('auth:logout', () => (modelsMap.value = map([] as T[], 'id')));
+    Events.on('purge-storage', () => (modelsMap.value = map([] as T[], 'id')));
     Events.on('cloud:migrated', () => refresh());
 
     await refresh();

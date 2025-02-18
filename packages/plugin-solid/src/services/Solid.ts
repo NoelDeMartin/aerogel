@@ -16,7 +16,7 @@ import {
     tap,
     urlRoot,
 } from '@noeldemartin/utils';
-import { App, Colors, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
+import { App, Colors, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { setEngine } from 'soukai';
 import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex } from 'soukai-solid';
@@ -238,7 +238,11 @@ export class SolidService extends Service {
 
             this.isLoggedIn() && (await this.authenticator.logout());
 
-            await Events.emit('auth:logout', { wipeLocalData: options.wipeLocalData ?? true });
+            if (options.wipeLocalData ?? true) {
+                await Storage.purge();
+            }
+
+            await Events.emit('auth:logout');
             await Events.emit('auth:after-logout');
         });
     }
@@ -527,7 +531,7 @@ declare module '@aerogel/core' {
         'auth:fetch-ready': Fetch;
         'auth:before-login': void;
         'auth:login': AuthSession;
-        'auth:logout': { wipeLocalData: boolean };
+        'auth:logout': void;
         'auth:after-logout': void;
         'solid:user-profile-loaded': [SolidUserProfile, SolidStore];
     }

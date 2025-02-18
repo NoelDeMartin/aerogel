@@ -6,6 +6,7 @@ import App from './App';
 import Cache from './Cache';
 import Events from './Events';
 import Service from './Service';
+import Storage from './Storage';
 import { getPiniaStore } from './store';
 
 export * from './App';
@@ -14,11 +15,12 @@ export * from './Events';
 export * from './Service';
 export * from './store';
 
-export { App, Cache, Events, Service };
+export { App, Cache, Events, Storage, Service };
 
 const defaultServices = {
     $app: App,
     $events: Events,
+    $storage: Storage,
 };
 
 export type DefaultServices = typeof defaultServices;

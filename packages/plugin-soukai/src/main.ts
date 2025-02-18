@@ -29,7 +29,7 @@ export default function soukai(options: Options): Plugin {
             setEngine(engine);
             bootModelsFromViteGlob(options.models);
 
-            Events.on('auth:logout', ({ wipeLocalData }) => wipeLocalData && engine.purgeDatabase());
+            Events.on('purge-storage', () => engine.purgeDatabase());
         },
     };
 }
