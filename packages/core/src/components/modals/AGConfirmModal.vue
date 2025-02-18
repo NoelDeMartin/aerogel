@@ -1,6 +1,6 @@
 <template>
     <AGModal v-slot="{ close }: IAGModalDefaultSlotProps" :cancellable="false" :title="title">
-        <AGMarkdown :text="message" />
+        <AGMarkdown :text="message" :actions="actions" />
 
         <div class="mt-2 flex flex-row-reverse gap-2">
             <AGButton :color="acceptColor" @click="close(true)">

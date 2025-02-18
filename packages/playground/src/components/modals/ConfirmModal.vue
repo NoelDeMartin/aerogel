@@ -1,6 +1,6 @@
 <template>
     <BaseModal v-slot="{ close }" :title="title" :cancellable="false">
-        <AGMarkdown :text="message" />
+        <AGMarkdown :text="message" :actions="actions" />
 
         <div class="mt-4 flex flex-row-reverse gap-2">
             <BaseButton :color="acceptColor" @click="close(true)">

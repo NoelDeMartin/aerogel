@@ -15,6 +15,7 @@ export const confirmModalProps = {
     cancelText: stringProp(),
     cancelColor: enumProp(Colors, Colors.Clear),
     checkboxes: objectProp<ConfirmCheckboxes>(),
+    actions: objectProp<Record<string, () => unknown>>(),
 };
 
 export type AGConfirmModalProps = SubPartial<

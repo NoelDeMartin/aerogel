@@ -1,4 +1,4 @@
-import { after, facade, fail, uuid } from '@noeldemartin/utils';
+import { after, facade, fail, required, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
@@ -42,6 +42,7 @@ export interface ConfirmOptions {
     acceptColor?: Color;
     cancelText?: string;
     cancelColor?: Color;
+    actions?: Record<string, () => unknown>;
 }
 
 export interface ConfirmOptionsWithCheckboxes<T extends ConfirmCheckboxes = ConfirmCheckboxes> extends ConfirmOptions {
@@ -267,6 +268,12 @@ export class UIService extends Service {
 
     public async closeModal(id: string, result?: unknown): Promise<void> {
         await Events.emit('close-modal', { id, result });
+    }
+
+    public async closeAllModals(): Promise<void> {
+        while (this.modals.length > 0) {
+            await this.closeModal(required(this.modals[this.modals.length - 1]).id);
+        }
     }
 
     protected async boot(): Promise<void> {
