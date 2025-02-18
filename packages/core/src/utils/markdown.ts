@@ -1,5 +1,5 @@
-import { tap } from '@noeldemartin/utils';
 import DOMPurify from 'dompurify';
+import { stringMatchAll, tap } from '@noeldemartin/utils';
 import { Renderer, marked } from 'marked';
 
 function makeRenderer(): Renderer {
@@ -10,8 +10,23 @@ function makeRenderer(): Renderer {
     });
 }
 
+function renderActionLinks(html: string): string {
+    const matches = stringMatchAll<3>(html, /<a[^>]*href="#action:([^"]+)"[^>]*>([^<]+)<\/a>/g);
+
+    for (const [link, action, text] of matches) {
+        html = html.replace(link, `<button type="button" data-markdown-action="${action}">${text}</button>`);
+    }
+
+    return html;
+}
+
 export function renderMarkdown(markdown: string): string {
-    return safeHtml(marked(markdown, { mangle: false, headerIds: false, renderer: makeRenderer() }));
+    let html = marked(markdown, { mangle: false, headerIds: false, renderer: makeRenderer() });
+
+    html = safeHtml(html);
+    html = renderActionLinks(html);
+
+    return html;
 }
 
 export function safeHtml(html: string): string {

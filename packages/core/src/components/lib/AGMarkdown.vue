@@ -4,9 +4,10 @@
 
 <script setup lang="ts">
 import { computed, h, useAttrs } from 'vue';
+import { isInstanceOf } from '@noeldemartin/utils';
 
 import { renderMarkdown } from '@/utils/markdown';
-import { booleanProp, mixedProp, stringProp } from '@/utils/vue';
+import { booleanProp, mixedProp, objectProp, stringProp } from '@/utils/vue';
 import { translate } from '@/lang';
 
 const props = defineProps({
@@ -15,6 +16,7 @@ const props = defineProps({
     langKey: stringProp(),
     langParams: mixedProp<number | Record<string, unknown>>(),
     text: stringProp(),
+    actions: objectProp<Record<string, () => unknown>>(),
 });
 
 const attrs = useAttrs();
@@ -35,7 +37,18 @@ const html = computed(() => {
 const root = () =>
     h(props.as ?? (props.inline ? 'span' : 'div'), {
         innerHTML: html.value,
+        onClick,
         ...attrs,
         class: `${attrs.class ?? ''} ${props.inline ? '' : 'prose'}`,
     });
+
+async function onClick(event: Event) {
+    const { target } = event;
+
+    if (isInstanceOf(target, HTMLElement) && target.dataset.markdownAction) {
+        props.actions?.[target.dataset.markdownAction]?.();
+
+        return;
+    }
+}
 </script>

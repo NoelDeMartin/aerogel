@@ -11,6 +11,10 @@ tap(globalThis, (global: any) => {
     });
 });
 
+vi.mock('dompurify', async () => {
+    return { default: { sanitize: (html: string) => html } };
+});
+
 beforeEach(() => {
     vi.stubGlobal('document', {
         querySelector: () => null,
