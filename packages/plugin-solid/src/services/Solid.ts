@@ -22,6 +22,7 @@ import { setEngine } from 'soukai';
 import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex } from 'soukai-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
+import type { NullablePartial } from '@noeldemartin/utils';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import AuthenticationCancelledError from '@/errors/AuthenticationCancelledError';
@@ -33,12 +34,12 @@ import type { AuthSession } from '@/auth/Authenticator';
 
 import Service, { DEFAULT_STATE } from './Solid.state';
 
-export type LoginOptions = {
-    authenticator?: AuthenticatorName;
-    onError?(error: ErrorSource): unknown;
-    fallbackUrl?: string;
-    loading?: boolean;
-};
+export type LoginOptions = NullablePartial<{
+    authenticator: AuthenticatorName;
+    onError(error: ErrorSource): unknown;
+    fallbackUrl: string;
+    loading: boolean;
+}>;
 
 export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
     force?: boolean;

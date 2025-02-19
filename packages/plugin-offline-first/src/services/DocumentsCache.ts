@@ -1,7 +1,5 @@
 import { Events, Service } from '@aerogel/core';
-import { facade } from '@noeldemartin/utils';
-
-import { IndexedDBMap } from '@/services/IndexedDBMap';
+import { IndexedDBMap, facade } from '@noeldemartin/utils';
 
 export class DocumentsCacheService extends Service {
 
