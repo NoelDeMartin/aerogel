@@ -1,5 +1,6 @@
 import { defineServiceState } from '@aerogel/core';
 import { map } from '@noeldemartin/utils';
+import type { ErrorSource } from '@aerogel/core';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
 
@@ -30,6 +31,7 @@ export default defineServiceState({
         setupDismissed: false,
         startupSync: true,
         status: CloudStatus.Disconnected as TCloudStatus,
+        syncError: null as ErrorSource | null,
         pollingEnabled: true,
         pollingMinutes: 10,
     }),

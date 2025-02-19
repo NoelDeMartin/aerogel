@@ -100,6 +100,7 @@ export class CloudService extends Service {
             const start = Date.now();
             const models = options.model ? [options.model] : options.models;
 
+            this.syncError = null;
             this.status = CloudStatus.Syncing;
 
             SyncQueue.clear(models);
@@ -119,6 +120,8 @@ export class CloudService extends Service {
 
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
+                this.syncError = error;
+
                 await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
             } finally {
                 this.status = CloudStatus.Online;
