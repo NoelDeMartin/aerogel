@@ -7,12 +7,6 @@ import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidTypeInd
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import {
-    getContainerRegisteredClasses,
-    getContainerRelations,
-    getSameDocumentRelations,
-    isDirtyOrHasDirtyChildren,
-} from '@/lib/inference';
-import {
     cloneLocalModel,
     cloneRemoteModel,
     completeRemoteModels,
@@ -25,6 +19,7 @@ import {
     trackModelsCollection,
 } from '@/lib/mirroring';
 import DocumentsCache from '@/services/DocumentsCache';
+import { getContainerRegisteredClasses, getContainerRelations, isDirtyOrHasDirtyChildren } from '@/lib/inference';
 import { lazy } from '@/lib/utils';
 
 const Cloud = required(() => App.service('$cloud'));
@@ -444,29 +439,36 @@ export default class Sync extends Job {
         }
     }
 
-    private async reconcileInconsistencies(localModel: SolidModel, remoteModel: SolidModel): Promise<void> {
+    private async reconcileInconsistencies(
+        localModel: SolidModel,
+        remoteModel: SolidModel,
+        processedModels?: Set<SolidModel>,
+    ): Promise<void> {
         localModel.rebuildAttributesFromHistory();
-        localModel.setAttributes(remoteModel.getAttributes());
+        localModel.setAttributes(remoteModel.getAttributes(true));
 
-        getSameDocumentRelations(localModel.static()).forEach((relation) => {
-            const localRelationModels = localModel.getRelationModels(relation) ?? [];
-            const remoteRelationModels = map(remoteModel.getRelationModels(relation) ?? [], 'url');
-
-            localRelationModels.forEach((localRelatedModel) => {
-                if (!localRelatedModel.isRelationLoaded('operations')) {
-                    return;
-                }
-
-                localRelatedModel.rebuildAttributesFromHistory();
-                localRelatedModel.setAttributes(remoteRelationModels.get(localRelatedModel.url)?.getAttributes() ?? {});
-            });
-        });
+        processedModels ??= new Set();
+        processedModels.add(localModel);
 
         for (const relation of getContainerRelations(localModel.static())) {
             await this.synchronizeContainerDocuments(
                 localModel.requireRelation<SolidContainsRelation>(relation),
                 remoteModel.requireRelation<SolidContainsRelation>(relation),
             );
+        }
+
+        const remoteRelatedModels = map(remoteModel.getRelatedModels(), 'url');
+
+        for (const localRelatedModel of localModel.getRelatedModels()) {
+            if (
+                processedModels.has(localRelatedModel) ||
+                !localRelatedModel.isRelationLoaded('operations') ||
+                !remoteRelatedModels.hasKey(localRelatedModel.url)
+            ) {
+                continue;
+            }
+
+            await this.reconcileInconsistencies(localRelatedModel, remoteRelatedModels.require(localRelatedModel.url));
         }
 
         if (localModel.isDirty()) {
