@@ -1,11 +1,16 @@
-import { arrayFilter } from '@noeldemartin/utils';
 import {
+    Metadata,
+    Operation,
+    SolidACLAuthorization,
     SolidContainer,
     SolidContainsRelation,
+    SolidDocument,
     SolidModel,
     isContainerClass,
     isSolidDocumentRelation,
 } from 'soukai-solid';
+import { arrayFilter, isInstanceOf } from '@noeldemartin/utils';
+
 import type { SolidContainerConstructor, SolidModelConstructor } from 'soukai-solid';
 
 const containerRelations: WeakMap<typeof SolidModel, string[]> = new WeakMap();
@@ -68,6 +73,19 @@ export function getRelatedClasses(modelClass: SolidModelConstructor): SolidModel
     }
 
     return [...relatedClasses.values()];
+}
+
+export function getRelatedAppModels(model: SolidModel): SolidModel[] {
+    return model
+        .getRelatedModels()
+        .filter(
+            (related) =>
+                !isInstanceOf(related, SolidACLAuthorization) &&
+                !isInstanceOf(related, SolidDocument) &&
+                !isInstanceOf(related, Metadata) &&
+                !isInstanceOf(related, Operation) &&
+                related.static() !== SolidContainer,
+        );
 }
 
 export function getSameDocumentRelations(modelClass: typeof SolidModel): string[] {

@@ -1,5 +1,5 @@
+import { arrayFrom, isInstanceOf, map, objectWithout, requireUrlParentDirectory, required } from '@noeldemartin/utils';
 import { App, Job } from '@aerogel/core';
-import { arrayFilter, arrayFrom, map, objectWithout, requireUrlParentDirectory, required } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -18,9 +18,15 @@ import {
     isRemoteModel,
     trackModelsCollection,
 } from '@/lib/mirroring';
+import {
+    getContainerRegisteredClasses,
+    getContainerRelations,
+    getRelatedAppModels,
+    isDirtyOrHasDirtyChildren,
+} from '@/lib/inference';
 import DocumentsCache from '@/services/DocumentsCache';
-import { getContainerRegisteredClasses, getContainerRelations, isDirtyOrHasDirtyChildren } from '@/lib/inference';
 import { lazy } from '@/lib/utils';
+import { DocumentNotFound } from 'soukai';
 
 const Cloud = required(() => App.service('$cloud'));
 const typeIndexes: WeakMap<SolidUserProfile, SolidTypeIndex | null> = new WeakMap();
@@ -165,6 +171,8 @@ export default class Sync extends Job {
             return [];
         }
 
+        const remoteModels: SolidModel[] = [];
+        const processedContainerUrls = new Set();
         const registeredModels = [...Cloud.registeredModels].map(({ modelClass }) => {
             const registeredChildren = isContainerClass(modelClass) ? getContainerRegisteredClasses(modelClass) : [];
 
@@ -177,40 +185,48 @@ export default class Sync extends Job {
             };
         });
 
-        const remoteModels = await Promise.all(
-            typeIndex.registrations.map(async (registration) => {
-                const registeredModel = registeredModels.find(
-                    ({ rdfsClasses }) =>
-                        !!registration.instanceContainer &&
-                        rdfsClasses.some((rdfsClass) => registration.forClass.includes(rdfsClass)),
+        for (const registration of typeIndex.registrations) {
+            const registeredModel = registeredModels.find(
+                ({ rdfsClasses }) =>
+                    !!registration.instanceContainer &&
+                    rdfsClasses.some((rdfsClass) => registration.forClass.includes(rdfsClass)),
+            );
+
+            if (
+                !registeredModel ||
+                !registration.instanceContainer ||
+                processedContainerUrls.has(registration.instanceContainer)
+            ) {
+                continue;
+            }
+
+            const remoteClass = getRemoteClass(registeredModel.modelClass);
+
+            processedContainerUrls.add(registration.instanceContainer);
+
+            if (isContainerClass(remoteClass)) {
+                await trackModelsCollection(
+                    registeredModel.modelClass,
+                    requireUrlParentDirectory(registration.instanceContainer),
                 );
 
-                if (!registeredModel || !registration.instanceContainer) {
-                    return;
+                const container = await remoteClass.find(registration.instanceContainer);
+
+                if (container) {
+                    await this.loadChildren(container);
+
+                    remoteModels.push(container);
                 }
 
-                const remoteClass = getRemoteClass(registeredModel.modelClass);
+                continue;
+            }
 
-                if (isContainerClass(remoteClass)) {
-                    await trackModelsCollection(
-                        registeredModel.modelClass,
-                        requireUrlParentDirectory(registration.instanceContainer),
-                    );
+            await trackModelsCollection(registeredModel.modelClass, registration.instanceContainer);
 
-                    const container = await remoteClass.find(registration.instanceContainer);
+            remoteModels.push(...(await remoteClass.from(registration.instanceContainer).all()));
+        }
 
-                    container && (await this.loadChildren(container));
-
-                    return container;
-                }
-
-                await trackModelsCollection(registeredModel.modelClass, registration.instanceContainer);
-
-                return remoteClass.from(registration.instanceContainer).all();
-            }),
-        );
-
-        return completeRemoteModels(this.rootLocalModels, arrayFilter(remoteModels).flat());
+        return completeRemoteModels(this.rootLocalModels, remoteModels);
     }
 
     protected async fetchRemoteModelsForLocal(models: SolidModel[]): Promise<SolidModel[]> {
@@ -345,7 +361,19 @@ export default class Sync extends Job {
         documentUrl: string,
     ): Promise<Record<string, SolidModel[]>> {
         const children: Record<string, SolidModel[]> = {};
-        const document = lazy(() => model.requireEngine().readOne(model.static('collection'), documentUrl));
+        const readDocument = lazy(async () => {
+            try {
+                const document = await model.requireEngine().readOne(model.static('collection'), documentUrl);
+
+                return document;
+            } catch (error) {
+                if (!isInstanceOf(error, DocumentNotFound)) {
+                    throw error;
+                }
+
+                return null;
+            }
+        });
 
         for (const relation of getContainerRelations(model.static())) {
             const relationInstance = model.requireRelation<SolidContainsRelation>(relation);
@@ -356,8 +384,14 @@ export default class Sync extends Job {
                 continue;
             }
 
+            const document = await readDocument();
+
+            if (!document) {
+                continue;
+            }
+
             const documentChildren = await relationInstance.relatedClass.createManyFromEngineDocuments({
-                [documentUrl]: await document(),
+                [documentUrl]: document,
             });
 
             children[relation] = documentChildren;
@@ -457,9 +491,9 @@ export default class Sync extends Job {
             );
         }
 
-        const remoteRelatedModels = map(remoteModel.getRelatedModels(), 'url');
+        const remoteRelatedModels = map(getRelatedAppModels(remoteModel), 'url');
 
-        for (const localRelatedModel of localModel.getRelatedModels()) {
+        for (const localRelatedModel of getRelatedAppModels(localModel)) {
             if (
                 processedModels.has(localRelatedModel) ||
                 !localRelatedModel.isRelationLoaded('operations') ||

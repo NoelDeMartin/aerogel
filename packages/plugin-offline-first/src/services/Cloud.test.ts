@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { App, Events } from '@aerogel/core';
 import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
-import { FakeResponse, arrayFind, mock } from '@noeldemartin/utils';
+import { FakeResponse, arrayFind, mock, required } from '@noeldemartin/utils';
 import { InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
 import { resetTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
@@ -563,6 +563,65 @@ describe('Cloud', () => {
         expect(server.getRequests()).toHaveLength(11);
     });
 
+    it('Ignores not found children', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const existingChildDocumentUrl = fakeContainerUrl({ baseUrl: containerUrl });
+        const notFoundChildDocumentUrl = fakeDocumentUrl({ containerUrl });
+        const existingChildContainerUrl = fakeContainerUrl({ baseUrl: containerUrl });
+        const notFoundChildContainerUrl = fakeContainerUrl({ baseUrl: containerUrl });
+
+        // Arrange - Prepare responses
+        const server = SolidMock.server;
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+        const typeIndexTurtle = `
+            <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
+
+            <#tasks>
+                a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
+                <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Action> ;
+                <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
+        `;
+
+        server.respondOnce(typeIndexUrl, FakeResponse.success(typeIndexTurtle)); // Initial fetch
+        server.respondOnce(
+            containerUrl,
+            containerResponse({
+                name: 'Tasks',
+                documentUrls: [
+                    existingChildDocumentUrl,
+                    notFoundChildDocumentUrl,
+                    existingChildContainerUrl,
+                    notFoundChildContainerUrl,
+                ],
+            }),
+        ); // Container
+        server.respondOnce(existingChildDocumentUrl, taskResponse());
+        server.respondOnce(notFoundChildDocumentUrl, FakeResponse.notFound());
+        server.respondOnce(existingChildContainerUrl, containerResponse());
+        server.respondOnce(notFoundChildContainerUrl, FakeResponse.notFound());
+
+        // Arrange - Prepare service
+        Cloud.ready = true;
+
+        await Cloud.launch();
+        await Cloud.register(Workspace);
+        await Events.emit('application-ready');
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        const workspace = required(await Workspace.find(containerUrl));
+
+        await workspace.loadRelationIfUnloaded('tasks');
+        await workspace.loadRelationIfUnloaded('lists');
+
+        expect(workspace.tasks).toHaveLength(1);
+        expect(workspace.lists).toHaveLength(1);
+    });
+
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
@@ -723,7 +782,7 @@ function movieResponse(title: string): Response {
     `);
 }
 
-function taskResponse(name: string): Response {
+function taskResponse(name?: string): Response {
     return FakeResponse.success(`
         @prefix schema: <https://schema.org/>.
         @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
@@ -731,7 +790,7 @@ function taskResponse(name: string): Response {
 
         <#it>
             a schema:Action;
-            schema:name "${name}".
+            schema:name "${name ?? 'Task'}".
 
         <#it-metadata> a crdt:Metadata;
             crdt:resource <#it>;

@@ -1,7 +1,6 @@
 import { bootModels } from 'soukai';
 import {
     fail,
-    isInstanceOf,
     objectWithout,
     requireUrlParentDirectory,
     required,
@@ -11,22 +10,13 @@ import {
 import { App } from '@aerogel/core';
 import { getTrackedModels, trackModelsCollection as trackSoukaiModelsCollection } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
-import {
-    Metadata,
-    Operation,
-    PropertyOperation,
-    SolidACLAuthorization,
-    SolidContainer,
-    SolidContainsRelation,
-    Tombstone,
-    isContainer,
-} from 'soukai-solid';
+import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone, isContainer } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
 
 import SyncQueue from '@/lib/SyncQueue';
-import { getContainerRelations } from '@/lib/inference';
+import { getContainerRelations, getRelatedAppModels } from '@/lib/inference';
 
 interface CloneOptions {
     clean?: boolean;
@@ -46,16 +36,7 @@ function cleanRemoteModelClone(remoteModel: SolidModel): void {
 
 function fixRemoteModelClone(remoteModel: SolidModel): void {
     const remoteOperationUrls = Cloud.remoteOperationUrls[remoteModel.url] ?? [];
-    const relatedModels = remoteModel
-        .getRelatedModels()
-        .filter(
-            (model) =>
-                !isInstanceOf(model, SolidACLAuthorization) &&
-                !isInstanceOf(model, SolidContainer) &&
-                !isInstanceOf(model, Metadata) &&
-                !isInstanceOf(model, Operation),
-        )
-        .concat([remoteModel]);
+    const relatedModels = getRelatedAppModels(remoteModel).concat([remoteModel]);
 
     for (const relatedModel of relatedModels) {
         if (!relatedModel.operations || relatedModel.operations.length === 0) {

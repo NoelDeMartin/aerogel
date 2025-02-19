@@ -1,5 +1,15 @@
+import {
+    Semaphore,
+    after,
+    facade,
+    fail,
+    getLocationQueryParameter,
+    hasLocationQueryParameter,
+    isArray,
+    map,
+    parseBoolean,
+} from '@noeldemartin/utils';
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
-import { Semaphore, after, facade, fail, isArray, map } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
@@ -94,9 +104,9 @@ export class CloudService extends Service {
 
             SyncQueue.clear(models);
 
-            await Events.emit('cloud:sync-started', models);
-
             try {
+                await Events.emit('cloud:sync-started', models);
+
                 if (options.refreshUserProfile) {
                     await Solid.refreshUserProfile();
                 }
@@ -179,8 +189,8 @@ export class CloudService extends Service {
 
         Events.on('auth:login', ({ authenticator }) => this.login(authenticator));
         Events.on('auth:logout', () => this.logout());
-        Events.once('application-ready', () => this.autoSetup());
-        Events.once('application-mounted', () => this.startupSync && this.sync());
+        Events.once('application-ready', () => this.onApplicationReady());
+        Events.once('application-mounted', () => this.onApplicationMounted());
 
         watchEffect(() => {
             this.pollingInterval && clearInterval(this.pollingInterval);
@@ -267,12 +277,20 @@ export class CloudService extends Service {
         await dispatch(job);
     }
 
-    protected async autoSetup(): Promise<void> {
+    protected async onApplicationReady(): Promise<void> {
         if (this.ready || !Solid.isLoggedIn()) {
             return;
         }
 
         await this.setReady(!getLocalModels().some((model) => model.url.startsWith('solid://')));
+    }
+
+    protected async onApplicationMounted(): Promise<void> {
+        if (!this.syncOnStartup()) {
+            return;
+        }
+
+        await this.sync();
     }
 
     protected login(authenticator: Authenticator): void {
@@ -302,6 +320,14 @@ export class CloudService extends Service {
             pollingEnabled: true,
             pollingMinutes: 10,
         });
+    }
+
+    private syncOnStartup(): boolean {
+        if (hasLocationQueryParameter('startupSync')) {
+            return parseBoolean(getLocationQueryParameter('startupSync'));
+        }
+
+        return this.startupSync;
     }
 
 }
