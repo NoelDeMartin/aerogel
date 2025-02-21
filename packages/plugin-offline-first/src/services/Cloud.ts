@@ -16,7 +16,7 @@ import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/p
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
-import type { SolidContainsRelation, SolidModelConstructor } from 'soukai-solid';
+import type { SolidContainsRelation, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
 import {
     createRemoteModel,
@@ -25,7 +25,8 @@ import {
     getRemoteContainersCollection,
     updateRemoteModel,
 } from '@/lib/mirroring';
-import MigrateLocalDocuments from '@/jobs/MigrateLocalDocuments';
+import Backup from '@/jobs/Backup';
+import Migrate from '@/jobs/Migrate';
 import Sync from '@/jobs/Sync';
 import SyncQueue from '@/lib/SyncQueue';
 import { getContainedModels, getContainerRelations, getRelatedClasses } from '@/lib/inference';
@@ -61,8 +62,7 @@ export class CloudService extends Service {
     }
 
     public async setup(modelUrlMappings?: WeakMap<SolidModelConstructor, Record<string, string>>): Promise<void> {
-        await this.migrateLocalDocuments(modelUrlMappings);
-        await Events.emit('cloud:migrated');
+        await this.backup(modelUrlMappings);
         await this.setReady(true);
         await this.sync();
     }
@@ -127,6 +127,35 @@ export class CloudService extends Service {
                 this.status = CloudStatus.Online;
 
                 await Events.emit('cloud:sync-completed', models);
+            }
+        });
+    }
+
+    public async migrate(
+        schemas: Map<SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor>,
+    ): Promise<void> {
+        if (!this.online || !Solid.isLoggedIn() || !this.ready) {
+            throw new Error('Data cannot be migrated');
+        }
+
+        await this.asyncLock.run(async () => {
+            const start = Date.now();
+            const models = getLocalModels();
+
+            this.status = CloudStatus.Migrating;
+
+            SyncQueue.clear(models);
+
+            try {
+                await Events.emit('cloud:migration-started', models);
+                await dispatch(new Migrate(models, schemas));
+                await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
+            } catch (error) {
+                await Errors.report(error, translateWithDefault('cloud.migrationFailed', 'Migration failed'));
+            } finally {
+                this.status = CloudStatus.Online;
+
+                await Events.emit('cloud:migration-completed', models);
             }
         });
     }
@@ -253,12 +282,12 @@ export class CloudService extends Service {
         this.ready = true;
     }
 
-    protected async migrateLocalDocuments(
-        modelUrlMappings?: WeakMap<SolidModelConstructor, Record<string, string>>,
-    ): Promise<void> {
+    protected async backup(modelUrlMappings?: WeakMap<SolidModelConstructor, Record<string, string>>): Promise<void> {
+        await Events.emit('cloud:backup-started');
+
         modelUrlMappings ??= new WeakMap();
 
-        const job = new MigrateLocalDocuments();
+        const job = new Backup();
 
         for (const { modelClass, path } of this.registeredModels) {
             if (!isContainerClass(modelClass)) {
@@ -278,6 +307,7 @@ export class CloudService extends Service {
         }
 
         await dispatch(job);
+        await Events.emit('cloud:backup-completed');
     }
 
     protected async onApplicationReady(): Promise<void> {
@@ -339,9 +369,12 @@ export default facade(CloudService);
 
 declare module '@aerogel/core' {
     export interface EventsPayload {
-        'cloud:migrated': void;
         'cloud:ready': void;
-        'cloud:sync-completed': SolidModel[] | undefined;
+        'cloud:backup-started': void;
+        'cloud:backup-completed': void;
+        'cloud:migration-started': SolidModel[] | undefined;
+        'cloud:migration-completed': SolidModel[] | undefined;
         'cloud:sync-started': SolidModel[] | undefined;
+        'cloud:sync-completed': SolidModel[] | undefined;
     }
 }

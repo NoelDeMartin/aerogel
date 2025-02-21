@@ -8,6 +8,7 @@ export const CloudStatus = {
     Disconnected: 'disconnected',
     Online: 'online',
     Syncing: 'syncing',
+    Migrating: 'migrating',
 } as const;
 
 export interface ModelRegistration {

@@ -11,7 +11,7 @@ interface Migration {
     remote: string;
 }
 
-export default class MigrateLocalDocuments extends Job {
+export default class Backup extends Job {
 
     private urlMigrations: Migration[] = [];
     private collectionMigrations: Migration[] = [];

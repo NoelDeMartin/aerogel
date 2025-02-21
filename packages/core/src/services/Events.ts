@@ -4,7 +4,7 @@ import Service from '@/services/Service';
 
 export interface EventsPayload {}
 export interface EventListenerOptions {
-    priority: number;
+    priority: EventListenerPriority;
 }
 export type AerogelGlobalEvents = Partial<{ [Event in EventWithoutPayload]: () => unknown }> &
     Partial<{ [Event in EventWithPayload]: EventListener<EventsPayload[Event]> }>;
@@ -25,6 +25,8 @@ export const EventListenerPriorities = {
     Default: 0,
     High: 256,
 } as const;
+
+export type EventListenerPriority = (typeof EventListenerPriorities)[keyof typeof EventListenerPriorities];
 
 export class EventsService extends Service {
 
@@ -48,8 +50,10 @@ export class EventsService extends Service {
 
     /* eslint-disable max-len */
     public on<Event extends EventWithoutPayload>(event: Event, listener: () => unknown): () => void;
+    public on<Event extends EventWithoutPayload>(event: Event, priority: EventListenerPriority, listener: () => unknown): () => void; // prettier-ignore
     public on<Event extends EventWithoutPayload>(event: Event, options: Partial<EventListenerOptions>, listener: () => unknown): () => void; // prettier-ignore
     public on<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
+    public on<Event extends EventWithPayload>(event: Event, priority: EventListenerPriority, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
     public on<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
     public on<Event extends string>(event: UnknownEvent<Event>, listener: EventListener): () => void;
     public on<Event extends string>(event: UnknownEvent<Event>, options: Partial<EventListenerOptions>, listener: EventListener): () => void; // prettier-ignore
@@ -57,10 +61,15 @@ export class EventsService extends Service {
 
     public on(
         event: string,
-        optionsOrListener: Partial<EventListenerOptions> | EventListener,
+        optionsOrListener: Partial<EventListenerOptions> | EventListenerPriority | EventListener,
         listener?: EventListener,
     ): () => void {
-        const options = typeof optionsOrListener === 'function' ? {} : optionsOrListener;
+        const options =
+            typeof optionsOrListener === 'function'
+                ? {}
+                : typeof optionsOrListener === 'number'
+                    ? { priority: optionsOrListener }
+                    : optionsOrListener;
         const handler = typeof optionsOrListener === 'function' ? optionsOrListener : (listener as EventListener);
 
         this.registerListener(event, options, handler);

@@ -1,36 +1,28 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { App, Events } from '@aerogel/core';
+import { Events } from '@aerogel/core';
 import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
-import { FakeResponse, arrayFind, mock, required } from '@noeldemartin/utils';
-import { InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
-import { resetTrackedModels } from '@aerogel/plugin-soukai';
+import { FakeResponse, arrayFind, required } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidTypeRegistration, bootSolidModels } from 'soukai-solid';
-import type { App as AppInstance } from 'vue';
+import { SolidTypeRegistration } from 'soukai-solid';
 
+import Cloud from '@/services/Cloud';
+
+import {
+    containerResponse,
+    movieResponse,
+    setupCloudTests,
+    taskResponse,
+    testRegisterVariants,
+    typeIndexResponse,
+} from '@/testing/cloud';
 import Movie from '@/testing/stubs/Movie';
 import MoviesContainer from '@/testing/stubs/MoviesContainer';
 import SolidMock from '@/testing/mocks/Solid.mock';
-import Task from '@/testing/stubs/Task';
-import TasksList from '@/testing/stubs/TasksList';
 import Workspace from '@/testing/stubs/Workspace';
 
-import Cloud from './Cloud';
+describe('Sync', () => {
 
-describe('Cloud', () => {
-
-    beforeEach(() => {
-        bootSolidModels();
-        bootModels({ Movie, MoviesContainer, Task, TasksList, Workspace });
-        setEngine(new InMemoryEngine());
-        resetTrackedModels();
-        resetModelListeners();
-
-        App.instance = mock<AppInstance>({ config: { globalProperties: { $cloud: Cloud } } });
-
-        Solid.mock();
-        Cloud.reset();
-    });
+    beforeEach(setupCloudTests);
 
     it('Syncs containers', async () => {
         // Arrange - Mint urls
@@ -48,7 +40,7 @@ describe('Cloud', () => {
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(typeIndexUrl, typeIndexResponse(remoteContainerUrl));
+        server.respond(typeIndexUrl, typeIndexResponse({ [remoteContainerUrl]: '<https://schema.org/Movie>' }));
         server.respond(remoteContainerUrl, containerResponse({ name: 'Remote Movies' }));
         server.respondOnce(localContainerUrl, FakeResponse.notFound()); // Tombstone check
         server.respondOnce(localContainerUrl, FakeResponse.notFound()); // Check before create
@@ -115,7 +107,7 @@ describe('Cloud', () => {
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
+        server.respond(typeIndexUrl, typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }));
         server.respond(
             containerUrl,
             containerResponse({
@@ -166,7 +158,7 @@ describe('Cloud', () => {
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
+        server.respond(typeIndexUrl, typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }));
         server.respond(containerUrl, containerResponse({ name: 'Movies', documentUrls: [remoteDocumentUrl] }));
         server.respond(remoteDocumentUrl, movieResponse('Spirited Away'));
         server.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Tombstone check
@@ -637,7 +629,7 @@ describe('Cloud', () => {
         const server = SolidMock.server;
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
-        server.respond(typeIndexUrl, typeIndexResponse(containerUrl));
+        server.respond(typeIndexUrl, typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }));
         server.respond(
             containerUrl,
             containerResponse({
@@ -697,104 +689,3 @@ describe('Cloud', () => {
     });
 
 });
-
-function testVariants<T>(description: string, variants: Record<string, T>, test: (variant: T) => unknown): void {
-    for (const [name, data] of Object.entries(variants)) {
-        it(`[${name}] ${description}`, () => test(data));
-    }
-}
-
-function testRegisterVariants(description: string, test: (registerModels: () => unknown) => unknown): void {
-    testVariants(
-        description,
-        {
-            'model registration': () => Cloud.register(Movie),
-            'container registration': () => Cloud.register(MoviesContainer),
-        },
-        test,
-    );
-}
-
-function typeIndexResponse(containerUrl: string): Response {
-    const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
-
-    return FakeResponse.success(`
-        @prefix solid: <http://www.w3.org/ns/solid/terms#>.
-        @prefix schema: <https://schema.org/>.
-
-        <${typeIndexUrl}> a solid:TypeIndex .
-
-        <#movies>
-             a solid:TypeRegistration ;
-             solid:forClass schema:Movie ;
-             solid:instanceContainer <${containerUrl}> .
-    `);
-}
-
-function containerResponse(
-    options: { name?: string; documentUrls?: string[]; createdAt?: Date; updatedAt?: Date; append?: string } = {},
-): Response {
-    const name = options.name ?? 'Movies';
-    const documentUrls = options.documentUrls ?? [];
-    const createdAt = options.createdAt ?? new Date();
-    const updatedAt = options.updatedAt ?? new Date();
-
-    return FakeResponse.success(`
-        @prefix dc: <http://purl.org/dc/terms/>.
-        @prefix ldp: <http://www.w3.org/ns/ldp#>.
-        @prefix posix: <http://www.w3.org/ns/posix/stat#>.
-        @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-        @prefix crdt: <https://vocab.noeldemartin.com/crdt/>.
-
-        <./> a ldp:Container, ldp:BasicContainer, ldp:Resource;
-            rdfs:label "${name}";
-            dc:created "2024-02-05T12:28:42Z"^^xsd:dateTime;
-            dc:modified "2024-02-05T12:28:42Z"^^xsd:dateTime;
-            ${documentUrls.length > 0 ? `ldp:contains ${documentUrls.map((url) => `<${url}>`).join(',')};` : ''}
-            posix:mtime 1707136122.
-
-        <./#metadata>
-            a crdt:Metadata ;
-            crdt:resource <./> ;
-            crdt:createdAt "${createdAt.toISOString()}"^^xsd:dateTime ;
-            crdt:updatedAt "${updatedAt.toISOString()}"^^xsd:dateTime .
-
-        ${options.append ?? ''}
-    `);
-}
-
-function movieResponse(title: string): Response {
-    return FakeResponse.success(`
-        @prefix schema: <https://schema.org/>.
-        @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-        @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
-
-        <#it>
-            a schema:Movie;
-            schema:datePublished "2001-07-20T00:00:00Z"^^xsd:dateTime;
-            schema:name "${title}".
-
-        <#it-metadata> a crdt:Metadata;
-            crdt:resource <#it>;
-            crdt:createdAt "2024-02-10T00:00:00Z"^^xsd:dateTime;
-            crdt:updatedAt "2024-02-10T00:00:00Z"^^xsd:dateTime.
-    `);
-}
-
-function taskResponse(name?: string): Response {
-    return FakeResponse.success(`
-        @prefix schema: <https://schema.org/>.
-        @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-        @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
-
-        <#it>
-            a schema:Action;
-            schema:name "${name ?? 'Task'}".
-
-        <#it-metadata> a crdt:Metadata;
-            crdt:resource <#it>;
-            crdt:createdAt "2024-02-10T00:00:00Z"^^xsd:dateTime;
-            crdt:updatedAt "2024-02-10T00:00:00Z"^^xsd:dateTime.
-    `);
-}
