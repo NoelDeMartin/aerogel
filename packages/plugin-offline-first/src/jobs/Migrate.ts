@@ -4,22 +4,13 @@ import { isContainer } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
+import { getContainerRegisteredClasses } from '@/lib/inference';
 import { getRemoteClass } from '@/lib/mirroring';
+import { mapFromArray } from '@/lib/utils';
 
 import LoadsChildren from './mixins/LoadsChildren';
 import LoadsTypeIndex from './mixins/LoadsTypeIndex';
 import TracksLocalModels from './mixins/TracksLocalModels';
-import { getContainerRegisteredClasses } from '@/lib/inference';
-
-function mapFromArray<K, V>(items: [K, V][]): Map<K, V> {
-    const itemsMap = new Map();
-
-    for (const [key, value] of items) {
-        itemsMap.set(key, value);
-    }
-
-    return itemsMap;
-}
 
 export default class Migrate extends mixed(Job, [LoadsChildren, LoadsTypeIndex, TracksLocalModels]) {
 

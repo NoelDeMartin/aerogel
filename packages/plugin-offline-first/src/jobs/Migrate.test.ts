@@ -57,11 +57,7 @@ describe('Migrate', () => {
         await Events.emit('application-ready');
 
         // Act
-        const schemas = new Map();
-
-        schemas.set(Task, TaskSchema);
-
-        await Cloud.migrate(schemas);
+        await Cloud.migrate([[Task, TaskSchema]]);
 
         // Assert - Local models
         expect(Task.rdfsClasses).toEqual(['https://schema.org/Action']);
