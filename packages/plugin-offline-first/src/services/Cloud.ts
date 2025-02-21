@@ -132,7 +132,9 @@ export class CloudService extends Service {
     }
 
     public async migrate(
-        schemas: Map<SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor>,
+        schemas:
+            | Map<SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor>
+            | [SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor][],
     ): Promise<void> {
         if (!this.online || !Solid.isLoggedIn() || !this.ready) {
             throw new Error('Data cannot be migrated');

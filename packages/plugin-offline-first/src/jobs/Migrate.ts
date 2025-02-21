@@ -11,6 +11,16 @@ import LoadsTypeIndex from './mixins/LoadsTypeIndex';
 import TracksLocalModels from './mixins/TracksLocalModels';
 import { getContainerRegisteredClasses } from '@/lib/inference';
 
+function mapFromArray<K, V>(items: [K, V][]): Map<K, V> {
+    const itemsMap = new Map();
+
+    for (const [key, value] of items) {
+        itemsMap.set(key, value);
+    }
+
+    return itemsMap;
+}
+
 export default class Migrate extends mixed(Job, [LoadsChildren, LoadsTypeIndex, TracksLocalModels]) {
 
     protected models: SolidModel[];
@@ -19,12 +29,14 @@ export default class Migrate extends mixed(Job, [LoadsChildren, LoadsTypeIndex, 
 
     constructor(
         models: SolidModel[],
-        schemas: Map<SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor>,
+        schemas:
+            | Map<SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor>
+            | [SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor][],
     ) {
         super();
 
         this.models = models;
-        this.schemas = schemas;
+        this.schemas = Array.isArray(schemas) ? mapFromArray(schemas) : schemas;
         this.localModels = map([], 'url');
     }
 
