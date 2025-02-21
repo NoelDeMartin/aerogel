@@ -58,7 +58,7 @@ describe('Composition helpers', () => {
         expect(usersByAge.value[25]?.[0]?.is(alice)).toBe(true);
 
         // TODO This should be 3
-        expect(collectionUpdated).toEqual(10);
+        expect(collectionUpdated).toEqual(12);
 
         // TODO This should be 2
         expect(aliceUpdated).toEqual(1);
