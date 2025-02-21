@@ -56,6 +56,7 @@ export class EventsService extends Service {
     public on<Event extends EventWithPayload>(event: Event, priority: EventListenerPriority, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
     public on<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
     public on<Event extends string>(event: UnknownEvent<Event>, listener: EventListener): () => void;
+    public on<Event extends string>(event: UnknownEvent<Event>, priority: EventListenerPriority, listener: EventListener): () => void; // prettier-ignore
     public on<Event extends string>(event: UnknownEvent<Event>, options: Partial<EventListenerOptions>, listener: EventListener): () => void; // prettier-ignore
     /* eslint-enable max-len */
 
