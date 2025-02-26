@@ -1,10 +1,11 @@
 import { computed } from 'vue';
 import type { ExtractPropTypes } from 'vue';
-import type { ObjectWithout, SubPartial } from '@noeldemartin/utils';
+import type { ObjectWithout, Pretty, SubPartial } from '@noeldemartin/utils';
 
 import { Colors } from '@/components/constants';
 import { enumProp, objectProp, requiredStringProp, stringProp } from '@/utils';
 import { translateWithDefault } from '@/lang';
+import type { AcceptRefs } from '@/utils';
 import type { ConfirmCheckboxes } from '@/ui';
 
 export const confirmModalProps = {
@@ -18,9 +19,13 @@ export const confirmModalProps = {
     actions: objectProp<Record<string, () => unknown>>(),
 };
 
-export type AGConfirmModalProps = SubPartial<
-    ObjectWithout<ExtractPropTypes<typeof confirmModalProps>, null | undefined>,
-    'acceptColor' | 'cancelColor'
+export type AGConfirmModalProps = Pretty<
+    AcceptRefs<
+        SubPartial<
+            ObjectWithout<ExtractPropTypes<typeof confirmModalProps>, null | undefined>,
+            'acceptColor' | 'cancelColor'
+        >
+    >
 >;
 
 export function useConfirmModalProps(): typeof confirmModalProps {

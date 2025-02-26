@@ -1,9 +1,10 @@
 import { computed, ref } from 'vue';
 import type { Component, ExtractPropTypes } from 'vue';
-import type { ObjectWithoutEmpty } from '@noeldemartin/utils';
+import type { ObjectWithout, Pretty } from '@noeldemartin/utils';
 
 import { requiredArrayProp } from '@/utils/vue';
 import { translateWithDefault } from '@/lang';
+import type { AcceptRefs } from '@/utils/vue';
 import type { ErrorReport } from '@/errors';
 
 export interface IAGErrorReportModalButtonsDefaultSlotProps {
@@ -18,7 +19,9 @@ export const errorReportModalProps = {
     reports: requiredArrayProp<ErrorReport>(),
 };
 
-export type AGErrorReportModalProps = ObjectWithoutEmpty<ExtractPropTypes<typeof errorReportModalProps>>;
+export type AGErrorReportModalProps = Pretty<
+    AcceptRefs<ObjectWithout<ExtractPropTypes<typeof errorReportModalProps>, null | undefined>>
+>;
 
 export function useErrorReportModalProps(): typeof errorReportModalProps {
     return errorReportModalProps;

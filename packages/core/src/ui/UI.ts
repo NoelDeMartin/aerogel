@@ -5,6 +5,7 @@ import type { ObjectValues } from '@noeldemartin/utils';
 
 import App from '@/services/App';
 import Events from '@/services/Events';
+import type { AcceptRefs } from '@/utils';
 import type { Color } from '@/components/constants';
 import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackbars';
 import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps, AGPromptModalProps } from '@/components';
@@ -37,19 +38,19 @@ export type UIComponent = ObjectValues<typeof UIComponents>;
 
 export type ConfirmCheckboxes = Record<string, { label: string; default?: boolean; required?: boolean }>;
 
-export interface ConfirmOptions {
+export type ConfirmOptions = AcceptRefs<{
     acceptText?: string;
     acceptColor?: Color;
     cancelText?: string;
     cancelColor?: Color;
     actions?: Record<string, () => unknown>;
-}
+}>;
 
 export interface ConfirmOptionsWithCheckboxes<T extends ConfirmCheckboxes = ConfirmCheckboxes> extends ConfirmOptions {
     checkboxes?: T;
 }
 
-export interface PromptOptions {
+export type PromptOptions = AcceptRefs<{
     label?: string;
     defaultValue?: string;
     placeholder?: string;
@@ -58,7 +59,7 @@ export interface PromptOptions {
     cancelText?: string;
     cancelColor?: Color;
     trim?: boolean;
-}
+}>;
 
 export interface ShowSnackbarOptions {
     component?: Component;
@@ -165,14 +166,14 @@ export class UIService extends Service {
                 return {
                     message: messageOrTitle,
                     ...(messageOrOptions ?? {}),
-                };
+                } as AGPromptModalProps;
             }
 
             return {
                 title: messageOrTitle,
                 message: messageOrOptions,
                 ...(options ?? {}),
-            };
+            } as AGPromptModalProps;
         };
 
         const modal = await this.openModal<ModalComponent<AGPromptModalProps, string | null>>(

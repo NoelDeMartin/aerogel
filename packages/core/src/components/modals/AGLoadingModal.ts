@@ -1,15 +1,18 @@
 import { computed } from 'vue';
 import type { ExtractPropTypes } from 'vue';
-import type { ObjectWithoutEmpty } from '@noeldemartin/utils';
+import type { ObjectWithout } from '@noeldemartin/utils';
 
 import { stringProp } from '@/utils';
 import { translateWithDefault } from '@/lang';
+import type { AcceptRefs } from '@/utils';
 
 export const loadingModalProps = {
     message: stringProp(),
 };
 
-export type AGLoadingModalProps = ObjectWithoutEmpty<ExtractPropTypes<typeof loadingModalProps>>;
+export type AGLoadingModalProps = AcceptRefs<
+    ObjectWithout<ExtractPropTypes<typeof loadingModalProps>, null | undefined>
+>;
 
 export function useLoadingModalProps(): typeof loadingModalProps {
     return loadingModalProps;

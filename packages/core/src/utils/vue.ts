@@ -10,7 +10,9 @@ type BaseProp<T> = {
 type RequiredProp<T> = BaseProp<T> & { required: true };
 type OptionalProp<T> = BaseProp<T> & { default: T | (() => T) | null };
 
+export type AcceptRefs<T> = { [K in keyof T]: T[K] | RefUnion<T[K]> };
 export type ComponentProps = Record<string, unknown>;
+export type RefUnion<T> = T extends infer R ? Ref<R> : never;
 
 export function arrayProp<T>(defaultValue?: () => T[]): OptionalProp<T[]> {
     return {
