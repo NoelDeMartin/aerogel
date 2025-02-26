@@ -1,12 +1,15 @@
 <template>
-    <DialogPanel>
+    <component :is="rootComponent">
         <slot />
 
         <template v-if="childModal">
-            <div class="pointer-events-none fixed inset-0 z-50 bg-black/30" />
-            <AGModalContext :child-index="modal.childIndex + 1" :modal="childModal" />
+            <div
+                class="pointer-events-none inset-0 z-50 bg-black/30"
+                :class="childModal.properties.inline ? 'absolute' : 'fixed'"
+            />
+            <AGModalContext :child-index="childIndex + 1" :modal="childModal" />
         </template>
-    </DialogPanel>
+    </component>
 </template>
 
 <script setup lang="ts">
@@ -19,10 +22,11 @@ import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
 import AGModalContext from '../../modals/AGModalContext.vue';
 
-const modal = injectReactiveOrFail<IAGModalContext>(
+const { modal, childIndex } = injectReactiveOrFail<IAGModalContext>(
     'modal',
     'could not obtain modal reference from <AGHeadlessModalPanel>, ' +
         'did you render this component manually? Show it using $ui.openModal() instead',
 );
-const childModal = computed(() => UI.modals[modal.childIndex] ?? null);
+const rootComponent = computed(() => (modal.properties.inline ? 'div' : DialogPanel));
+const childModal = computed(() => UI.modals[childIndex] ?? null);
 </script>

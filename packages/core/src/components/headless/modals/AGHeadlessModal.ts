@@ -13,6 +13,7 @@ export interface IAGHeadlessModalDefaultSlotProps {
 
 export const modalProps = {
     cancellable: booleanProp(true),
+    inline: booleanProp(),
     title: stringProp(),
 };
 
@@ -28,7 +29,8 @@ export function extractModalProps<T extends ExtractPropTypes<typeof modalProps>>
 
 export function useModalExpose($modal: Ref<IAGHeadlessModal | undefined>): IAGModal {
     return {
-        close: async () => $modal.value?.close(),
+        inline: computed(() => !!$modal.value?.inline),
         cancellable: computed(() => !!$modal.value?.cancellable),
+        close: async () => $modal.value?.close(),
     };
 }

@@ -5,7 +5,7 @@
         v-bind="modalProps"
         class="relative z-50"
     >
-        <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="z-10 overflow-y-auto" :class="{ 'fixed inset-0': !inline }">
             <div class="flex min-h-full items-center justify-center p-4 text-center">
                 <AGHeadlessModalPanel
                     class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all"

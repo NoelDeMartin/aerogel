@@ -1,11 +1,16 @@
 <template>
-    <Dialog ref="$root" :open="true" @close="cancellable && close()">
+    <component
+        :is="rootComponent"
+        ref="$root"
+        :open="true"
+        @close="cancellable && close()"
+    >
         <slot :close="close" />
-    </Dialog>
+    </component>
 </template>
 
 <script setup lang="ts">
-import { ref, toRef } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { Dialog } from '@headlessui/vue';
 import type { VNode } from 'vue';
 
@@ -26,6 +31,7 @@ const { modal } = injectReactiveOrFail<IAGModalContext>(
     'could not obtain modal reference from <AGHeadlessModal>, ' +
         'did you render this component manually? Show it using $ui.openModal() instead',
 );
+const rootComponent = computed(() => (modal.properties.inline ? 'div' : Dialog));
 
 async function hide(): Promise<void> {
     if (!$root.value?.$el) {
@@ -82,5 +88,5 @@ useEvent('show-modal', async ({ id }) => {
 });
 
 defineSlots<{ default(props: IAGHeadlessModalDefaultSlotProps): VNode[] }>();
-defineExpose<IAGHeadlessModal>({ close, cancellable: toRef(props, 'cancellable') });
+defineExpose<IAGHeadlessModal>({ close, cancellable: toRef(props, 'cancellable'), inline: toRef(props, 'inline') });
 </script>
