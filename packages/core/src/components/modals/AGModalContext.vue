@@ -5,14 +5,14 @@
 <script setup lang="ts">
 import { computed, provide, toRef, unref } from 'vue';
 
-import { requiredNumberProp, requiredObjectProp } from '@/utils/vue';
+import { numberProp, requiredObjectProp } from '@/utils/vue';
 import type { Modal } from '@/ui/UI.state';
 
 import type { IAGModalContext } from './AGModalContext';
 
 const props = defineProps({
     modal: requiredObjectProp<Modal>(),
-    childIndex: requiredNumberProp(),
+    childIndex: numberProp(0),
 });
 
 const modalProperties = computed(() => {

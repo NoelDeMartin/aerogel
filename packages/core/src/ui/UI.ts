@@ -1,4 +1,4 @@
-import { after, facade, fail, required, uuid } from '@noeldemartin/utils';
+import { after, facade, fail, isInstanceOf, required, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
@@ -44,6 +44,12 @@ export type ConfirmOptions = AcceptRefs<{
     cancelText?: string;
     cancelColor?: Color;
     actions?: Record<string, () => unknown>;
+}>;
+
+export type LoadingOptions = AcceptRefs<{
+    title?: string;
+    message?: string;
+    progress?: number;
 }>;
 
 export interface ConfirmOptionsWithCheckboxes<T extends ConfirmCheckboxes = ConfirmCheckboxes> extends ConfirmOptions {
@@ -188,22 +194,33 @@ export class UIService extends Service {
 
     public async loading<T>(operation: Promise<T> | (() => T)): Promise<T>;
     public async loading<T>(message: string, operation: Promise<T> | (() => T)): Promise<T>;
+    public async loading<T>(options: LoadingOptions, operation: Promise<T> | (() => T)): Promise<T>;
     public async loading<T>(
-        messageOrOperation: string | Promise<T> | (() => T),
+        operationOrMessageOrOptions: string | LoadingOptions | Promise<T> | (() => T),
         operation?: Promise<T> | (() => T),
     ): Promise<T> {
         const getProperties = (): AGLoadingModalProps => {
-            if (typeof messageOrOperation !== 'string') {
+            if (typeof operationOrMessageOrOptions === 'string') {
+                return { message: operationOrMessageOrOptions };
+            }
+
+            if (typeof operationOrMessageOrOptions === 'function' || operationOrMessageOrOptions instanceof Promise) {
                 return {};
             }
 
-            return { message: messageOrOperation };
+            return operationOrMessageOrOptions;
         };
 
         const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), getProperties());
 
         try {
-            operation = typeof messageOrOperation === 'string' ? (operation as () => T) : messageOrOperation;
+            operation =
+                typeof operationOrMessageOrOptions === 'string'
+                    ? (operation as () => T)
+                    : typeof operationOrMessageOrOptions !== 'function' &&
+                      !isInstanceOf(operationOrMessageOrOptions, Promise)
+                        ? (operation as () => T)
+                        : operationOrMessageOrOptions;
             operation = typeof operation === 'function' ? Promise.resolve(operation()) : operation;
 
             const [result] = await Promise.all([operation, after({ seconds: 1 })]);

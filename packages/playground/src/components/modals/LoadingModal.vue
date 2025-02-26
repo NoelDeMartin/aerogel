@@ -1,7 +1,11 @@
 <template>
-    <BaseModal :cancellable="false">
-        <div class="flex items-center justify-center gap-2">
-            <i-svg-spinners:90-ring-with-bg class="h-6 w-6 flex-shrink-0" />
+    <BaseModal :title="title" :cancellable="false">
+        <div
+            class="flex"
+            :class="{ 'flex-col-reverse': showProgress, 'items-center justify-center gap-2': !showProgress }"
+        >
+            <AGProgressBar v-if="showProgress" :progress="progress" />
+            <i-svg-spinners:90-ring-with-bg v-else class="h-6 w-6 flex-shrink-0" />
             <AGMarkdown :text="renderedMessage" />
         </div>
     </BaseModal>
@@ -11,5 +15,5 @@
 import { useLoadingModal, useLoadingModalProps } from '@aerogel/core';
 
 const props = defineProps(useLoadingModalProps());
-const { renderedMessage } = useLoadingModal(props);
+const { renderedMessage, showProgress } = useLoadingModal(props);
 </script>
