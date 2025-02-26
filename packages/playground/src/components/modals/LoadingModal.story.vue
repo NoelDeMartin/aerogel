@@ -67,7 +67,7 @@ setInterval(() => {
 async function showModal() {
     const modal = await UI.openModal({
         render() {
-            return h(LoadingModal, { message });
+            return h(LoadingModal, { message: message.value });
         },
     });
 
