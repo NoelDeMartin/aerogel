@@ -36,7 +36,7 @@
         "@noeldemartin/eslint-config-vue": "0.1.1-next.6991d432d0368b4d59bb674c8bf0384e9eded802",
         "@noeldemartin/scripts": "^0.2.1",
         "@noeldemartin/testing": "0.0.0",
-        "@noeldemartin/utils": "0.6.0-next.2838b8e01d2fc650c33c1fedf0cc5efd907e8de1",
+        "@noeldemartin/utils": "0.6.0-next.adaba211c74e52997b06eaca2e391e62a0a614a6",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/mustache": "^4.2.2",
         "cypress": "^12.17.0",
@@ -59,7 +59,7 @@
         "vue-tsc": "^1.6.5"
     },
     "overrides": {
-        "@noeldemartin/utils": "0.6.0-next.2838b8e01d2fc650c33c1fedf0cc5efd907e8de1"
+        "@noeldemartin/utils": "0.6.0-next.adaba211c74e52997b06eaca2e391e62a0a614a6"
     },
     "eslintConfig": {
         "extends": [

@@ -32,7 +32,7 @@ export default class Backup extends Job {
         });
     }
 
-    public async run(): Promise<void> {
+    protected async run(): Promise<void> {
         const engine = requireEngine<IndexedDBEngine>();
         const collections = await engine.getCollections();
 

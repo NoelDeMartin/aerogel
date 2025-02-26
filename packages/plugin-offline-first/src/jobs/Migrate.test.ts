@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Events } from '@aerogel/core';
 import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
-import { FakeResponse } from '@noeldemartin/utils';
+import { FakeResponse, range, round } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 
 import Cloud from '@/services/Cloud';
@@ -56,8 +56,16 @@ describe('Migrate', () => {
         await Cloud.register(Workspace);
         await Events.emit('application-ready');
 
+        // Arrange - Track progress
+        const updates: number[] = [];
+
         // Act
-        await Cloud.migrate([[Task, TaskSchema]]);
+        await Cloud.migrate([[Task, TaskSchema]], {
+            onUpdated: (progress) => updates.push(progress),
+        });
+
+        // Assert - Progress
+        expect(updates).toEqual([0, 1]);
 
         // Assert - Local models
         expect(Task.rdfsClasses).toEqual(['https://schema.org/Action']);
@@ -108,6 +116,62 @@ describe('Migrate', () => {
                 <#[[registration][.*]]> solid:forClass schema:Action .
             } .
         `);
+    });
+
+    it('Tracks progress', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const documentUrls = range(5).map(() => fakeDocumentUrl({ containerUrl }));
+
+        // Arrange - Prepare models
+        await Task.updateSchema(LegacyTaskSchema);
+
+        const workspace = await Workspace.at(parentContainerUrl).create({
+            url: containerUrl,
+            name: 'Tasks',
+        });
+
+        for (const documentUrl of documentUrls) {
+            await workspace.relatedTasks.create({
+                url: `${documentUrl}#it`,
+                name: 'Migrate schemas',
+            });
+        }
+
+        // Arrange - Prepare responses
+        const server = SolidMock.server;
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+        const typeIndex = typeIndexResponse({ [containerUrl]: '<http://www.w3.org/2002/12/cal/ical#Vtodo>' });
+
+        server.respondOnce(typeIndexUrl, typeIndex);
+        documentUrls.forEach((documentUrl) => {
+            server.respondOnce(documentUrl, legacyTaskResponse('Migrate schemas'));
+            server.respondOnce(documentUrl, legacyTaskResponse('Migrate schemas'));
+            server.respondOnce(documentUrl, FakeResponse.success());
+        });
+        server.respondOnce(typeIndexUrl, typeIndex);
+        server.respondOnce(typeIndexUrl, FakeResponse.success());
+
+        // Arrange - Prepare service
+        Cloud.ready = true;
+
+        await Cloud.launch();
+        await Cloud.register(Workspace);
+        await Events.emit('application-ready');
+
+        // Arrange - Track progress
+        const updates: number[] = [];
+
+        // Act
+        await Cloud.migrate([[Task, TaskSchema]], {
+            onUpdated: (progress) => updates.push(progress),
+        });
+
+        // Assert
+        const step = 1 / documentUrls.length;
+
+        expect(updates).toEqual([...documentUrls.map((_, index) => round(index * step, 2)), 1]);
     });
 
 });

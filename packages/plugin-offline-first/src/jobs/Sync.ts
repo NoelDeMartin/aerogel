@@ -43,7 +43,7 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
         this.rootLocalModels = [];
     }
 
-    public async run(): Promise<void> {
+    protected async run(): Promise<void> {
         this.rootLocalModels = this.models ?? getLocalModels();
 
         await this.indexLocalModels(this.rootLocalModels);

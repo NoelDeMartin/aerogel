@@ -16,6 +16,7 @@ import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/p
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
+import type { JobListener } from '@aerogel/core';
 import type { SolidContainsRelation, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
 import {
@@ -135,6 +136,7 @@ export class CloudService extends Service {
         schemas:
             | Map<SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor>
             | [SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor][],
+        listener?: JobListener,
     ): Promise<void> {
         if (!this.online || !Solid.isLoggedIn() || !this.ready) {
             throw new Error('Data cannot be migrated');
@@ -149,8 +151,12 @@ export class CloudService extends Service {
             SyncQueue.clear(models);
 
             try {
+                const job = new Migrate(models, schemas);
+
+                listener && job.listeners.add(listener);
+
                 await Events.emit('cloud:migration-started', models);
-                await dispatch(new Migrate(models, schemas));
+                await dispatch(job);
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
                 await Errors.report(error, translateWithDefault('cloud.migrationFailed', 'Migration failed'));

@@ -1,4 +1,4 @@
-import { after, facade, fail, isInstanceOf, required, uuid } from '@noeldemartin/utils';
+import { after, facade, fail, required, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
@@ -199,31 +199,30 @@ export class UIService extends Service {
         operationOrMessageOrOptions: string | LoadingOptions | Promise<T> | (() => T),
         operation?: Promise<T> | (() => T),
     ): Promise<T> {
-        const getProperties = (): AGLoadingModalProps => {
+        const processOperation = (o: Promise<T> | (() => T)) => (typeof o === 'function' ? Promise.resolve(o()) : o);
+        const processArgs = (): { operationPromise: Promise<T>; props?: AGLoadingModalProps } => {
             if (typeof operationOrMessageOrOptions === 'string') {
-                return { message: operationOrMessageOrOptions };
+                return {
+                    props: { message: operationOrMessageOrOptions },
+                    operationPromise: processOperation(operation as Promise<T> | (() => T)),
+                };
             }
 
             if (typeof operationOrMessageOrOptions === 'function' || operationOrMessageOrOptions instanceof Promise) {
-                return {};
+                return { operationPromise: processOperation(operationOrMessageOrOptions) };
             }
 
-            return operationOrMessageOrOptions;
+            return {
+                props: operationOrMessageOrOptions,
+                operationPromise: processOperation(operation as Promise<T> | (() => T)),
+            };
         };
 
-        const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), getProperties());
+        const { operationPromise, props } = processArgs();
+        const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), props);
 
         try {
-            operation =
-                typeof operationOrMessageOrOptions === 'string'
-                    ? (operation as () => T)
-                    : typeof operationOrMessageOrOptions !== 'function' &&
-                      !isInstanceOf(operationOrMessageOrOptions, Promise)
-                        ? (operation as () => T)
-                        : operationOrMessageOrOptions;
-            operation = typeof operation === 'function' ? Promise.resolve(operation()) : operation;
-
-            const [result] = await Promise.all([operation, after({ seconds: 1 })]);
+            const [result] = await Promise.all([operationPromise, after({ seconds: 1 })]);
 
             return result;
         } finally {
