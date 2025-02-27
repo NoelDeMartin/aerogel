@@ -1,35 +1,114 @@
-import { ListenersManager, round } from '@noeldemartin/utils';
+import { ListenersManager, PromisedValue, round } from '@noeldemartin/utils';
 import type { Listeners } from '@noeldemartin/utils';
+
+import JobCancelledError from '@/errors/JobCancelledError';
+import { toError } from '@/utils/errors';
 
 import type { JobListener } from './listeners';
 import type { JobStatus } from './status';
 
-export default abstract class Job<Listener extends JobListener = JobListener, Status extends JobStatus = JobStatus> {
+export default abstract class Job<
+    Listener extends JobListener = JobListener,
+    Status extends JobStatus = JobStatus,
+    SerializedStatus extends JobStatus = JobStatus
+> {
 
-    protected _listeners: ListenersManager<JobListener>;
     protected status: Status;
-    protected progress: number | null;
+    protected _listeners: ListenersManager<JobListener>;
+    protected _progress?: number;
+    protected _cancelled?: PromisedValue<void>;
+    protected _started: PromisedValue<void>;
+    protected _completed: PromisedValue<void>;
 
     constructor() {
-        this._listeners = new ListenersManager();
         this.status = this.getInitialStatus();
-        this.progress = null;
+        this._listeners = new ListenersManager();
+        this._started = new PromisedValue();
+        this._completed = new PromisedValue();
     }
 
     public async start(): Promise<void> {
-        await this.updateProgress();
-        await this.run();
-        await this.updateProgress();
+        this.beforeStart();
+        this._started.resolve();
+
+        try {
+            await this.updateProgress();
+            await this.run();
+            await this.updateProgress();
+
+            this._completed.resolve();
+        } catch (error) {
+            if (error instanceof JobCancelledError) {
+                return;
+            }
+
+            const errorInstance = toError(error);
+
+            this._completed.reject(errorInstance);
+
+            throw errorInstance;
+        }
+    }
+
+    public async cancel(): Promise<void> {
+        this._cancelled = new PromisedValue();
+
+        await this._cancelled;
+    }
+
+    public serialize(): SerializedStatus {
+        return this.serializeStatus(this.status);
     }
 
     public get listeners(): Listeners<Listener> {
         return this._listeners;
     }
 
+    public get progress(): number {
+        return this._progress ?? 0;
+    }
+
+    public get cancelled(): boolean {
+        return !!this._cancelled?.isResolved();
+    }
+
+    public get started(): Promise<void> {
+        return this._started;
+    }
+
+    public get completed(): Promise<void> {
+        return this._completed;
+    }
+
     protected abstract run(): Promise<void>;
 
     protected getInitialStatus(): Status {
         return { completed: false } as Status;
+    }
+
+    protected beforeStart(): void {
+        if (!this._started.isResolved()) {
+            return;
+        }
+
+        if (this._cancelled) {
+            delete this._progress;
+            delete this._cancelled;
+
+            return;
+        }
+
+        throw new Error('Job already started!');
+    }
+
+    protected assertNotCancelled(): void {
+        if (!this._cancelled) {
+            return;
+        }
+
+        this._cancelled.resolve();
+
+        throw new JobCancelledError();
     }
 
     protected calculateCurrentProgress(status?: JobStatus): number {
@@ -55,13 +134,17 @@ export default abstract class Job<Listener extends JobListener = JobListener, St
 
         const progress = this.calculateCurrentProgress();
 
-        if (progress === this.progress) {
+        if (progress === this._progress) {
             return;
         }
 
-        this.progress = progress;
+        this._progress = progress;
 
         await this._listeners.emit('onUpdated', progress);
+    }
+
+    protected serializeStatus(status: Status): SerializedStatus {
+        return { ...status } as unknown as SerializedStatus;
     }
 
 }

@@ -93,7 +93,7 @@ export class CloudService extends Service {
                 ? { model: config }
                 : config;
 
-        if (!Solid.isLoggedIn() || !this.ready) {
+        if (!Solid.isLoggedIn() || !this.ready || !this.online) {
             return;
         }
 
@@ -132,38 +132,47 @@ export class CloudService extends Service {
         });
     }
 
-    public async migrate(
-        schemas:
-            | Map<SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor>
-            | [SolidModelConstructor, SolidSchemaDefinition | SolidModelConstructor][],
-        listener?: JobListener,
-    ): Promise<void> {
+    public async migrate(listener?: JobListener): Promise<void> {
         if (!this.online || !Solid.isLoggedIn() || !this.ready) {
-            throw new Error('Data cannot be migrated');
+            throw new Error('Data cannot be migrated at the moment');
+        }
+
+        if (this.schemaMigrations.size === 0) {
+            return;
         }
 
         await this.asyncLock.run(async () => {
-            const start = Date.now();
-            const models = getLocalModels();
-
             this.status = CloudStatus.Migrating;
+            this.migrationJob ??= new Migrate();
+
+            const start = Date.now();
+            const removeListeners: Function[] = [];
+            const models = (this.migrationJob.models ??= getLocalModels());
 
             SyncQueue.clear(models);
 
             try {
-                const job = new Migrate(models, schemas);
-
-                listener && job.listeners.add(listener);
+                listener && removeListeners.push(this.migrationJob.listeners.add(listener));
 
                 await Events.emit('cloud:migration-started', models);
-                await dispatch(job);
+                await dispatch(this.migrationJob);
+
+                if (this.migrationJob.cancelled) {
+                    await Events.emit('cloud:migration-cancelled', models);
+
+                    return;
+                }
+
+                this.migrationJob = null;
+
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
+                await Events.emit('cloud:migration-completed', models);
             } catch (error) {
                 await Errors.report(error, translateWithDefault('cloud.migrationFailed', 'Migration failed'));
             } finally {
                 this.status = CloudStatus.Online;
 
-                await Events.emit('cloud:migration-completed', models);
+                removeListeners.forEach((removeListener) => removeListener?.());
             }
         });
     }
@@ -208,6 +217,13 @@ export class CloudService extends Service {
         for (const collection of this.modelCollections[modelClass.modelName] ?? []) {
             await trackModelsCollection(modelClass, collection);
         }
+    }
+
+    public registerSchemaMigration(
+        modelClass: SolidModelConstructor,
+        schema: SolidModelConstructor | SolidSchemaDefinition,
+    ): void {
+        this.schemaMigrations.set(modelClass, schema);
     }
 
     public requireRemoteCollection(modelClass: SolidModelConstructor): string {
@@ -380,8 +396,9 @@ declare module '@aerogel/core' {
         'cloud:ready': void;
         'cloud:backup-started': void;
         'cloud:backup-completed': void;
-        'cloud:migration-started': SolidModel[] | undefined;
-        'cloud:migration-completed': SolidModel[] | undefined;
+        'cloud:migration-started': SolidModel[];
+        'cloud:migration-cancelled': SolidModel[];
+        'cloud:migration-completed': SolidModel[];
         'cloud:sync-started': SolidModel[] | undefined;
         'cloud:sync-completed': SolidModel[] | undefined;
     }

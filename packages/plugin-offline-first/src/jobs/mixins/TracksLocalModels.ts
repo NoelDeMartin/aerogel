@@ -5,7 +5,7 @@ import { getContainerRelations } from '@/lib/inference';
 
 export default class TracksLocalModels {
 
-    protected declare localModels: ObjectsMap<SolidModel>;
+    protected declare localModels?: ObjectsMap<SolidModel>;
 
     protected async indexLocalModels(models: SolidModel[]): Promise<void> {
         for (const localModel of models) {
@@ -14,7 +14,7 @@ export default class TracksLocalModels {
     }
 
     protected async addLocalModel(localModel: SolidModel): Promise<void> {
-        if (this.localModels.hasKey(localModel.url)) {
+        if (!this.localModels || this.localModels.hasKey(localModel.url)) {
             return;
         }
 

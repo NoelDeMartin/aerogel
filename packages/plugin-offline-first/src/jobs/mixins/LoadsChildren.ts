@@ -10,7 +10,7 @@ import { lazy } from '@/lib/utils';
 
 export default class LoadsChildren {
 
-    protected declare localModels: ObjectsMap<SolidModel>;
+    protected declare localModels?: ObjectsMap<SolidModel>;
 
     protected async loadContainedModels(model: SolidContainer): Promise<SolidModel[]> {
         if (!isRemoteModel(model)) {
@@ -56,7 +56,7 @@ export default class LoadsChildren {
         if (
             document &&
             (await DocumentsCache.isFresh(document.url, document.updatedAt ?? new Date())) &&
-            this.localModels.hasKey(model.url)
+            this.localModels?.hasKey(model.url)
         ) {
             return this.loadDocumentChildrenFromLocal(model, document);
         }
@@ -79,7 +79,7 @@ export default class LoadsChildren {
                 continue;
             }
 
-            const relatedLocalModels = this.localModels.get(model.url)?.getRelationModels(relation) ?? [];
+            const relatedLocalModels = this.localModels?.get(model.url)?.getRelationModels(relation) ?? [];
 
             children[relation] = relatedLocalModels
                 .filter((relatedLocalModel) => relatedLocalModel.getDocumentUrl() === document.url)

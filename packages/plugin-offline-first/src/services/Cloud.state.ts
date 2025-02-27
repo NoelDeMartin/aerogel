@@ -1,8 +1,11 @@
-import { defineServiceState } from '@aerogel/core';
-import { map } from '@noeldemartin/utils';
+import { defineServiceState, translateWithDefault } from '@aerogel/core';
+import { map, objectWithoutEmpty } from '@noeldemartin/utils';
+import { Solid } from '@aerogel/plugin-solid';
 import type { ErrorSource } from '@aerogel/core';
-import type { ObjectsMap } from '@noeldemartin/utils';
-import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
+import type { Nullable, ObjectsMap } from '@noeldemartin/utils';
+import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
+
+import Migrate from '@/jobs/Migrate';
 
 export const CloudStatus = {
     Disconnected: 'disconnected',
@@ -20,7 +23,7 @@ export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
 export default defineServiceState({
     name: 'cloud',
-    persist: ['ready', 'modelCollections', 'startupSync', 'pollingEnabled', 'pollingMinutes'],
+    persist: ['ready', 'modelCollections', 'startupSync', 'pollingEnabled', 'pollingMinutes', 'migrationJob'],
     initialState: () => ({
         autoPush: true,
         dirtyRemoteModels: map([], 'url') as ObjectsMap<SolidModel>,
@@ -28,14 +31,31 @@ export default defineServiceState({
         ready: false,
         modelCollections: {} as Record<string, string[]>,
         registeredModels: [] as ModelRegistration[],
+        schemaMigrations: new Map<SolidModelConstructor, SolidModelConstructor | SolidSchemaDefinition>(),
         remoteOperationUrls: {} as Record<string, string[]>,
         setupDismissed: false,
         startupSync: true,
         status: CloudStatus.Disconnected as TCloudStatus,
-        syncError: null as ErrorSource | null,
+        syncError: null as Nullable<ErrorSource>,
         pollingEnabled: true,
         pollingMinutes: 10,
+        migrationJob: null as Nullable<Migrate>,
     }),
+    serialize: (state) =>
+        objectWithoutEmpty({
+            ...state,
+            migrationJob: state.migrationJob?.serialize(),
+        }),
+    restore: (state) =>
+        objectWithoutEmpty({
+            ...state,
+            migrationJob: state.migrationJob && Migrate.restore(state.migrationJob),
+        }),
+    watch: {
+        migrationJob(migrationJob) {
+            migrationJob?.listeners.add({ onUpdated: () => this.updatedPersistedState({ migrationJob }) });
+        },
+    },
     computed: {
         disconnected: ({ status }) => status === CloudStatus.Disconnected,
         online: ({ status }) => status === CloudStatus.Online,
@@ -45,6 +65,40 @@ export default defineServiceState({
         },
         dirty(): boolean {
             return this.localChanges > 0;
+        },
+        migrationStarted({ migrationJob }): boolean {
+            return !!migrationJob;
+        },
+        migrationDisabledReason({ status, ready }): string | null {
+            if (!Solid.isLoggedIn()) {
+                return translateWithDefault(
+                    'cloud.migrationNotLoggedIn',
+                    'You need to reconnect before starting the migration',
+                );
+            }
+
+            if (!ready) {
+                return translateWithDefault(
+                    'cloud.migrationNotReady',
+                    'You need to backup your data before starting the migration',
+                );
+            }
+
+            if (status === CloudStatus.Syncing || status === CloudStatus.Migrating) {
+                return translateWithDefault(
+                    'cloud.migrationNotSyncing',
+                    'Wait for syncing to finish before starting the migration',
+                );
+            }
+
+            if (!this.online) {
+                return translateWithDefault(
+                    'cloud.migrationNotOnline',
+                    'You need to be online in order to start the migration',
+                );
+            }
+
+            return null;
         },
     },
 });

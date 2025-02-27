@@ -13,7 +13,7 @@ import { Solid } from '@aerogel/plugin-solid';
 import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone, isContainer } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
-import type { SolidModel, SolidModelConstructor } from 'soukai-solid';
+import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
 import SyncQueue from '@/lib/SyncQueue';
 import { getContainerRelations, getRelatedAppModels } from '@/lib/inference';
@@ -204,6 +204,20 @@ export function getLocalModel(remoteModel: SolidModel, localModels: ObjectsMap<S
 
 export function getLocalModels(): SolidModel[] {
     return [...Cloud.registeredModels].map(({ modelClass }) => getTrackedModels(modelClass)).flat();
+}
+
+export function getSchemaMigrations(): Map<SolidModelConstructor, SolidModelConstructor | SolidSchemaDefinition> {
+    return Cloud.schemaMigrations;
+}
+
+export function clearSchemaMigrations(): void {
+    Cloud.schemaMigrations.clear();
+}
+
+export function getSchemaMigration(
+    modelClass: SolidModelConstructor,
+): SolidModelConstructor | SolidSchemaDefinition | undefined {
+    return Cloud.schemaMigrations.get(modelClass);
 }
 
 export function getRemoteClass<T extends SolidModelConstructor>(localClass: T): T {

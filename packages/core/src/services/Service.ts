@@ -1,5 +1,5 @@
 import { MagicObject, PromisedValue, Storage, fail, isEmpty, objectDeepClone, objectOnly } from '@noeldemartin/utils';
-import type { Constructor } from '@noeldemartin/utils';
+import type { Constructor, Nullable } from '@noeldemartin/utils';
 import type { MaybeRef } from 'vue';
 import type { Store } from 'pinia';
 
@@ -19,19 +19,32 @@ export type ComputedStateDefinition<TState extends ServiceState, TComputedState 
     readonly [K in keyof TComputedState]: TComputedState[K];
 }>;
 
+export type StateWatchers<TService extends Service, TState extends ServiceState> = {
+    [K in keyof TState]?: (this: TService, value: TState[K], oldValue: TState[K]) => unknown;
+};
+
+export type ServiceWithState<
+    State extends ServiceState = ServiceState,
+    ComputedState extends ServiceState = {},
+    ServiceStorage = Partial<State>
+> = Constructor<UnrefServiceState<State>> &
+    Constructor<ComputedState> &
+    Constructor<Service<UnrefServiceState<State>, ComputedState, ServiceStorage>>;
+
 export function defineServiceState<
     State extends ServiceState = ServiceState,
-    ComputedState extends ServiceState = {}
+    ComputedState extends ServiceState = {},
+    ServiceStorage = Partial<State>
 >(options: {
     name: string;
     initialState: State | (() => State);
     persist?: (keyof State)[];
+    watch?: StateWatchers<Service, State>;
     computed?: ComputedStateDefinition<State, ComputedState>;
-    serialize?: (state: Partial<State>) => Partial<State>;
-}): Constructor<UnrefServiceState<State>> &
-    Constructor<ComputedState> &
-    Constructor<Service<UnrefServiceState<State>, ComputedState, Partial<UnrefServiceState<State>>>> {
-    return class extends Service<UnrefServiceState<State>, ComputedState> {
+    serialize?: (state: Partial<State>) => ServiceStorage;
+    restore?: (state: ServiceStorage) => Partial<State>;
+}): ServiceWithState<State, ComputedState, ServiceStorage> {
+    return class extends Service<UnrefServiceState<State>, ComputedState, ServiceStorage> {
 
         public static persist = (options.persist as string[]) ?? [];
 
@@ -71,19 +84,25 @@ export function defineServiceState<
             return (options.computed ?? {}) as ComputedStateDefinition<UnrefServiceState<State>, ComputedState>;
         }
 
-        protected serializePersistedState(state: Partial<State>): Partial<State> {
-            return options.serialize?.(state) ?? state;
+        protected getStateWatchers(): StateWatchers<Service, UnrefServiceState<State>> {
+            return (options.watch ?? {}) as StateWatchers<Service, UnrefServiceState<State>>;
         }
 
-    } as unknown as Constructor<UnrefServiceState<State>> &
-        Constructor<ComputedState> &
-        Constructor<Service<UnrefServiceState<State>, ComputedState, Partial<UnrefServiceState<State>>>>;
+        protected serializePersistedState(state: Partial<State>): ServiceStorage {
+            return options.serialize?.(state) ?? (state as ServiceStorage);
+        }
+
+        protected deserializePersistedState(state: ServiceStorage): Partial<State> {
+            return options.restore?.(state) ?? (state as Partial<State>);
+        }
+    
+    } as unknown as ServiceWithState<State, ComputedState, ServiceStorage>;
 }
 
 export default class Service<
     State extends ServiceState = DefaultServiceState,
     ComputedState extends ServiceState = {},
-    ServiceStorage extends Partial<State> = Partial<State>
+    ServiceStorage = Partial<State>
 > extends MagicObject {
 
     public static persist: string[] = [];
@@ -91,6 +110,7 @@ export default class Service<
     protected _name: string;
     private _booted: PromisedValue<void>;
     private _computedStateKeys: Set<keyof State>;
+    private _watchers: StateWatchers<Service, State>;
     private _store: Store<string, State, ComputedState, {}> | false;
 
     constructor() {
@@ -101,6 +121,7 @@ export default class Service<
         this._name = this.getName() ?? new.target.name;
         this._booted = new PromisedValue();
         this._computedStateKeys = new Set(Object.keys(getters));
+        this._watchers = this.getStateWatchers();
         this._store =
             this.usesStore() &&
             defineServiceStore(this._name, {
@@ -162,13 +183,11 @@ export default class Service<
             return;
         }
 
-        const state = (
-            typeof stateOrProperty === 'string' ? { [stateOrProperty]: value } : stateOrProperty
-        ) as Partial<State>;
+        const update = typeof stateOrProperty === 'string' ? { [stateOrProperty]: value } : stateOrProperty;
+        const old = objectOnly(this._store.$state as State, Object.keys(update));
 
-        Object.assign(this._store.$state, state);
-
-        this.onStateUpdated(state);
+        Object.assign(this._store.$state, update);
+        this.onStateUpdated(update as Partial<State>, old as Partial<State>);
     }
 
     protected __get(property: string): unknown {
@@ -183,7 +202,17 @@ export default class Service<
         this.setState({ [property]: value } as Partial<State>);
     }
 
-    protected onStateUpdated(state: Partial<State>): void {
+    protected onStateUpdated(update: Partial<State>, old: Partial<State>): void {
+        this.updatedPersistedState(update);
+
+        for (const property in update) {
+            const watcher = this._watchers[property] as Nullable<(value: unknown, oldValue: unknown) => unknown>;
+
+            watcher?.call(this, update[property], old[property]);
+        }
+    }
+
+    protected updatedPersistedState(state: Partial<State>): void {
         // TODO fix this.static()
         const persist = (this.constructor as unknown as { persist: string[] }).persist;
         const persisted = objectOnly(state, persist);
@@ -220,19 +249,27 @@ export default class Service<
         return {} as ComputedStateDefinition<State, ComputedState>;
     }
 
-    protected serializePersistedState(state: Partial<State>): Partial<State> {
-        return state;
+    protected getStateWatchers(): StateWatchers<Service, State> {
+        return {};
+    }
+
+    protected serializePersistedState(state: Partial<State>): ServiceStorage {
+        return state as ServiceStorage;
+    }
+
+    protected deserializePersistedState(state: ServiceStorage): Partial<State> {
+        return state as Partial<State>;
     }
 
     protected async frameworkBoot(): Promise<void> {
-        this.initializePersistedState();
+        this.restorePersistedState();
     }
 
     protected async boot(): Promise<void> {
         // Placeholder for overrides, don't place any functionality here.
     }
 
-    protected initializePersistedState(): void {
+    protected restorePersistedState(): void {
         // TODO fix this.static()
         const persist = (this.constructor as unknown as { persist: string[] }).persist;
 
@@ -242,7 +279,7 @@ export default class Service<
 
         if (Storage.has(this._name)) {
             const persisted = Storage.require<ServiceStorage>(this._name);
-            this.setState(persisted);
+            this.setState(this.deserializePersistedState(persisted));
 
             return;
         }
