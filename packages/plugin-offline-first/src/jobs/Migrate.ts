@@ -37,7 +37,14 @@ export default class Migrate extends mixed(BaseJob, [LoadsChildren, LoadsTypeInd
         return this._models;
     }
 
-    public set models(models: SolidModel[]) {
+    public set models(models: SolidModel[] | undefined) {
+        if (!models) {
+            delete this._models;
+            delete this.localModels;
+
+            return;
+        }
+
         const childrenStatus = objectMap(this.status.children ?? [], 'modelUrl');
 
         this._models = models;
