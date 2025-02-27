@@ -34,7 +34,7 @@
         "@aerogel/vite": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.6.0-next.adaba211c74e52997b06eaca2e391e62a0a614a6",
+        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
         "vue": "^3.4.15",
         "vue-router": "4.4.0"
     },

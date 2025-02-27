@@ -145,6 +145,12 @@ export default class Service<
         return this._booted;
     }
 
+    public static<T extends typeof Service>(): T;
+    public static<T extends typeof Service, K extends keyof T>(property: K): T[K];
+    public static<T extends typeof Service, K extends keyof T>(property?: K): T | T[K] {
+        return super.static<T, K>(property as K);
+    }
+
     public launch(): Promise<void> {
         const handleError = (error: unknown) => this._booted.reject(new ServiceBootError(this._name, error));
 
@@ -229,12 +235,10 @@ export default class Service<
     }
 
     protected onStateUpdated(update: Partial<State>, old: Partial<State>): void {
-        // TODO fix this.static()
-        const persist = (this.constructor as unknown as { persist: string[] }).persist;
-        const persisted = objectOnly(update, persist);
+        const persisted = objectOnly(update, this.static('persist'));
 
         if (!isEmpty(persisted)) {
-            this.onPersistentStateUpdated(update);
+            this.onPersistentStateUpdated(persisted as Partial<State>);
         }
 
         for (const property in update) {
@@ -298,10 +302,7 @@ export default class Service<
     }
 
     protected restorePersistedState(): void {
-        // TODO fix this.static()
-        const persist = (this.constructor as unknown as { persist: string[] }).persist;
-
-        if (!this.usesStore() || isEmpty(persist)) {
+        if (!this.usesStore() || isEmpty(this.static('persist'))) {
             return;
         }
 
@@ -312,7 +313,7 @@ export default class Service<
             return;
         }
 
-        Storage.set(this._name, objectOnly(this.getState(), persist));
+        Storage.set(this._name, objectOnly(this.getState(), this.static('persist')));
     }
 
     protected requireStore(): Store<string, State, ComputedState, {}> {

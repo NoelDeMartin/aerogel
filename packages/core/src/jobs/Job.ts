@@ -1,8 +1,7 @@
-import { ListenersManager, PromisedValue, round } from '@noeldemartin/utils';
+import { ListenersManager, PromisedValue, round, tap, toError } from '@noeldemartin/utils';
 import type { Listeners } from '@noeldemartin/utils';
 
 import JobCancelledError from '@/errors/JobCancelledError';
-import { toError } from '@/utils/errors';
 
 import type { JobListener } from './listeners';
 import type { JobStatus } from './status';
@@ -42,11 +41,9 @@ export default abstract class Job<
                 return;
             }
 
-            const errorInstance = toError(error);
-
-            this._completed.reject(errorInstance);
-
-            throw errorInstance;
+            throw tap(toError(error), (realError) => {
+                this._completed.reject(realError);
+            });
         }
     }
 

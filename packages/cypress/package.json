@@ -43,7 +43,7 @@
         "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.6.0-next.adaba211c74e52997b06eaca2e391e62a0a614a6",
+        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
         "cypress-solid": "0.1.4-next.53f94118897ff3e1f7008e3331f57979ef5d965a",
         "idb": "^8.0.2"
