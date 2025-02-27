@@ -284,6 +284,12 @@ export class UIService extends Service {
     }
 
     public async closeModal(id: string, result?: unknown): Promise<void> {
+        if (!App.isMounted()) {
+            await this.removeModal(id, result);
+
+            return;
+        }
+
         await Events.emit('close-modal', { id, result });
     }
 
@@ -299,6 +305,21 @@ export class UIService extends Service {
         this.watchViewportBreakpoints();
     }
 
+    private async removeModal(id: string, result?: unknown): Promise<void> {
+        this.setState(
+            'modals',
+            this.modals.filter((m) => m.id !== id),
+        );
+
+        this.modalCallbacks[id]?.closed?.(result);
+
+        delete this.modalCallbacks[id];
+
+        const activeModal = this.modals.at(-1);
+
+        await (activeModal && Events.emit('show-modal', { id: activeModal.id }));
+    }
+
     private watchModalEvents(): void {
         Events.on('modal-will-close', ({ modal, result }) => {
             this.modalCallbacks[modal.id]?.willClose?.(result);
@@ -308,19 +329,8 @@ export class UIService extends Service {
             }
         });
 
-        Events.on('modal-closed', async ({ modal, result }) => {
-            this.setState(
-                'modals',
-                this.modals.filter((m) => m.id !== modal.id),
-            );
-
-            this.modalCallbacks[modal.id]?.closed?.(result);
-
-            delete this.modalCallbacks[modal.id];
-
-            const activeModal = this.modals.at(-1);
-
-            await (activeModal && Events.emit('show-modal', { id: activeModal.id }));
+        Events.on('modal-closed', async ({ modal: { id }, result }) => {
+            await this.removeModal(id, result);
         });
     }
 
