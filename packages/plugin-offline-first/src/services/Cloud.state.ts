@@ -53,7 +53,7 @@ export default defineServiceState({
         }),
     watch: {
         migrationJob(migrationJob) {
-            migrationJob?.listeners.add({ onUpdated: () => this.updatedPersistedState({ migrationJob }) });
+            migrationJob?.listeners.add({ onUpdated: () => this.updatePersistedState('migrationJob') });
         },
     },
     computed: {

@@ -1,4 +1,13 @@
-import { MagicObject, PromisedValue, Storage, fail, isEmpty, objectDeepClone, objectOnly } from '@noeldemartin/utils';
+import {
+    MagicObject,
+    PromisedValue,
+    Storage,
+    arrayFrom,
+    fail,
+    isEmpty,
+    objectDeepClone,
+    objectOnly,
+} from '@noeldemartin/utils';
 import type { Constructor, Nullable } from '@noeldemartin/utils';
 import type { MaybeRef } from 'vue';
 import type { Store } from 'pinia';
@@ -190,6 +199,23 @@ export default class Service<
         this.onStateUpdated(update as Partial<State>, old as Partial<State>);
     }
 
+    public updatePersistedState(key: keyof State): void;
+    public updatePersistedState(keys: Array<keyof State>): void;
+    public updatePersistedState(keyOrKeys: keyof State | Array<keyof State>): void {
+        if (!this._store) {
+            return;
+        }
+
+        const keys = arrayFrom(keyOrKeys) as Array<keyof State>;
+        const state = objectOnly(this._store.$state as State, keys);
+
+        if (isEmpty(state)) {
+            return;
+        }
+
+        this.onPersistentStateUpdated(state);
+    }
+
     protected __get(property: string): unknown {
         if (this.hasState(property)) {
             return this.getState(property);
@@ -203,24 +229,26 @@ export default class Service<
     }
 
     protected onStateUpdated(update: Partial<State>, old: Partial<State>): void {
-        this.updatedPersistedState(update);
+        // TODO fix this.static()
+        const persist = (this.constructor as unknown as { persist: string[] }).persist;
+        const persisted = objectOnly(update, persist);
+
+        if (!isEmpty(persisted)) {
+            this.onPersistentStateUpdated(update);
+        }
 
         for (const property in update) {
             const watcher = this._watchers[property] as Nullable<(value: unknown, oldValue: unknown) => unknown>;
 
-            watcher?.call(this, update[property], old[property]);
+            if (!watcher || update[property] === old[property]) {
+                continue;
+            }
+
+            watcher.call(this, update[property], old[property]);
         }
     }
 
-    protected updatedPersistedState(state: Partial<State>): void {
-        // TODO fix this.static()
-        const persist = (this.constructor as unknown as { persist: string[] }).persist;
-        const persisted = objectOnly(state, persist);
-
-        if (isEmpty(persisted)) {
-            return;
-        }
-
+    protected onPersistentStateUpdated(persisted: Partial<State>): void {
         const storage = Storage.get<ServiceStorage>(this._name);
 
         if (!storage) {
