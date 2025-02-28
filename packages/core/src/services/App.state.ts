@@ -16,10 +16,15 @@ export default defineServiceState({
     },
     computed: {
         development: (state) => state.environment === 'development',
+        staging: (state) => state.environment === 'staging',
         testing: (state) => state.environment === 'test' || state.environment === 'testing',
         versionName(state): string {
             if (this.development) {
                 return 'dev.' + Aerogel.sourceHash.toString().substring(0, 7);
+            }
+
+            if (this.staging) {
+                return 'staging.' + Aerogel.sourceHash.toString().substring(0, 7);
             }
 
             return `v${state.version}`;
@@ -27,7 +32,7 @@ export default defineServiceState({
         versionUrl(state): string {
             return (
                 state.sourceUrl +
-                (this.development ? `/tree/${Aerogel.sourceHash}` : `/releases/tag/${this.versionName}`)
+                (this.development || this.staging ? `/tree/${Aerogel.sourceHash}` : `/releases/tag/${this.versionName}`)
             );
         },
     },
