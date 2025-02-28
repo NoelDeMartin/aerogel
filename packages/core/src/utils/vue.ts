@@ -1,6 +1,6 @@
 import { fail } from '@noeldemartin/utils';
 import { computed, inject, reactive, ref, watch } from 'vue';
-import type { Directive, InjectionKey, PropType, Ref, UnwrapNestedRefs } from 'vue';
+import type { Directive, InjectionKey, MaybeRef, PropType, Ref, UnwrapNestedRefs } from 'vue';
 
 type BaseProp<T> = {
     type?: PropType<T>;
@@ -13,6 +13,7 @@ type OptionalProp<T> = BaseProp<T> & { default: T | (() => T) | null };
 export type AcceptRefs<T> = { [K in keyof T]: T[K] | RefUnion<T[K]> };
 export type ComponentProps = Record<string, unknown>;
 export type RefUnion<T> = T extends infer R ? Ref<R> : never;
+export type Unref<T> = { [K in keyof T]: T[K] extends MaybeRef<infer Value> ? Value : T[K] };
 
 export function arrayProp<T>(defaultValue?: () => T[]): OptionalProp<T[]> {
     return {

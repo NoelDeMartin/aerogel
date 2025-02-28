@@ -9,21 +9,18 @@ import {
     objectOnly,
 } from '@noeldemartin/utils';
 import type { Constructor, Nullable } from '@noeldemartin/utils';
-import type { MaybeRef } from 'vue';
 import type { Store } from 'pinia';
 
 import ServiceBootError from '@/errors/ServiceBootError';
 import { defineServiceStore } from '@/services/store';
+import type { Unref } from '@/utils/vue';
 
 export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type DefaultServiceState = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type ServiceConstructor<T extends Service = Service> = Constructor<T> & typeof Service;
-export type UnrefServiceState<State extends ServiceState> = {
-    [K in keyof State]: State[K] extends MaybeRef<infer T> ? T : State[K];
-};
 
 export type ComputedStateDefinition<TState extends ServiceState, TComputedState extends ServiceState> = {
-    [K in keyof TComputedState]: (state: UnrefServiceState<TState>) => TComputedState[K];
+    [K in keyof TComputedState]: (state: Unref<TState>) => TComputedState[K];
 } & ThisType<{
     readonly [K in keyof TComputedState]: TComputedState[K];
 }>;
@@ -36,9 +33,9 @@ export type ServiceWithState<
     State extends ServiceState = ServiceState,
     ComputedState extends ServiceState = {},
     ServiceStorage = Partial<State>
-> = Constructor<UnrefServiceState<State>> &
+> = Constructor<Unref<State>> &
     Constructor<ComputedState> &
-    Constructor<Service<UnrefServiceState<State>, ComputedState, ServiceStorage>>;
+    Constructor<Service<Unref<State>, ComputedState, Unref<ServiceStorage>>>;
 
 export function defineServiceState<
     State extends ServiceState = ServiceState,
@@ -53,7 +50,7 @@ export function defineServiceState<
     serialize?: (state: Partial<State>) => ServiceStorage;
     restore?: (state: ServiceStorage) => Partial<State>;
 }): ServiceWithState<State, ComputedState, ServiceStorage> {
-    return class extends Service<UnrefServiceState<State>, ComputedState, ServiceStorage> {
+    return class extends Service<Unref<State>, ComputedState, ServiceStorage> {
 
         public static persist = (options.persist as string[]) ?? [];
 
@@ -65,7 +62,7 @@ export function defineServiceState<
             return options.name ?? null;
         }
 
-        protected getInitialState(): UnrefServiceState<State> {
+        protected getInitialState(): Unref<State> {
             if (typeof options.initialState === 'function') {
                 return options.initialState();
             }
@@ -86,15 +83,15 @@ export function defineServiceState<
                 state[key as keyof State] = value;
 
                 return state;
-            }, {} as UnrefServiceState<State>);
+            }, {} as Unref<State>);
         }
 
-        protected getComputedStateDefinition(): ComputedStateDefinition<UnrefServiceState<State>, ComputedState> {
-            return (options.computed ?? {}) as ComputedStateDefinition<UnrefServiceState<State>, ComputedState>;
+        protected getComputedStateDefinition(): ComputedStateDefinition<Unref<State>, ComputedState> {
+            return (options.computed ?? {}) as ComputedStateDefinition<Unref<State>, ComputedState>;
         }
 
-        protected getStateWatchers(): StateWatchers<Service, UnrefServiceState<State>> {
-            return (options.watch ?? {}) as StateWatchers<Service, UnrefServiceState<State>>;
+        protected getStateWatchers(): StateWatchers<Service, Unref<State>> {
+            return (options.watch ?? {}) as StateWatchers<Service, Unref<State>>;
         }
 
         protected serializePersistedState(state: Partial<State>): ServiceStorage {
