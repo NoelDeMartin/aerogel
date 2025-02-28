@@ -205,9 +205,9 @@ export default class Service<
         this.onStateUpdated(update as Partial<State>, old as Partial<State>);
     }
 
-    public updatePersistedState(key: keyof State): void;
-    public updatePersistedState(keys: Array<keyof State>): void;
-    public updatePersistedState(keyOrKeys: keyof State | Array<keyof State>): void {
+    public updatePersistedState<T extends keyof State>(key: T): void;
+    public updatePersistedState<T extends keyof State>(keys: T[]): void;
+    public updatePersistedState<T extends keyof State>(keyOrKeys: T | T[]): void {
         if (!this._store) {
             return;
         }

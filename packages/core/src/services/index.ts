@@ -14,6 +14,7 @@ export * from './Cache';
 export * from './Events';
 export * from './Service';
 export * from './store';
+export * from './utils';
 
 export { App, Cache, Events, Storage, Service };
 

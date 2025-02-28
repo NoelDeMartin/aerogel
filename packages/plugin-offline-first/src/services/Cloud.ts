@@ -376,6 +376,7 @@ export class CloudService extends Service {
             status: CloudStatus.Disconnected,
             pollingEnabled: true,
             pollingMinutes: 10,
+            migrationJob: null,
         });
     }
 

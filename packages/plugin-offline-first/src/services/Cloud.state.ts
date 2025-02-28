@@ -1,5 +1,5 @@
-import { defineServiceState, translateWithDefault } from '@aerogel/core';
-import { map, objectWithoutEmpty } from '@noeldemartin/utils';
+import { defineServiceState, replaceExisting, translateWithDefault } from '@aerogel/core';
+import { map } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Nullable, ObjectsMap } from '@noeldemartin/utils';
@@ -41,14 +41,9 @@ export default defineServiceState({
         pollingMinutes: 10,
         migrationJob: null as Nullable<Migrate>,
     }),
-    serialize: (state) =>
-        objectWithoutEmpty({
-            ...state,
-            migrationJob: state.migrationJob?.serialize(),
-        }),
+    serialize: (state) => replaceExisting(state, { migrationJob: state.migrationJob?.serialize() }),
     restore: (state) =>
-        objectWithoutEmpty({
-            ...state,
+        replaceExisting(state, {
             migrationJob: state.migrationJob && Migrate.restore(state.migrationJob),
         }),
     watch: {
