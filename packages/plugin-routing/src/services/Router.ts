@@ -53,6 +53,8 @@ export class RouterService extends Service {
         Events.on('auth:before-login', () => this.storeFlashRoute());
         Events.on('auth:login', () => this.restoreFlashRoute());
         Events.on('cloud:backup-completed', EventListenerPriorities.Low, () => this.updateCurrentRouteParams());
+        Events.on('cloud:migration-cancelled', EventListenerPriorities.Low, () => this.updateCurrentRouteParams());
+        Events.on('cloud:migration-completed', EventListenerPriorities.Low, () => this.updateCurrentRouteParams());
         Events.on('purge-storage', () => this.push({ name: 'home' }));
     }
 

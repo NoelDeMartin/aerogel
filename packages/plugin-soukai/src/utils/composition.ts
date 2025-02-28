@@ -1,5 +1,5 @@
 import { arrayRemove, isArray, isObject, tap } from '@noeldemartin/utils';
-import { onCleanMounted } from '@aerogel/core';
+import { Events, onCleanMounted, useEvent } from '@aerogel/core';
 import {
     computed,
     customRef,
@@ -54,19 +54,21 @@ function shallowComputedModels<T>(modelClass: typeof Model, compute: () => T): C
     return customRef((track, trigger) => {
         let value: T;
         const recompute = () => ((value = compute()), trigger());
-        const modelListeners: Array<() => void> = [
+        const listeners: Array<() => void> = [
             modelClass.on('deleted', recompute),
             modelClass.on('created', recompute),
             modelClass.on('updated', recompute),
             modelClass.on('modified', recompute),
             modelClass.on('relation-loaded', recompute),
+            Events.on('cloud:migration-cancelled', recompute),
+            Events.on('cloud:migration-completed', recompute),
         ];
-        const stopModelListeners = () => {
-            modelListeners.forEach((stop) => stop());
-            modelListeners.splice(0, modelListeners.length);
+        const stopListeners = () => {
+            listeners.forEach((stop) => stop());
+            listeners.splice(0, listeners.length);
         };
 
-        getCurrentScope() && onScopeDispose(stopModelListeners);
+        getCurrentScope() && onScopeDispose(stopListeners);
         watchEffect(recompute);
 
         return {
@@ -120,28 +122,30 @@ export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 export function computedModel<T extends Model | null | undefined>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
-        const modelListeners: Array<() => void> = [];
+        const listeners: Array<() => void> = [];
         const onModelUpdated = (model: Model) => model.id === value?.id && trigger();
-        const stopModelListeners = () => {
-            modelListeners.forEach((stop) => stop());
-            modelListeners.splice(0, modelListeners.length);
+        const stopListeners = () => {
+            listeners.forEach((stop) => stop());
+            listeners.splice(0, listeners.length);
         };
 
-        getCurrentScope() && onScopeDispose(stopModelListeners);
+        getCurrentScope() && onScopeDispose(stopListeners);
         watchEffect(() => {
             const newValue = compute();
 
             if (newValue?.static() !== value?.static()) {
-                stopModelListeners();
+                stopListeners();
             }
 
             value = newValue;
             trigger();
 
-            if (value && !modelListeners.length) {
-                modelListeners.push(value.static().on('modified', onModelUpdated));
-                modelListeners.push(value.static().on('updated', onModelUpdated));
-                modelListeners.push(value.static().on('relation-loaded', onModelUpdated));
+            if (value && !listeners.length) {
+                listeners.push(Events.on('cloud:migration-completed', trigger));
+                listeners.push(Events.on('cloud:migration-cancelled', trigger));
+                listeners.push(value.static().on('modified', onModelUpdated));
+                listeners.push(value.static().on('updated', onModelUpdated));
+                listeners.push(value.static().on('relation-loaded', onModelUpdated));
             }
         });
 
@@ -162,7 +166,14 @@ export function computedModels<T>(modelClass: typeof Model, compute: () => T): C
 
 export function useModelCollection<T extends Model>(modelClass: ModelConstructor<T>): Ref<T[]> {
     const models = ref<T[]>([]) as Ref<T[]>;
+    const recompute = async () => {
+        const databaseModels = await modelClass.all();
 
+        models.value.splice(0, models.value.length, ...databaseModels);
+    };
+
+    useEvent('cloud:migration-cancelled', recompute);
+    useEvent('cloud:migration-completed', recompute);
     onCleanMounted(() => modelClass.on('deleted', (model) => arrayRemove(models.value, model)));
     onCleanMounted(() => modelClass.on('created', (model) => models.value.push(model)));
     onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));

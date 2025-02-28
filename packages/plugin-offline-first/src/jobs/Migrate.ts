@@ -1,6 +1,6 @@
-import { isContainer } from 'soukai-solid';
+import { PropertyOperation, isContainer } from 'soukai-solid';
 import { Job } from '@aerogel/core';
-import { map, mixed, objectMap, tap } from '@noeldemartin/utils';
+import { isInstanceOf, map, mixed, objectMap, tap } from '@noeldemartin/utils';
 import type { JobListener, JobStatus } from '@aerogel/core';
 import type { Nullable } from '@noeldemartin/utils';
 import type { SolidModel, SolidTypeIndex } from 'soukai-solid';
@@ -126,9 +126,25 @@ export default class Migrate extends mixed(BaseJob, [LoadsChildren, LoadsTypeInd
         }
 
         const remoteModel = await getRemoteClass(localModel.static()).find(localModel.url);
+        const migratedModel = await remoteModel?.migrateSchema(schema);
 
-        await remoteModel?.migrateSchema(schema);
-        await localModel.migrateSchema(schema);
+        await localModel.migrateSchema(schema, {
+            mintOperationUrl: (operation) => {
+                return migratedModel?.operations?.find((migratedOperation) => {
+                    if (
+                        !isInstanceOf(operation, PropertyOperation) ||
+                        !isInstanceOf(migratedOperation, PropertyOperation)
+                    ) {
+                        return false;
+                    }
+
+                    return (
+                        operation.property === migratedOperation.property &&
+                        operation.date.getTime() === migratedOperation.date.getTime()
+                    );
+                })?.url;
+            },
+        });
     }
 
     protected async migrateChildren(localModel: SolidModel, status: MigrateModelJobStatus): Promise<void> {
