@@ -1,4 +1,4 @@
-import { computed, shallowRef, triggerRef } from 'vue';
+import { computed, shallowRef, toRaw, triggerRef } from 'vue';
 import { Events } from '@aerogel/core';
 import { map } from '@noeldemartin/utils';
 import type { ComputedRef, Ref } from 'vue';
@@ -36,9 +36,9 @@ function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstruc
     };
 
     trackedModels.set(modelClass, data);
-    modelClass.on('created', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
-    modelClass.on('deleted', (model) => (modelsMap.value.delete(model), triggerRef(modelsMap)));
-    modelClass.on('updated', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
+    modelClass.on('created', (model) => (modelsMap.value.add(toRaw(model)), triggerRef(modelsMap)));
+    modelClass.on('deleted', (model) => (modelsMap.value.delete(toRaw(model)), triggerRef(modelsMap)));
+    modelClass.on('updated', (model) => (modelsMap.value.add(toRaw(model)), triggerRef(modelsMap)));
     Events.on('purge-storage', () => (modelsMap.value = map([] as T[], 'id')));
     Events.on('cloud:migration-completed', () => data.refresh());
     Events.on('cloud:migration-cancelled', () => data.refresh());
