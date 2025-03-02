@@ -85,7 +85,7 @@ export async function createRemoteModel(localModel: SolidModel): Promise<void> {
     if (isRegisteredModelClass(localModel.static())) {
         await trackModelsCollection(
             localModel.static(),
-            isContainer(localModel) ? requireUrlParentDirectory(localModel.url) : urlResolveDirectory(localModel.url),
+            isContainer(localModel) ? urlResolveDirectory(localModel.url) : requireUrlParentDirectory(localModel.url),
         );
     }
 
