@@ -1,57 +1,9 @@
 import { map, required } from '@noeldemartin/utils';
-import { Events } from '@aerogel/core';
-import { computed, shallowRef, triggerRef, watchEffect } from 'vue';
-import type { ComputedRef, Ref } from 'vue';
+import { watchEffect } from 'vue';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
-import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Service } from '@aerogel/core';
 
-interface TrackedModelData<T extends object = Model> {
-    modelsMap: Ref<ObjectsMap<T>>;
-    modelsArray: ComputedRef<T[]>;
-    collectionsSet: Set<string>;
-}
-
-let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
-
-async function initializedTrackedModelsData<T extends Model>(
-    modelClass: ModelConstructor<T>,
-): Promise<TrackedModelData<T>> {
-    const modelsMap = shallowRef(map([] as T[], 'id'));
-    const modelsArray = computed(() => modelsMap.value.getItems());
-    const collectionsSet = new Set<string>([modelClass.collection]);
-    const data = { modelsMap, modelsArray, collectionsSet };
-    const refresh = async () => {
-        const models = map([] as T[], 'id');
-
-        for (const collection of collectionsSet) {
-            const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
-
-            collectionModels.forEach((model) => models.add(model));
-        }
-
-        modelsMap.value = models;
-    };
-
-    trackedModels.set(modelClass, data);
-    modelClass.on('created', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
-    modelClass.on('deleted', (model) => (modelsMap.value.delete(model), triggerRef(modelsMap)));
-    modelClass.on('updated', (model) => (modelsMap.value.add(model), triggerRef(modelsMap)));
-    Events.on('purge-storage', () => (modelsMap.value = map([] as T[], 'id')));
-    Events.on('cloud:migration-completed', () => refresh());
-    Events.on('cloud:migration-cancelled', () => refresh());
-    Events.on('cloud:backup-completed', () => refresh());
-
-    await refresh();
-
-    return data;
-}
-
-async function getTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): Promise<TrackedModelData<T>> {
-    return (
-        (trackedModels.get(modelClass) as TrackedModelData<T>) ?? (await initializedTrackedModelsData<T>(modelClass))
-    );
-}
+import { _getTrackedModels, _getTrackedModelsData, _setTrackedModels } from './internal';
 
 export interface TrackCollectionsOptions {
     refresh?: boolean;
@@ -70,16 +22,16 @@ export type ModelService<TModel extends Model = Model, TKey extends string = str
 }>;
 
 export function getTrackedModels<T extends Model>(modelClass: ModelConstructor<T>): T[] {
-    return (trackedModels.get(modelClass)?.modelsArray.value as T[]) ?? [];
+    return (_getTrackedModels().get(modelClass)?.modelsArray.value as T[]) ?? [];
 }
 
 export function resetTrackedModels(): void {
-    trackedModels = new WeakMap();
+    _setTrackedModels(new WeakMap());
 }
 
 export function ignoreModelsCollection(modelClass: ModelConstructor, collection: string): void {
     const modelData = required(
-        trackedModels.get(modelClass),
+        _getTrackedModels().get(modelClass),
         'Failed ignoring models collection, please track the model first using trackModels()',
     );
 
@@ -93,7 +45,7 @@ export async function trackModelsCollection(
 ): Promise<void> {
     const refresh = options.refresh ?? true;
     const modelData = required(
-        trackedModels.get(modelClass),
+        _getTrackedModels().get(modelClass),
         'Failed tracking models collection, please track the model first using trackModels()',
     );
 
@@ -118,7 +70,7 @@ export async function trackModels<TModel extends Model, TKey extends string>(
 ): Promise<void> {
     const { service, property: stateKey, transform: optionsTransform, ...eventListeners } = options ?? {};
     const transform = optionsTransform ?? ((models) => models);
-    const modelData = await getTrackedModelsData<TModel>(modelClass);
+    const modelData = _getTrackedModelsData<TModel>(modelClass);
 
     for (const [event, listener] of Object.entries(eventListeners)) {
         modelClass.on(event as keyof ModelEvents, listener as ModelListener<TModel, keyof ModelEvents>);
@@ -127,4 +79,6 @@ export async function trackModels<TModel extends Model, TKey extends string>(
     if (service && stateKey) {
         watchEffect(() => service.setState(stateKey, transform(modelData.modelsArray.value)));
     }
+
+    await modelData.refresh();
 }

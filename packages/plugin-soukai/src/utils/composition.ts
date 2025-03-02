@@ -1,18 +1,10 @@
-import { arrayRemove, isArray, isObject, tap } from '@noeldemartin/utils';
-import { Events, onCleanMounted, useEvent } from '@aerogel/core';
-import {
-    computed,
-    customRef,
-    getCurrentScope,
-    onMounted,
-    onScopeDispose,
-    onUnmounted,
-    reactive,
-    ref,
-    watchEffect,
-} from 'vue';
+import { isArray, isObject, tap } from '@noeldemartin/utils';
+import { Events, onCleanMounted } from '@aerogel/core';
+import { computed, customRef, getCurrentScope, onScopeDispose, onUnmounted, reactive, ref, watchEffect } from 'vue';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
 import type { ComputedRef, Ref } from 'vue';
+
+import { _getTrackedModelsData } from './internal';
 
 function isSoftDeleted(model: Model): boolean {
     if (!('isSoftDeleted' in model)) {
@@ -165,23 +157,13 @@ export function computedModels<T>(modelClass: typeof Model, compute: () => T): C
 }
 
 export function useModelCollection<T extends Model>(modelClass: ModelConstructor<T>): Ref<T[]> {
-    const models = ref<T[]>([]) as Ref<T[]>;
-    const recompute = async () => {
-        const databaseModels = await modelClass.all();
+    const models = ref([]) as Ref<T[]>;
+    const modelData = _getTrackedModelsData<T>(modelClass);
 
-        models.value.splice(0, models.value.length, ...databaseModels);
-    };
-
-    useEvent('cloud:migration-cancelled', recompute);
-    useEvent('cloud:migration-completed', recompute);
-    onCleanMounted(() => modelClass.on('deleted', (model) => arrayRemove(models.value, model)));
-    onCleanMounted(() => modelClass.on('created', (model) => models.value.push(model)));
+    watchEffect(() => models.value.splice(0, models.value.length, ...modelData.modelsArray.value));
     onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));
-    onMounted(async () => {
-        const databaseModels = await modelClass.all();
 
-        models.value.push(...databaseModels);
-    });
+    modelData.refresh();
 
     return models;
 }
