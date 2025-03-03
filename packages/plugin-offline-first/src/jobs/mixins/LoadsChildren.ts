@@ -1,4 +1,4 @@
-import { arrayFrom, isInstanceOf, map } from '@noeldemartin/utils';
+import { arrayChunk, arrayFrom, isInstanceOf, map } from '@noeldemartin/utils';
 import { DocumentNotFound } from 'soukai';
 import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidModel } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -28,15 +28,20 @@ export default class LoadsChildren {
 
         const children: Record<string, SolidModel[]> = {};
         const documents = map(model.documents, 'url');
+        const documentUrlChunks = arrayChunk(model.resourceUrls, 10);
 
-        for (const documentUrl of model.resourceUrls) {
-            const documentChildren = await this.loadDocumentChildren(model, documentUrl, documents);
+        for (const documentUrls of documentUrlChunks) {
+            await Promise.all(
+                documentUrls.map(async (documentUrl) => {
+                    const documentChildren = await this.loadDocumentChildren(model, documentUrl, documents);
 
-            for (const [relation, documentModels] of Object.entries(documentChildren)) {
-                const relationChildren = (children[relation] ??= []);
+                    for (const [relation, documentModels] of Object.entries(documentChildren)) {
+                        const relationChildren = (children[relation] ??= []);
 
-                relationChildren.push(...documentModels);
-            }
+                        relationChildren.push(...documentModels);
+                    }
+                }),
+            );
         }
 
         for (const [relation, relationModels] of Object.entries(children)) {
