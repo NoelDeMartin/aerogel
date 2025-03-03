@@ -41,6 +41,11 @@ export type LoginOptions = NullablePartial<{
     loading: boolean;
 }>;
 
+export type UserProfileOptions = NullablePartial<{
+    required: boolean;
+    markStale: boolean;
+}>;
+
 export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
     force?: boolean;
 };
@@ -68,21 +73,23 @@ export class SolidService extends Service {
     }
 
     public requireUserProfile(url: string): Promise<SolidUserProfile> {
-        return this.getUserProfile(url, true);
+        return this.getUserProfile(url, { required: true });
     }
 
-    public async getUserProfile(url: string, required: true): Promise<SolidUserProfile>;
-    public async getUserProfile(url: string, required?: false): Promise<SolidUserProfile | null>;
-    public async getUserProfile(url: string, required: boolean = false): Promise<SolidUserProfile | null> {
-        let profileStore: SolidStore | null = null;
-        const usingAuthenticatedFetch = !!this.authenticator?.getAuthenticatedFetch();
+    /* eslint-disable max-len */
+    public async getUserProfile(url: string, options: Omit<UserProfileOptions, 'required'> & { required: true }): Promise<SolidUserProfile>; // prettier-ignore
+    public async getUserProfile(url: string, options?: UserProfileOptions): Promise<SolidUserProfile | null>;
+    /* eslint-enable max-len */
 
-        return (
+    public async getUserProfile(url: string, options: UserProfileOptions = {}): Promise<SolidUserProfile | null> {
+        let profileStore: SolidStore | null = null;
+        const markStale = options.markStale ?? !this.authenticator?.getAuthenticatedFetch();
+        const userProfile =
             this.profiles[url] ??
-            tap(
+            (await tap(
                 await fetchLoginUserProfile(url, {
                     fetch: this.fetch,
-                    required,
+                    required: options.required ?? false,
                     onLoaded(store) {
                         profileStore = store;
                     },
@@ -97,13 +104,14 @@ export class SolidService extends Service {
                     }
 
                     this.rememberProfile(profile);
-
-                    if (!usingAuthenticatedFetch) {
-                        this.setState({ staleProfiles: arrayUnique(this.staleProfiles.concat([profile.webId])) });
-                    }
                 },
-            )
-        );
+            ));
+
+        if (userProfile && markStale) {
+            this.setState({ staleProfiles: arrayUnique(this.staleProfiles.concat([userProfile.webId])) });
+        }
+
+        return userProfile;
     }
 
     public async refreshUserProfile(): Promise<void> {
@@ -385,10 +393,11 @@ export class SolidService extends Service {
             ignorePreviousSessionError: this.ignorePreviousSessionError,
             previousSession: this.previousSession,
         };
+
         this.loginOngoing = true;
 
         try {
-            const profile = await this.getUserProfile(loginUrl);
+            const profile = await this.getUserProfile(loginUrl, { markStale: true });
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
             const authenticator = await this.bootAuthenticator(authenticatorName);
             const { domain: loginDomain } = requireUrlParse(loginUrl);
