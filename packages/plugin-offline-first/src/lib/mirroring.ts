@@ -10,7 +10,7 @@ import {
 import { App } from '@aerogel/core';
 import { getTrackedModels, trackModelsCollection as trackSoukaiModelsCollection } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
-import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone, isContainer } from 'soukai-solid';
+import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
@@ -83,10 +83,7 @@ export async function createRemoteModel(localModel: SolidModel): Promise<void> {
     });
 
     if (isRegisteredModelClass(localModel.static())) {
-        await trackModelsCollection(
-            localModel.static(),
-            isContainer(localModel) ? urlResolveDirectory(localModel.url) : requireUrlParentDirectory(localModel.url),
-        );
+        await trackModelsCollection(localModel.static(), requireUrlParentDirectory(localModel.url));
     }
 
     if (Cloud.autoPush && Cloud.ready && !Cloud.syncing) {
