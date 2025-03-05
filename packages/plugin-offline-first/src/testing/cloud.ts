@@ -180,3 +180,15 @@ export function legacyTaskResponse(name?: string): Response {
             crdt:updatedAt "2024-02-10T00:00:00Z"^^xsd:dateTime.
     `);
 }
+
+export function tombstoneResponse(): Response {
+    return FakeResponse.success(`
+        @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+        <#it-metadata>
+            a crdt:Tombstone ;
+            crdt:resource <#it> ;
+            crdt:deletedAt  "2025-03-03T00:00:00Z"^^xsd:dateTime .
+    `);
+}

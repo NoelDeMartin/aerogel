@@ -5,6 +5,7 @@ import {
     requireUrlParentDirectory,
     required,
     tap,
+    toString,
     urlResolveDirectory,
 } from '@noeldemartin/utils';
 import { App } from '@aerogel/core';
@@ -123,6 +124,18 @@ export async function updateRemoteModel(localModel: SolidModel): Promise<void> {
     if (Cloud.autoPush && Cloud.ready && !Cloud.syncing) {
         SyncQueue.push(localModel);
     }
+}
+
+export function clearLocalModelUpdates(localModel: SolidModel): void {
+    const url = localModel.getDeletedPrimaryKey() ?? localModel.getPrimaryKey();
+
+    if (!url) {
+        return;
+    }
+
+    Cloud.setState({
+        localModelUpdates: objectWithout(Cloud.localModelUpdates, toString(url)),
+    });
 }
 
 export function cloneLocalModel(localModel: SolidModel, options: CloneOptions = {}): SolidModel {
