@@ -1,6 +1,6 @@
 import { App } from '@aerogel/core';
 import { bootSolidModels } from 'soukai-solid';
-import { FakeResponse, mock, uuid } from '@noeldemartin/utils';
+import { FakeResponse, fail, mock, required, uuid } from '@noeldemartin/utils';
 import { InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
 import { it } from 'vitest';
 import { resetTrackedModels } from '@aerogel/plugin-soukai';
@@ -32,13 +32,39 @@ export async function setupCloudTests(): Promise<void> {
     Cloud.reset();
 }
 
-export function testVariants<T>(description: string, variants: Record<string, T>, test: (variant: T) => unknown): void {
+export function testVariants<T, Variants extends Record<string, T>>(
+    description: string,
+    variants: Variants,
+    test: (variantData: T, variantName: keyof Variants) => unknown,
+    options: { only?: boolean | keyof Variants } = {},
+): void {
+    if (typeof options.only === 'string') {
+        const name = options.only;
+        const data = variants[name] ?? fail<T>();
+
+        it.only(`[${name}] ${description}`, () => test(data, name));
+
+        return;
+    }
+
+    if (options.only) {
+        const [name, data] = required(Object.entries(variants)[0]);
+
+        it.only(`[${name}] ${description}`, () => test(data, name));
+
+        return;
+    }
+
     for (const [name, data] of Object.entries(variants)) {
-        it(`[${name}] ${description}`, () => test(data));
+        it(`[${name}] ${description}`, () => test(data, name));
     }
 }
 
-export function testRegisterVariants(description: string, test: (registerModels: () => unknown) => unknown): void {
+export function testRegisterVariants(
+    description: string,
+    test: (registerModels: () => unknown, variant: 'model registration' | 'container registration') => unknown,
+    options: { only?: boolean | 'model registration' | 'container registration' } = {},
+): void {
     testVariants(
         description,
         {
@@ -46,12 +72,13 @@ export function testRegisterVariants(description: string, test: (registerModels:
             'container registration': () => Cloud.register(MoviesContainer),
         },
         test,
+        options,
     );
 }
 
-export function typeIndexResponse(containers: Record<string, string>): Response {
+export function typeIndexResponse(containers?: Record<string, string>): Response {
     const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
-    const registrations = Object.entries(containers).map(
+    const registrations = Object.entries(containers ?? []).map(
         ([containerUrl, forClass]) => `
             <#${uuid()}>
                 a solid:TypeRegistration ;

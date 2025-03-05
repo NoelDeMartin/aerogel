@@ -152,7 +152,7 @@ export default class Migrate extends mixed(BaseJob, [LoadsChildren, LoadsTypeInd
             return;
         }
 
-        const children = await this.loadContainedModels(localModel);
+        const children = await this.loadContainedModels(localModel, { ignoreTombstones: true });
 
         status.children ??= children.map((child) => ({
             modelUrl: child.url,

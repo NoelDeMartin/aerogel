@@ -1,10 +1,11 @@
 import { arrayChunk, arrayFrom, isInstanceOf, map } from '@noeldemartin/utils';
 import { DocumentNotFound } from 'soukai';
+import { Tombstone } from 'soukai-solid';
 import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidModel } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 
 import DocumentsCache from '@/services/DocumentsCache';
-import { cloneLocalModel, isRemoteModel } from '@/lib/mirroring';
+import { cloneLocalModel, isLocalModel } from '@/lib/mirroring';
 import { getContainerRelations } from '@/lib/inference';
 import { lazy } from '@/lib/utils';
 
@@ -12,8 +13,11 @@ export default class LoadsChildren {
 
     protected declare localModels?: ObjectsMap<SolidModel>;
 
-    protected async loadContainedModels(model: SolidContainer): Promise<SolidModel[]> {
-        if (!isRemoteModel(model)) {
+    protected async loadContainedModels(
+        model: SolidContainer,
+        options: { ignoreTombstones?: boolean } = {},
+    ): Promise<SolidModel[]> {
+        if (isLocalModel(model)) {
             const children = [];
 
             for (const relation of getContainerRelations(model.static())) {
@@ -27,13 +31,17 @@ export default class LoadsChildren {
         }
 
         const children: Record<string, SolidModel[]> = {};
+        const tombstones: Tombstone[] = [];
         const documents = map(model.documents, 'url');
         const documentUrlChunks = arrayChunk(model.resourceUrls, 10);
 
         for (const documentUrls of documentUrlChunks) {
             await Promise.all(
                 documentUrls.map(async (documentUrl) => {
-                    const documentChildren = await this.loadDocumentChildren(model, documentUrl, documents);
+                    const { children: documentChildren, tombstones: documentTombstones } =
+                        await this.loadDocumentChildren(model, documentUrl, documents);
+
+                    tombstones.push(...documentTombstones);
 
                     for (const [relation, documentModels] of Object.entries(documentChildren)) {
                         const relationChildren = (children[relation] ??= []);
@@ -48,14 +56,16 @@ export default class LoadsChildren {
             model.setRelationModels(relation, relationModels);
         }
 
-        return Object.values(children).flat();
+        return options.ignoreTombstones
+            ? Object.values(children).flat()
+            : Object.values(children).flat().concat(tombstones);
     }
 
     protected async loadDocumentChildren(
         model: SolidModel,
         documentUrl: string,
         documents: ObjectsMap<SolidDocument>,
-    ): Promise<Record<string, SolidModel[]>> {
+    ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const document = documents.get(documentUrl);
 
         if (
@@ -63,7 +73,10 @@ export default class LoadsChildren {
             (await DocumentsCache.isFresh(document.url, document.updatedAt ?? new Date())) &&
             this.localModels?.hasKey(model.url)
         ) {
-            return this.loadDocumentChildrenFromLocal(model, document);
+            return {
+                children: await this.loadDocumentChildrenFromLocal(model, document),
+                tombstones: [],
+            };
         }
 
         return this.loadDocumentChildrenFromRemote(model, documentUrl);
@@ -97,11 +110,17 @@ export default class LoadsChildren {
     protected async loadDocumentChildrenFromRemote(
         model: SolidModel,
         documentUrl: string,
-    ): Promise<Record<string, SolidModel[]>> {
+    ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const children: Record<string, SolidModel[]> = {};
+        const tombstones: Tombstone[] = [];
         const readDocument = lazy(async () => {
             try {
                 const document = await model.requireEngine().readOne(model.static('collection'), documentUrl);
+                const documentTombstones = await Tombstone.createManyFromEngineDocuments({
+                    [documentUrl]: document,
+                });
+
+                tombstones.push(...documentTombstones);
 
                 return document;
             } catch (error) {
@@ -141,7 +160,7 @@ export default class LoadsChildren {
             DocumentsCache.remember(documentUrl, new Date());
         }
 
-        return children;
+        return { children, tombstones };
     }
 
 }

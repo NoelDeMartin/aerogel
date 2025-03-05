@@ -32,15 +32,17 @@ const Cloud = required(() => App.service('$cloud'));
 export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, TracksLocalModels]) {
 
     protected models?: SolidModel[];
-    protected localModels: ObjectsMap<SolidModel>;
     protected rootLocalModels: SolidModel[];
+    protected localModels: ObjectsMap<SolidModel>;
+    protected tombstones: ObjectsMap<Tombstone>;
 
     constructor(models?: SolidModel[]) {
         super();
 
         this.models = models;
-        this.localModels = map([], 'url');
         this.rootLocalModels = [];
+        this.localModels = map([], 'url');
+        this.tombstones = map([], 'resourceUrl');
     }
 
     protected async run(): Promise<void> {
@@ -237,8 +239,44 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
         const children = await this.loadContainedModels(model);
 
         for (const child of children) {
+            if (child instanceof Tombstone) {
+                this.tombstones.add(child);
+
+                continue;
+            }
+
+            if (this.tombstones.hasKey(child.url)) {
+                await this.deleteChild(model, child);
+
+                continue;
+            }
+
             await this.loadChildren(child);
         }
+    }
+
+    protected async deleteChild(model: SolidModel, child: SolidModel): Promise<void> {
+        for (const relation of model.static('relations')) {
+            const relationInstance = model.requireRelation(relation);
+
+            if (!relationInstance.related) {
+                continue;
+            }
+
+            if (Array.isArray(relationInstance.related)) {
+                relationInstance.related = relationInstance.related.filter((relatedModel) => relatedModel !== child);
+
+                continue;
+            }
+
+            if (relationInstance.related === child) {
+                relationInstance.related = null;
+
+                continue;
+            }
+        }
+
+        await child.delete();
     }
 
     protected async saveModelAndChildren(model: SolidModel): Promise<void> {
@@ -267,6 +305,7 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
 
     protected async synchronizeModels(remoteModels: ObjectsMap<SolidModel>): Promise<void> {
         const synchronizedModelUrls = new Set<string>();
+        const deletedModels = new Set<SolidModel>();
 
         for (const remoteModel of remoteModels.items()) {
             if (remoteModel instanceof Tombstone) {
@@ -275,7 +314,7 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
                 if (localModel) {
                     await localModel.delete();
 
-                    synchronizedModelUrls.add(remoteModel.resourceUrl);
+                    deletedModels.add(localModel);
                 }
 
                 continue;
@@ -294,7 +333,7 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
         }
 
         for (const localModel of this.rootLocalModels) {
-            if (synchronizedModelUrls.has(localModel.url)) {
+            if (deletedModels.has(localModel) || synchronizedModelUrls.has(localModel.url)) {
                 continue;
             }
 

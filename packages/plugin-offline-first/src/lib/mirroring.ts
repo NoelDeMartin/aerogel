@@ -249,6 +249,10 @@ export function isRemoteModel(model: SolidModel): boolean {
     return localClasses.has(model.static());
 }
 
+export function isLocalModel(model: SolidModel): boolean {
+    return !isRemoteModel(model);
+}
+
 export function isRegisteredModelClass(modelClass: SolidModelConstructor): boolean {
     return Cloud.registeredModels.some(({ modelClass: registeredModelClass }) => registeredModelClass === modelClass);
 }

@@ -673,6 +673,112 @@ describe('Sync', () => {
         `);
     });
 
+    testRegisterVariants('Deletes tombstone models', async (registerModels, variant) => {
+        const usingContainers = variant === 'container registration';
+
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const documentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({
+            url: containerUrl,
+            name: 'Movies',
+        });
+
+        const movie = await container.relatedMovies.create({ url: `${documentUrl}#it`, name: 'Spirited Away' });
+
+        // Arrange - Prepare initial sync responses
+        const server = SolidMock.server;
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+
+        server.respondOnce(typeIndexUrl, typeIndexResponse());
+
+        if (usingContainers) {
+            server.respondOnce(containerUrl, FakeResponse.notFound()); // Tombstone check
+            server.respondOnce(containerUrl, FakeResponse.notFound()); // Check before create
+            server.respondOnce(containerUrl, FakeResponse.created()); // Create
+            server.respondOnce(
+                // Read described-by header
+                containerUrl,
+                FakeResponse.success('<> a <http://www.w3.org/ns/ldp#Container> .'),
+            );
+            server.respondOnce(`${containerUrl}.meta`, FakeResponse.success()); // Update meta
+            server.respondOnce(typeIndexUrl, typeIndexResponse()); // Check before update
+            server.respondOnce(typeIndexUrl, FakeResponse.success()); // Update
+        } else {
+            server.respondOnce(documentUrl, FakeResponse.notFound()); // Tombstone check
+        }
+
+        server.respondOnce(documentUrl, FakeResponse.notFound()); // Existence check
+        server.respondOnce(documentUrl, FakeResponse.success()); // Create
+
+        // Arrange - Prepare service
+        if (!usingContainers) {
+            Cloud.modelCollections[Movie.modelName] = [containerUrl];
+        }
+
+        await Cloud.launch();
+        await registerModels();
+        await Events.emit('application-ready');
+
+        // Arrange - Initial sync
+        await Cloud.sync();
+
+        // Arrange - Sync responses
+        if (usingContainers) {
+            server.respondOnce(
+                containerUrl,
+                containerResponse({
+                    documentUrls: [documentUrl],
+                    createdAt: container.createdAt,
+                    updatedAt: container.updatedAt,
+                }),
+            );
+        }
+
+        server.respondOnce(
+            documentUrl,
+            FakeResponse.success(`
+                    @prefix crdt: <https://vocab.noeldemartin.com/crdt/> .
+                    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+                    <#it-metadata>
+                        a crdt:Tombstone ;
+                        crdt:resource <#it> ;
+                        crdt:deletedAt  "2025-03-03T00:00:00Z"^^xsd:dateTime .
+                `),
+        );
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        expect(await Movie.at(containerUrl).find(movie.url)).toBeNull();
+
+        if (usingContainers) {
+            const freshContainer = await container.fresh();
+
+            await freshContainer.loadRelation('movies');
+
+            expect(freshContainer.movies).toHaveLength(0);
+            expect(freshContainer.resourceUrls).toHaveLength(1);
+        }
+
+        if (usingContainers) {
+            expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
+            expect(server.getRequests(containerUrl)).toHaveLength(5);
+            expect(server.getRequests(documentUrl)).toHaveLength(3);
+            expect(server.getRequests(`${containerUrl}.meta`)).toHaveLength(1);
+            expect(server.getRequests()).toHaveLength(12);
+        } else {
+            expect(server.getRequests(typeIndexUrl)).toHaveLength(1);
+            expect(server.getRequests(documentUrl)).toHaveLength(4);
+            expect(server.getRequests()).toHaveLength(5);
+        }
+    });
+
     testRegisterVariants('Tracks model updates', async (registerModels) => {
         // Arrange
         const container = await MoviesContainer.create({ name: 'Movies' });

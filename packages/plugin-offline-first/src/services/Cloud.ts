@@ -9,7 +9,7 @@ import {
     map,
     parseBoolean,
 } from '@noeldemartin/utils';
-import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
+import { App, Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
@@ -121,6 +121,10 @@ export class CloudService extends Service {
 
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
             } catch (error) {
+                if (App.testing) {
+                    throw error;
+                }
+
                 this.syncError = error;
 
                 await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
