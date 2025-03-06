@@ -6,7 +6,7 @@
             <AGButton :color="acceptColor" @click="close(true)">
                 {{ renderedAcceptText }}
             </AGButton>
-            <AGButton :color="cancelColor" @click="close()">
+            <AGButton v-if="!required" :color="cancelColor" @click="close()">
                 {{ renderedCancelText }}
             </AGButton>
         </div>

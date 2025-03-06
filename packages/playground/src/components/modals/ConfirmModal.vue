@@ -6,7 +6,7 @@
             <BaseButton :color="acceptColor" @click="close(true)">
                 {{ renderedAcceptText }}
             </BaseButton>
-            <BaseButton :color="cancelColor" @click="close(false)">
+            <BaseButton v-if="!required" :color="cancelColor" @click="close(false)">
                 {{ renderedCancelText }}
             </BaseButton>
         </div>

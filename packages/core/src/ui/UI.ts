@@ -44,6 +44,7 @@ export type ConfirmOptions = AcceptRefs<{
     cancelText?: string;
     cancelColor?: Color;
     actions?: Record<string, () => unknown>;
+    required?: boolean;
 }>;
 
 export type LoadingOptions = AcceptRefs<{
@@ -114,15 +115,17 @@ export class UIService extends Service {
         const getProperties = (): AGConfirmModalProps => {
             if (typeof messageOrOptions !== 'string') {
                 return {
-                    message: messageOrTitle,
                     ...(messageOrOptions ?? {}),
+                    message: messageOrTitle,
+                    required: !!messageOrOptions?.required,
                 };
             }
 
             return {
+                ...(options ?? {}),
                 title: messageOrTitle,
                 message: messageOrOptions,
-                ...(options ?? {}),
+                required: !!options?.required,
             };
         };
         const properties = getProperties();

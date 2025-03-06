@@ -3,7 +3,7 @@ import type { ExtractPropTypes } from 'vue';
 import type { ObjectWithout, Pretty, SubPartial } from '@noeldemartin/utils';
 
 import { Colors } from '@/components/constants';
-import { enumProp, objectProp, requiredStringProp, stringProp } from '@/utils';
+import { booleanProp, enumProp, objectProp, requiredStringProp, stringProp } from '@/utils';
 import { translateWithDefault } from '@/lang';
 import type { AcceptRefs } from '@/utils';
 import type { ConfirmCheckboxes } from '@/ui';
@@ -17,6 +17,7 @@ export const confirmModalProps = {
     cancelColor: enumProp(Colors, Colors.Clear),
     checkboxes: objectProp<ConfirmCheckboxes>(),
     actions: objectProp<Record<string, () => unknown>>(),
+    required: booleanProp(false),
 };
 
 export type AGConfirmModalProps = Pretty<
