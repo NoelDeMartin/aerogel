@@ -73,6 +73,10 @@ export class CloudService extends Service {
         this.setupDismissed = true;
     }
 
+    public dismissMigration(): void {
+        this.migrationDismissed = true;
+    }
+
     public async syncIfOnline(options?: SyncOptions): Promise<void>;
     public async syncIfOnline(model: SolidModel): Promise<void>;
     public async syncIfOnline(models: SolidModel[]): Promise<void>;
@@ -137,12 +141,16 @@ export class CloudService extends Service {
         });
     }
 
+    public shouldMigrate(): boolean {
+        return this.schemaMigrations.size > 0;
+    }
+
     public async migrate(listener?: JobListener): Promise<void> {
         if (!this.online || !Solid.isLoggedIn() || !this.ready) {
             throw new Error('Data cannot be migrated at the moment');
         }
 
-        if (this.schemaMigrations.size === 0) {
+        if (!this.shouldMigrate()) {
             return;
         }
 
@@ -169,6 +177,7 @@ export class CloudService extends Service {
                 }
 
                 this.migrationJob = null;
+                this.migrationDismissed = false;
 
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
                 await Events.emit('cloud:migration-completed', models);
@@ -384,6 +393,7 @@ export class CloudService extends Service {
             pollingEnabled: true,
             pollingMinutes: 10,
             migrationJob: null,
+            migrationDismissed: false,
         });
     }
 

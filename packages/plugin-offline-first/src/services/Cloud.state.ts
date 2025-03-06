@@ -23,7 +23,15 @@ export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
 export default defineServiceState({
     name: 'cloud',
-    persist: ['ready', 'modelCollections', 'startupSync', 'pollingEnabled', 'pollingMinutes', 'migrationJob'],
+    persist: [
+        'ready',
+        'modelCollections',
+        'startupSync',
+        'pollingEnabled',
+        'pollingMinutes',
+        'migrationJob',
+        'migrationDismissed',
+    ],
     initialState: () => ({
         autoPush: true,
         dirtyRemoteModels: map([], 'url') as ObjectsMap<SolidModel>,
@@ -40,6 +48,7 @@ export default defineServiceState({
         pollingEnabled: true,
         pollingMinutes: 10,
         migrationJob: null as Nullable<Migrate>,
+        migrationDismissed: false,
     }),
     serialize: (state) => replaceExisting(state, { migrationJob: state.migrationJob?.serialize() }),
     restore: (state) =>
@@ -55,6 +64,7 @@ export default defineServiceState({
         disconnected: ({ status }) => status === CloudStatus.Disconnected,
         online: ({ status }) => status === CloudStatus.Online,
         syncing: ({ status }) => status === CloudStatus.Syncing,
+        migrating: ({ status }) => status === CloudStatus.Migrating,
         localChanges({ localModelUpdates }) {
             return Object.values(localModelUpdates).reduce((total, count) => total + count, 0);
         },
