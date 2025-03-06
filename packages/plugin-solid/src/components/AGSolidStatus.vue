@@ -32,7 +32,10 @@
                         :aria-label="$td('solid.url', 'Login url')"
                         :placeholder="$td('solid.placeholder', 'https://...')"
                     />
-                    <AGButton submit>
+                    <AGButton v-if="showDevLogin" submit @click="form.url = 'dev'">
+                        {{ $td('solid.devLogin', 'Dev login') }}
+                    </AGButton>
+                    <AGButton v-else submit>
                         {{ $td('solid.login', 'Login') }}
                     </AGButton>
                 </AGForm>
@@ -54,7 +57,9 @@
 </template>
 
 <script setup lang="ts">
-import { AGButton, AGForm, AGInput, AGLink, AGMarkdown, requiredStringInput, useForm } from '@aerogel/core';
+import { AGButton, AGForm, AGInput, AGLink, AGMarkdown, App, requiredStringInput, useForm } from '@aerogel/core';
+import { computed } from 'vue';
 
 const form = useForm({ url: requiredStringInput() });
+const showDevLogin = computed(() => App.development && (!form.url || form.url.trim().length === 0));
 </script>
