@@ -1,7 +1,7 @@
-import { computed, shallowRef, unref } from 'vue';
-import { App, EventListenerPriorities, Events } from '@aerogel/core';
+import { computed, ref, shallowRef, unref, watch } from 'vue';
+import { App, Events, computedAsync } from '@aerogel/core';
 import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
-import type { ComputedRef, Ref } from 'vue';
+import type { ComputedRef, Ref, WatchStopHandle } from 'vue';
 import type { RouteLocationNormalizedLoaded, RouteLocationRaw, RouteParamValue, RouteParams, Router } from 'vue-router';
 
 import Service from './Router.state';
@@ -19,12 +19,16 @@ export class RouterService extends Service {
     public readonly routesParams: Ref<Record<string, Record<string, unknown>>>;
     protected router: Ref<Router | null>;
     protected bindings: RouteBindings;
+    protected history: string[];
+    protected routesStopWatchers: Record<string, WatchStopHandle[]>;
 
     constructor() {
         super();
 
         this.router = shallowRef(null);
         this.bindings = {};
+        this.history = [];
+        this.routesStopWatchers = {};
         this.routesParams = shallowRef({});
         this.currentRoute = computed(() => {
             if (!this.router.value) {
@@ -46,15 +50,12 @@ export class RouterService extends Service {
         this.bindings = options.bindings ?? {};
 
         router.beforeEach(once(() => this.handleStatic404Redirect()));
-        router.beforeEach((to) => this.updateRouteParams(to.path, to.params));
+        router.beforeEach((to) => this.onEnterRoute(to.path, to.params));
     }
 
     protected async boot(): Promise<void> {
         Events.on('auth:before-login', () => this.storeFlashRoute());
         Events.on('auth:login', () => this.restoreFlashRoute());
-        Events.on('cloud:backup-completed', EventListenerPriorities.Low, () => this.updateCurrentRouteParams());
-        Events.on('cloud:migration-cancelled', EventListenerPriorities.Low, () => this.updateCurrentRouteParams());
-        Events.on('cloud:migration-completed', EventListenerPriorities.Low, () => this.updateCurrentRouteParams());
         Events.on('purge-storage', () => this.push({ name: 'home' }));
     }
 
@@ -64,25 +65,49 @@ export class RouterService extends Service {
             : super.__get(property);
     }
 
-    protected async updateCurrentRouteParams(): Promise<void> {
-        if (!this.currentRoute.value) {
+    protected async onEnterRoute(path: string, params: RouteParams): Promise<void> {
+        if (path in this.routesParams.value) {
             return;
         }
 
-        await this.updateRouteParams(this.currentRoute.value.path, this.currentRoute.value.rawParams);
-    }
-
-    protected async updateRouteParams(path: string, params: RouteParams): Promise<void> {
         const resolvedParams: Record<string, unknown> = { ...params };
+        const stopWatchers: WatchStopHandle[] = [];
 
         for (const [paramName, paramValue] of Object.entries(params)) {
-            resolvedParams[paramName] = await this.resolveBinding(paramName, paramValue, resolvedParams);
+            const resolvedValue = await this.resolveBinding(paramName, paramValue, resolvedParams);
+            const stopWatcher = watch(resolvedValue, (newValue) => {
+                this.routesParams.value = {
+                    ...this.routesParams.value,
+                    [path]: {
+                        ...this.routesParams.value[path],
+                        [paramName]: newValue,
+                    },
+                };
+            });
+
+            stopWatchers.push(stopWatcher);
+
+            resolvedParams[paramName] = resolvedValue.value;
         }
 
-        this.routesParams.value = {
+        this.history = this.history.slice(0, 3);
+        this.history.unshift(path);
+
+        const routesParams = {
             ...this.routesParams.value,
             [path]: resolvedParams,
         };
+
+        for (const routePath in routesParams) {
+            if (this.history.includes(routePath)) {
+                continue;
+            }
+
+            this.routesStopWatchers[routePath]?.forEach((stop) => stop());
+        }
+
+        this.routesParams.value = objectOnly(routesParams, this.history);
+        this.routesStopWatchers = objectOnly(this.routesStopWatchers, this.history);
     }
 
     protected handleStatic404Redirect(): void {
@@ -115,16 +140,16 @@ export class RouterService extends Service {
         name: string,
         value: RouteParamValue | RouteParamValue[],
         params: Record<string, unknown>,
-    ): Promise<unknown> {
+    ): Promise<Ref<unknown>> {
         const binding = this.bindings[name];
 
         if (Array.isArray(value) || !binding) {
-            return value;
+            return ref(value);
         }
 
         await App.ready;
 
-        return binding(value, params);
+        return computedAsync(() => Promise.resolve(binding(value, params)));
     }
 
 }
