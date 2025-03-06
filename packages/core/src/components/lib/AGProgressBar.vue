@@ -18,10 +18,10 @@ import { requiredNumberProp, stringProp } from '@/utils/vue';
 
 const props = defineProps({
     progress: requiredNumberProp(),
-    class: stringProp(''),
+    barClass: stringProp(''),
 });
 const barClasses = computed(() => {
-    const classes = props.class ?? '';
+    const classes = props.barClass ?? '';
 
     return `h-full w-full transition-transform duration-500 ease-linear ${
         classes.includes('bg-') ? classes : `${classes} bg-gray-700`
