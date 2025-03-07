@@ -1,3 +1,5 @@
+import type { ClientIDDocument } from '@/lib/solid';
+
 export interface Options {
     name?: string;
     description?: string;
@@ -5,6 +7,7 @@ export interface Options {
     icons?: Record<string, string>;
     baseUrl?: string;
     static404Redirect?: boolean | string;
+    solidClientId?: boolean | ClientIDDocument;
 }
 
 export interface AppInfo {

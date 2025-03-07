@@ -12,8 +12,11 @@ import { guessMediaType } from '@/lib/media-types';
 import { loadPackageInfo } from '@/lib/package-parser';
 import { renderHTML } from '@/lib/html';
 import type { AppInfo, Options } from '@/lib/options';
+import type { ClientIDDocument } from '@/lib/solid';
 
 import type { VirtualAerogel } from 'virtual:aerogel';
+
+export type { Options, AppInfo, ClientIDDocument };
 
 export function AerogelResolver(): ComponentResolver {
     return {

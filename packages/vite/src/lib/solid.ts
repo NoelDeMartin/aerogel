@@ -1,10 +1,9 @@
-import { objectWithoutEmpty } from '@noeldemartin/utils';
 import type { Connect } from 'vite';
 import type { PluginContext } from 'rollup';
 
 import type { AppInfo, Options } from '@/lib/options';
 
-import type { ClientIDDocument, VirtualAerogelSolid } from 'virtual:aerogel-solid';
+import type { VirtualAerogelSolid } from 'virtual:aerogel-solid';
 
 function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocument | null {
     if (!app.baseUrl) {
@@ -37,6 +36,18 @@ function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocumen
     return clientID;
 }
 
+export interface ClientIDDocument {
+    '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld';
+    client_id: string;
+    client_name: string;
+    redirect_uris: [string, ...string[]];
+    client_uri: string;
+    logo_uri?: string;
+    scope: string;
+    grant_types: string[];
+    response_types: string[];
+}
+
 export function generateSolidAssets(context: PluginContext, app: AppInfo, options: Options): void {
     if (!app.plugins?.includes('solid')) {
         return;
@@ -58,9 +69,13 @@ export function generateSolidAssets(context: PluginContext, app: AppInfo, option
 }
 
 export function generateSolidVirtualModule(app: AppInfo, options: Options): string {
-    const virtual: VirtualAerogelSolid = objectWithoutEmpty({
-        clientID: createClientIDDocument(app, options),
-    });
+    const clientId = options.solidClientId ?? true;
+    const clientIdDocument = typeof clientId !== 'boolean' ? clientId : createClientIDDocument(app, options);
+    const virtual: VirtualAerogelSolid = {};
+
+    if (clientId && clientIdDocument) {
+        virtual.clientID = clientIdDocument;
+    }
 
     return `export default ${JSON.stringify(virtual)};`;
 }
