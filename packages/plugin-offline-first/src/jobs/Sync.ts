@@ -1,8 +1,9 @@
 import { map, mixed, objectWithout, requireUrlParentDirectory, required } from '@noeldemartin/utils';
 import { App, Job } from '@aerogel/core';
+import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
-import type { SolidContainsRelation } from 'soukai-solid';
+import type { SolidContainsRelation, SolidEngine } from 'soukai-solid';
 
 import {
     cloneLocalModel,
@@ -22,6 +23,7 @@ import {
     getRelatedAppModels,
     isDirtyOrHasDirtyChildren,
 } from '@/lib/inference';
+import DocumentsCache from '@/services/DocumentsCache';
 
 import LoadsChildren from './mixins/LoadsChildren';
 import LoadsTypeIndex from './mixins/LoadsTypeIndex';
@@ -35,6 +37,7 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
     protected rootLocalModels: SolidModel[];
     protected localModels: ObjectsMap<SolidModel>;
     protected tombstones: ObjectsMap<Tombstone>;
+    protected documentsModifiedAt: Record<string, Date>;
 
     constructor(models?: SolidModel[]) {
         super();
@@ -43,14 +46,34 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
         this.rootLocalModels = [];
         this.localModels = map([], 'url');
         this.tombstones = map([], 'resourceUrl');
+        this.documentsModifiedAt = {};
     }
 
     protected async run(): Promise<void> {
-        this.rootLocalModels = this.models ?? getLocalModels();
+        const engine = Solid.requireAuthenticator().engine as SolidEngine;
+        const updateDocumentDate = (url: string, { headers }: { headers: Headers }) => {
+            const date = headers?.get('last-modified');
 
-        await this.indexLocalModels(this.rootLocalModels);
-        await this.pullChanges();
-        await this.pushChanges();
+            if (!date) {
+                return;
+            }
+
+            this.documentsModifiedAt[url] = new Date(date);
+        };
+        const clearListener = engine.listeners.add({
+            onDocumentRead: updateDocumentDate,
+            onDocumentUpdated: updateDocumentDate,
+        });
+
+        try {
+            this.rootLocalModels = this.models ?? getLocalModels();
+
+            await this.indexLocalModels(this.rootLocalModels);
+            await this.pullChanges();
+            await this.pushChanges();
+        } finally {
+            clearListener();
+        }
     }
 
     protected async pullChanges(): Promise<void> {
@@ -65,13 +88,10 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
             return model.url;
         });
 
-        await this.synchronizeModels(remoteModels);
+        const dirtyRemoteModels = await this.synchronizeModels(remoteModels);
 
         Cloud.setState({
-            dirtyRemoteModels: map(
-                remoteModels.getItems().filter((model) => isDirtyOrHasDirtyChildren(model)),
-                'url',
-            ),
+            dirtyRemoteModels: map(dirtyRemoteModels, 'url'),
             remoteOperationUrls: remoteModels.getItems().reduce((urls, model) => {
                 const operationUrls = model
                     .getRelatedModels()
@@ -291,6 +311,13 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
         await model.save();
 
         if (!isContainer(model)) {
+            if (isRemoteModel(model)) {
+                const documentUrl = model.requireDocumentUrl();
+                const modifiedAt = this.documentsModifiedAt[documentUrl] ?? new Date();
+
+                await DocumentsCache.remember(documentUrl, modifiedAt);
+            }
+
             return;
         }
 
@@ -303,7 +330,7 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
         }
     }
 
-    protected async synchronizeModels(remoteModels: ObjectsMap<SolidModel>): Promise<void> {
+    protected async synchronizeModels(remoteModels: ObjectsMap<SolidModel>): Promise<SolidModel[]> {
         const synchronizedModelUrls = new Set<string>();
         const deletedModels = new Set<SolidModel>();
 
@@ -345,6 +372,20 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
 
             remoteModels.add(remoteModel);
         }
+
+        const dirtyRemoteModels = [];
+
+        for (const remoteModel of remoteModels.getItems()) {
+            if (isDirtyOrHasDirtyChildren(remoteModel)) {
+                dirtyRemoteModels.push(remoteModel);
+
+                continue;
+            }
+
+            await this.rememberModelDocuments(remoteModel);
+        }
+
+        return dirtyRemoteModels;
     }
 
     private async reconcileInconsistencies(
@@ -419,6 +460,25 @@ export default class Sync extends mixed(Job, [LoadsChildren, LoadsTypeIndex, Tra
 
             await SolidModel.synchronize(localModel, remoteModel);
             await this.saveModelAndChildren(localModel);
+        }
+    }
+
+    private async rememberModelDocuments(model: SolidModel): Promise<void> {
+        if (!isContainer(model)) {
+            const documentUrl = model.requireDocumentUrl();
+            const modifiedAt = this.documentsModifiedAt[documentUrl] ?? new Date();
+
+            await DocumentsCache.remember(documentUrl, modifiedAt);
+
+            return;
+        }
+
+        const children = getContainerRelations(model.static())
+            .map((relation) => model.getRelationModels(relation) ?? [])
+            .flat();
+
+        for (const child of children) {
+            await this.rememberModelDocuments(child);
         }
     }
 

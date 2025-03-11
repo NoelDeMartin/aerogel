@@ -154,12 +154,6 @@ export default class LoadsChildren {
             children[relation] = documentChildren;
         }
 
-        if (!documentUrl.endsWith('/')) {
-            // For now, we're only caching non-container documents, given that not all POD providers
-            // will update a container's modification date when a child document is changed.
-            DocumentsCache.remember(documentUrl, new Date());
-        }
-
         return { children, tombstones };
     }
 
