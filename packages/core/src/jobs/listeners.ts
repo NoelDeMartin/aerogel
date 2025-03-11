@@ -1,3 +1,3 @@
 export interface JobListener {
-    onUpdated(progress: number): unknown;
+    onUpdated?(progress: number): unknown;
 }

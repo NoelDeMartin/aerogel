@@ -39,7 +39,7 @@ export interface RegisterOptions {
     path?: string;
 }
 
-export interface SyncOptions {
+export interface SyncOptions extends JobListener {
     refreshUserProfile?: boolean;
     model?: SolidModel;
     models?: SolidModel[];
@@ -122,18 +122,29 @@ export class CloudService extends Service {
                     await Solid.refreshUserProfile();
                 }
 
-                await dispatch(new Sync(models));
+                this.syncJob = new Sync(models);
+
+                this.syncJob.listeners.add(options);
+
+                await dispatch(this.syncJob);
 
                 while (this.dirty) {
+                    this.syncJob = new Sync(models);
+
+                    this.syncJob.listeners.add(options);
+
                     await dispatch(new Sync(this.getDirtyLocalModels()));
                 }
 
-                await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
+                await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
+
+                this.syncJob = null;
             } catch (error) {
                 if (App.testing) {
                     throw error;
                 }
 
+                this.syncJob = null;
                 this.syncError = error;
 
                 await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));

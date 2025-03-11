@@ -1,10 +1,10 @@
 <template>
     <div class="mt-1 h-2 w-full min-w-[min(400px,80vw)] overflow-hidden rounded-full bg-gray-200">
-        <div :class="barClasses" :style="`transform:translateX(-${(1 - progress) * 100}%)`" />
+        <div :class="barClasses" :style="`transform:translateX(-${(1 - renderedProgress) * 100}%)`" />
         <span class="sr-only">
             {{
                 $td('ui.progress', '{progress}% complete', {
-                    progress: progress * 100,
+                    progress: renderedProgress * 100,
                 })
             }}
         </span>
@@ -12,14 +12,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
-import { requiredNumberProp, stringProp } from '@/utils/vue';
+import { numberProp, objectProp, stringProp } from '@/utils/vue';
+import type { Job } from '@/jobs';
 
 const props = defineProps({
-    progress: requiredNumberProp(),
+    progress: numberProp(),
     barClass: stringProp(''),
+    job: objectProp<Job>(),
 });
+
+let cleanup: Function | undefined;
+const jobProgress = ref(0);
 const barClasses = computed(() => {
     const classes = props.barClass ?? '';
 
@@ -27,4 +32,14 @@ const barClasses = computed(() => {
         classes.includes('bg-') ? classes : `${classes} bg-gray-700`
     }`;
 });
+const renderedProgress = computed(() => {
+    if (typeof props.progress === 'number') {
+        return props.progress;
+    }
+
+    return jobProgress.value;
+});
+
+onMounted(() => (cleanup = props.job?.listeners.add({ onUpdated: (progress) => (jobProgress.value = progress) })));
+onUnmounted(() => cleanup?.());
 </script>

@@ -59,9 +59,13 @@ describe('Sync', () => {
         await Events.emit('application-ready');
 
         // Act
-        await Cloud.sync();
+        const updates: number[] = [];
+
+        await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
 
         // Assert
+        expect(updates).toEqual([0, 0.5, 1]);
+
         expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
         expect(server.getRequests(remoteContainerUrl)).toHaveLength(1);
         expect(server.getRequests(localContainerUrl)).toHaveLength(4);
@@ -128,9 +132,12 @@ describe('Sync', () => {
         await Events.emit('application-ready');
 
         // Act
-        await Cloud.sync();
+        const updates: number[] = [];
+
+        await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
 
         // Assert
+        expect(updates).toEqual([0, 0.5, 0.75, 1]);
         expect(server.getRequests(typeIndexUrl)).toHaveLength(1);
         expect(server.getRequests(containerUrl)).toHaveLength(1);
         expect(server.getRequests(localDocumentUrl)).toHaveLength(2);
@@ -172,9 +179,13 @@ describe('Sync', () => {
         await Events.emit('application-ready');
 
         // Act
-        await Cloud.sync();
+        const updates: number[] = [];
+
+        await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
 
         // Assert
+        expect(updates).toEqual([0, 0.5, 1]);
+
         expect(server.getRequests(typeIndexUrl)).toHaveLength(1);
         expect(server.getRequests(containerUrl)).toHaveLength(1);
         expect(server.getRequests(localDocumentUrl)).toHaveLength(3);
@@ -256,10 +267,14 @@ describe('Sync', () => {
         await Cloud.sync();
 
         // Act
+        const updates: number[] = [];
+
         await container.update({ name: 'Great Movies' });
-        await Cloud.sync(container);
+        await Cloud.sync({ model: container, onUpdated: (progress) => updates.push(progress) });
 
         // Assert
+        expect(updates).toEqual([0, 0.5, 1]);
+
         expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
         expect(server.getRequests(containerUrl)).toHaveLength(5);
         expect(server.getRequests(`${containerUrl}.meta`)).toHaveLength(3);
@@ -322,14 +337,17 @@ describe('Sync', () => {
         await Events.emit('application-ready');
 
         // Act
+        const updates: number[] = [];
         const movie = await container.relatedMovies.create({
             url: `${documentUrl}#it`,
             name: 'The Tale of Princess Kaguya',
         });
 
-        await Cloud.sync(movie);
+        await Cloud.sync({ model: movie, onUpdated: (progress) => updates.push(progress) });
 
         // Assert
+        expect(updates).toEqual([0, 0.5, 1]);
+
         expect(server.getRequests(documentUrl)).toHaveLength(4);
         expect(server.getRequests()).toHaveLength(4);
     });

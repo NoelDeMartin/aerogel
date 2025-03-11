@@ -1,8 +1,9 @@
-import { arrayChunk, arrayFrom, isInstanceOf, map } from '@noeldemartin/utils';
+import { arrayChunk, arrayFrom, isInstanceOf, map, required } from '@noeldemartin/utils';
 import { DocumentNotFound } from 'soukai';
 import { Tombstone } from 'soukai-solid';
-import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidModel } from 'soukai-solid';
+import type { JobStatus } from '@aerogel/core';
 import type { ObjectsMap } from '@noeldemartin/utils';
+import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidModel } from 'soukai-solid';
 
 import DocumentsCache from '@/services/DocumentsCache';
 import { cloneLocalModel, isLocalModel } from '@/lib/mirroring';
@@ -15,7 +16,11 @@ export default class LoadsChildren {
 
     protected async loadContainedModels(
         model: SolidContainer,
-        options: { ignoreTombstones?: boolean } = {},
+        options: {
+            ignoreTombstones?: boolean;
+            status?: JobStatus;
+            updateStatus?: (update: Function) => Promise<void>;
+        } = {},
     ): Promise<SolidModel[]> {
         if (isLocalModel(model)) {
             const children = [];
@@ -34,8 +39,15 @@ export default class LoadsChildren {
         const tombstones: Tombstone[] = [];
         const documents = map(model.documents, 'url');
         const documentUrlChunks = arrayChunk(model.resourceUrls, 10);
+        const statusChildren = documentUrlChunks.map(() => ({ completed: false }));
 
-        for (const documentUrls of documentUrlChunks) {
+        if (options.status) {
+            options.status.children = statusChildren;
+        }
+
+        for (let index = 0; index < documentUrlChunks.length; index++) {
+            const documentUrls = documentUrlChunks[index] as string[];
+
             await Promise.all(
                 documentUrls.map(async (documentUrl) => {
                     const { children: documentChildren, tombstones: documentTombstones } =
@@ -50,6 +62,8 @@ export default class LoadsChildren {
                     }
                 }),
             );
+
+            await options.updateStatus?.(() => (required(statusChildren[index]).completed = true));
         }
 
         for (const [relation, relationModels] of Object.entries(children)) {

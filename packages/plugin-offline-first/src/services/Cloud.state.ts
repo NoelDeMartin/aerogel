@@ -6,6 +6,7 @@ import type { Nullable, ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
 import Migrate from '@/jobs/Migrate';
+import type Sync from '@/jobs/Sync';
 
 export const CloudStatus = {
     Disconnected: 'disconnected',
@@ -47,6 +48,7 @@ export default defineServiceState({
         syncError: null as Nullable<ErrorSource>,
         pollingEnabled: true,
         pollingMinutes: 10,
+        syncJob: null as Nullable<Sync>,
         migrationJob: null as Nullable<Migrate>,
         migrationDismissed: false,
         migrationPostponed: false,
