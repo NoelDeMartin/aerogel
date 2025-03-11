@@ -77,6 +77,10 @@ export class CloudService extends Service {
         this.migrationDismissed = true;
     }
 
+    public postponeMigration(): void {
+        this.migrationPostponed = true;
+    }
+
     public async syncIfOnline(options?: SyncOptions): Promise<void>;
     public async syncIfOnline(model: SolidModel): Promise<void>;
     public async syncIfOnline(models: SolidModel[]): Promise<void>;
@@ -178,6 +182,7 @@ export class CloudService extends Service {
 
                 this.migrationJob = null;
                 this.migrationDismissed = false;
+                this.migrationPostponed = false;
 
                 await after({ milliseconds: Math.max(0, 1000 - (Date.now() - start)) });
                 await Events.emit('cloud:migration-completed', models);
@@ -267,7 +272,7 @@ export class CloudService extends Service {
         watchEffect(() => {
             this.pollingInterval && clearInterval(this.pollingInterval);
 
-            if (!this.pollingEnabled) {
+            if (!this.pollingEnabled || this.migrationJob) {
                 this.pollingInterval = null;
 
                 return;
@@ -394,12 +399,17 @@ export class CloudService extends Service {
             pollingMinutes: 10,
             migrationJob: null,
             migrationDismissed: false,
+            migrationPostponed: false,
         });
     }
 
     private syncOnStartup(): boolean {
         if (hasLocationQueryParameter('startupSync')) {
             return parseBoolean(getLocationQueryParameter('startupSync'));
+        }
+
+        if (this.migrationJob) {
+            return false;
         }
 
         return this.startupSync;

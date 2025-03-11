@@ -49,6 +49,7 @@ export default defineServiceState({
         pollingMinutes: 10,
         migrationJob: null as Nullable<Migrate>,
         migrationDismissed: false,
+        migrationPostponed: false,
     }),
     serialize: (state) => replaceExisting(state, { migrationJob: state.migrationJob?.serialize() }),
     restore: (state) =>
