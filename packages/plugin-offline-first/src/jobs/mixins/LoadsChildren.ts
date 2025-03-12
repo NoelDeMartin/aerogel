@@ -19,7 +19,7 @@ export default class LoadsChildren {
         options: {
             ignoreTombstones?: boolean;
             status?: JobStatus;
-            updateStatus?: (update: Function) => Promise<void>;
+            onLoaded?: (urls: string[]) => Promise<void>;
         } = {},
     ): Promise<SolidModel[]> {
         if (isLocalModel(model)) {
@@ -63,7 +63,9 @@ export default class LoadsChildren {
                 }),
             );
 
-            await options.updateStatus?.(() => (required(statusChildren[index]).completed = true));
+            required(statusChildren[index]).completed = true;
+
+            await options.onLoaded?.(documentUrls);
         }
 
         for (const [relation, relationModels] of Object.entries(children)) {

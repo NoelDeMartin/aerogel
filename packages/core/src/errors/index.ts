@@ -8,6 +8,8 @@ import { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
 
 export * from './utils';
 export { Errors, ErrorSource, ErrorReport, ErrorReportLog };
+export { default as JobCancelledError } from './JobCancelledError';
+export { default as ServiceBootError } from './ServiceBootError';
 
 const services = { $errors: Errors };
 const frameworkHandler: ErrorHandler = (error) => {

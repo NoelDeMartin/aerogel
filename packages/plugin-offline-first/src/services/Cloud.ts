@@ -128,6 +128,10 @@ export class CloudService extends Service {
 
                 await dispatch(this.syncJob);
 
+                if (this.syncJob.cancelled) {
+                    return;
+                }
+
                 while (this.dirty) {
                     this.syncJob = new Sync(models);
 

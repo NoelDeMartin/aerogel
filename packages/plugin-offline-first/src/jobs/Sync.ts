@@ -302,13 +302,19 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     }
 
     private async loadChildren(model: SolidModel, childStatus?: JobStatus): Promise<void> {
+        this.assertNotCancelled();
+
         if (!isContainer(model)) {
             return;
         }
 
         const children = await this.loadContainedModels(model, {
             status: childStatus,
-            updateStatus: (update) => this.updateProgress(() => update()),
+            onLoaded: async () => {
+                this.assertNotCancelled();
+
+                await this.updateProgress();
+            },
         });
 
         for (let index = 0; index < children.length; index++) {
@@ -359,6 +365,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     }
 
     private async saveModelAndChildren(model: SolidModel, status?: JobStatus): Promise<void> {
+        this.assertNotCancelled();
+
         if (isRemoteModel(model) && model.isSoftDeleted()) {
             model.enableHistory();
             model.enableTombstone();
