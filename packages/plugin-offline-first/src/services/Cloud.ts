@@ -64,9 +64,15 @@ export class CloudService extends Service {
     }
 
     public async setup(modelUrlMappings?: WeakMap<SolidModelConstructor, Record<string, string>>): Promise<void> {
-        await this.backup(modelUrlMappings);
-        await this.setReady(true);
-        await this.sync();
+        this.setupOngoing = true;
+
+        try {
+            await this.backup(modelUrlMappings);
+            await this.setReady(true);
+            await this.sync();
+        } finally {
+            this.setupOngoing = false;
+        }
     }
 
     public dismissSetup(): void {
@@ -408,6 +414,7 @@ export class CloudService extends Service {
             modelCollections: {},
             remoteOperationUrls: {},
             setupDismissed: false,
+            setupOngoing: false,
             startupSync: true,
             status: CloudStatus.Disconnected,
             pollingEnabled: true,

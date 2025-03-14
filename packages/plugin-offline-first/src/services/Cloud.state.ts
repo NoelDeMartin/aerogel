@@ -43,6 +43,7 @@ export default defineServiceState({
         schemaMigrations: new Map<SolidModelConstructor, SolidModelConstructor | SolidSchemaDefinition>(),
         remoteOperationUrls: {} as Record<string, string[]>,
         setupDismissed: false,
+        setupOngoing: false,
         startupSync: true,
         status: CloudStatus.Disconnected as TCloudStatus,
         syncError: null as Nullable<ErrorSource>,
