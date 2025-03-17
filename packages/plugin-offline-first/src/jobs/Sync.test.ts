@@ -64,7 +64,7 @@ describe('Sync', () => {
         await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
 
         // Assert
-        expect(updates).toEqual([0, 0.5, 1]);
+        expect(updates).toEqual([0, 0.9, 1]);
 
         expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
         expect(server.getRequests(remoteContainerUrl)).toHaveLength(1);
@@ -137,7 +137,7 @@ describe('Sync', () => {
         await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
 
         // Assert
-        expect(updates).toEqual([0, 0.5, 0.75, 1]);
+        expect(updates).toEqual([0, 0.9, 0.95, 1]);
         expect(server.getRequests(typeIndexUrl)).toHaveLength(1);
         expect(server.getRequests(containerUrl)).toHaveLength(1);
         expect(server.getRequests(localDocumentUrl)).toHaveLength(2);
@@ -184,7 +184,7 @@ describe('Sync', () => {
         await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
 
         // Assert
-        expect(updates).toEqual([0, 0.5, 1]);
+        expect(updates).toEqual([0, 0.9, 1]);
 
         expect(server.getRequests(typeIndexUrl)).toHaveLength(1);
         expect(server.getRequests(containerUrl)).toHaveLength(1);
@@ -273,7 +273,7 @@ describe('Sync', () => {
         await Cloud.sync({ model: container, onUpdated: (progress) => updates.push(progress) });
 
         // Assert
-        expect(updates).toEqual([0, 0.5, 1]);
+        expect(updates).toEqual([0, 0.9, 1]);
 
         expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
         expect(server.getRequests(containerUrl)).toHaveLength(5);
@@ -346,7 +346,7 @@ describe('Sync', () => {
         await Cloud.sync({ model: movie, onUpdated: (progress) => updates.push(progress) });
 
         // Assert
-        expect(updates).toEqual([0, 0.5, 1]);
+        expect(updates).toEqual([0, 0.9, 1]);
 
         expect(server.getRequests(documentUrl)).toHaveLength(4);
         expect(server.getRequests()).toHaveLength(4);
@@ -574,7 +574,7 @@ describe('Sync', () => {
         expect(server.getRequests()).toHaveLength(11);
     });
 
-    it('Ignores not found children', async () => {
+    it('Ignores missing children', async () => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });

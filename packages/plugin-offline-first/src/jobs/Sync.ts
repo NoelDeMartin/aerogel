@@ -1,4 +1,4 @@
-import { map, mixed, objectWithout, requireUrlParentDirectory, required } from '@noeldemartin/utils';
+import { map, mixed, objectWithout, requireUrlParentDirectory, required, round } from '@noeldemartin/utils';
 import { App, Job } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
@@ -29,12 +29,22 @@ import DocumentsCache from '@/services/DocumentsCache';
 import LoadsChildren from './mixins/LoadsChildren';
 import LoadsTypeIndex from './mixins/LoadsTypeIndex';
 import TracksLocalModels from './mixins/TracksLocalModels';
+import type { ResourceJobStatus } from './mixins/LoadsChildren';
 
 const Cloud = required(() => App.service('$cloud'));
 const BaseJob = Job as typeof Job<JobListener, SyncJobStatus, SyncJobStatus>;
 
 interface SyncJobStatus extends JobStatus {
-    children: [JobStatus, JobStatus];
+    root: true;
+    children: [SyncPullJobStatus, JobStatus];
+}
+
+interface SyncPullJobStatus extends JobStatus {
+    children?: ResourceJobStatus[];
+}
+
+function isRootStatus(status?: JobStatus): status is SyncJobStatus {
+    return !!status && 'root' in status;
 }
 
 export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex, TracksLocalModels]) {
@@ -60,7 +70,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         const updateDocumentDate = (url: string, { headers }: { headers: Headers }) => {
             const date = headers?.get('last-modified');
 
-            if (!date) {
+            if (!date || url.endsWith('/')) {
                 return;
             }
 
@@ -84,9 +94,24 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
     protected getInitialStatus(): SyncJobStatus {
         return {
+            root: true,
             completed: false,
             children: [{ completed: false }, { completed: false }],
         };
+    }
+
+    protected calculateCurrentProgress(status?: JobStatus): number {
+        status ??= this.status;
+
+        if (isRootStatus(status)) {
+            return round(
+                this.calculateCurrentProgress(status.children[0]) * 0.9 +
+                    this.calculateCurrentProgress(status.children[1]) * 0.1,
+                2,
+            );
+        }
+
+        return super.calculateCurrentProgress(status);
     }
 
     private async pullChanges(): Promise<void> {
@@ -148,6 +173,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             await this.saveModelAndChildren(remoteModel, childStatus);
             await this.updateTypeRegistrations(remoteModel);
             await this.updateProgress(() => (childStatus.completed = true));
+        }
+
+        for (const [documentUrl, modifiedAt] of Object.entries(this.documentsModifiedAt)) {
+            await DocumentsCache.remember(documentUrl, modifiedAt);
         }
 
         Cloud.setState({
@@ -383,6 +412,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                 const modifiedAt = this.documentsModifiedAt[documentUrl] ?? new Date();
 
                 await DocumentsCache.remember(documentUrl, modifiedAt);
+
+                delete this.documentsModifiedAt[documentUrl];
             }
 
             return;
@@ -549,6 +580,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             const modifiedAt = this.documentsModifiedAt[documentUrl] ?? new Date();
 
             await DocumentsCache.remember(documentUrl, modifiedAt);
+
+            delete this.documentsModifiedAt[documentUrl];
 
             return;
         }

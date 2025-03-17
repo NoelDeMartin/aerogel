@@ -10,6 +10,11 @@ import { cloneLocalModel, isLocalModel } from '@/lib/mirroring';
 import { getContainerRelations } from '@/lib/inference';
 import { lazy } from '@/lib/utils';
 
+export interface ResourceJobStatus extends JobStatus {
+    documentUrl?: string;
+    children?: ResourceJobStatus[];
+}
+
 export default class LoadsChildren {
 
     protected declare localModels?: ObjectsMap<SolidModel>;
@@ -18,7 +23,7 @@ export default class LoadsChildren {
         model: SolidContainer,
         options: {
             ignoreTombstones?: boolean;
-            status?: JobStatus;
+            status?: ResourceJobStatus;
             onLoaded?: (urls: string[]) => Promise<void>;
         } = {},
     ): Promise<SolidModel[]> {
@@ -39,15 +44,17 @@ export default class LoadsChildren {
         const tombstones: Tombstone[] = [];
         const documents = map(model.documents, 'url');
         const documentUrlChunks = arrayChunk(model.resourceUrls, 10);
-        const statusChildren = documentUrlChunks.map(() => ({ completed: false }));
+        const statusChildren = documentUrlChunks.flat().map((url) => ({
+            documentUrl: url,
+            completed: false,
+        }));
+        const statusChildrenMap = map(statusChildren, 'documentUrl');
 
         if (options.status) {
             options.status.children = statusChildren;
         }
 
-        for (let index = 0; index < documentUrlChunks.length; index++) {
-            const documentUrls = documentUrlChunks[index] as string[];
-
+        for (const documentUrls of documentUrlChunks) {
             await Promise.all(
                 documentUrls.map(async (documentUrl) => {
                     const { children: documentChildren, tombstones: documentTombstones } =
@@ -63,7 +70,13 @@ export default class LoadsChildren {
                 }),
             );
 
-            required(statusChildren[index]).completed = true;
+            for (const documentUrl of documentUrls) {
+                if (documentUrl.endsWith('/')) {
+                    continue;
+                }
+
+                required(statusChildrenMap.get(documentUrl)).completed = true;
+            }
 
             await options.onLoaded?.(documentUrls);
         }
@@ -72,9 +85,17 @@ export default class LoadsChildren {
             model.setRelationModels(relation, relationModels);
         }
 
-        return options.ignoreTombstones
+        const childrenArray = options.ignoreTombstones
             ? Object.values(children).flat()
             : Object.values(children).flat().concat(tombstones);
+
+        if (options.status) {
+            options.status.children = childrenArray.map((child) => {
+                return required(statusChildrenMap.get(child.requireDocumentUrl()));
+            });
+        }
+
+        return childrenArray;
     }
 
     protected async loadDocumentChildren(
