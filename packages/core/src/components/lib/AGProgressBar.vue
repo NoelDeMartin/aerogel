@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watchEffect } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 
 import { numberProp, objectProp, stringProp } from '@/utils/vue';
 import type { Job } from '@/jobs';
@@ -40,12 +40,16 @@ const renderedProgress = computed(() => {
     return jobProgress.value;
 });
 
-watchEffect(() => {
-    cleanup?.();
+watch(
+    () => props.job,
+    () => {
+        cleanup?.();
 
-    jobProgress.value = props.job?.progress ?? 0;
-    cleanup = props.job?.listeners.add({ onUpdated: (progress) => (jobProgress.value = progress) });
-});
+        jobProgress.value = props.job?.progress ?? 0;
+        cleanup = props.job?.listeners.add({ onUpdated: (progress) => (jobProgress.value = progress) });
+    },
+    { immediate: true },
+);
 
 onUnmounted(() => cleanup?.());
 </script>
