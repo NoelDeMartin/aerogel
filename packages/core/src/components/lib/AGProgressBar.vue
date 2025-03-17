@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-1 h-2 w-full min-w-[min(400px,80vw)] overflow-hidden rounded-full bg-gray-200">
+    <div class="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-200">
         <div :class="barClasses" :style="`transform:translateX(-${(1 - renderedProgress) * 100}%)`" />
         <span class="sr-only">
             {{
