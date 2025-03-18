@@ -194,7 +194,7 @@ export class SolidService extends Service {
                         )
                     : translateWithDefault(
                         'solid.disconnectConfirmMessage',
-                        'You\'ll need to introduce logging details again to connect to your Solid POD.',
+                        'You\'ll need to introduce your credentials again to connect to your Solid POD.',
                     ),
                 {
                     acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
