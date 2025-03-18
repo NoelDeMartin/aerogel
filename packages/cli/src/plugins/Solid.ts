@@ -56,7 +56,7 @@ export class Solid extends Plugin {
                 .replace(
                     '"dev": "vite",',
                     '"dev": "vite",\n' +
-                        '"dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid-data",',
+                        '"dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid",',
                 )
                 .replace(
                     '"test:serve-app": "vite --port 5001 --mode testing"',
@@ -73,7 +73,7 @@ export class Solid extends Plugin {
 
         const gitignore = File.read('.gitignore') ?? '';
 
-        File.write('.gitignore', `${gitignore}/solid-data\n`);
+        File.write('.gitignore', `${gitignore}/solid\n`);
     }
 
 }

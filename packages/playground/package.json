@@ -9,7 +9,7 @@
         "cy:run": "cypress run --config-file ./cypress/cypress.config.ts",
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:3000 cy:run",
         "dev": "vite",
-        "dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid-data",
+        "dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid",
         "histoire": "histoire dev",
         "lint": "noeldemartin-lint src cypress",
         "test:serve-app": "vite --port 5001 --mode testing",
