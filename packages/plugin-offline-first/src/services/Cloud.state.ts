@@ -1,9 +1,8 @@
 import { defineServiceState, replaceExisting, translateWithDefault } from '@aerogel/core';
-import { map } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 import type { ErrorSource } from '@aerogel/core';
-import type { Nullable, ObjectsMap } from '@noeldemartin/utils';
-import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
+import type { Nullable } from '@noeldemartin/utils';
+import type { SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
 import Migrate from '@/jobs/Migrate';
 import type Sync from '@/jobs/Sync';
@@ -25,34 +24,33 @@ export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 export default defineServiceState({
     name: 'cloud',
     persist: [
-        'ready',
+        'localModelUpdates',
+        'migrationDismissed',
+        'migrationJob',
         'modelCollections',
-        'startupSync',
         'pollingEnabled',
         'pollingMinutes',
-        'migrationJob',
-        'migrationDismissed',
+        'ready',
+        'startupSync',
     ],
     initialState: () => ({
         autoPush: true,
-        dirtyRemoteModels: map([], 'url') as ObjectsMap<SolidModel>,
         localModelUpdates: {} as Record<string, number>,
-        ready: false,
+        migrationDismissed: false,
+        migrationJob: null as Nullable<Migrate>,
+        migrationPostponed: false,
         modelCollections: {} as Record<string, string[]>,
+        pollingEnabled: true,
+        pollingMinutes: 10,
+        ready: false,
         registeredModels: [] as ModelRegistration[],
         schemaMigrations: new Map<SolidModelConstructor, SolidModelConstructor | SolidSchemaDefinition>(),
-        remoteOperationUrls: {} as Record<string, string[]>,
         setupDismissed: false,
         setupOngoing: false,
         startupSync: true,
         status: CloudStatus.Disconnected as TCloudStatus,
         syncError: null as Nullable<ErrorSource>,
-        pollingEnabled: true,
-        pollingMinutes: 10,
         syncJob: null as Nullable<Sync>,
-        migrationJob: null as Nullable<Migrate>,
-        migrationDismissed: false,
-        migrationPostponed: false,
     }),
     serialize: (state) => replaceExisting(state, { migrationJob: state.migrationJob?.serialize() }),
     restore: (state) =>

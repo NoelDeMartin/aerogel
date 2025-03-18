@@ -6,7 +6,6 @@ import {
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isArray,
-    map,
     parseBoolean,
 } from '@noeldemartin/utils';
 import { App, Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
@@ -408,20 +407,18 @@ export class CloudService extends Service {
 
     protected logout(): void {
         this.setState({
-            dirtyRemoteModels: map([], 'url'),
             localModelUpdates: {},
-            ready: false,
+            migrationDismissed: false,
+            migrationJob: null,
+            migrationPostponed: false,
             modelCollections: {},
-            remoteOperationUrls: {},
+            pollingEnabled: true,
+            pollingMinutes: 10,
+            ready: false,
             setupDismissed: false,
             setupOngoing: false,
             startupSync: true,
             status: CloudStatus.Disconnected,
-            pollingEnabled: true,
-            pollingMinutes: 10,
-            migrationJob: null,
-            migrationDismissed: false,
-            migrationPostponed: false,
         });
     }
 

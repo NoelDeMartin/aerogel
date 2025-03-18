@@ -50,6 +50,7 @@ function isRootStatus(status?: JobStatus): status is SyncJobStatus {
 export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex, TracksLocalModels]) {
 
     protected models?: SolidModel[];
+    protected dirtyRemoteModels?: SolidModel[];
     protected rootLocalModels: SolidModel[];
     protected localModels: ObjectsMap<SolidModel>;
     protected tombstones: ObjectsMap<Tombstone>;
@@ -126,34 +127,13 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             return model.url;
         });
 
-        const dirtyRemoteModels = await this.synchronizeModels(remoteModels);
-
-        Cloud.setState({
-            dirtyRemoteModels: map(dirtyRemoteModels, 'url'),
-            remoteOperationUrls: remoteModels.getItems().reduce((urls, model) => {
-                const operationUrls = model
-                    .getRelatedModels()
-                    .map((related) => related.operations ?? [])
-                    .flat()
-                    .map((operation) => operation.url);
-
-                if (operationUrls.length > 0) {
-                    urls[model.url] = operationUrls;
-                }
-
-                return urls;
-            }, {} as Record<string, string[]>),
-        });
+        this.dirtyRemoteModels = await this.synchronizeModels(remoteModels);
 
         await this.updateProgress((status) => (status.children[0].completed = true));
     }
 
     private async pushChanges(): Promise<void> {
-        const modelUrls = this.models?.map((model) => model.url);
-        const remoteModels = Cloud.dirtyRemoteModels
-            .getItems()
-            .filter((model) => !modelUrls || modelUrls.includes(model.url));
-
+        const remoteModels = this.dirtyRemoteModels ?? [];
         const childrenStatus = (this.status.children[1].children = remoteModels.map(() => ({ completed: false })));
 
         for (let index = 0; index < remoteModels.length; index++) {
@@ -180,23 +160,12 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
 
         Cloud.setState({
-            dirtyRemoteModels: modelUrls
-                ? Cloud.dirtyRemoteModels.filter((_, url) => !modelUrls.includes(url))
-                : map([], 'url'),
-            remoteOperationUrls: remoteModels.reduce((urls, model) => {
-                const operationUrls = model
-                    .getRelatedModels()
-                    .map((related) => related.operations ?? [])
-                    .flat()
-                    .map((operation) => operation.url);
-
-                if (operationUrls.length > 0) {
-                    urls[model.url] = operationUrls;
-                }
-
-                return urls;
-            }, Cloud.remoteOperationUrls),
-            localModelUpdates: modelUrls ? objectWithout(Cloud.localModelUpdates, modelUrls) : {},
+            localModelUpdates: this.models
+                ? objectWithout(
+                    Cloud.localModelUpdates,
+                    this.models.map((model) => model.url),
+                )
+                : {},
         });
 
         await this.updateProgress((status) => (status.children[1].completed = true));

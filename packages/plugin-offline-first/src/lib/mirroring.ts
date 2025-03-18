@@ -36,7 +36,6 @@ function cleanRemoteModelClone(remoteModel: SolidModel): void {
 }
 
 function fixRemoteModelClone(remoteModel: SolidModel): void {
-    const remoteOperationUrls = Cloud.remoteOperationUrls[remoteModel.url] ?? [];
     const relatedModels = getRelatedAppModels(remoteModel).concat([remoteModel]);
 
     for (const relatedModel of relatedModels) {
@@ -57,21 +56,7 @@ function fixRemoteModelClone(remoteModel: SolidModel): void {
             continue;
         }
 
-        const existingOperations = operations.filter((operation) => remoteOperationUrls.includes(operation.url));
-
-        if (existingOperations.length === 0) {
-            relatedModel.setRelationModels('operations', operations);
-
-            continue;
-        }
-
-        relatedModel.setRelationModels('operations', existingOperations);
-        relatedModel.rebuildAttributesFromHistory();
-        relatedModel.cleanDirty(true);
-        relatedModel.metadata.cleanDirty(true);
-
         relatedModel.setRelationModels('operations', operations);
-        relatedModel.rebuildAttributesFromHistory();
     }
 }
 
