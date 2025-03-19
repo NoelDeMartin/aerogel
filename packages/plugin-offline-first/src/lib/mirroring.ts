@@ -7,6 +7,7 @@ import {
     tap,
     toString,
     urlResolveDirectory,
+    urlRoute,
 } from '@noeldemartin/utils';
 import { App } from '@aerogel/core';
 import { getTrackedModels, trackModelsCollection as trackSoukaiModelsCollection } from '@aerogel/plugin-soukai';
@@ -111,16 +112,26 @@ export async function updateRemoteModel(localModel: SolidModel): Promise<void> {
     }
 }
 
-export function clearLocalModelUpdates(localModel: SolidModel): void {
-    const url = localModel.getDeletedPrimaryKey() ?? localModel.getPrimaryKey();
+export function clearLocalModelUpdates(models?: SolidModel[], malformedDocuments?: Set<string>): void {
+    const syncedModelUrls = models?.map((model) => toString(model.getDeletedPrimaryKey() ?? model.getPrimaryKey()));
+    const localModelUpdates = {} as Record<string, number>;
 
-    if (!url) {
-        return;
+    for (const [url, count] of Object.entries(Cloud.localModelUpdates)) {
+        const documentUrl = urlRoute(url);
+        const wasSynced =
+            !syncedModelUrls ||
+            syncedModelUrls.some(
+                (modelUrl) => url === modelUrl || (modelUrl.endsWith('/') && url.startsWith(modelUrl)),
+            );
+
+        if (wasSynced && !malformedDocuments?.has(documentUrl)) {
+            continue;
+        }
+
+        localModelUpdates[url] = count;
     }
 
-    Cloud.setState({
-        localModelUpdates: objectWithout(Cloud.localModelUpdates, toString(url)),
-    });
+    Cloud.setState({ localModelUpdates });
 }
 
 export function cloneLocalModel(localModel: SolidModel, options: CloneOptions = {}): SolidModel {

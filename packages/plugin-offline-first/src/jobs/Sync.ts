@@ -1,5 +1,5 @@
 import { App, Job } from '@aerogel/core';
-import { isInstanceOf, map, mixed, requireUrlParentDirectory, required, round, urlRoute } from '@noeldemartin/utils';
+import { isInstanceOf, map, mixed, requireUrlParentDirectory, required, round } from '@noeldemartin/utils';
 import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
@@ -8,6 +8,7 @@ import type { JobListener, JobStatus } from '@aerogel/core';
 import type { SolidContainsRelation, SolidEngine, SolidTypeRegistration } from 'soukai-solid';
 
 import {
+    clearLocalModelUpdates,
     cloneLocalModel,
     cloneRemoteModel,
     completeRemoteModels,
@@ -162,7 +163,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             await DocumentsCache.remember(documentUrl, modifiedAt);
         }
 
-        this.cleanLocalModelUpdates();
+        clearLocalModelUpdates(this.models, this.malformedDocuments);
 
         await this.updateProgress((status) => (status.children[1].completed = true));
     }
@@ -584,27 +585,6 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
             throw error;
         }
-    }
-
-    private cleanLocalModelUpdates(): void {
-        const syncedModelUrls = this.models?.map((model) => model.url);
-        const localModelUpdates = {} as Record<string, number>;
-
-        for (const [url, count] of Object.entries(Cloud.localModelUpdates)) {
-            const documentUrl = urlRoute(url);
-
-            if (syncedModelUrls?.includes(url) && !this.malformedDocuments.has(documentUrl)) {
-                continue;
-            }
-
-            if (!syncedModelUrls && !this.malformedDocuments.has(documentUrl)) {
-                continue;
-            }
-
-            localModelUpdates[url] = count;
-        }
-
-        Cloud.setState({ localModelUpdates });
     }
 
 }

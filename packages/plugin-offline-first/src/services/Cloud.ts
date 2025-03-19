@@ -230,7 +230,7 @@ export class CloudService extends Service {
         await trackModels(modelClass, {
             created: (model) => createRemoteModel(model),
             updated: (model) => updateRemoteModel(model),
-            deleted: (model) => clearLocalModelUpdates(model),
+            deleted: (model) => clearLocalModelUpdates([model]),
         });
 
         if (isContainerClass(modelClass)) {
@@ -241,7 +241,7 @@ export class CloudService extends Service {
 
                 relatedClass.on('created', (model) => createRemoteModel(model));
                 relatedClass.on('updated', (model) => updateRemoteModel(model));
-                relatedClass.on('deleted', (model) => clearLocalModelUpdates(model));
+                relatedClass.on('deleted', (model) => clearLocalModelUpdates([model]));
             });
         }
 
