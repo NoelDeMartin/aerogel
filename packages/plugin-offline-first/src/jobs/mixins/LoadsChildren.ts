@@ -1,5 +1,6 @@
 import { arrayChunk, arrayFrom, isInstanceOf, map, required } from '@noeldemartin/utils';
 import { DocumentNotFound } from 'soukai';
+import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Tombstone } from 'soukai-solid';
 import type { JobStatus } from '@aerogel/core';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -24,7 +25,8 @@ export default class LoadsChildren {
         options: {
             ignoreTombstones?: boolean;
             status?: ResourceJobStatus;
-            onLoaded?: (urls: string[]) => Promise<void>;
+            onLoaded?: (urls: string[]) => unknown;
+            onMalformedDocument?: (url: string) => unknown;
         } = {},
     ): Promise<SolidModel[]> {
         if (isLocalModel(model)) {
@@ -58,7 +60,7 @@ export default class LoadsChildren {
             await Promise.all(
                 documentUrls.map(async (documentUrl) => {
                     const { children: documentChildren, tombstones: documentTombstones } =
-                        await this.loadDocumentChildren(model, documentUrl, documents);
+                        await this.loadDocumentChildren(model, documentUrl, documents, options.onMalformedDocument);
 
                     tombstones.push(...documentTombstones);
 
@@ -102,6 +104,7 @@ export default class LoadsChildren {
         model: SolidModel,
         documentUrl: string,
         documents: ObjectsMap<SolidDocument>,
+        onMalformedDocument?: (url: string) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const document = documents.get(documentUrl);
 
@@ -116,7 +119,7 @@ export default class LoadsChildren {
             };
         }
 
-        return this.loadDocumentChildrenFromRemote(model, documentUrl);
+        return this.loadDocumentChildrenFromRemote(model, documentUrl, onMalformedDocument);
     }
 
     protected async loadDocumentChildrenFromLocal(
@@ -147,6 +150,7 @@ export default class LoadsChildren {
     protected async loadDocumentChildrenFromRemote(
         model: SolidModel,
         documentUrl: string,
+        onMalformedDocument?: (url: string) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const children: Record<string, SolidModel[]> = {};
         const tombstones: Tombstone[] = [];
@@ -161,11 +165,20 @@ export default class LoadsChildren {
 
                 return document;
             } catch (error) {
-                if (!isInstanceOf(error, DocumentNotFound)) {
-                    throw error;
+                if (isInstanceOf(error, DocumentNotFound)) {
+                    return null;
                 }
 
-                return null;
+                if (isInstanceOf(error, MalformedSolidDocumentError)) {
+                    // eslint-disable-next-line no-console
+                    console.warn(error.message);
+
+                    await onMalformedDocument?.(documentUrl);
+
+                    return null;
+                }
+
+                throw error;
             }
         });
 

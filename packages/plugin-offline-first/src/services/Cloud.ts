@@ -137,14 +137,6 @@ export class CloudService extends Service {
                     return;
                 }
 
-                while (this.dirty) {
-                    this.syncJob = new Sync(models);
-
-                    this.syncJob.listeners.add(options);
-
-                    await dispatch(new Sync(this.getDirtyLocalModels()));
-                }
-
                 await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
 
                 this.syncJob = null;

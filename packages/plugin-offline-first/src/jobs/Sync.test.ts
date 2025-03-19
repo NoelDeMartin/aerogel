@@ -633,6 +633,67 @@ describe('Sync', () => {
         expect(workspace.lists).toHaveLength(1);
     });
 
+    it('Ignores malformed documents', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const firstDocumentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
+        const secondDocumentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
+        const thirdDocumentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
+        const fourthDocumentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({ url: containerUrl, name: 'Movies' });
+        const movie = await container.relatedMovies.create({
+            url: `${thirdDocumentUrl}#it`,
+            name: 'The Tale of Princess Kaguya',
+        });
+
+        await container.relatedMovies.create({ url: `${secondDocumentUrl}#it`, name: 'Spirited Away' });
+        await movie.update({ name: 'かぐや姫の物語' });
+
+        // Arrange - Prepare responses
+        const server = SolidMock.server;
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+        const typeIndexTurtle = `
+            <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
+
+            <#tasks>
+                a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
+                <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Movie> ;
+                <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
+        `;
+
+        server.respondOnce(typeIndexUrl, FakeResponse.success(typeIndexTurtle)); // Initial fetch
+        server.respondOnce(
+            containerUrl,
+            containerResponse({
+                documentUrls: [firstDocumentUrl, secondDocumentUrl, thirdDocumentUrl, fourthDocumentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+            }),
+        ); // Container
+        server.respondOnce(firstDocumentUrl, FakeResponse.success('invalid turtle'));
+        server.respondOnce(secondDocumentUrl, FakeResponse.success('invalid turtle'));
+        server.respondOnce(thirdDocumentUrl, FakeResponse.success('invalid turtle'));
+        server.respondOnce(fourthDocumentUrl, FakeResponse.success('invalid turtle'));
+
+        // Arrange - Prepare service
+        Cloud.ready = true;
+        Cloud.localModelUpdates = { [movie.url]: 1 };
+
+        await Cloud.launch();
+        await Cloud.register(MoviesContainer);
+        await Events.emit('application-ready');
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        expect(server.getRequests()).toHaveLength(6);
+        expect(Cloud.localModelUpdates).toEqual({ [movie.url]: 1 });
+    });
+
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
@@ -652,7 +713,6 @@ describe('Sync', () => {
         server.respond(
             containerUrl,
             containerResponse({
-                name: 'Movies',
                 documentUrls: [documentUrl],
                 createdAt: container.createdAt,
                 updatedAt: container.updatedAt,

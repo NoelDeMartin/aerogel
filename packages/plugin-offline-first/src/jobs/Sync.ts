@@ -1,4 +1,4 @@
-import { map, mixed, objectWithout, requireUrlParentDirectory, required, round } from '@noeldemartin/utils';
+import { map, mixed, requireUrlParentDirectory, required, round, urlRoute } from '@noeldemartin/utils';
 import { App, Job } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
@@ -54,6 +54,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     protected rootLocalModels: SolidModel[];
     protected localModels: ObjectsMap<SolidModel>;
     protected tombstones: ObjectsMap<Tombstone>;
+    protected malformedDocuments: Set<string>;
     protected documentsModifiedAt: Record<string, Date>;
 
     constructor(models?: SolidModel[]) {
@@ -63,6 +64,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         this.rootLocalModels = [];
         this.localModels = map([], 'url');
         this.tombstones = map([], 'resourceUrl');
+        this.malformedDocuments = new Set();
         this.documentsModifiedAt = {};
     }
 
@@ -159,14 +161,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             await DocumentsCache.remember(documentUrl, modifiedAt);
         }
 
-        Cloud.setState({
-            localModelUpdates: this.models
-                ? objectWithout(
-                    Cloud.localModelUpdates,
-                    this.models.map((model) => model.url),
-                )
-                : {},
-        });
+        this.cleanLocalModelUpdates();
 
         await this.updateProgress((status) => (status.children[1].completed = true));
     }
@@ -313,6 +308,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
                 await this.updateProgress();
             },
+            onMalformedDocument: (url) => this.malformedDocuments.add(url),
         });
 
         for (let index = 0; index < children.length; index++) {
@@ -370,6 +366,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             model.enableTombstone();
             await model.delete();
 
+            return;
+        }
+
+        if (this.malformedDocuments.has(model.requireDocumentUrl())) {
             return;
         }
 
@@ -562,6 +562,27 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         for (const child of children) {
             await this.rememberModelDocuments(child);
         }
+    }
+
+    protected cleanLocalModelUpdates(): void {
+        const syncedModelUrls = this.models?.map((model) => model.url);
+        const localModelUpdates = {} as Record<string, number>;
+
+        for (const [url, count] of Object.entries(Cloud.localModelUpdates)) {
+            const documentUrl = urlRoute(url);
+
+            if (syncedModelUrls?.includes(url) && !this.malformedDocuments.has(documentUrl)) {
+                continue;
+            }
+
+            if (!syncedModelUrls && !this.malformedDocuments.has(documentUrl)) {
+                continue;
+            }
+
+            localModelUpdates[url] = count;
+        }
+
+        Cloud.setState({ localModelUpdates });
     }
 
 }
