@@ -12,7 +12,7 @@ import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps, AGPro
 
 import Service from './UI.state';
 import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
-import type { Modal, ModalComponent, Snackbar } from './UI.state';
+import type { ModalComponent, UIModal, UISnackbar } from './UI.state';
 
 interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
@@ -234,7 +234,7 @@ export class UIService extends Service {
     }
 
     public showSnackbar(message: string, options: ShowSnackbarOptions = {}): void {
-        const snackbar: Snackbar = {
+        const snackbar: UISnackbar = {
             id: uuid(),
             properties: { message, ...options },
             component: markRaw(options.component ?? this.requireComponent(UIComponents.Snackbar)),
@@ -259,10 +259,10 @@ export class UIService extends Service {
     public async openModal<TModalComponent extends ModalComponent>(
         component: TModalComponent,
         properties?: ModalProperties<TModalComponent>,
-    ): Promise<Modal<ModalResult<TModalComponent>>> {
+    ): Promise<UIModal<ModalResult<TModalComponent>>> {
         const id = uuid();
         const callbacks: Partial<ModalCallbacks<ModalResult<TModalComponent>>> = {};
-        const modal: Modal<ModalResult<TModalComponent>> = {
+        const modal: UIModal<ModalResult<TModalComponent>> = {
             id,
             properties: properties ?? {},
             component: markRaw(component),
@@ -378,8 +378,8 @@ declare module '@/services/Events' {
         'close-modal': { id: string; result?: unknown };
         'hide-modal': { id: string };
         'hide-overlays-backdrop': void;
-        'modal-closed': { modal: Modal; result?: unknown };
-        'modal-will-close': { modal: Modal; result?: unknown };
+        'modal-closed': { modal: UIModal; result?: unknown };
+        'modal-will-close': { modal: UIModal; result?: unknown };
         'show-modal': { id: string };
         'show-overlays-backdrop': void;
     }

@@ -1,33 +1,32 @@
 import { computed } from 'vue';
-import type { ExtractPropTypes, Ref } from 'vue';
+import type { Ref } from 'vue';
 
-import { booleanProp, stringProp } from '@/utils';
+import { booleanProp, stringProp } from '@/utils/vue';
 import { extractComponentProps } from '@/components/utils';
-import type { IAGModal } from '@/components/modals/AGModal';
+import type { ComponentPropDefinitions } from '@/components/utils';
+import type { ComponentProps } from '@/utils/vue';
+import type { IModal, IModalProps } from '@/components/contracts/Modal';
 
-export interface IAGHeadlessModal extends IAGModal {}
+export interface IAGHeadlessModal extends IModal {}
 
 export interface IAGHeadlessModalDefaultSlotProps {
     close(result?: unknown): Promise<void>;
 }
 
-export const modalProps = {
-    cancellable: booleanProp(true),
-    inline: booleanProp(),
-    title: stringProp(),
-};
-
-export function useModalProps(): typeof modalProps {
-    return modalProps;
+export function extractModalProps<T extends IModalProps>(props: T): ComponentProps<IModalProps> {
+    return extractComponentProps(props, modalProps());
 }
 
-export function extractModalProps<T extends ExtractPropTypes<typeof modalProps>>(
-    props: T,
-): Pick<T, keyof typeof modalProps> {
-    return extractComponentProps(props, modalProps);
+export function modalProps(): ComponentPropDefinitions<IModalProps> {
+    return {
+        cancellable: booleanProp(true),
+        description: stringProp(),
+        inline: booleanProp(),
+        title: stringProp(),
+    };
 }
 
-export function useModalExpose($modal: Ref<IAGHeadlessModal | undefined>): IAGModal {
+export function modalExpose($modal: Ref<IAGHeadlessModal | undefined>): IModal {
     return {
         inline: computed(() => !!$modal.value?.inline),
         cancellable: computed(() => !!$modal.value?.cancellable),

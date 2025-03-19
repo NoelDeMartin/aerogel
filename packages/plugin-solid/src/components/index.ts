@@ -1,6 +1,5 @@
-import AGSolidImage from './AGSolidImage.vue';
-import AGSolidStatus from './AGSolidStatus.vue';
-import AGSolidUserAvatar from './AGSolidUserAvatar.vue';
-import { IAGSolidStatusLoggedInSlotProps } from './AGSolidStatus';
-
-export { AGSolidImage, AGSolidStatus, AGSolidUserAvatar, IAGSolidStatusLoggedInSlotProps };
+export { default as AGSolidImage } from './AGSolidImage.vue';
+export { default as AGSolidStatus } from './AGSolidStatus.vue';
+export { default as AGSolidUserAvatar } from './AGSolidUserAvatar.vue';
+export { default as SolidAvatar } from './AGSolidUserAvatar.vue';
+export { IAGSolidStatusLoggedInSlotProps } from './AGSolidStatus';

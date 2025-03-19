@@ -11,6 +11,7 @@ import { getSourceHash } from '@/lib/git';
 import { guessMediaType } from '@/lib/media-types';
 import { loadPackageInfo } from '@/lib/package-parser';
 import { renderHTML } from '@/lib/html';
+import { resolveComponent } from '@/components';
 import type { AppInfo, Options } from '@/lib/options';
 import type { ClientIDDocument } from '@/lib/solid';
 
@@ -21,21 +22,7 @@ export type { Options, AppInfo, ClientIDDocument };
 export function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
-        resolve: (name) => {
-            if (!name.startsWith('AG') || name.startsWith('AGStory')) {
-                return;
-            }
-
-            if (name.startsWith('AGSolid')) {
-                return { name, as: name, from: '@aerogel/plugin-solid' };
-            }
-
-            if (name.startsWith('AGCloud')) {
-                return { name, as: name, from: '@aerogel/plugin-offline-first' };
-            }
-
-            return { name, as: name, from: '@aerogel/core' };
-        },
+        resolve: (name) => resolveComponent(name),
     };
 }
 

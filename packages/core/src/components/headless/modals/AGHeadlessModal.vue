@@ -19,10 +19,10 @@ import { useEvent } from '@/utils/composition/events';
 import { injectReactiveOrFail } from '@/utils/vue';
 import type { IAGModalContext } from '@/components/modals/AGModalContext';
 
-import { useModalProps } from './AGHeadlessModal';
+import { modalProps } from './AGHeadlessModal';
 import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from './AGHeadlessModal';
 
-const props = defineProps(useModalProps());
+const props = defineProps(modalProps());
 const $root = ref<{ $el?: HTMLElement } | null>(null);
 const hidden = ref(true);
 const closed = ref(false);

@@ -1,3 +1,3 @@
-import AGCloudStatus from './AGCloudStatus.vue';
+export { default as AGCloudStatus } from './AGCloudStatus.vue';
 
-export { AGCloudStatus };
+export * from './account';

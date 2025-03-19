@@ -18,7 +18,7 @@ import { computed, ref, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@/utils/vue';
 import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
-import type { __SetsElement } from '@/components/interfaces';
+import type { __SetsElement } from '@/components/contracts/shared';
 
 import { onFormFocus } from './composition';
 

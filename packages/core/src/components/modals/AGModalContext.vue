@@ -6,12 +6,12 @@
 import { computed, provide, toRef, unref } from 'vue';
 
 import { numberProp, requiredObjectProp } from '@/utils/vue';
-import type { Modal } from '@/ui/UI.state';
+import type { UIModal } from '@/ui/UI.state';
 
 import type { IAGModalContext } from './AGModalContext';
 
 const props = defineProps({
-    modal: requiredObjectProp<Modal>(),
+    modal: requiredObjectProp<UIModal>(),
     childIndex: numberProp(0),
 });
 

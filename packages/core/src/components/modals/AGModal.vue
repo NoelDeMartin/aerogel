@@ -21,19 +21,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { useModalExpose, useModalProps } from '@/components/headless/modals/AGHeadlessModal';
+import { modalExpose, modalProps } from '@/components/headless/modals/AGHeadlessModal';
 import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from '@/components/headless/modals/AGHeadlessModal';
-
-import type { IAGModal } from './AGModal';
 
 import AGHeadlessModal from '../headless/modals/AGHeadlessModal.vue';
 import AGHeadlessModalPanel from '../headless/modals/AGHeadlessModalPanel.vue';
 import AGHeadlessModalTitle from '../headless/modals/AGHeadlessModalTitle.vue';
 import AGMarkdown from '../lib/AGMarkdown.vue';
 
-const props = defineProps(useModalProps());
+const props = defineProps(modalProps());
 const $modal = ref<IAGHeadlessModal>();
 
 defineOptions({ inheritAttrs: false });
-defineExpose<IAGModal>(useModalExpose($modal));
+defineExpose(modalExpose($modal));
 </script>

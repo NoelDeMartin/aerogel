@@ -11,7 +11,7 @@ import { uuid } from '@noeldemartin/utils';
 
 import { stringProp } from '@/utils/vue';
 import type Form from '@/forms/Form';
-import type { __SetsElement } from '@/components/interfaces';
+import type { __SetsElement } from '@/components/contracts/shared';
 
 import { useInputProps } from './AGHeadlessInput';
 import type { IAGHeadlessInput } from './AGHeadlessInput';

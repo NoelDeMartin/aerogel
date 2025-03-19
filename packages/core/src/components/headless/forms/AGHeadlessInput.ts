@@ -3,7 +3,7 @@ import type { ComputedRef, DeepReadonly, ExtractPropTypes, Ref } from 'vue';
 import { mixedProp, stringProp } from '@/utils';
 import { extractComponentProps } from '@/components/utils';
 import type { FormFieldValue } from '@/forms/Form';
-import type { HasElement } from '@/components/interfaces';
+import type { HasElement } from '@/components/contracts';
 
 export interface IAGHeadlessInput extends HasElement {
     id: string;

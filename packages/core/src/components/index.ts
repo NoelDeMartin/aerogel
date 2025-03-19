@@ -3,11 +3,11 @@ import AGAppOverlays from './AGAppOverlays.vue';
 
 export { AGAppLayout, AGAppOverlays };
 
-export * from './composition';
 export * from './constants';
+export * from './contracts';
+export * from './focus';
 export * from './forms';
 export * from './headless';
-export * from './interfaces';
 export * from './lib';
 export * from './modals';
 export * from './snackbars';

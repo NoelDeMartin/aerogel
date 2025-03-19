@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue';
+import { twMerge } from 'tailwind-merge';
 
 import { numberProp, objectProp, stringProp } from '@/utils/vue';
 import type { Job } from '@/jobs';
@@ -25,13 +26,8 @@ const props = defineProps({
 
 let cleanup: Function | undefined;
 const jobProgress = ref(0);
-const barClasses = computed(() => {
-    const classes = props.barClass ?? '';
-
-    return `h-full w-full transition-transform duration-500 ease-linear ${
-        classes.includes('bg-') ? classes : `${classes} bg-gray-700`
-    }`;
-});
+const barClasses = computed(() =>
+    twMerge('h-full w-full transition-transform duration-500 ease-linear rounded-full bg-gray-700', props.barClass));
 const renderedProgress = computed(() => {
     if (typeof props.progress === 'number') {
         return props.progress;

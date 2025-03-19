@@ -8,20 +8,12 @@
 import { computed } from 'vue';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 
-import { booleanProp, objectProp, stringProp } from '@/utils/vue';
-import { elementRef } from '@/components/composition';
+import { elementRef } from '@/components/utils';
 
+import { buttonProps } from './AGHeadlessButton';
 import type { IAGHeadlessButton } from './AGHeadlessButton';
 
-const props = defineProps({
-    as: objectProp(),
-    href: stringProp(),
-    url: stringProp(),
-    route: stringProp(),
-    routeParams: objectProp(() => ({})),
-    routeQuery: objectProp(() => ({})),
-    submit: booleanProp(),
-});
+const props = defineProps(buttonProps());
 
 const $root = elementRef();
 const component = computed(() => {
