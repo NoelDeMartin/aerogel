@@ -166,12 +166,14 @@ export function cloneRemoteModel(remoteModel: SolidModel): SolidModel {
 export async function completeRemoteModels(
     localModels: SolidModel[],
     remoteModels: SolidModel[],
+    malformedDocuments: Set<string>,
 ): Promise<SolidModel[]> {
     const RemoteTombstone = getRemoteClass(Tombstone);
     const remoteModelUrls = remoteModels.map((remoteModel) => remoteModel.url);
     const missingModelDocumentUrls = localModels
         .filter((localModel) => !remoteModelUrls.includes(localModel.url))
-        .map((localModel) => localModel.requireDocumentUrl());
+        .map((localModel) => localModel.requireDocumentUrl())
+        .filter((documentUrl) => !malformedDocuments.has(documentUrl));
     const tombstones = await RemoteTombstone.all({ $in: missingModelDocumentUrls });
 
     return remoteModels.concat(tombstones);

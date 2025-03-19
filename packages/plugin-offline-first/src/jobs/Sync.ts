@@ -1,5 +1,6 @@
-import { map, mixed, requireUrlParentDirectory, required, round, urlRoute } from '@noeldemartin/utils';
 import { App, Job } from '@aerogel/core';
+import { isInstanceOf, map, mixed, requireUrlParentDirectory, required, round, urlRoute } from '@noeldemartin/utils';
+import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -212,66 +213,70 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         pullStatus.children = registrations.map(() => ({ completed: false }));
 
         for (let index = 0; index < registrations.length; index++) {
-            const registration = required(registrations[index])[0];
-            const registeredModel = required(registrations[index])[1];
-            const remoteClass = getRemoteClass(registeredModel.modelClass);
+            await this.ignoringMalformedDocumentErrors(async () => {
+                const registration = required(registrations[index])[0];
+                const registeredModel = required(registrations[index])[1];
+                const remoteClass = getRemoteClass(registeredModel.modelClass);
 
-            if (!registration.instanceContainer) {
-                continue;
-            }
-
-            if (isContainerClass(remoteClass)) {
-                await trackModelsCollection(
-                    registeredModel.modelClass,
-                    requireUrlParentDirectory(registration.instanceContainer),
-                );
-
-                const container = await remoteClass.find(registration.instanceContainer);
-
-                if (container) {
-                    await this.loadChildren(container, required(pullStatus.children?.[index]));
-
-                    remoteModels.push(container);
+                if (!registration.instanceContainer) {
+                    return;
                 }
 
+                if (isContainerClass(remoteClass)) {
+                    await trackModelsCollection(
+                        registeredModel.modelClass,
+                        requireUrlParentDirectory(registration.instanceContainer),
+                    );
+
+                    const container = await remoteClass.find(registration.instanceContainer);
+
+                    if (container) {
+                        await this.loadChildren(container, required(pullStatus.children?.[index]));
+
+                        remoteModels.push(container);
+                    }
+
+                    await this.updateProgress(() => (required(pullStatus.children?.[index]).completed = true));
+
+                    return;
+                }
+
+                await trackModelsCollection(registeredModel.modelClass, registration.instanceContainer);
+
+                remoteModels.push(...(await remoteClass.from(registration.instanceContainer).all()));
+
                 await this.updateProgress(() => (required(pullStatus.children?.[index]).completed = true));
-
-                continue;
-            }
-
-            await trackModelsCollection(registeredModel.modelClass, registration.instanceContainer);
-
-            remoteModels.push(...(await remoteClass.from(registration.instanceContainer).all()));
-
-            await this.updateProgress(() => (required(pullStatus.children?.[index]).completed = true));
+            });
         }
 
-        return completeRemoteModels(this.rootLocalModels, remoteModels);
+        return completeRemoteModels(this.rootLocalModels, remoteModels, this.malformedDocuments);
     }
 
     private async fetchRemoteModelsForLocal(models: SolidModel[]): Promise<SolidModel[]> {
-        const remoteModels = [];
+        const remoteModels = [] as SolidModel[];
         const statusChildren = (this.status.children[0].children = models.map(() => ({ completed: false })));
 
         for (let index = 0; index < models.length; index++) {
-            const localModel = models[index] as SolidModel;
-            const childStatus = statusChildren[index] as JobStatus;
-            const remoteModel = await getRemoteClass(localModel.static()).find(localModel.url);
+            await this.ignoringMalformedDocumentErrors(async () => {
+                const localModel = models[index] as SolidModel;
+                const childStatus = statusChildren[index] as JobStatus;
+                const remoteModel = await getRemoteClass(localModel.static()).find(localModel.url);
 
-            if (!remoteModel) {
+                if (!remoteModel) {
+                    await this.updateProgress(() => (childStatus.completed = true));
+
+                    return;
+                }
+
+                isContainer(remoteModel) && (await this.loadChildren(remoteModel, childStatus));
+
+                remoteModels.push(remoteModel);
+
                 await this.updateProgress(() => (childStatus.completed = true));
-
-                continue;
-            }
-
-            isContainer(remoteModel) && (await this.loadChildren(remoteModel, childStatus));
-
-            remoteModels.push(remoteModel);
-
-            await this.updateProgress(() => (childStatus.completed = true));
+            });
         }
 
-        return completeRemoteModels(models, remoteModels);
+        return completeRemoteModels(models, remoteModels, this.malformedDocuments);
     }
 
     private async updateTypeRegistrations(remoteModel: SolidModel): Promise<void> {
@@ -564,7 +569,24 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
     }
 
-    protected cleanLocalModelUpdates(): void {
+    private async ignoringMalformedDocumentErrors(operation: Function): Promise<void> {
+        try {
+            await operation();
+        } catch (error) {
+            if (isInstanceOf(error, MalformedSolidDocumentError)) {
+                // eslint-disable-next-line no-console
+                console.warn(error.message);
+
+                error.documentUrl && this.malformedDocuments.add(error.documentUrl);
+
+                return;
+            }
+
+            throw error;
+        }
+    }
+
+    private cleanLocalModelUpdates(): void {
         const syncedModelUrls = this.models?.map((model) => model.url);
         const localModelUpdates = {} as Record<string, number>;
 

@@ -694,6 +694,42 @@ describe('Sync', () => {
         expect(Cloud.localModelUpdates).toEqual({ [movie.url]: 1 });
     });
 
+    it('Ignores malformed documents in individual syncs', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const documentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({ url: containerUrl, name: 'Movies' });
+        const movie = await container.relatedMovies.create({
+            url: `${documentUrl}#it`,
+            name: 'The Tale of Princess Kaguya',
+        });
+
+        await movie.update({ name: 'かぐや姫の物語' });
+
+        // Arrange - Prepare responses
+        const server = SolidMock.server;
+
+        server.respondOnce(documentUrl, FakeResponse.success('invalid turtle'));
+
+        // Arrange - Prepare service
+        Cloud.ready = true;
+        Cloud.localModelUpdates = { [movie.url]: 1 };
+
+        await Cloud.launch();
+        await Cloud.register(MoviesContainer);
+        await Events.emit('application-ready');
+
+        // Act
+        await Cloud.sync(movie);
+
+        // Assert
+        expect(server.getRequests()).toHaveLength(1);
+        expect(Cloud.localModelUpdates).toEqual({ [movie.url]: 1 });
+    });
+
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
