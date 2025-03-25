@@ -36,7 +36,7 @@
     },
     "devDependencies": {
         "@aerogel/core": "*",
-        "@aerogel/plugin-offline-first": "*",
+        "@aerogel/plugin-offline-first": "0.0.0-next.b1bbfb972b88fe7cc5caa9c0005d4d82e25e9ae3",
         "@aerogel/vite": "*",
         "soukai": "*",
         "soukai-solid": "*"
