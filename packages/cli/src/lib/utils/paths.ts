@@ -1,5 +1,6 @@
 import { URL, fileURLToPath } from 'node:url';
 import { stringMatch } from '@noeldemartin/utils';
+import { resolve } from 'node:path';
 
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
@@ -8,10 +9,10 @@ export function basePath(path: string = ''): string {
     if (
         File.contains(
             fileURLToPath(new URL(/* @vite-ignore */ '../../../package.json', import.meta.url)),
-            '"name": "aerogel"',
+            '"packages/create-aerogel"',
         )
     ) {
-        return fileURLToPath(new URL(/* @vite-ignore */ '../', import.meta.url)) + path;
+        return resolve(fileURLToPath(new URL(/* @vite-ignore */ '../', import.meta.url)), path);
     }
 
     const packageJson = File.read(
@@ -20,7 +21,7 @@ export function basePath(path: string = ''): string {
     const matches = stringMatch<2>(packageJson ?? '', /"@aerogel\/core": "file:(.*)\/aerogel-core-[\d.]*\.tgz"/);
     const cliPath = matches?.[1] ?? Log.fail<string>('Could not determine base path');
 
-    return fileURLToPath(new URL(path, cliPath));
+    return resolve(cliPath, path);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,5 +38,5 @@ export function packagePath(packageName: string): string {
 }
 
 export function templatePath(name: string): string {
-    return fileURLToPath(new URL(`../templates/${name}`, import.meta.url));
+    return fileURLToPath(new URL(/* @vite-ignore */ `../templates/${name}`, import.meta.url));
 }

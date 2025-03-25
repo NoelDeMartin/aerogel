@@ -95,7 +95,7 @@ jobs:
                   name: cypress_snapshots
                   path: packages/playground/cypress/snapshots
 
-  verify:
+    verify:
         runs-on: ubuntu-latest
         needs: build
         steps:
