@@ -1,4 +1,4 @@
-import { addMatchImageSnapshotCommand } from '@simonsmith/cypress-image-snapshot/command';
+import { addMatchImageSnapshotCommand } from '@simonsmith/cypress-image-snapshot/command.js';
 import { setupSolidSupport } from 'cypress-solid';
 
 import addCustomCommands from '@aerogel/cypress/lib/commands';
