@@ -1,6 +1,5 @@
 {
-    "name": "aerogel",
-    "private": "true",
+    "private": true,
     "workspaces": [
         "packages/cli",
         "packages/vite",
@@ -11,56 +10,51 @@
         "packages/plugin-solid",
         "packages/plugin-offline-first",
         "packages/cypress",
-        "packages/histoire",
-        "packages/playground",
         "packages/create-aerogel",
-        "packages/docs"
+        "playground"
     ],
     "scripts": {
         "build": "npm run build -ws --if-present",
         "cy:test": "npm run cy:test -ws --if-present",
         "cy:test-snapshots": "docker run -it -u `id -u ${whoami}` -e CYPRESS_SNAPSHOTS=true -v ./:/app -w /app cypress/base:18.16.0 sh -c \"npx cypress install && npm run cy:test\"",
         "cy:test-snapshots:ci": "docker run -e CYPRESS_SNAPSHOTS=true -v ./:/app -w /app cypress/base:18.16.0 sh -c \"npx cypress install && npm run cy:test\"",
-        "deploy": "./scripts/deploy.sh",
         "dev": "npm run dev -ws --if-present",
         "lint": "npm run lint -ws --if-present",
-        "postinstall": "patch-package",
-        "publish-next": "npm run publish-next -ws --if-present",
         "test": "npm run test -ws --if-present",
-        "test:ci": "npm run test:ci -ws --if-present"
+        "test:ci": "npm run test:ci -ws --if-present",
+        "verify": "npm run verify -ws --if-present"
     },
     "devDependencies": {
         "@iconify/json": "^2.2.131",
         "@intlify/unplugin-vue-i18n": "^0.11.0",
-        "@noeldemartin/eslint-config-typescript": "0.1.1-next.213cffed3d1b24c286a9602ebd17085b58a673b4",
-        "@noeldemartin/eslint-config-vue": "0.1.1-next.6991d432d0368b4d59bb674c8bf0384e9eded802",
-        "@noeldemartin/scripts": "^0.2.1",
-        "@noeldemartin/testing": "0.0.0",
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
+        "@noeldemartin/eslint-config-typescript": "0.1.1-next.8da46d7532acbe6ee4126f410141b7f281ec349a",
+        "@noeldemartin/eslint-config-vue": "0.1.1-next.8da46d7532acbe6ee4126f410141b7f281ec349a",
+        "@noeldemartin/scripts": "0.3.0-next.2dfd366e59e45ecf5ead1a617e4d0e870dbea507",
+        "@noeldemartin/testing": "0.0.0-next.3aa03a51f580a9508bbc982c55eda4fd2b302f35",
+        "@noeldemartin/solid-utils": "0.6.0-next.cfba421315c47e4aa5a72990714376d9dcd1ffff",
+        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
         "@total-typescript/ts-reset": "^0.4.2",
+        "@tsconfig/node22": "^22.0.1",
         "@types/mustache": "^4.2.2",
+        "@vue/tsconfig": "^0.7.0",
         "cypress": "^12.17.0",
-        "eslint": "^8.40.0",
-        "histoire": "0.17.6",
-        "patch-package": "^7.0.0",
-        "prettier": "^2.8.8",
-        "prettier-eslint-cli": "^7.1.0",
-        "prettier-plugin-tailwindcss": "^0.2.8",
-        "soukai": "0.5.2-next.b7fedddf243ea6df3baf082890eb2834dd48c010",
-        "soukai-solid": "0.5.2-next.edc8539490c467b9e2c9103b344345f667cdb301",
-        "typescript": "~5.0.4",
+        "prettier-plugin-tailwindcss": "^0.6.11",
+        "soukai": "0.6.0-next.99b8d2509c34fc253150d47a9deed61332bc3065",
+        "soukai-solid": "0.6.0-next.25e19aa8919ad05ab3d2b5e224654aee15778fc2",
+        "typescript": "^5.8.2",
         "unplugin-icons": "^0.17.1",
         "unplugin-vue-components": "^0.24.1",
-        "vite": "^4.3.1",
-        "vitest": "^0.31.0",
+        "vite": "^6.2.2",
+        "vite-plugin-dts": "4.5.0",
+        "vitest": "^3.0.9",
         "vue": "^3.3.0",
         "vue-i18n": "9.3.0-beta.19",
         "vue-router": "4.4.0",
-        "vue-tsc": "^1.6.5"
+        "vue-tsc": "^2.2.8"
     },
     "overrides": {
-        "@noeldemartin/solid-utils": "0.5.0-next.612e9e93903ec33bbcba7105ed2a8580ed2d754c",
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06"
+        "@noeldemartin/solid-utils": "0.6.0-next.cfba421315c47e4aa5a72990714376d9dcd1ffff",
+        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca"
     },
     "eslintConfig": {
         "extends": [
@@ -68,9 +62,9 @@
         ]
     },
     "prettier": {
+        "printWidth": 120,
         "plugins": [
             "prettier-plugin-tailwindcss"
-        ],
-        "printWidth": 120
+        ]
     }
 }

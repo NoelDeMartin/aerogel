@@ -38,14 +38,14 @@ export type FormErrors<T> = {
 export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.String
     ? string
     : TType extends typeof FormFieldTypes.Number
-    ? number
-    : TType extends typeof FormFieldTypes.Boolean
-    ? boolean
-    : TType extends typeof FormFieldTypes.Object
-    ? object
-    : TType extends typeof FormFieldTypes.Date
-    ? Date
-    : never;
+      ? number
+      : TType extends typeof FormFieldTypes.Boolean
+        ? boolean
+        : TType extends typeof FormFieldTypes.Object
+          ? object
+          : TType extends typeof FormFieldTypes.Date
+            ? Date
+            : never;
 
 const validForms: WeakMap<Form, ComputedRef<boolean>> = new WeakMap();
 
@@ -113,11 +113,14 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     }
 
     public validate(): boolean {
-        const errors = Object.entries(this._fields).reduce((formErrors, [name, definition]) => {
-            formErrors[name] = this.getFieldErrors(name, definition);
+        const errors = Object.entries(this._fields).reduce(
+            (formErrors, [name, definition]) => {
+                formErrors[name] = this.getFieldErrors(name, definition);
 
-            return formErrors;
-        }, {} as Record<string, string[] | null>);
+                return formErrors;
+            },
+            {} as Record<string, string[] | null>,
+        );
 
         this.resetErrors(errors);
 
@@ -165,7 +168,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         this._listeners['focus']?.forEach((listener) => listener(input));
     }
 
-    protected __get(property: string): unknown {
+    protected override __get(property: string): unknown {
         if (!(property in this._fields)) {
             return super.__get(property);
         }
@@ -173,7 +176,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return this.getFieldValue(property);
     }
 
-    protected __set(property: string, value: unknown): void {
+    protected override __set(property: string, value: unknown): void {
         if (!(property in this._fields)) {
             super.__set(property, value);
 

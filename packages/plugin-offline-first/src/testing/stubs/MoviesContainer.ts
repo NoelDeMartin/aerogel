@@ -6,12 +6,12 @@ import Movie from './Movie';
 
 export default class MoviesContainer extends SolidContainer {
 
-    public static history = true;
-    public static timestamps = true;
-    public static tombstone = false;
+    public static override history = true;
+    public static override timestamps = true;
+    public static override tombstone = false;
 
-    public declare movies?: Movie[];
-    public declare relatedMovies: SolidContainsRelation<this, Movie, typeof Movie>;
+    declare public movies?: Movie[];
+    declare public relatedMovies: SolidContainsRelation<this, Movie, typeof Movie>;
 
     public moviesRelationship(): Relation {
         return this.contains(Movie);

@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-const { CLI } = require('../dist/aerogel-cli.cjs.js');
+import { CLI } from '../dist/aerogel-cli.js';
 
 CLI.run();

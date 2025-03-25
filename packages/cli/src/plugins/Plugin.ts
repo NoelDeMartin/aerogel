@@ -1,13 +1,13 @@
 import { Node, SyntaxKind } from 'ts-morph';
 import type { ArrayLiteralExpression, ImportDeclarationStructure, OptionalKind, SourceFile } from 'ts-morph';
 
-import Log from '@/lib/Log';
-import Shell from '@/lib/Shell';
-import File from '@/lib/File';
-import { app, isLinkedLocalApp, isLocalApp } from '@/lib/utils/app';
-import { editFiles, findDescendant, when } from '@/lib/utils/edit';
-import { packNotFound, packagePackPath, packagePath } from '@/lib/utils/paths';
-import type { Editor } from '@/lib/Editor';
+import Log from '@aerogel/cli/lib/Log';
+import Shell from '@aerogel/cli/lib/Shell';
+import File from '@aerogel/cli/lib/File';
+import { app, isLinkedLocalApp, isLocalApp } from '@aerogel/cli/lib/utils/app';
+import { editFiles, findDescendant, when } from '@aerogel/cli/lib/utils/edit';
+import { packNotFound, packagePackPath, packagePath } from '@aerogel/cli/lib/utils/paths';
+import type { Editor } from '@aerogel/cli/lib/Editor';
 
 export default abstract class Plugin {
 

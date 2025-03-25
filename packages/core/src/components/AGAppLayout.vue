@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { UIComponents } from '@/ui/UI';
+import { UIComponents } from '@aerogel/core/ui/UI';
 
 import AGAppOverlays from './AGAppOverlays.vue';
 </script>

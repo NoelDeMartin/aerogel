@@ -13,16 +13,19 @@ export default class I18nMessages {
     private loaders: Record<string, MessagesLoader>;
 
     constructor(loaders: Record<string, unknown>) {
-        this.loaders = Object.entries(loaders).reduce((messageLoaders, [fileName, loader]) => {
-            const locale = stringMatch<2>(fileName, /.*\/lang\/(.+)\.yaml/)?.[1];
+        this.loaders = Object.entries(loaders).reduce(
+            (messageLoaders, [fileName, loader]) => {
+                const locale = stringMatch<2>(fileName, /.*\/lang\/(.+)\.yaml/)?.[1];
 
-            if (locale) {
-                messageLoaders[locale] = () =>
-                    (loader as () => Promise<{ default: Messages }>)().then(({ default: messages }) => messages);
-            }
+                if (locale) {
+                    messageLoaders[locale] = () =>
+                        (loader as () => Promise<{ default: Messages }>)().then(({ default: messages }) => messages);
+                }
 
-            return messageLoaders;
-        }, {} as Record<string, MessagesLoader>);
+                return messageLoaders;
+            },
+            {} as Record<string, MessagesLoader>,
+        );
     }
 
     public getMessages(): Record<string, Messages> {

@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { Cache, computedAsync, requiredStringProp } from '@aerogel/core';
 
-import Solid from '@/services/Solid';
+import Solid from '@aerogel/plugin-solid/services/Solid';
 
 const props = defineProps({ src: requiredStringProp() });
 const sourceUrl = computedAsync(async () => {

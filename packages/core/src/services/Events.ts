@@ -1,6 +1,6 @@
 import { arrayRemove, facade, fail, tap } from '@noeldemartin/utils';
 
-import Service from '@/services/Service';
+import Service from '@aerogel/core/services/Service';
 
 export interface EventsPayload {}
 export interface EventListenerOptions {
@@ -32,7 +32,7 @@ export class EventsService extends Service {
 
     private listeners: Record<string, { priorities: number[]; handlers: Record<number, EventListener[]> }> = {};
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         Object.entries(globalThis.__aerogelEvents__ ?? {}).forEach(([event, listener]) =>
             this.on(event as string, listener as EventListener));
     }

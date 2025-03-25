@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue';
 
-import { injectReactiveOrFail } from '@/utils/vue';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 
 import type { IAGHeadlessInput } from './AGHeadlessInput';
 

@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { injectReactiveOrFail } from '@/utils/vue';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 
 import AGMarkdown from '../../lib/AGMarkdown.vue';
 import type { IAGHeadlessInput } from './AGHeadlessInput';

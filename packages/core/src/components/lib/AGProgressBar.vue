@@ -14,8 +14,8 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue';
 
-import { numberProp, objectProp, stringProp } from '@/utils/vue';
-import type { Job } from '@/jobs';
+import { numberProp, objectProp, stringProp } from '@aerogel/core/utils/vue';
+import type { Job } from '@aerogel/core/jobs';
 
 const props = defineProps({
     progress: numberProp(),

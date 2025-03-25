@@ -1,9 +1,9 @@
 import type { ComputedRef, DeepReadonly, ExtractPropTypes, Ref } from 'vue';
 
-import { mixedProp, stringProp } from '@/utils';
-import { extractComponentProps } from '@/components/utils';
-import type { FormFieldValue } from '@/forms/Form';
-import type { HasElement } from '@/components/interfaces';
+import { mixedProp, stringProp } from '@aerogel/core/utils';
+import { extractComponentProps } from '@aerogel/core/components/utils';
+import type { FormFieldValue } from '@aerogel/core/forms/Form';
+import type { HasElement } from '@aerogel/core/components/interfaces';
 
 export interface IAGHeadlessInput extends HasElement {
     id: string;

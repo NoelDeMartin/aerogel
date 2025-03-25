@@ -7,8 +7,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { injectReactiveOrFail } from '@/utils/vue';
-import { translateWithDefault } from '@/lang/utils';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
 
 import type { IAGHeadlessSelect } from './AGHeadlessSelect';
 

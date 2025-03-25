@@ -1,6 +1,6 @@
 import type { App as VueApp } from 'vue';
 
-import { definePlugin } from '@/plugins';
+import { definePlugin } from '@aerogel/core/plugins';
 
 import App from './App';
 import Cache from './Cache';
@@ -57,7 +57,7 @@ export default definePlugin({
     },
 });
 
-declare module '@/bootstrap/options' {
+declare module '@aerogel/core/bootstrap/options' {
     export interface AerogelOptions {
         services?: Record<string, Service>;
     }

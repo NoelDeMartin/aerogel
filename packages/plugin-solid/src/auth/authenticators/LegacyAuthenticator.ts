@@ -3,9 +3,10 @@ import { persistent } from '@aerogel/core';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { UnwrapNestedRefs } from 'vue';
 
-import Authenticator from '@/auth/Authenticator';
-import AuthenticationFailedError from '@/errors/AuthenticationFailedError';
-import type { AuthSession } from '@/auth/Authenticator';
+import Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
+import AuthenticationFailedError from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
+import Solid from '@aerogel/plugin-solid/services/Solid';
+import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 
 interface Data {
     webId?: string;
@@ -68,7 +69,6 @@ export default class LegacyAuthenticator extends Authenticator {
         });
 
         try {
-            const { default: Solid } = await import('@/services/Solid');
             const user = await Solid.requireUserProfile(required(session?.webId ?? this.store.webId));
 
             await this.startSession({ user, loginUrl });

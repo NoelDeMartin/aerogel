@@ -1,4 +1,4 @@
-import { defineDirective } from '@/utils/vue';
+import { defineDirective } from '@aerogel/core/utils/vue';
 
 export default defineDirective({
     mounted(element: HTMLElement, { value }) {

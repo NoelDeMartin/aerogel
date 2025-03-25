@@ -1,13 +1,13 @@
 import { onUnmounted } from 'vue';
 
-import Events from '@/services/Events';
+import Events from '@aerogel/core/services/Events';
 import type {
     EventListener,
     EventWithPayload,
     EventWithoutPayload,
     EventsPayload,
     UnknownEvent,
-} from '@/services/Events';
+} from '@aerogel/core/services/Events';
 
 export function useEvent<Event extends EventWithoutPayload>(event: Event, listener: () => unknown): void;
 export function useEvent<Event extends EventWithPayload>(

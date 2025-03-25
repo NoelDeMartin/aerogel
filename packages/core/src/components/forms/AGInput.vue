@@ -21,10 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import { componentRef } from '@/utils/vue';
-import { useInputAttrs } from '@/utils/composition/forms';
-import { useInputProps } from '@/components/headless/forms/AGHeadlessInput';
-import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
+import { componentRef } from '@aerogel/core/utils/vue';
+import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
+import { useInputProps } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
+import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 
 import AGHeadlessInput from '../headless/forms/AGHeadlessInput.vue';
 import AGHeadlessInputDescription from '../headless/forms/AGHeadlessInputDescription.vue';

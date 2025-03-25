@@ -15,8 +15,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { Colors } from '@/components/constants';
-import { useSnackbar, useSnackbarProps } from '@/components/headless/snackbars';
+import { Colors } from '@aerogel/core/components/constants';
+import { useSnackbar, useSnackbarProps } from '@aerogel/core/components/headless/snackbars';
 
 import AGButton from '../forms/AGButton.vue';
 import AGHeadlessSnackbar from '../headless/snackbars/AGHeadlessSnackbar.vue';

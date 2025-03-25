@@ -24,9 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import { componentRef, stringProp } from '@/utils/vue';
+import { componentRef, stringProp } from '@aerogel/core/utils/vue';
 
-import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
+import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 
 import AGHeadlessInput from '../headless/forms/AGHeadlessInput.vue';
 import AGHeadlessInputError from '../headless/forms/AGHeadlessInputError.vue';

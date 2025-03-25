@@ -1,4 +1,4 @@
-import { guessMediaType } from '@/lib/media-types';
+import { guessMediaType } from '@aerogel/vite/lib/media-types';
 import { describe, expect, it } from 'vitest';
 
 describe('Media Types helpers', () => {

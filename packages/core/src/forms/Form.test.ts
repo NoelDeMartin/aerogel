@@ -1,8 +1,9 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { useForm } from './composition';
-import { FormFieldTypes } from '@/main';
-import { numberInput, requiredStringInput } from '@/forms/utils';
+import { useForm } from '@aerogel/core/forms/composition';
+import { numberInput, requiredStringInput } from '@aerogel/core/forms/utils';
+
+import { FormFieldTypes } from './Form';
 
 describe('Form', () => {
 

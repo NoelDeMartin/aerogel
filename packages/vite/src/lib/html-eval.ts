@@ -1,4 +1,4 @@
-import type { AppInfo } from '@/lib/options';
+import type { AppInfo } from '@aerogel/vite/lib/options';
 
 export interface HTMLEvalScope {
     app: AppInfo;

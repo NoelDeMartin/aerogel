@@ -1,52 +1,42 @@
 {
     "name": "@aerogel/plugin-soukai",
-    "description": "Aerogel Soukai plugin",
     "version": "0.0.0",
-    "main": "dist/aerogel-plugin-soukai.cjs.js",
-    "module": "dist/aerogel-plugin-soukai.esm.js",
-    "types": "dist/aerogel-plugin-soukai.d.ts",
+    "type": "module",
     "sideEffects": false,
-    "scripts": {
-        "build": "rm dist -rf && npm run build:js && npm run build:types",
-        "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types",
-        "lint": "noeldemartin-lint src",
-        "publish-next": "noeldemartin-publish-next",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose"
+    "exports": {
+        "types": "./dist/aerogel-plugin-soukai.d.ts",
+        "default": "./dist/aerogel-plugin-soukai.js"
     },
-    "engines": {
-        "node": ">=18.x"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
-    },
-    "keywords": [
-        "javascript",
-        "aerogel"
+    "files": [
+        "src",
+        "dist"
     ],
-    "author": "Noel De Martin",
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    "author": "Noel De Martin",
+    "repository": "github:NoelDeMartin/aerogel",
+    "scripts": {
+        "build": "vite build",
+        "lint": "noeldemartin-lint src",
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose",
+        "verify": "noeldemartin-verify"
     },
     "peerDependencies": {
         "@aerogel/core": "*",
         "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
+        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
         "vue": "^3.3.0"
     },
     "devDependencies": {
         "@aerogel/core": "*",
-        "@aerogel/plugin-solid": "0.0.1-next.6ee67691c283fd950be6f879c79ff3e620a3fe31",
+        "@aerogel/plugin-solid": "*",
         "@aerogel/vite": "*"
     },
     "eslintConfig": {
         "extends": [
-            "@noeldemartin/eslint-config-typescript"
+            "@noeldemartin/eslint-config-vue"
         ]
     }
 }

@@ -1,6 +1,6 @@
 import type { JSError } from '@noeldemartin/utils';
 
-import { defineServiceState } from '@/services';
+import { defineServiceState } from '@aerogel/core/services';
 
 export type ErrorSource = string | Error | JSError | unknown;
 

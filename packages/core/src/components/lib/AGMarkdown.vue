@@ -6,9 +6,9 @@
 import { computed, h, useAttrs } from 'vue';
 import { isInstanceOf } from '@noeldemartin/utils';
 
-import { renderMarkdown } from '@/utils/markdown';
-import { booleanProp, mixedProp, objectProp, stringProp } from '@/utils/vue';
-import { translate } from '@/lang';
+import { renderMarkdown } from '@aerogel/core/utils/markdown';
+import { booleanProp, mixedProp, objectProp, stringProp } from '@aerogel/core/utils/vue';
+import { translate } from '@aerogel/core/lang';
 
 const props = defineProps({
     as: stringProp(),

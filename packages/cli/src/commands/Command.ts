@@ -1,5 +1,5 @@
-import File from '@/lib/File';
-import Log from '@/lib/Log';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
 import type { Constructor } from '@noeldemartin/utils';
 import type { Command as CommanderCommand } from 'commander';
 
@@ -22,7 +22,7 @@ export default class Command {
 
         for (const [name, definition] of Object.entries(this.options)) {
             const description = typeof definition === 'string' ? definition : definition.description;
-            const type = typeof definition === 'string' ? 'string' : definition.type ?? 'string';
+            const type = typeof definition === 'string' ? 'string' : (definition.type ?? 'string');
 
             program = program.option(type === 'boolean' ? `--${name}` : `--${name} <${type}>`, description);
         }

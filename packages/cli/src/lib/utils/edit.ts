@@ -23,8 +23,8 @@ export function findDescendant<T extends Node>(
     const skipKinds = arrayFrom(options.skip ?? []);
 
     return node.forEachDescendant((descendant, traversal) => {
-        if (guard(descendant) && validate(descendant)) {
-            return descendant;
+        if (guard(descendant) && validate(descendant as T)) {
+            return descendant as T;
         }
 
         const descendantKind = descendant.getKind();

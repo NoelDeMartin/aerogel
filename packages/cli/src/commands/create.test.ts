@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest';
 
-import FileMock from '@/lib/File.mock';
-import ShellMock from '@/lib/Shell.mock';
+import FileMock from '@aerogel/cli/lib/File.mock';
+import ShellMock from '@aerogel/cli/lib/Shell.mock';
 
 import { CreateCommand } from './create';
 

@@ -1,15 +1,15 @@
 import { Command } from 'commander';
+import { existsSync, readFileSync } from 'node:fs';
 import { facade, fail } from '@noeldemartin/utils';
-import { resolve } from 'path';
-import { existsSync, readFileSync } from 'fs';
+import { URL, fileURLToPath } from 'node:url';
 
-import { CreateCommand } from '@/commands/create';
-import { GenerateComponentCommand } from '@/commands/generate-component';
-import { GenerateModelCommand } from '@/commands/generate-model';
-import { GenerateOverridesCommand } from '@/commands/generate-overrides';
-import { GenerateServiceCommand } from '@/commands/generate-service';
-import { InfoCommand } from '@/commands/info';
-import { InstallCommand } from '@/commands/install';
+import { CreateCommand } from '@aerogel/cli/commands/create';
+import { GenerateComponentCommand } from '@aerogel/cli/commands/generate-component';
+import { GenerateModelCommand } from '@aerogel/cli/commands/generate-model';
+import { GenerateOverridesCommand } from '@aerogel/cli/commands/generate-overrides';
+import { GenerateServiceCommand } from '@aerogel/cli/commands/generate-service';
+import { InfoCommand } from '@aerogel/cli/commands/info';
+import { InstallCommand } from '@aerogel/cli/commands/install';
 
 export class CLIService {
 
@@ -31,7 +31,7 @@ export class CLIService {
 
     public getVersion(): string {
         const errorMessage = 'Could not find CLI\'s version, please report this bug.';
-        const packageJsonPath = resolve(__dirname, '../package.json');
+        const packageJsonPath = fileURLToPath(new URL(/* @vite-ignore */ '../package.json', import.meta.url));
 
         if (!existsSync(packageJsonPath)) {
             throw new Error(errorMessage);

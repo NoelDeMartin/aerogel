@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { useEvent } from '@/utils/composition/events';
+import { useEvent } from '@aerogel/core/utils/composition/events';
 
 import AGAppModals from './AGAppModals.vue';
 import AGAppSnackbars from './AGAppSnackbars.vue';

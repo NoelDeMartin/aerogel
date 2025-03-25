@@ -1,7 +1,7 @@
 import type { Component } from 'vue';
 
-import { bootServices } from '@/services';
-import { definePlugin } from '@/plugins';
+import { bootServices } from '@aerogel/core/services';
+import { definePlugin } from '@aerogel/core/plugins';
 
 import UI, { UIComponents } from './UI';
 import AGAlertModal from '../components/modals/AGAlertModal.vue';
@@ -42,12 +42,12 @@ export default definePlugin({
     },
 });
 
-declare module '@/bootstrap/options' {
+declare module '@aerogel/core/bootstrap/options' {
     export interface AerogelOptions {
         components?: Partial<Record<UIComponent, Component>>;
     }
 }
 
-declare module '@/services' {
+declare module '@aerogel/core/services' {
     export interface Services extends UIServices {}
 }

@@ -25,12 +25,16 @@ import {
     getRemoteClass,
     getRemoteContainersCollection,
     updateRemoteModel,
-} from '@/lib/mirroring';
-import Backup from '@/jobs/Backup';
-import Migrate from '@/jobs/Migrate';
-import Sync from '@/jobs/Sync';
-import SyncQueue from '@/lib/SyncQueue';
-import { getContainedModels, getContainerRelations, getRelatedClasses } from '@/lib/inference';
+} from '@aerogel/plugin-offline-first/lib/mirroring';
+import Backup from '@aerogel/plugin-offline-first/jobs/Backup';
+import Migrate from '@aerogel/plugin-offline-first/jobs/Migrate';
+import Sync from '@aerogel/plugin-offline-first/jobs/Sync';
+import SyncQueue from '@aerogel/plugin-offline-first/lib/SyncQueue';
+import {
+    getContainedModels,
+    getContainerRelations,
+    getRelatedClasses,
+} from '@aerogel/plugin-offline-first/lib/inference';
 
 import Service, { CloudStatus } from './Cloud.state';
 
@@ -137,7 +141,9 @@ export class CloudService extends Service {
                     return;
                 }
 
-                await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
+                if (!App.testing) {
+                    await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
+                }
 
                 this.syncJob = null;
             } catch (error) {
@@ -271,7 +277,7 @@ export class CloudService extends Service {
         throw new Error(`Failed resolving remote collection for '${modelClass.modelName}' model`);
     }
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         await Solid.booted;
 
         Solid.isLoggedIn() && this.login(Solid.authenticator);

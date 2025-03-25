@@ -2,8 +2,8 @@ import { defineServiceState } from '@aerogel/core';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
-import type { AuthSession } from '@/auth/Authenticator';
-import type { AuthenticatorName } from '@/auth';
+import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
 
 export const DEFAULT_STATE = { autoReconnect: true };
 

@@ -1,19 +1,34 @@
+import { URL, fileURLToPath } from 'node:url';
+
 import Aerogel from '@aerogel/vite';
+import Icons from 'unplugin-icons/vite';
+import dts from 'vite-plugin-dts';
 import { defineConfig } from 'vitest/config';
-import { resolve } from 'path';
 
 export default defineConfig({
-    test: {
-        clearMocks: true,
-        setupFiles: ['./src/testing/setup.ts'],
+    build: {
+        sourcemap: true,
+        lib: {
+            entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+            formats: ['es'],
+            fileName: 'aerogel-plugin-soukai',
+        },
+        rollupOptions: {
+            external: ['@aerogel/core', 'soukai', '@noeldemartin/utils', 'vue'],
+        },
     },
-    plugins: [Aerogel()],
+    plugins: [
+        dts({
+            rollupTypes: true,
+            tsconfigPath: './tsconfig.json',
+            insertTypesEntry: true,
+        }),
+        Aerogel({ lib: true }),
+        Icons(),
+    ],
     resolve: {
         alias: {
-            '@': resolve(__dirname, './src'),
-
-            // TODO not sure why it doesn't work without this :/
-            '@aerogel/core': resolve(__dirname, '../core/dist/aerogel-core.esm.js'),
+            '@aerogel/plugin-soukai': fileURLToPath(new URL('./src/', import.meta.url)),
         },
     },
 });

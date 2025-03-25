@@ -6,10 +6,10 @@ import type { JobStatus } from '@aerogel/core';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidModel } from 'soukai-solid';
 
-import DocumentsCache from '@/services/DocumentsCache';
-import { cloneLocalModel, isLocalModel } from '@/lib/mirroring';
-import { getContainerRelations } from '@/lib/inference';
-import { lazy } from '@/lib/utils';
+import DocumentsCache from '@aerogel/plugin-offline-first/services/DocumentsCache';
+import { cloneLocalModel, isLocalModel } from '@aerogel/plugin-offline-first/lib/mirroring';
+import { getContainerRelations } from '@aerogel/plugin-offline-first/lib/inference';
+import { lazy } from '@aerogel/plugin-offline-first/lib/utils';
 
 export interface ResourceJobStatus extends JobStatus {
     documentUrl?: string;
@@ -18,7 +18,7 @@ export interface ResourceJobStatus extends JobStatus {
 
 export default class LoadsChildren {
 
-    protected declare localModels?: ObjectsMap<SolidModel>;
+    declare protected localModels?: ObjectsMap<SolidModel>;
 
     protected async loadContainedModels(
         model: SolidContainer,

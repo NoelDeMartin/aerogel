@@ -1,43 +1,32 @@
 import 'fake-indexeddb/auto';
 
-import { beforeEach, expect, vi } from 'vitest';
-import { mock, resetAsyncMemo, setTestingNamespace, tap } from '@noeldemartin/utils';
+import { installVitestSolidMatchers } from '@noeldemartin/solid-utils/testing';
+import { FakeLocalStorage, FakeServer, setupFacadeMocks } from '@noeldemartin/testing';
+import { resetAsyncMemo } from '@noeldemartin/utils';
+import { beforeEach, vi } from 'vitest';
 
-import { sparqlEquals } from '@noeldemartin/solid-utils';
-
-setTestingNamespace(vi);
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-tap(globalThis, (global: any) => {
-    global.jest = vi;
-    global.navigator = { languages: ['en'] };
-    global.localStorage = mock<Storage>({
-        getItem: () => null,
-        setItem: () => null,
-    });
-});
+setupFacadeMocks();
+installVitestSolidMatchers();
 
 beforeEach(async () => {
-    const { resetPiniaStore } = await import('@aerogel/core');
-    const { resetTrackedModels } = await import('@aerogel/plugin-soukai');
     const { Solid } = await import('@aerogel/plugin-solid');
     const { default: SolidMock } = await import('./mocks/Solid.mock');
+    const { resetPiniaStore } = await import('@aerogel/core');
+    const { resetTrackedModels } = await import('@aerogel/plugin-soukai');
 
+    FakeLocalStorage.requireInstance().clear();
     Solid.setMockFacade(SolidMock);
+    FakeServer.reset();
 
     resetAsyncMemo();
     resetPiniaStore();
     resetTrackedModels();
 });
 
-expect.extend({
-    toEqualSparql(received, expected) {
-        const { isNot } = this;
-        const result = sparqlEquals(expected, received);
+vi.mock('@aerogel/core', async () => {
+    const original = (await vi.importActual('@aerogel/core')) as object;
 
-        return {
-            pass: result.success,
-            message: () => `Sparql ${isNot ? 'does not match' : 'matches'}: ${result.message}`,
-        };
-    },
+    FakeLocalStorage.patchGlobal();
+
+    return original;
 });

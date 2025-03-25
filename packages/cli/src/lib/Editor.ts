@@ -2,9 +2,9 @@ import { arrayFrom } from '@noeldemartin/utils';
 import { Project } from 'ts-morph';
 import type { SourceFile } from 'ts-morph';
 
-import File from '@/lib/File';
-import Log from '@/lib/Log';
-import Shell from '@/lib/Shell';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Shell from '@aerogel/cli/lib/Shell';
 
 export class Editor {
 

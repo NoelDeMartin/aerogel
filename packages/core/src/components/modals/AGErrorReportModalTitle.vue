@@ -5,8 +5,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { numberProp, requiredObjectProp } from '@/utils/vue';
-import type { ErrorReport } from '@/errors';
+import { numberProp, requiredObjectProp } from '@aerogel/core/utils/vue';
+import type { ErrorReport } from '@aerogel/core/errors';
 
 import AGMarkdown from '../lib/AGMarkdown.vue';
 

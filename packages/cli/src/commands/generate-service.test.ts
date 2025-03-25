@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
 
-import FileMock from '@/lib/File.mock';
+import FileMock from '@aerogel/cli/lib/File.mock';
 
 import { GenerateServiceCommand } from './generate-service';
 

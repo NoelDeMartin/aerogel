@@ -1,12 +1,12 @@
+import chalk from 'chalk';
+import { clearLine, cursorTo } from 'node:readline';
 import { facade, stringMatchAll } from '@noeldemartin/utils';
-import { bold, hex } from 'chalk';
-import { clearLine, cursorTo } from 'readline';
 
 export class LogService {
 
-    protected renderInfo = hex('#00ffff');
-    protected renderSuccess = hex('#00ff00');
-    protected renderError = hex('#ff0000');
+    protected renderInfo = chalk.hex('#00ffff');
+    protected renderSuccess = chalk.hex('#00ff00');
+    protected renderError = chalk.hex('#ff0000');
 
     public async animate<T>(message: string, operation: () => Promise<T>): Promise<T> {
         const updateStdout = (end: string = '', done: boolean = false) => {
@@ -52,7 +52,7 @@ export class LogService {
         const matches = stringMatchAll<2>(message, /\*\*(.*)\*\*/g);
 
         for (const match of matches) {
-            message = message.replace(match[0], bold(match[1]));
+            message = message.replace(match[0], chalk.bold(match[1]));
         }
 
         return message;

@@ -1,11 +1,11 @@
-import { basename } from 'path';
+import { basename } from 'node:path';
 import { stringToTitleCase } from '@noeldemartin/utils';
 
-import App from '@/lib/App';
-import Command from '@/commands/Command';
-import Log from '@/lib/Log';
-import Shell from '@/lib/Shell';
-import type { CommandOptions } from '@/commands/Command';
+import App from '@aerogel/cli/lib/App';
+import Command from '@aerogel/cli/commands/Command';
+import Log from '@aerogel/cli/lib/Log';
+import Shell from '@aerogel/cli/lib/Shell';
+import type { CommandOptions } from '@aerogel/cli/commands/Command';
 
 export interface Options {
     name?: string;
@@ -15,10 +15,10 @@ export interface Options {
 
 export class CreateCommand extends Command {
 
-    protected static command: string = 'create';
-    protected static description: string = 'Create AerogelJS app';
-    protected static parameters: [string, string][] = [['path', 'Application path']];
-    protected static options: CommandOptions = {
+    protected static override command: string = 'create';
+    protected static override description: string = 'Create AerogelJS app';
+    protected static override parameters: [string, string][] = [['path', 'Application path']];
+    protected static override options: CommandOptions = {
         name: 'Application name',
         local: {
             type: 'boolean',
@@ -40,7 +40,7 @@ export class CreateCommand extends Command {
         this.options = options;
     }
 
-    protected async run(): Promise<void> {
+    protected override async run(): Promise<void> {
         const path = this.path;
         const name = this.options.name ?? stringToTitleCase(basename(path));
 

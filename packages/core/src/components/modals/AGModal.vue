@@ -21,8 +21,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { useModalExpose, useModalProps } from '@/components/headless/modals/AGHeadlessModal';
-import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from '@/components/headless/modals/AGHeadlessModal';
+import { useModalExpose, useModalProps } from '@aerogel/core/components/headless/modals/AGHeadlessModal';
+import type {
+    IAGHeadlessModal,
+    IAGHeadlessModalDefaultSlotProps,
+} from '@aerogel/core/components/headless/modals/AGHeadlessModal';
 
 import type { IAGModal } from './AGModal';
 

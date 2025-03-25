@@ -18,7 +18,7 @@ import IconAnonymous from '~icons/ooui/user-anonymous';
 
 import { computed } from 'vue';
 
-import Solid from '@/services/Solid';
+import Solid from '@aerogel/plugin-solid/services/Solid';
 
 import AGSolidImage from './AGSolidImage.vue';
 

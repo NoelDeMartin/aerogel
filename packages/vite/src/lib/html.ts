@@ -1,8 +1,9 @@
-import { dirname, resolve } from 'path';
-import { readFileSync } from 'fs';
+import { dirname, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+
 import { stringMatchAll, toString } from '@noeldemartin/utils';
 
-import type { AppInfo } from '@/lib/options';
+import type { AppInfo } from '@aerogel/vite/lib/options';
 
 import * as globalScope from './html-eval';
 import type { HTMLEvalScope } from './html-eval';

@@ -1,11 +1,11 @@
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModel } from 'soukai-solid';
 
-import { getContainerRelations } from '@/lib/inference';
+import { getContainerRelations } from '@aerogel/plugin-offline-first/lib/inference';
 
 export default class TracksLocalModels {
 
-    protected declare localModels?: ObjectsMap<SolidModel>;
+    declare protected localModels?: ObjectsMap<SolidModel>;
 
     protected async indexLocalModels(models: SolidModel[]): Promise<void> {
         for (const localModel of models) {

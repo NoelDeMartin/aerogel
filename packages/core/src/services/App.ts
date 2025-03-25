@@ -2,9 +2,9 @@ import Aerogel from 'virtual:aerogel';
 
 import { PromisedValue, facade, forever, updateLocationQueryParameters } from '@noeldemartin/utils';
 
-import Events from '@/services/Events';
-import type { Plugin } from '@/plugins';
-import type { Services } from '@/services';
+import Events from '@aerogel/core/services/Events';
+import type { Plugin } from '@aerogel/core/plugins';
+import type { Services } from '@aerogel/core/services';
 
 import Service from './App.state';
 
@@ -45,7 +45,7 @@ export class AppService extends Service {
         return this.instance?.config.globalProperties[name] ?? null;
     }
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         Events.once('application-ready', () => this.ready.resolve());
         Events.once('application-mounted', () => this.mounted.resolve());
     }

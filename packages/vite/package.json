@@ -1,47 +1,37 @@
 {
     "name": "@aerogel/vite",
-    "description": "Vite Plugin to build Aerogel apps",
     "version": "0.0.0",
-    "main": "dist/aerogel-vite.cjs.js",
-    "module": "dist/aerogel-vite.esm.js",
-    "types": "dist/aerogel-vite.d.ts",
+    "type": "module",
     "sideEffects": false,
-    "scripts": {
-        "build": "rm dist -rf && npm run build:js && npm run build:types",
-        "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types && cp src/types/virtual.d.ts dist",
-        "lint": "noeldemartin-lint src",
-        "publish-next": "noeldemartin-publish-next",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose"
+    "exports": {
+        ".": {
+            "types": "./dist/aerogel-vite.d.ts",
+            "default": "./dist/aerogel-vite.js"
+        },
+        "./virtual": {
+            "types": "./dist/virtual.d.ts"
+        }
     },
-    "engines": {
-        "node": ">=18.x"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
-    },
-    "keywords": [
-        "aerogel",
-        "vite"
+    "files": [
+        "src",
+        "dist"
     ],
-    "author": "Noel De Martin",
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
-    },
-    "peerDependencies": {
-        "@aerogel/core": "*",
-        "vite": "*"
+    "author": "Noel De Martin",
+    "repository": "github:NoelDeMartin/aerogel",
+    "scripts": {
+        "build": "vite build && cp src/types/virtual.d.ts dist/virtual.d.ts",
+        "lint": "noeldemartin-lint src",
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose",
+        "verify": "noeldemartin-verify"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
-        "@vitejs/plugin-vue": "^4.1.0",
+        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
+        "@vitejs/plugin-vue": "^5.2.3",
         "mustache": "^4.2.0",
-        "rollup": "^3.29.4",
-        "unplugin-vue-components": "^0.25.2",
-        "vite-plugin-pwa": "^0.17.2"
+        "unplugin-vue-components": "^28.4.1",
+        "vite-plugin-pwa": "^0.21.2"
     },
     "eslintConfig": {
         "extends": [

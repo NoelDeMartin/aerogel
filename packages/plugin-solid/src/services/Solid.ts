@@ -25,12 +25,12 @@ import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { NullablePartial } from '@noeldemartin/utils';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
-import AuthenticationCancelledError from '@/errors/AuthenticationCancelledError';
-import { ContainerAlreadyInUse } from '@/errors';
-import { getAuthenticator } from '@/auth';
-import type Authenticator from '@/auth/Authenticator';
-import type { AuthenticatorName } from '@/auth';
-import type { AuthSession } from '@/auth/Authenticator';
+import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
+import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
+import { getAuthenticator } from '@aerogel/plugin-solid/auth';
+import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
+import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 
 import Service, { DEFAULT_STATE } from './Solid.state';
 
@@ -332,7 +332,7 @@ export class SolidService extends Service {
         });
     }
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         await Errors.booted;
 
         if (hasLocationQueryParameter('authenticator')) {

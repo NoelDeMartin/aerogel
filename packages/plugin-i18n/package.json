@@ -1,39 +1,31 @@
 {
     "name": "@aerogel/plugin-i18n",
-    "description": "Aerogel Internationalization plugin",
     "version": "0.0.0",
-    "main": "dist/aerogel-plugin-i18n.cjs.js",
-    "module": "dist/aerogel-plugin-i18n.esm.js",
-    "types": "dist/aerogel-plugin-i18n.d.ts",
+    "type": "module",
     "sideEffects": false,
-    "scripts": {
-        "build": "rm dist -rf && npm run build:js && npm run build:types",
-        "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types",
-        "publish-next": "noeldemartin-publish-next",
-        "lint": "noeldemartin-lint src"
+    "exports": {
+        "types": "./dist/aerogel-plugin-i18n.d.ts",
+        "default": "./dist/aerogel-plugin-i18n.js"
     },
-    "engines": {
-        "node": ">=18.x"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
-    },
-    "keywords": [
-        "javascript",
-        "aerogel"
+    "files": [
+        "src",
+        "dist"
     ],
-    "author": "Noel De Martin",
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    "author": "Noel De Martin",
+    "repository": "github:NoelDeMartin/aerogel",
+    "scripts": {
+        "build": "vite build",
+        "lint": "noeldemartin-lint src",
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose",
+        "verify": "noeldemartin-verify"
     },
     "peerDependencies": {
         "@aerogel/core": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
+        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
         "vue-i18n": "9.3.0-beta.19"
     },
     "devDependencies": {
@@ -41,7 +33,7 @@
     },
     "eslintConfig": {
         "extends": [
-            "@noeldemartin/eslint-config-typescript"
+            "@noeldemartin/eslint-config-vue"
         ]
     }
 }

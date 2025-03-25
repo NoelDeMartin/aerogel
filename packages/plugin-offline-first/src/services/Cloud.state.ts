@@ -4,8 +4,8 @@ import type { ErrorSource } from '@aerogel/core';
 import type { Nullable } from '@noeldemartin/utils';
 import type { SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
-import Migrate from '@/jobs/Migrate';
-import type Sync from '@/jobs/Sync';
+import Migrate from '@aerogel/plugin-offline-first/jobs/Migrate';
+import type Sync from '@aerogel/plugin-offline-first/jobs/Sync';
 
 export const CloudStatus = {
     Disconnected: 'disconnected',

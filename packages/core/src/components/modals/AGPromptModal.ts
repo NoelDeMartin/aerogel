@@ -2,10 +2,10 @@ import { computed } from 'vue';
 import type { ExtractPropTypes } from 'vue';
 import type { ObjectWithout, Pretty, SubPartial } from '@noeldemartin/utils';
 
-import { Colors } from '@/components/constants';
-import { enumProp, requiredStringProp, stringProp } from '@/utils';
-import { translateWithDefault } from '@/lang';
-import type { AcceptRefs } from '@/utils';
+import { Colors } from '@aerogel/core/components/constants';
+import { enumProp, requiredStringProp, stringProp } from '@aerogel/core/utils';
+import { translateWithDefault } from '@aerogel/core/lang';
+import type { AcceptRefs } from '@aerogel/core/utils';
 
 export const promptModalProps = {
     title: stringProp(),

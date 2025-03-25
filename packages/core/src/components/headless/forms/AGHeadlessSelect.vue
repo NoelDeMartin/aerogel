@@ -13,11 +13,11 @@ import { computed, inject, provide } from 'vue';
 import { toString, uuid } from '@noeldemartin/utils';
 import { Listbox } from '@headlessui/vue';
 
-import { mixedProp } from '@/utils/vue';
-import { translateWithDefault } from '@/lang/utils';
-import type Form from '@/forms/Form';
-import type { FormFieldValue } from '@/forms/Form';
-import type { ComponentProps } from '@/utils/vue';
+import { mixedProp } from '@aerogel/core/utils/vue';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
+import type Form from '@aerogel/core/forms/Form';
+import type { FormFieldValue } from '@aerogel/core/forms/Form';
+import type { ComponentProps } from '@aerogel/core/utils/vue';
 
 import { useSelectEmits, useSelectProps } from './AGHeadlessSelect';
 import type { IAGHeadlessSelect } from './AGHeadlessSelect';

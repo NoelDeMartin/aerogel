@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formatCodeBlock } from '@noeldemartin/utils';
 
-import type { AppInfo } from '@/lib/options';
+import type { AppInfo } from '@aerogel/vite/lib/options';
 
 import { renderHTML } from './html';
 

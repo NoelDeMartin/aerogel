@@ -1,15 +1,16 @@
 import type { App } from 'vue';
 
-import { bootServices } from '@/services';
-import { definePlugin } from '@/plugins';
+import { bootServices } from '@aerogel/core/services';
+import { definePlugin } from '@aerogel/core/plugins';
 
 import Errors from './Errors';
-import { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
+import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
 
 export * from './utils';
-export { Errors, ErrorSource, ErrorReport, ErrorReportLog };
+export { Errors };
 export { default as JobCancelledError } from './JobCancelledError';
 export { default as ServiceBootError } from './ServiceBootError';
+export type { ErrorSource, ErrorReport, ErrorReportLog };
 
 const services = { $errors: Errors };
 const frameworkHandler: ErrorHandler = (error) => {
@@ -37,12 +38,12 @@ export default definePlugin({
     },
 });
 
-declare module '@/bootstrap/options' {
+declare module '@aerogel/core/bootstrap/options' {
     export interface AerogelOptions {
         handleError?(error: ErrorSource): boolean;
     }
 }
 
-declare module '@/services' {
+declare module '@aerogel/core/services' {
     export interface Services extends ErrorsServices {}
 }

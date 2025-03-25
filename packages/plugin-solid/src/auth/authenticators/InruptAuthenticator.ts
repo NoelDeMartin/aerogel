@@ -1,3 +1,5 @@
+import AerogelSolid from 'virtual:aerogel-solid';
+
 import { Storage, after, fail } from '@noeldemartin/utils';
 import type { Fetch } from 'soukai-solid';
 import type {
@@ -8,11 +10,10 @@ import type {
     logout,
 } from '@inrupt/solid-client-authn-browser';
 
-import Authenticator from '@/auth/Authenticator';
-import AuthenticationFailedError from '@/errors/AuthenticationFailedError';
-import type { AuthSession } from '@/auth/Authenticator';
-
-import AerogelSolid from 'virtual:aerogel-solid';
+import AuthenticationFailedError from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
+import Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
+import Solid from '@aerogel/plugin-solid/services/Solid';
+import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 
 const STORAGE_KEY = 'inrupt-authenticator';
 
@@ -91,7 +92,6 @@ export default class InruptAuthenticator extends Authenticator {
         await this.initAuthenticatedFetch(this._fetch);
 
         try {
-            const { default: Solid } = await import('@/services/Solid');
             const user = await Solid.requireUserProfile(webId);
 
             await this.startSession({ user, loginUrl: webId });

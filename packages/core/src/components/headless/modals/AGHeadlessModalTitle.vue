@@ -8,8 +8,8 @@
 import { computed } from 'vue';
 import { DialogTitle } from '@headlessui/vue';
 
-import { injectReactiveOrFail, stringProp } from '@/utils/vue';
-import type { IAGModalContext } from '@/components/modals/AGModalContext';
+import { injectReactiveOrFail, stringProp } from '@aerogel/core/utils/vue';
+import type { IAGModalContext } from '@aerogel/core/components/modals/AGModalContext';
 
 const props = defineProps({ as: stringProp('h2') });
 

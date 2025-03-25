@@ -1,3 +1,3 @@
-import type { HasElement } from '@/components/interfaces';
+import type { HasElement } from '@aerogel/core/components/interfaces';
 
 export interface IAGHeadlessButton extends HasElement {}

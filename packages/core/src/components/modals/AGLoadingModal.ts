@@ -2,9 +2,9 @@ import { computed } from 'vue';
 import type { ExtractPropTypes } from 'vue';
 import type { ObjectWithout } from '@noeldemartin/utils';
 
-import { numberProp, stringProp } from '@/utils';
-import { translateWithDefault } from '@/lang';
-import type { AcceptRefs } from '@/utils';
+import { numberProp, stringProp } from '@aerogel/core/utils';
+import { translateWithDefault } from '@aerogel/core/lang';
+import type { AcceptRefs } from '@aerogel/core/utils';
 
 export const loadingModalProps = {
     title: stringProp(),

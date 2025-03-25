@@ -8,10 +8,12 @@ describe('i18n', () => {
 
     it('Initializes messages', async () => {
         // Arrange
+        const messages = new I18nMessages(import.meta.glob('@aerogel/plugin-i18n/testing/stubs/lang/*'));
+
         vi.mock('vue-i18n', () => ({ createI18n: vi.fn(() => ({ i18nMock: true })) }));
 
         // Act
-        await createAppI18n({ messages: new I18nMessages(import.meta.glob('@/testing/stubs/lang/*')) });
+        await createAppI18n({ messages });
 
         // Assert
         const mockedCreateI18n = vi.mocked(createI18n);

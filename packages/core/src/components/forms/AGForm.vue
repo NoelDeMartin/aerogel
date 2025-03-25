@@ -7,8 +7,8 @@
 <script setup lang="ts">
 import { provide, watchEffect } from 'vue';
 
-import { objectProp } from '@/utils/vue';
-import type Form from '@/forms/Form';
+import { objectProp } from '@aerogel/core/utils/vue';
+import type Form from '@aerogel/core/forms/Form';
 
 let offSubmit: (() => void) | undefined;
 const props = defineProps({ form: objectProp<Form>() });

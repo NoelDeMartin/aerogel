@@ -1,19 +1,19 @@
-import { beforeEach, vi } from 'vitest';
-import { resolve } from 'path';
-import { setTestingNamespace } from '@noeldemartin/utils';
+import { beforeAll, beforeEach, vi } from 'vitest';
+import { resolve } from 'node:path';
+import { setupFacadeMocks } from '@noeldemartin/testing';
 
-import File from '@/lib/File';
-import FileMock from '@/lib/File.mock';
-import Log from '@/lib/Log';
-import LogMock from '@/lib/Log.mock';
-import Shell from '@/lib/Shell';
-import ShellMock from '@/lib/Shell.mock';
+import ShellMock from '@aerogel/cli/lib/Shell.mock';
+import File from '@aerogel/cli/lib/File';
+import FileMock from '@aerogel/cli/lib/File.mock';
+import Log from '@aerogel/cli/lib/Log';
+import LogMock from '@aerogel/cli/lib/Log.mock';
+import Shell from '@aerogel/cli/lib/Shell';
 
-setTestingNamespace(vi);
-
-File.setMockFacade(FileMock);
-Log.setMockFacade(LogMock);
-Shell.setMockFacade(ShellMock);
+beforeAll(() => {
+    File.setMockFacade(FileMock);
+    Log.setMockFacade(LogMock);
+    Shell.setMockFacade(ShellMock);
+});
 
 beforeEach(() => {
     File.mock();
@@ -21,8 +21,16 @@ beforeEach(() => {
     Shell.mock();
 });
 
-vi.mock('@/lib/utils/app', async () => {
-    const original = (await vi.importActual('@/lib/utils/app')) as object;
+vi.mock('@noeldemartin/utils', async () => {
+    const original = (await vi.importActual('@noeldemartin/utils')) as object;
+
+    setupFacadeMocks();
+
+    return original;
+});
+
+vi.mock('@aerogel/cli/lib/utils/app', async () => {
+    const original = (await vi.importActual('@aerogel/cli/lib/utils/app')) as object;
 
     return {
         ...original,
@@ -31,8 +39,8 @@ vi.mock('@/lib/utils/app', async () => {
     };
 });
 
-vi.mock('@/lib/utils/edit', async () => {
-    const original = (await vi.importActual('@/lib/utils/edit')) as object;
+vi.mock('@aerogel/cli/lib/utils/edit', async () => {
+    const original = (await vi.importActual('@aerogel/cli/lib/utils/edit')) as object;
 
     return {
         ...original,
@@ -41,8 +49,8 @@ vi.mock('@/lib/utils/edit', async () => {
 });
 
 // TODO find out why these need to be mocked
-vi.mock('@/lib/utils/paths', async () => {
-    const original = (await vi.importActual('@/lib/utils/paths')) as object;
+vi.mock('@aerogel/cli/lib/utils/paths', async () => {
+    const original = (await vi.importActual('@aerogel/cli/lib/utils/paths')) as object;
 
     function basePath(path: string = '') {
         return resolve(__dirname, '../../', path);
@@ -62,10 +70,4 @@ vi.mock('@/lib/utils/paths', async () => {
         packagePath,
         templatePath,
     };
-});
-
-vi.mock('mustache', async () => {
-    const mustache = (await vi.importActual('mustache')) as { default: unknown };
-
-    return mustache.default;
 });

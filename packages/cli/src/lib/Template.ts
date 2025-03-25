@@ -1,8 +1,8 @@
-import { readFileSync } from 'fs';
-import { render } from 'mustache';
+import Mustache from 'mustache';
+import { readFileSync } from 'node:fs';
 import { toString } from '@noeldemartin/utils';
 
-import File from '@/lib/File';
+import File from '@aerogel/cli/lib/File';
 
 export default class Template {
 
@@ -32,7 +32,7 @@ export default class Template {
             const filePath =
                 destination + (relativePath.endsWith('.template') ? relativePath.slice(0, -9) : relativePath);
 
-            File.write(filePath, render(fileContents, replacements, undefined, ['<%', '%>']));
+            File.write(filePath, Mustache.render(fileContents, replacements, undefined, ['<%', '%>']));
             files.push(filePath);
         }
 
@@ -43,18 +43,21 @@ export default class Template {
         replacements: Record<string, unknown>,
         prefix: string = '',
     ): Record<string, string> {
-        return Object.entries(replacements).reduce((filenameReplacements, [key, value]) => {
-            if (typeof value === 'object') {
-                Object.assign(
-                    filenameReplacements,
-                    this.getFilenameReplacements(value as Record<string, unknown>, `${key}.`),
-                );
-            } else {
-                filenameReplacements[`[${prefix}${key}]`] = toString(value);
-            }
+        return Object.entries(replacements).reduce(
+            (filenameReplacements, [key, value]) => {
+                if (typeof value === 'object') {
+                    Object.assign(
+                        filenameReplacements,
+                        this.getFilenameReplacements(value as Record<string, unknown>, `${key}.`),
+                    );
+                } else {
+                    filenameReplacements[`[${prefix}${key}]`] = toString(value);
+                }
 
-            return filenameReplacements;
-        }, {} as Record<string, string>);
+                return filenameReplacements;
+            },
+            {} as Record<string, string>,
+        );
     }
 
 }

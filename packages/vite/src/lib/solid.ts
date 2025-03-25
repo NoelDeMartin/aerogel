@@ -1,7 +1,7 @@
 import type { Connect } from 'vite';
 import type { PluginContext } from 'rollup';
 
-import type { AppInfo, Options } from '@/lib/options';
+import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 
 import type { VirtualAerogelSolid } from 'virtual:aerogel-solid';
 

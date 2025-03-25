@@ -1,51 +1,36 @@
 {
     "name": "@aerogel/core",
-    "description": "The Lightest Solid",
     "version": "0.0.0",
-    "main": "dist/aerogel-core.cjs.js",
-    "module": "dist/aerogel-core.esm.js",
-    "types": "dist/aerogel-core.d.ts",
+    "type": "module",
     "sideEffects": false,
-    "scripts": {
-        "build": "rm dist -rf && npm run build:js && npm run build:types",
-        "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types",
-        "histoire": "histoire dev",
-        "lint": "noeldemartin-lint src",
-        "publish-next": "noeldemartin-publish-next",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose"
+    "exports": {
+        "types": "./dist/aerogel-core.d.ts",
+        "default": "./dist/aerogel-core.js"
     },
-    "engines": {
-        "node": ">=18.x"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
-    },
-    "keywords": [
-        "javascript",
-        "framework",
-        "solid"
+    "files": [
+        "src",
+        "dist"
     ],
-    "author": "Noel De Martin",
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    "author": "Noel De Martin",
+    "repository": "github:NoelDeMartin/aerogel",
+    "scripts": {
+        "build": "vite build && ./scripts/fix-types.sh",
+        "lint": "noeldemartin-lint src",
+        "test": "vitest --run",
+        "test:ci": "vitest --run --reporter verbose",
+        "verify": "noeldemartin-verify"
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.14",
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
-        "dompurify": "^3.0.3",
-        "marked": "^5.0.4",
+        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
+        "dompurify": "^3.2.4",
+        "marked": "^15.0.7",
         "pinia": "^2.1.6",
         "vue": "^3.3.0"
     },
     "devDependencies": {
         "@aerogel/vite": "*",
-        "@histoire/plugin-vue": "0.17.6",
-        "@types/dompurify": "^3.0.2",
-        "@types/marked": "^5.0.0",
         "tailwindcss": "^3.3.5"
     },
     "eslintConfig": {

@@ -16,9 +16,9 @@
 import { computed } from 'vue';
 import { DialogPanel } from '@headlessui/vue';
 
-import UI from '@/ui/UI';
-import { injectReactiveOrFail } from '@/utils/vue';
-import type { IAGModalContext } from '@/components/modals/AGModalContext';
+import UI from '@aerogel/core/ui/UI';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import type { IAGModalContext } from '@aerogel/core/components/modals/AGModalContext';
 
 import AGModalContext from '../../modals/AGModalContext.vue';
 

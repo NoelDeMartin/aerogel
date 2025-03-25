@@ -1,11 +1,11 @@
 import { arrayFrom } from '@noeldemartin/utils';
 
-import Command from '@/commands/Command';
-import File from '@/lib/File';
-import Log from '@/lib/Log';
-import Template from '@/lib/Template';
-import { templatePath } from '@/lib/utils/paths';
-import type { CommandOptions } from '@/commands/Command';
+import Command from '@aerogel/cli/commands/Command';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Template from '@aerogel/cli/lib/Template';
+import { templatePath } from '@aerogel/cli/lib/utils/paths';
+import type { CommandOptions } from '@aerogel/cli/commands/Command';
 
 export interface Options {
     story?: boolean;
@@ -13,10 +13,10 @@ export interface Options {
 
 export class GenerateOverridesCommand extends Command {
 
-    protected static command: string = 'generate:overrides';
-    protected static description: string = 'Generate AerogelJS component overrides';
+    protected static override command: string = 'generate:overrides';
+    protected static override description: string = 'Generate AerogelJS component overrides';
 
-    protected static options: CommandOptions = {
+    protected static override options: CommandOptions = {
         story: {
             description: 'Create overrides story using Histoire',
             type: 'boolean',
@@ -31,7 +31,7 @@ export class GenerateOverridesCommand extends Command {
         this.options = options;
     }
 
-    protected async run(): Promise<void> {
+    protected override async run(): Promise<void> {
         this.assertAerogelOrDirectory('src/components');
         this.assertHistoireInstalled();
 

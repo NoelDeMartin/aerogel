@@ -2,20 +2,20 @@ import { arrayFrom, formatCodeBlock, stringToCamelCase } from '@noeldemartin/uti
 import { Node, SyntaxKind } from 'ts-morph';
 import type { ObjectLiteralExpression, SourceFile } from 'ts-morph';
 
-import Command from '@/commands/Command';
-import File from '@/lib/File';
-import Log from '@/lib/Log';
-import Template from '@/lib/Template';
-import { app } from '@/lib/utils/app';
-import { templatePath } from '@/lib/utils/paths';
-import { editFiles, findDescendant } from '@/lib/utils/edit';
-import type { Editor } from '@/lib/Editor';
+import Command from '@aerogel/cli/commands/Command';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Template from '@aerogel/cli/lib/Template';
+import { app } from '@aerogel/cli/lib/utils/app';
+import { templatePath } from '@aerogel/cli/lib/utils/paths';
+import { editFiles, findDescendant } from '@aerogel/cli/lib/utils/edit';
+import type { Editor } from '@aerogel/cli/lib/Editor';
 
 export class GenerateServiceCommand extends Command {
 
-    protected static command: string = 'generate:service';
-    protected static description: string = 'Generate an AerogelJS Service';
-    protected static parameters: [string, string][] = [['name', 'Service name']];
+    protected static override command: string = 'generate:service';
+    protected static override description: string = 'Generate an AerogelJS Service';
+    protected static override parameters: [string, string][] = [['name', 'Service name']];
 
     private name: string;
 
@@ -25,7 +25,7 @@ export class GenerateServiceCommand extends Command {
         this.name = name;
     }
 
-    protected async run(): Promise<void> {
+    protected override async run(): Promise<void> {
         this.assertAerogelOrDirectory('src/services');
 
         const files = new Set<string>();

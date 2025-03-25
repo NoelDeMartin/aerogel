@@ -1,5 +1,5 @@
 import { JSError, isObject, toString } from '@noeldemartin/utils';
-import { translateWithDefault } from '@/lang/utils';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
 import type { ErrorSource } from './Errors.state';
 
 const handlers: ErrorHandler[] = [];

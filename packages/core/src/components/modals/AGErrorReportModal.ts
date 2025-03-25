@@ -2,10 +2,10 @@ import { computed, ref } from 'vue';
 import type { Component, ExtractPropTypes } from 'vue';
 import type { ObjectWithout, Pretty } from '@noeldemartin/utils';
 
-import { requiredArrayProp } from '@/utils/vue';
-import { translateWithDefault } from '@/lang';
-import type { AcceptRefs } from '@/utils/vue';
-import type { ErrorReport } from '@/errors';
+import { requiredArrayProp } from '@aerogel/core/utils/vue';
+import { translateWithDefault } from '@aerogel/core/lang';
+import type { AcceptRefs } from '@aerogel/core/utils/vue';
+import type { ErrorReport } from '@aerogel/core/errors';
 
 export interface IAGErrorReportModalButtonsDefaultSlotProps {
     id: string;

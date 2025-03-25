@@ -1,18 +1,18 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Events } from '@aerogel/core';
-import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
-import { FakeResponse, range } from '@noeldemartin/utils';
+import { FakeServer, fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
+import { range } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
 
-import Cloud from '@/services/Cloud';
-import { getRemoteClass } from '@/lib/mirroring';
+import Cloud from '@aerogel/plugin-offline-first/services/Cloud';
+import { getRemoteClass } from '@aerogel/plugin-offline-first/lib/mirroring';
 
-import Workspace from '@/testing/stubs/Workspace';
-import SolidMock from '@/testing/mocks/Solid.mock';
-import LegacyTaskSchema from '@/testing/stubs/LegacyTask.schema';
-import TaskSchema from '@/testing/stubs/Task.schema';
-import Task from '@/testing/stubs/Task';
-import { legacyTaskResponse, setupCloudTests, typeIndexResponse } from '@/testing/cloud';
+import Workspace from '@aerogel/plugin-offline-first/testing/stubs/Workspace';
+import SolidMock from '@aerogel/plugin-offline-first/testing/mocks/Solid.mock';
+import LegacyTaskSchema from '@aerogel/plugin-offline-first/testing/stubs/LegacyTask.schema';
+import TaskSchema from '@aerogel/plugin-offline-first/testing/stubs/Task.schema';
+import Task from '@aerogel/plugin-offline-first/testing/stubs/Task';
+import { legacyTaskResponse, setupCloudTests, typeIndexResponse } from '@aerogel/plugin-offline-first/testing/cloud';
 
 import Migrate from './Migrate';
 
@@ -24,7 +24,6 @@ describe('Migrate', () => {
         // Arrange
         const updates: number[] = [];
         const {
-            server,
             workspace,
             typeIndexUrl,
             documentUrls: [documentUrl],
@@ -48,11 +47,11 @@ describe('Migrate', () => {
         // Assert - Remote models
         expect(getRemoteClass(Task).rdfsClasses).toEqual(['https://schema.org/Action']);
 
-        expect(server.getRequests(documentUrl)).toHaveLength(3);
-        expect(server.getRequests(typeIndexUrl)).toHaveLength(3);
-        expect(server.getRequests()).toHaveLength(6);
+        expect(FakeServer.getRequests(documentUrl)).toHaveLength(3);
+        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(3);
+        expect(FakeServer.getRequests()).toHaveLength(6);
 
-        expect(server.getRequest('PATCH', documentUrl)?.body).toEqualSparql(`
+        expect(FakeServer.getRequest('PATCH', documentUrl)?.body).toEqualSparql(`
             DELETE DATA {
                 @prefix ical: <http://www.w3.org/2002/12/cal/ical#>.
 
@@ -70,7 +69,7 @@ describe('Migrate', () => {
             } .
         `);
 
-        expect(server.getRequest('PATCH', typeIndexUrl)?.body).toEqualSparql(`
+        expect(FakeServer.getRequest('PATCH', typeIndexUrl)?.body).toEqualSparql(`
             DELETE DATA {
                 @prefix solid: <http://www.w3.org/ns/solid/terms#>.
                 @prefix ical: <http://www.w3.org/2002/12/cal/ical#>.
@@ -189,18 +188,17 @@ async function setupMigration(count: number = 1) {
     }
 
     // Arrange - Prepare responses
-    const server = SolidMock.server;
     const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
     const typeIndex = typeIndexResponse({ [containerUrl]: '<http://www.w3.org/2002/12/cal/ical#Vtodo>' });
 
-    server.respondOnce(typeIndexUrl, typeIndex);
+    FakeServer.respondOnce(typeIndexUrl, typeIndex);
     documentUrls.forEach((documentUrl) => {
-        server.respondOnce(documentUrl, legacyTaskResponse('Migrate schemas'));
-        server.respondOnce(documentUrl, legacyTaskResponse('Migrate schemas'));
-        server.respondOnce(documentUrl, FakeResponse.success());
+        FakeServer.respondOnce(documentUrl, legacyTaskResponse('Migrate schemas'));
+        FakeServer.respondOnce(documentUrl, legacyTaskResponse('Migrate schemas'));
+        FakeServer.respondOnce(documentUrl);
     });
-    server.respondOnce(typeIndexUrl, typeIndex);
-    server.respondOnce(typeIndexUrl, FakeResponse.success());
+    FakeServer.respondOnce(typeIndexUrl, typeIndex);
+    FakeServer.respondOnce(typeIndexUrl);
 
     // Arrange - Prepare service
     Cloud.ready = true;
@@ -212,7 +210,6 @@ async function setupMigration(count: number = 1) {
     await Events.emit('application-ready');
 
     return {
-        server,
         workspace,
         typeIndexUrl,
         documentUrls,

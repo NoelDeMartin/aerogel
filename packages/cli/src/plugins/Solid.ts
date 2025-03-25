@@ -1,10 +1,10 @@
-import File from '@/lib/File';
-import Log from '@/lib/Log';
-import Plugin from '@/plugins/Plugin';
-import Shell from '@/lib/Shell';
-import { isLinkedLocalApp } from '@/lib/utils/app';
-import { packagePath } from '@/lib/utils/paths';
-import type { Editor } from '@/lib/Editor';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Plugin from '@aerogel/cli/plugins/Plugin';
+import Shell from '@aerogel/cli/lib/Shell';
+import { isLinkedLocalApp } from '@aerogel/cli/lib/utils/app';
+import { packagePath } from '@aerogel/cli/lib/utils/paths';
+import type { Editor } from '@aerogel/cli/lib/Editor';
 
 export class Solid extends Plugin {
 
@@ -12,7 +12,7 @@ export class Solid extends Plugin {
         super('solid');
     }
 
-    protected async updateFiles(editor: Editor): Promise<void> {
+    protected override async updateFiles(editor: Editor): Promise<void> {
         await this.updateTailwindConfig(editor, {
             content: isLinkedLocalApp()
                 ? `'${packagePath('plugin-solid')}/dist/**/*.js'`
@@ -24,7 +24,10 @@ export class Solid extends Plugin {
         await super.updateFiles(editor);
     }
 
-    protected async installNpmDependencies(): Promise<void> {
+    protected override async installNpmDependencies(): Promise<void> {
+        const shell = Shell;
+        shell;
+
         await Shell.run('npm install soukai-solid@next --save-exact');
         await Shell.run('npm install @noeldemartin/solid-utils@next --save-exact');
         await Shell.run('npm install @solid/community-server@7.1.3 --save-dev -E');

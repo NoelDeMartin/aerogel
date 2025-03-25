@@ -1,10 +1,12 @@
-import { bootServices } from '@/services';
-import { definePlugin } from '@/plugins';
+import { bootServices } from '@aerogel/core/services';
+import { definePlugin } from '@aerogel/core/plugins';
 
-import Lang, { LangProvider } from './Lang';
+import Lang from './Lang';
+import type { LangProvider } from './Lang';
 import { translate, translateWithDefault } from './utils';
 
-export { Lang, LangProvider, translate, translateWithDefault };
+export { Lang, translate, translateWithDefault };
+export type { LangProvider };
 
 const services = { $lang: Lang };
 
@@ -19,7 +21,7 @@ export default definePlugin({
     },
 });
 
-declare module '@/services' {
+declare module '@aerogel/core/services' {
     export interface Services extends LangServices {}
 }
 

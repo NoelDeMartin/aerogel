@@ -5,8 +5,13 @@ import type { JobListener, JobStatus } from '@aerogel/core';
 import type { Nullable } from '@noeldemartin/utils';
 import type { SolidModel, SolidTypeIndex } from 'soukai-solid';
 
-import { clearSchemaMigrations, getRemoteClass, getSchemaMigration, getSchemaMigrations } from '@/lib/mirroring';
-import { getContainerRegisteredClasses } from '@/lib/inference';
+import {
+    clearSchemaMigrations,
+    getRemoteClass,
+    getSchemaMigration,
+    getSchemaMigrations,
+} from '@aerogel/plugin-offline-first/lib/mirroring';
+import { getContainerRegisteredClasses } from '@aerogel/plugin-offline-first/lib/inference';
 
 import LoadsChildren from './mixins/LoadsChildren';
 import LoadsTypeIndex from './mixins/LoadsTypeIndex';

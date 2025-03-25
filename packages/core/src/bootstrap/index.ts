@@ -3,18 +3,18 @@ import Aerogel from 'virtual:aerogel';
 import { createApp } from 'vue';
 import type { App as AppInstance, Component } from 'vue';
 
-import App from '@/services/App';
-import directives from '@/directives';
-import errors from '@/errors';
-import Events from '@/services/Events';
-import lang from '@/lang';
-import services from '@/services';
-import testing from '@/testing';
-import ui from '@/ui';
-import { installPlugins } from '@/plugins';
-import type { AerogelOptions } from '@/bootstrap/options';
+import App from '@aerogel/core/services/App';
+import directives from '@aerogel/core/directives';
+import errors from '@aerogel/core/errors';
+import Events from '@aerogel/core/services/Events';
+import lang from '@aerogel/core/lang';
+import services from '@aerogel/core/services';
+import testing from '@aerogel/core/testing';
+import ui from '@aerogel/core/ui';
+import { installPlugins } from '@aerogel/core/plugins';
+import type { AerogelOptions } from '@aerogel/core/bootstrap/options';
 
-export { AerogelOptions };
+export type { AerogelOptions };
 
 export async function bootstrapApplication(app: AppInstance, options: AerogelOptions = {}): Promise<void> {
     const plugins = [testing, directives, errors, lang, services, ui, ...(options.plugins ?? [])];
@@ -42,7 +42,7 @@ export async function bootstrap(rootComponent: Component, options: AerogelOption
     await Events.emit('application-mounted');
 }
 
-declare module '@/services/Events' {
+declare module '@aerogel/core/services/Events' {
     export interface EventsPayload {
         'application-ready': void;
         'application-mounted': void;

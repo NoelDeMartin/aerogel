@@ -1,7 +1,7 @@
 import { customRef } from 'vue';
 import type { Ref } from 'vue';
 
-import { getElement } from '@/components/interfaces';
+import { getElement } from '@aerogel/core/components/interfaces';
 
 export function elementRef(): Ref<HTMLElement | undefined> {
     return customRef((track, trigger) => {

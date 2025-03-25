@@ -18,9 +18,9 @@
 <script setup lang="ts">
 import { ListboxOption } from '@headlessui/vue';
 
-import { injectReactiveOrFail, requiredMixedProp, stringProp } from '@/utils/vue';
-import type { ComponentProps } from '@/utils/vue';
-import type { FormFieldValue } from '@/forms/Form';
+import { injectReactiveOrFail, requiredMixedProp, stringProp } from '@aerogel/core/utils/vue';
+import type { ComponentProps } from '@aerogel/core/utils/vue';
+import type { FormFieldValue } from '@aerogel/core/forms/Form';
 
 import type { IAGHeadlessSelect } from './AGHeadlessSelect';
 

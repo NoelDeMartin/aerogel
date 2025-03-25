@@ -6,12 +6,12 @@ import type { Fetch } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { ErrorSource } from '@aerogel/core';
 
-import type { AuthenticatorName } from '@/auth';
+import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
 
 type ListenerEvent = keyof AuthenticatorListener;
 type ListenerEventPayload<
     Event extends ListenerEvent,
-    Callback = AuthenticatorListener[Event]
+    Callback = AuthenticatorListener[Event],
 > = Callback extends Closure ? GetClosureArgs<Callback> : never;
 
 export interface AuthSession {

@@ -5,8 +5,8 @@
 <script setup lang="ts">
 import { computed, provide, toRef, unref } from 'vue';
 
-import { numberProp, requiredObjectProp } from '@/utils/vue';
-import type { Modal } from '@/ui/UI.state';
+import { numberProp, requiredObjectProp } from '@aerogel/core/utils/vue';
+import type { Modal } from '@aerogel/core/ui/UI.state';
 
 import type { IAGModalContext } from './AGModalContext';
 

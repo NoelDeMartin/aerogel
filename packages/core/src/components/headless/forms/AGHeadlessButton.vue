@@ -8,8 +8,8 @@
 import { computed } from 'vue';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 
-import { booleanProp, objectProp, stringProp } from '@/utils/vue';
-import { elementRef } from '@/components/composition';
+import { booleanProp, objectProp, stringProp } from '@aerogel/core/utils/vue';
+import { elementRef } from '@aerogel/core/components/composition';
 
 import type { IAGHeadlessButton } from './AGHeadlessButton';
 

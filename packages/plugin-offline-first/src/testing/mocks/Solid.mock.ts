@@ -1,17 +1,15 @@
-import { fakeContainerUrl, fakeDocumentUrl } from '@noeldemartin/testing';
-import { FakeServer, facade, mock } from '@noeldemartin/utils';
+import { FakeServer, fakeContainerUrl, fakeDocumentUrl, mock } from '@noeldemartin/testing';
+import { facade } from '@noeldemartin/utils';
 import { SolidACLAuthorization, SolidDocument, SolidEngine, SolidTypeIndex } from 'soukai-solid';
 import { SolidService } from '@aerogel/plugin-solid';
 import type { AuthSession } from '@aerogel/plugin-solid';
 
 export class SolidMockService extends SolidService {
 
-    public readonly server: FakeServer = new FakeServer();
-
     constructor() {
         super();
 
-        const engine = new SolidEngine(this.server.fetch);
+        const engine = new SolidEngine(FakeServer.fetch);
 
         this.setState('session', {
             user: mock({
@@ -20,7 +18,7 @@ export class SolidMockService extends SolidService {
             }),
             authenticator: mock({
                 engine,
-                requireAuthenticatedFetch: () => this.server.fetch,
+                requireAuthenticatedFetch: () => FakeServer.fetch,
             }),
         } as unknown as AuthSession);
 

@@ -19,14 +19,14 @@ import {
     isRegisteredModel,
     isRemoteModel,
     trackModelsCollection,
-} from '@/lib/mirroring';
+} from '@aerogel/plugin-offline-first/lib/mirroring';
 import {
     getContainerRegisteredClasses,
     getContainerRelations,
     getRelatedAppModels,
     isDirtyOrHasDirtyChildren,
-} from '@/lib/inference';
-import DocumentsCache from '@/services/DocumentsCache';
+} from '@aerogel/plugin-offline-first/lib/inference';
+import DocumentsCache from '@aerogel/plugin-offline-first/services/DocumentsCache';
 
 import LoadsChildren from './mixins/LoadsChildren';
 import LoadsTypeIndex from './mixins/LoadsTypeIndex';
@@ -54,10 +54,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     protected models?: SolidModel[];
     protected dirtyRemoteModels?: SolidModel[];
     protected rootLocalModels: SolidModel[];
-    protected localModels: ObjectsMap<SolidModel>;
     protected tombstones: ObjectsMap<Tombstone>;
     protected malformedDocuments: Set<string>;
     protected documentsModifiedAt: Record<string, Date>;
+    protected override localModels: ObjectsMap<SolidModel>;
 
     constructor(models?: SolidModel[]) {
         super();
@@ -97,7 +97,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
     }
 
-    protected getInitialStatus(): SyncJobStatus {
+    protected override getInitialStatus(): SyncJobStatus {
         return {
             root: true,
             completed: false,
@@ -105,7 +105,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         };
     }
 
-    protected calculateCurrentProgress(status?: JobStatus): number {
+    protected override calculateCurrentProgress(status?: JobStatus): number {
         status ??= this.status;
 
         if (isRootStatus(status)) {

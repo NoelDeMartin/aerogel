@@ -53,15 +53,15 @@ export class RouterService extends Service {
         router.beforeEach((to) => this.onEnterRoute(to.path, to.params));
     }
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         Events.on('auth:before-login', () => this.storeFlashRoute());
         Events.on('auth:login', () => this.restoreFlashRoute());
         Events.on('purge-storage', () => this.push({ name: 'home' }));
     }
 
-    protected __get(property: string): unknown {
+    protected override __get(property: string): unknown {
         return this.router.value
-            ? super.__get(property) ?? Reflect.get(this.router.value, property)
+            ? (super.__get(property) ?? Reflect.get(this.router.value, property))
             : super.__get(property);
     }
 

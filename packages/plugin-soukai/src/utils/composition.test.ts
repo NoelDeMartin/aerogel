@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { InMemoryEngine, bootModels, setEngine } from 'soukai';
 import { ref, watchEffect } from 'vue';
 
-import User from '@/testing/stubs/models/User';
+import User from '@aerogel/plugin-soukai/testing/stubs/models/User';
 
 import { computedModels } from './composition';
 

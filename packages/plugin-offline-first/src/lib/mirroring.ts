@@ -17,8 +17,8 @@ import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
-import SyncQueue from '@/lib/SyncQueue';
-import { getContainerRelations, getRelatedAppModels } from '@/lib/inference';
+import SyncQueue from '@aerogel/plugin-offline-first/lib/SyncQueue';
+import { getContainerRelations, getRelatedAppModels } from '@aerogel/plugin-offline-first/lib/inference';
 
 interface CloneOptions {
     clean?: boolean;
@@ -281,14 +281,14 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
     };
     const RemoteClass = class extends LocalClass {
 
-        public static timestamps = false;
-        public static history = false;
+        public static override timestamps = false;
+        public static override history = false;
 
-        protected initialize(attributes: Attributes, exists: boolean): void {
+        protected override initialize(attributes: Attributes, exists: boolean): void {
             withLocalHistoryConfig(this._proxy.static(), () => super.initialize(attributes, exists));
         }
 
-        protected initializeRelations(): void {
+        protected override initializeRelations(): void {
             super.initializeRelations();
 
             for (const relation of Object.values(this._relations)) {
@@ -300,7 +300,7 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
             }
         }
 
-        public fixMalformedAttributes(): void {
+        public override fixMalformedAttributes(): void {
             withLocalHistoryConfig(this.static(), () => super.fixMalformedAttributes());
         }
     

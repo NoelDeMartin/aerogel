@@ -22,7 +22,7 @@ export class DocumentsCacheService extends Service {
         await this.cache.delete(documentUrl);
     }
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         Events.on('auth:logout', async () => {
             await this.cache.clear();
 

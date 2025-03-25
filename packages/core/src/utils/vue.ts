@@ -1,4 +1,4 @@
-import { fail } from '@noeldemartin/utils';
+import { fail, toString } from '@noeldemartin/utils';
 import { computed, inject, reactive, ref, watch } from 'vue';
 import type { Directive, InjectionKey, MaybeRef, PropType, Ref, UnwrapNestedRefs } from 'vue';
 
@@ -69,11 +69,11 @@ export function injectReactiveOrFail<T extends object>(
     key: InjectionKey<T> | string,
     errorMessage?: string,
 ): UnwrapNestedRefs<T> {
-    return injectReactive(key) ?? fail(errorMessage ?? `Could not resolve '${key}' injection key`);
+    return injectReactive(key) ?? fail(errorMessage ?? `Could not resolve '${toString(key)}' injection key`);
 }
 
 export function injectOrFail<T>(key: InjectionKey<T> | string, errorMessage?: string): T {
-    return inject(key) ?? fail(errorMessage ?? `Could not resolve '${key}' injection key`);
+    return inject(key) ?? fail(errorMessage ?? `Could not resolve '${toString(key)}' injection key`);
 }
 
 export function listenerProp<T extends Function = Function>(): OptionalProp<T | null> {

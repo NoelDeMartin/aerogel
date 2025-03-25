@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest';
 import { formatCodeBlock } from '@noeldemartin/utils';
 
-import FileMock from '@/lib/File.mock';
+import FileMock from '@aerogel/cli/lib/File.mock';
 
 import { GenerateModelCommand } from './generate-model';
 

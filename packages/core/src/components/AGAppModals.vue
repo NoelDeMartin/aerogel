@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import UI from '@/ui/UI';
+import UI from '@aerogel/core/ui/UI';
 
 import AGModalContext from './modals/AGModalContext.vue';
 

@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { stringProp } from '@/utils/vue';
+import { stringProp } from '@aerogel/core/utils/vue';
 
 defineProps({ as: stringProp('span') });
 

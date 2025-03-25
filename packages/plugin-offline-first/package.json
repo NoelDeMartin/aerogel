@@ -1,35 +1,25 @@
 {
     "name": "@aerogel/plugin-offline-first",
-    "description": "Aerogel Offline First plugin",
-    "version": "0.0.0",
-    "main": "dist/aerogel-plugin-offline-first.cjs.js",
-    "module": "dist/aerogel-plugin-offline-first.esm.js",
-    "types": "dist/aerogel-plugin-offline-first.d.ts",
+    "version": "0.0.1",
+    "type": "module",
     "sideEffects": false,
+    "exports": {
+        "types": "./dist/aerogel-plugin-offline-first.d.ts",
+        "default": "./dist/aerogel-plugin-offline-first.js"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "rm dist -rf && npm run build:js && npm run build:types",
-        "build:js": "noeldemartin-build-javascript",
-        "build:types": "noeldemartin-build-types",
-        "publish-next": "noeldemartin-publish-next",
+        "build": "vite build",
         "lint": "noeldemartin-lint src",
         "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose"
-    },
-    "engines": {
-        "node": ">=18.x"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
-    },
-    "keywords": [
-        "javascript",
-        "aerogel"
-    ],
-    "author": "Noel De Martin",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+        "test:ci": "vitest --run --reporter verbose",
+        "verify": "noeldemartin-verify"
     },
     "peerDependencies": {
         "@aerogel/core": "*",
@@ -39,13 +29,18 @@
         "soukai-solid": "*"
     },
     "dependencies": {
-        "@noeldemartin/solid-utils": "0.5.0-next.612e9e93903ec33bbcba7105ed2a8580ed2d754c",
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
-        "idb": "^8.0.1",
+        "@noeldemartin/solid-utils": "0.6.0-next.cfba421315c47e4aa5a72990714376d9dcd1ffff",
+        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
+        "idb": "^8.0.2",
         "vue": "^3.3.0"
     },
     "devDependencies": {
-        "fake-indexeddb": "^6.0.0"
+        "@aerogel/core": "*",
+        "@aerogel/plugin-solid": "*",
+        "@aerogel/plugin-soukai": "*",
+        "fake-indexeddb": "^6.0.0",
+        "soukai": "*",
+        "soukai-solid": "*"
     },
     "eslintConfig": {
         "extends": [

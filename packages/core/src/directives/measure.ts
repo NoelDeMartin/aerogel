@@ -1,4 +1,4 @@
-import { defineDirective } from '@/utils/vue';
+import { defineDirective } from '@aerogel/core/utils/vue';
 import { tap } from '@noeldemartin/utils';
 
 const resizeObservers: WeakMap<HTMLElement, ResizeObserver> = new WeakMap();

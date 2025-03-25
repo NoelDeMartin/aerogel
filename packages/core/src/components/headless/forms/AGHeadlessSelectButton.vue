@@ -10,8 +10,8 @@
 <script setup lang="ts">
 import { ListboxButton } from '@headlessui/vue';
 
-import { injectReactiveOrFail, stringProp } from '@/utils/vue';
-import type { ComponentProps } from '@/utils/vue';
+import { injectReactiveOrFail, stringProp } from '@aerogel/core/utils/vue';
+import type { ComponentProps } from '@aerogel/core/utils/vue';
 
 import type { IAGHeadlessSelect } from './AGHeadlessSelect';
 

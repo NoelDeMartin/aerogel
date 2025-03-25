@@ -1,6 +1,6 @@
 import type { Directive } from 'vue';
 
-import { definePlugin } from '@/plugins';
+import { definePlugin } from '@aerogel/core/plugins';
 
 import initialFocus from './initial-focus';
 import measure from './measure';
@@ -25,7 +25,7 @@ export default definePlugin({
     },
 });
 
-declare module '@/bootstrap/options' {
+declare module '@aerogel/core/bootstrap/options' {
     export interface AerogelOptions {
         directives?: Record<string, Directive>;
     }

@@ -1,16 +1,16 @@
 import { JSError, facade, isObject, objectWithoutEmpty, toString } from '@noeldemartin/utils';
 
-import App from '@/services/App';
-import ServiceBootError from '@/errors/ServiceBootError';
-import UI, { UIComponents } from '@/ui/UI';
-import { translateWithDefault } from '@/lang/utils';
+import App from '@aerogel/core/services/App';
+import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
+import UI, { UIComponents } from '@aerogel/core/ui/UI';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
 
 import Service from './Errors.state';
-import { Colors } from '@/components/constants';
-import { Events } from '@/services';
-import type { AGErrorReportModalProps } from '@/components/modals/AGErrorReportModal';
+import { Colors } from '@aerogel/core/components/constants';
+import { Events } from '@aerogel/core/services';
+import type { AGErrorReportModalProps } from '@aerogel/core/components/modals/AGErrorReportModal';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
-import type { ModalComponent } from '@/ui/UI.state';
+import type { ModalComponent } from '@aerogel/core/ui/UI.state';
 
 export class ErrorsService extends Service {
 
@@ -178,7 +178,7 @@ export class ErrorsService extends Service {
 
 export default facade(ErrorsService);
 
-declare module '@/services/Events' {
+declare module '@aerogel/core/services/Events' {
     export interface EventsPayload {
         error: { error: ErrorSource; message?: string };
     }

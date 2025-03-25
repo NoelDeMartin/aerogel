@@ -1,7 +1,8 @@
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'node:fs';
+
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 
-import type { AppInfo } from '@/lib/options';
+import type { AppInfo } from '@aerogel/vite/lib/options';
 
 interface PackageJson {
     version: string;

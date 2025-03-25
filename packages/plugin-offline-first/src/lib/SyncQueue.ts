@@ -2,7 +2,7 @@ import { after, arrayRemove, facade, required } from '@noeldemartin/utils';
 import { App } from '@aerogel/core';
 import { type SolidModel, isContainer } from 'soukai-solid';
 
-import { getContainedModels } from '@/lib/inference';
+import { getContainedModels } from '@aerogel/plugin-offline-first/lib/inference';
 
 const Cloud = required(() => App.service('$cloud'));
 

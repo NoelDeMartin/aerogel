@@ -8,28 +8,28 @@ export class FileMockService extends FileService {
 
     private virtualFilesystem: Record<string, string | { directory: true }> = {};
 
-    public exists(path: string): boolean {
+    public override exists(path: string): boolean {
         return super.exists(path) || path in this.virtualFilesystem;
     }
 
-    public isDirectory(path: string): boolean {
+    public override isDirectory(path: string): boolean {
         return (
             super.isDirectory(path) ||
             (path in this.virtualFilesystem && typeof this.virtualFilesystem[path] === 'object')
         );
     }
 
-    public isFile(path: string): boolean {
+    public override isFile(path: string): boolean {
         return (
             super.isFile(path) || (path in this.virtualFilesystem && typeof this.virtualFilesystem[path] === 'string')
         );
     }
 
-    public makeDirectory(path: string): void {
+    public override makeDirectory(path: string): void {
         this.virtualFilesystem[path] = { directory: true };
     }
 
-    public read(path: string): string | null {
+    public override read(path: string): string | null {
         if (path in this.virtualFilesystem && typeof this.virtualFilesystem[path] === 'string') {
             return this.virtualFilesystem[path] as string;
         }
@@ -37,7 +37,7 @@ export class FileMockService extends FileService {
         return super.read(path);
     }
 
-    public write(path: string, contents: string): void {
+    public override write(path: string, contents: string): void {
         this.virtualFilesystem[path] = contents;
     }
 

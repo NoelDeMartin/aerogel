@@ -1,60 +1,55 @@
 {
     "name": "@aerogel/cypress",
-    "description": "Aerogel Cypress plugin",
     "version": "0.0.0",
-    "main": "dist/index.js",
-    "types": "dist/aerogel-cypress.d.ts",
-    "sideEffects": false,
-    "scripts": {
-        "build": "rm -rf dist && npm run build:support && npm run build:plugin && npm run build:types",
-        "build:plugin": "esbuild src/plugin/index.ts --format=cjs --bundle --sourcemap --outfile=dist/plugin.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/plugin",
-        "build:support": "esbuild src/support/index.ts --format=cjs --bundle --sourcemap --outfile=dist/index.js --external:@noeldemartin/utils --external:cypress-solid --external:soukai --external:@simonsmith/cypress-image-snapshot/command",
-        "build:types": "noeldemartin-build-types && ./scripts/fix-types.sh && ./scripts/build-config-types.js",
-        "publish-next": "noeldemartin-publish-next",
-        "lint": "noeldemartin-lint src"
+    "type": "module",
+    "sideEffects": [
+        "./dist/support.js"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/aerogel-cypress.d.ts",
+            "default": "./dist/aerogel-cypress.js"
+        },
+        "./config": {
+            "types": "./dist/config.d.ts",
+            "default": "./dist/config.js"
+        },
+        "./support": {
+            "types": "./dist/support.d.ts",
+            "default": "./dist/support.js"
+        }
     },
     "files": [
-        "dist",
         "src",
-        "config.d.ts",
-        "config.js",
-        "support.d.ts",
-        "support.js"
+        "dist"
     ],
-    "engines": {
-        "node": ">=18.x"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/NoelDeMartin/aerogeljs.git"
-    },
-    "keywords": [
-        "javascript",
-        "aerogel",
-        "cypress"
-    ],
-    "author": "Noel De Martin",
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/NoelDeMartin/aerogeljs/issues"
+    "author": "Noel De Martin",
+    "repository": "github:NoelDeMartin/aerogel",
+    "scripts": {
+        "build": "vite build && ./scripts/fix-types.sh",
+        "lint": "noeldemartin-lint src",
+        "verify": "noeldemartin-verify"
     },
     "peerDependencies": {
-        "cypress": "*",
-        "soukai": "*"
+        "cypress": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.6.0-next.036a147180df61c600c4599df30816ac860dbf06",
+        "@noeldemartin/utils": "0.7.0-next.5c206fa7d2c7aa3aa156d38935403ee1e4866f59",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
-        "cypress-solid": "0.1.4-next.53f94118897ff3e1f7008e3331f57979ef5d965a",
+        "cypress-solid": "0.2.0-next.ec830621f3bee773a71c83209fbbdf2de126e886",
         "idb": "^8.0.2"
     },
     "devDependencies": {
         "@aerogel/plugin-soukai": "*",
-        "esbuild": "^0.19.4"
+        "soukai": "0.6.0-next.99b8d2509c34fc253150d47a9deed61332bc3065"
     },
     "eslintConfig": {
         "extends": [
             "@noeldemartin/eslint-config-typescript"
         ]
+    },
+    "prettier": {
+        "printWidth": 120
     }
 }

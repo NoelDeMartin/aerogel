@@ -17,10 +17,10 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue';
 
-import { injectReactiveOrFail, stringProp } from '@/utils/vue';
-import type { __SetsElement } from '@/components/interfaces';
-import type { FormFieldValue } from '@/forms/Form';
-import type { IAGHeadlessInput } from '@/components/headless/forms/AGHeadlessInput';
+import { injectReactiveOrFail, stringProp } from '@aerogel/core/utils/vue';
+import type { __SetsElement } from '@aerogel/core/components/interfaces';
+import type { FormFieldValue } from '@aerogel/core/forms/Form';
+import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 
 import { onFormFocus } from './composition';
 

@@ -1,6 +1,6 @@
 import { PromisedValue, facade, tap } from '@noeldemartin/utils';
 
-import Service from '@/services/Service';
+import Service from '@aerogel/core/services/Service';
 
 export class CacheService extends Service {
 

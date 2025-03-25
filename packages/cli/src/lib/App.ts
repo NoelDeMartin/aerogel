@@ -1,10 +1,10 @@
 import { stringToSlug } from '@noeldemartin/utils';
 
-import File from '@/lib/File';
-import Log from '@/lib/Log';
-import Template from '@/lib/Template';
-import { packNotFound, packagePackPath, packagePath, templatePath } from '@/lib/utils/paths';
-import { Editor } from '@/lib/Editor';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Template from '@aerogel/cli/lib/Template';
+import { packNotFound, packagePackPath, packagePath, templatePath } from '@aerogel/cli/lib/utils/paths';
+import { Editor } from '@aerogel/cli/lib/Editor';
 
 interface Dependencies {
     aerogelCli: string;
@@ -22,7 +22,10 @@ export interface Options {
 
 export default class App {
 
-    constructor(protected name: string, protected options: Options = {}) {}
+    constructor(
+        protected name: string,
+        protected options: Options = {},
+    ) {}
 
     public create(path: string): void {
         if (File.exists(path) && (!File.isDirectory(path) || !File.isEmptyDirectory(path))) {

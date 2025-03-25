@@ -11,9 +11,9 @@ import {
 import type { Constructor, Nullable } from '@noeldemartin/utils';
 import type { Store } from 'pinia';
 
-import ServiceBootError from '@/errors/ServiceBootError';
-import { defineServiceStore } from '@/services/store';
-import type { Unref } from '@/utils/vue';
+import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
+import { defineServiceStore } from '@aerogel/core/services/store';
+import type { Unref } from '@aerogel/core/utils/vue';
 
 export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 export type DefaultServiceState = any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -32,7 +32,7 @@ export type StateWatchers<TService extends Service, TState extends ServiceState>
 export type ServiceWithState<
     State extends ServiceState = ServiceState,
     ComputedState extends ServiceState = {},
-    ServiceStorage = Partial<State>
+    ServiceStorage = Partial<State>,
 > = Constructor<Unref<State>> &
     Constructor<ComputedState> &
     Constructor<Service<Unref<State>, ComputedState, Unref<ServiceStorage>>>;
@@ -40,7 +40,7 @@ export type ServiceWithState<
 export function defineServiceState<
     State extends ServiceState = ServiceState,
     ComputedState extends ServiceState = {},
-    ServiceStorage = Partial<State>
+    ServiceStorage = Partial<State>,
 >(options: {
     name: string;
     initialState: State | (() => State);
@@ -52,17 +52,17 @@ export function defineServiceState<
 }): ServiceWithState<State, ComputedState, ServiceStorage> {
     return class extends Service<Unref<State>, ComputedState, ServiceStorage> {
 
-        public static persist = (options.persist as string[]) ?? [];
+        public static override persist = (options.persist as string[]) ?? [];
 
-        protected usesStore(): boolean {
+        protected override usesStore(): boolean {
             return true;
         }
 
-        protected getName(): string | null {
+        protected override getName(): string | null {
             return options.name ?? null;
         }
 
-        protected getInitialState(): Unref<State> {
+        protected override getInitialState(): Unref<State> {
             if (typeof options.initialState === 'function') {
                 return options.initialState();
             }
@@ -86,19 +86,19 @@ export function defineServiceState<
             }, {} as Unref<State>);
         }
 
-        protected getComputedStateDefinition(): ComputedStateDefinition<Unref<State>, ComputedState> {
+        protected override getComputedStateDefinition(): ComputedStateDefinition<Unref<State>, ComputedState> {
             return (options.computed ?? {}) as ComputedStateDefinition<Unref<State>, ComputedState>;
         }
 
-        protected getStateWatchers(): StateWatchers<Service, Unref<State>> {
+        protected override getStateWatchers(): StateWatchers<Service, Unref<State>> {
             return (options.watch ?? {}) as StateWatchers<Service, Unref<State>>;
         }
 
-        protected serializePersistedState(state: Partial<State>): ServiceStorage {
+        protected override serializePersistedState(state: Partial<State>): ServiceStorage {
             return options.serialize?.(state) ?? (state as ServiceStorage);
         }
 
-        protected deserializePersistedState(state: ServiceStorage): Partial<State> {
+        protected override deserializePersistedState(state: ServiceStorage): Partial<State> {
             return options.restore?.(state) ?? (state as Partial<State>);
         }
     
@@ -108,7 +108,7 @@ export function defineServiceState<
 export default class Service<
     State extends ServiceState = DefaultServiceState,
     ComputedState extends ServiceState = {},
-    ServiceStorage = Partial<State>
+    ServiceStorage = Partial<State>,
 > extends MagicObject {
 
     public static persist: string[] = [];
@@ -142,9 +142,9 @@ export default class Service<
         return this._booted;
     }
 
-    public static<T extends typeof Service>(): T;
-    public static<T extends typeof Service, K extends keyof T>(property: K): T[K];
-    public static<T extends typeof Service, K extends keyof T>(property?: K): T | T[K] {
+    public override static<T extends typeof Service>(): T;
+    public override static<T extends typeof Service, K extends keyof T>(property: K): T[K];
+    public override static<T extends typeof Service, K extends keyof T>(property?: K): T | T[K] {
         return super.static<T, K>(property as K);
     }
 
@@ -182,10 +182,10 @@ export default class Service<
         const store = this._store as any;
 
         if (property) {
-            return store ? store[property] : undefined;
+            return store ? store[property] : (undefined as State[P]);
         }
 
-        return store ? store : {};
+        return store ? store : ({} as State);
     }
 
     public setState<P extends keyof State>(property: P, value: State[P]): void;
@@ -219,7 +219,7 @@ export default class Service<
         this.onPersistentStateUpdated(state);
     }
 
-    protected __get(property: string): unknown {
+    protected override __get(property: string): unknown {
         if (this.hasState(property)) {
             return this.getState(property);
         }
@@ -227,7 +227,7 @@ export default class Service<
         return super.__get(property);
     }
 
-    protected __set(property: string, value: unknown): void {
+    protected override __set(property: string, value: unknown): void {
         this.setState({ [property]: value } as Partial<State>);
     }
 

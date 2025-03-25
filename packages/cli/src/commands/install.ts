@@ -1,20 +1,19 @@
-import Command from '@/commands/Command';
-import Log from '@/lib/Log';
-import { Histoire } from '@/plugins/Histoire';
-import { Solid } from '@/plugins/Solid';
-import { Soukai } from '@/plugins/Soukai';
-import type Plugin from '@/plugins/Plugin';
+import Command from '@aerogel/cli/commands/Command';
+import Log from '@aerogel/cli/lib/Log';
+import { Solid } from '@aerogel/cli/plugins/Solid';
+import { Soukai } from '@aerogel/cli/plugins/Soukai';
+import type Plugin from '@aerogel/cli/plugins/Plugin';
 
-const plugins = [new Soukai(), new Solid(), new Histoire()].reduce(
+const plugins = [new Soukai(), new Solid()].reduce(
     (pluginsObject, plugin) => Object.assign(pluginsObject, { [plugin.name]: plugin }),
     {} as Record<string, Plugin>,
 );
 
 export class InstallCommand extends Command {
 
-    protected static command: string = 'install';
-    protected static description: string = 'Install an AerogelJS plugin';
-    protected static parameters: [string, string][] = [['plugin', 'Plugin to install']];
+    protected static override command: string = 'install';
+    protected static override description: string = 'Install an AerogelJS plugin';
+    protected static override parameters: [string, string][] = [['plugin', 'Plugin to install']];
 
     private plugin: Plugin;
 
@@ -26,7 +25,7 @@ export class InstallCommand extends Command {
             Log.fail(`Plugin '${plugin}' doesn't exist. Available plugins: ${Object.keys(plugins).join(', ')}`);
     }
 
-    protected async run(): Promise<void> {
+    protected override async run(): Promise<void> {
         await this.plugin.install();
     }
 

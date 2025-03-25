@@ -7,7 +7,7 @@ export class ShellServiceMock extends ShellService {
 
     private history: string[] = [];
 
-    public async run(command: string): Promise<void> {
+    public override async run(command: string): Promise<void> {
         this.history.push(command.trim());
     }
 

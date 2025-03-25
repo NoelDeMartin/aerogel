@@ -52,7 +52,7 @@ export class LangService extends Service {
         return navigator.languages.find((locale) => locales.includes(locale)) ?? 'en';
     }
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         if (!globalThis.document) {
             return;
         }

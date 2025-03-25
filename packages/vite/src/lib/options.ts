@@ -1,6 +1,7 @@
-import type { ClientIDDocument } from '@/lib/solid';
+import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
 
 export interface Options {
+    lib?: boolean;
     name?: string;
     description?: string;
     themeColor?: string;

@@ -14,10 +14,10 @@ import { computed, ref, toRef } from 'vue';
 import { Dialog } from '@headlessui/vue';
 import type { VNode } from 'vue';
 
-import Events from '@/services/Events';
-import { useEvent } from '@/utils/composition/events';
-import { injectReactiveOrFail } from '@/utils/vue';
-import type { IAGModalContext } from '@/components/modals/AGModalContext';
+import Events from '@aerogel/core/services/Events';
+import { useEvent } from '@aerogel/core/utils/composition/events';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import type { IAGModalContext } from '@aerogel/core/components/modals/AGModalContext';
 
 import { useModalProps } from './AGHeadlessModal';
 import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from './AGHeadlessModal';

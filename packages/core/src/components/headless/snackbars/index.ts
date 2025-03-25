@@ -1,9 +1,9 @@
 import type { ExtractPropTypes } from 'vue';
 import type { ObjectWithoutEmpty } from '@noeldemartin/utils';
 
-import UI from '@/ui/UI';
-import { arrayProp, enumProp, requiredStringProp } from '@/utils/vue';
-import { Colors } from '@/components/constants';
+import UI from '@aerogel/core/ui/UI';
+import { arrayProp, enumProp, requiredStringProp } from '@aerogel/core/utils/vue';
+import { Colors } from '@aerogel/core/components/constants';
 import { objectWithout } from '@noeldemartin/utils';
 
 export { default as AGHeadlessSnackbar } from './AGHeadlessSnackbar.vue';

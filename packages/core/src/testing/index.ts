@@ -1,7 +1,7 @@
 import type { GetClosureArgs } from '@noeldemartin/utils';
 
-import Events from '@/services/Events';
-import { definePlugin } from '@/plugins';
+import Events from '@aerogel/core/services/Events';
+import { definePlugin } from '@aerogel/core/plugins';
 
 export interface AerogelTestingRuntime {
     on: (typeof Events)['on'];

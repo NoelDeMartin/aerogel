@@ -2,8 +2,8 @@ import Aerogel from 'virtual:aerogel';
 
 import type { App } from 'vue';
 
-import { defineServiceState } from '@/services/Service';
-import type { Plugin } from '@/plugins/Plugin';
+import { defineServiceState } from '@aerogel/core/services/Service';
+import type { Plugin } from '@aerogel/core/plugins/Plugin';
 
 export default defineServiceState({
     name: 'app',

@@ -2,14 +2,14 @@ import { arrayFilter, arrayFrom, stringToSlug } from '@noeldemartin/utils';
 import { Node, SyntaxKind } from 'ts-morph';
 import type { ArrayLiteralExpression, CallExpression, SourceFile } from 'ts-morph';
 
-import Command from '@/commands/Command';
-import File from '@/lib/File';
-import Log from '@/lib/Log';
-import Template from '@/lib/Template';
-import { app } from '@/lib/utils/app';
-import { editFiles, findDescendant } from '@/lib/utils/edit';
-import { templatePath } from '@/lib/utils/paths';
-import type { CommandOptions } from '@/commands/Command';
+import Command from '@aerogel/cli/commands/Command';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Template from '@aerogel/cli/lib/Template';
+import { app } from '@aerogel/cli/lib/utils/app';
+import { editFiles, findDescendant } from '@aerogel/cli/lib/utils/edit';
+import { templatePath } from '@aerogel/cli/lib/utils/paths';
+import type { CommandOptions } from '@aerogel/cli/commands/Command';
 
 export interface Options {
     button?: boolean;
@@ -20,13 +20,13 @@ export interface Options {
 
 export class GenerateComponentCommand extends Command {
 
-    protected static command: string = 'generate:component';
-    protected static description: string = 'Generate an AerogelJS Component';
-    protected static parameters: [string, string][] = [
+    protected static override command: string = 'generate:component';
+    protected static override description: string = 'Generate an AerogelJS Component';
+    protected static override parameters: [string, string][] = [
         ['path', 'Component path (relative to components folder; extension not necessary)'],
     ];
 
-    protected static options: CommandOptions = {
+    protected static override options: CommandOptions = {
         button: {
             description: 'Create a custom button',
             type: 'boolean',
@@ -55,7 +55,7 @@ export class GenerateComponentCommand extends Command {
         this.options = options;
     }
 
-    protected async validate(): Promise<void> {
+    protected override async validate(): Promise<void> {
         const components = arrayFilter([this.options.button, this.options.input, this.options.checkbox]).length;
 
         if (components > 1) {
@@ -63,7 +63,7 @@ export class GenerateComponentCommand extends Command {
         }
     }
 
-    protected async run(): Promise<void> {
+    protected override async run(): Promise<void> {
         this.assertAerogelOrDirectory('src/components');
         this.assertHistoireInstalled();
 

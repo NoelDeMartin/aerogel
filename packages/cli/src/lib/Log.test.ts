@@ -1,11 +1,11 @@
-import { bold, hex } from 'chalk';
+import chalk from 'chalk';
 import { describe, it } from 'vitest';
 
-import LogMock from '@/lib/Log.mock';
+import LogMock from '@aerogel/cli/lib/Log.mock';
 
 import Log from './Log';
 
-const info = hex('#00ffff');
+const info = chalk.hex('#00ffff');
 
 describe('Log', () => {
 
@@ -14,7 +14,7 @@ describe('Log', () => {
         Log.info('Foo **bar**');
 
         // Assert
-        LogMock.expectLogged(info(`Foo ${bold('bar')}`));
+        LogMock.expectLogged(info(`Foo ${chalk.bold('bar')}`));
     });
 
     it('renders multiline messages', () => {

@@ -1,5 +1,5 @@
-import App from '@/lib/App';
-import File from '@/lib/File';
+import App from '@aerogel/cli/lib/App';
+import File from '@aerogel/cli/lib/File';
 
 export function app(): App {
     // TODO parse app name

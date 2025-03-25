@@ -5,9 +5,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { requiredObjectProp } from '@/utils/vue';
-import { getErrorMessage } from '@/errors/utils';
-import type { ErrorSource } from '@/errors/Errors.state';
+import { requiredObjectProp } from '@aerogel/core/utils/vue';
+import { getErrorMessage } from '@aerogel/core/errors/utils';
+import type { ErrorSource } from '@aerogel/core/errors/Errors.state';
 
 import AGMarkdown from './AGMarkdown.vue';
 

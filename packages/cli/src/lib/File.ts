@@ -1,6 +1,6 @@
-import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'fs';
+import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { facade } from '@noeldemartin/utils';
-import { dirname, resolve } from 'path';
+import { dirname, resolve } from 'node:path';
 
 export class FileService {
 

@@ -1,19 +1,26 @@
-import { resolve } from 'path';
+import { URL, fileURLToPath } from 'node:url';
 import { stringMatch } from '@noeldemartin/utils';
 
-import File from '@/lib/File';
-import Log from '@/lib/Log';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
 
 export function basePath(path: string = ''): string {
-    if (File.contains(resolve(__dirname, '../../../package.json'), '"name": "aerogel"')) {
-        return resolve(__dirname, '../', path);
+    if (
+        File.contains(
+            fileURLToPath(new URL(/* @vite-ignore */ '../../../package.json', import.meta.url)),
+            '"name": "aerogel"',
+        )
+    ) {
+        return fileURLToPath(new URL(/* @vite-ignore */ '../', import.meta.url)) + path;
     }
 
-    const packageJson = File.read(resolve(__dirname, '../../../../package.json'));
+    const packageJson = File.read(
+        fileURLToPath(new URL(/* @vite-ignore */ '../../../../package.json', import.meta.url)),
+    );
     const matches = stringMatch<2>(packageJson ?? '', /"@aerogel\/core": "file:(.*)\/aerogel-core-[\d.]*\.tgz"/);
     const cliPath = matches?.[1] ?? Log.fail<string>('Could not determine base path');
 
-    return resolve(cliPath, path);
+    return fileURLToPath(new URL(path, cliPath));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,5 +37,5 @@ export function packagePath(packageName: string): string {
 }
 
 export function templatePath(name: string): string {
-    return resolve(__dirname, `../templates/${name}`);
+    return fileURLToPath(new URL(`../templates/${name}`, import.meta.url));
 }

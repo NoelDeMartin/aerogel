@@ -7,8 +7,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { enumProp } from '@/utils/vue';
-import { Colors } from '@/components/constants';
+import { enumProp } from '@aerogel/core/utils/vue';
+import { Colors } from '@aerogel/core/components/constants';
 
 import AGHeadlessButton from '../headless/forms/AGHeadlessButton.vue';
 

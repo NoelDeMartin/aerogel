@@ -6,7 +6,10 @@ import type I18nMessages from './I18nMessages';
 
 export default class I18nLangProvider implements LangProvider {
 
-    constructor(private i18n: Composer, private messages: I18nMessages) {
+    constructor(
+        private i18n: Composer,
+        private messages: I18nMessages,
+    ) {
         this.messages.addListener((locale, localeMessages) => this.i18n.setLocaleMessage(locale, localeMessages));
     }
 

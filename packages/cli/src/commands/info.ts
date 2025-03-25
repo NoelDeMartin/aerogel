@@ -1,14 +1,15 @@
-import Command from '@/commands/Command';
-import Log from '@/lib/Log';
+import { URL, fileURLToPath } from 'node:url';
 
+import Command from '@aerogel/cli/commands/Command';
+import Log from '@aerogel/cli/lib/Log';
 export class InfoCommand extends Command {
 
-    protected static command: string = 'info';
-    protected static description: string = 'Show debugging information about the CLI';
+    protected static override command: string = 'info';
+    protected static override description: string = 'Show debugging information about the CLI';
 
-    protected async run(): Promise<void> {
+    protected override async run(): Promise<void> {
         Log.info('[AerogelJS CLI info]');
-        Log.info('Installation directory: ' + __dirname);
+        Log.info('Installation directory: ' + fileURLToPath(new URL(/* @vite-ignore */ './', import.meta.url)));
     }
 
 }

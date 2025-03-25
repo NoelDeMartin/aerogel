@@ -2,8 +2,10 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "baseUrl": ".",
+        "lib": ["ESNext", "DOM"],
+        "types": ["@aerogel/core", "@aerogel/vite/virtual", "unplugin-icons/types/vue3", "node"],
         "paths": {
-            "@/*": ["./src/*"]
+            "@aerogel/plugin-offline-first/*": ["./src/*"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.vue"]

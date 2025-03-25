@@ -1,3 +1,3 @@
-export { default as AuthenticationCancelledError } from '@/errors/AuthenticationCancelledError';
-export { default as AuthenticationFailedError } from '@/errors/AuthenticationFailedError';
-export { default as ContainerAlreadyInUse } from '@/errors/ContainerAlreadyInUse';
+export { default as AuthenticationCancelledError } from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
+export { default as AuthenticationFailedError } from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
+export { default as ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors/ContainerAlreadyInUse';

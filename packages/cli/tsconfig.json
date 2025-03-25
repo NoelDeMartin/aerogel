@@ -1,10 +1,10 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["node"],
         "baseUrl": ".",
+        "lib": ["ESNext"],
         "paths": {
-            "@/*": ["./src/*"]
+            "@aerogel/cli/*": ["./src/*"]
         }
     },
     "include": ["src/**/*.ts"]

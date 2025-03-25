@@ -1,9 +1,9 @@
 import type { ComputedRef, DeepReadonly, ExtractPropTypes, Ref } from 'vue';
 import type { Writable } from '@noeldemartin/utils';
 
-import { mixedProp, requiredArrayProp, stringProp } from '@/utils/vue';
-import { extractComponentProps } from '@/components/utils';
-import type { FormFieldValue } from '@/forms/Form';
+import { mixedProp, requiredArrayProp, stringProp } from '@aerogel/core/utils/vue';
+import { extractComponentProps } from '@aerogel/core/components/utils';
+import type { FormFieldValue } from '@aerogel/core/forms/Form';
 
 export interface IAGHeadlessSelect {
     id: string;

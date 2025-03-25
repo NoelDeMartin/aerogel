@@ -1,6 +1,6 @@
 <template>
     <div class="flex">
-        <slot v-for="(button, i) of buttons" v-bind="(button as unknown as ComponentProps)" :key="i">
+        <slot v-for="(button, i) of buttons" v-bind="button as unknown as ComponentProps" :key="i">
             <AGButton
                 color="clear"
                 :url="button.url"
@@ -22,12 +22,12 @@ import IconGitHub from '~icons/mdi/github';
 import { computed } from 'vue';
 import { stringExcerpt, tap } from '@noeldemartin/utils';
 
-import App from '@/services/App';
-import UI from '@/ui/UI';
-import { requiredObjectProp } from '@/utils/vue';
-import { translateWithDefault } from '@/lang/utils';
-import type { ComponentProps } from '@/utils/vue';
-import type { ErrorReport } from '@/errors';
+import App from '@aerogel/core/services/App';
+import UI from '@aerogel/core/ui/UI';
+import { requiredObjectProp } from '@aerogel/core/utils/vue';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
+import type { ComponentProps } from '@aerogel/core/utils/vue';
+import type { ErrorReport } from '@aerogel/core/errors';
 
 import AGButton from '../forms/AGButton.vue';
 import type { IAGErrorReportModalButtonsDefaultSlotProps } from './AGErrorReportModal';
@@ -94,8 +94,8 @@ const buttons = computed(() =>
                     );
                 },
             },
-        ],
-        (reportButtons: IAGErrorReportModalButtonsDefaultSlotProps[]) => {
+        ] as IAGErrorReportModalButtonsDefaultSlotProps[],
+        (reportButtons) => {
             if (!githubReportUrl.value) {
                 return;
             }

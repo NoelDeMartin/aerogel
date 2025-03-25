@@ -1,9 +1,9 @@
 import { computed } from 'vue';
 import type { ExtractPropTypes, Ref } from 'vue';
 
-import { booleanProp, stringProp } from '@/utils';
-import { extractComponentProps } from '@/components/utils';
-import type { IAGModal } from '@/components/modals/AGModal';
+import { booleanProp, stringProp } from '@aerogel/core/utils';
+import { extractComponentProps } from '@aerogel/core/components/utils';
+import type { IAGModal } from '@aerogel/core/components/modals/AGModal';
 
 export interface IAGHeadlessModal extends IAGModal {}
 

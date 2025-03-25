@@ -1,7 +1,7 @@
 import { ListenersManager, PromisedValue, round, tap, toError } from '@noeldemartin/utils';
 import type { Listeners } from '@noeldemartin/utils';
 
-import JobCancelledError from '@/errors/JobCancelledError';
+import JobCancelledError from '@aerogel/core/errors/JobCancelledError';
 
 import type { JobListener } from './listeners';
 import type { JobStatus } from './status';
@@ -9,7 +9,7 @@ import type { JobStatus } from './status';
 export default abstract class Job<
     Listener extends JobListener = JobListener,
     Status extends JobStatus = JobStatus,
-    SerializedStatus extends JobStatus = JobStatus
+    SerializedStatus extends JobStatus = JobStatus,
 > {
 
     protected status: Status;

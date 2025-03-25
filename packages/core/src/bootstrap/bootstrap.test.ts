@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp } from 'vue';
-import { mock } from '@noeldemartin/utils';
+import { mock } from '@noeldemartin/testing';
 import type { Component } from 'vue';
 
-import Events from '@/services/Events';
-import initialFocus from '@/directives/initial-focus';
+import Events from '@aerogel/core/services/Events';
+import initialFocus from '@aerogel/core/directives/initial-focus';
 
 import { bootstrap } from './index';
 

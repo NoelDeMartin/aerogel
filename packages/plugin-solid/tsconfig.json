@@ -2,9 +2,9 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "baseUrl": ".",
-        "types": ["unplugin-icons/types/vue3", "@aerogel/vite/dist/virtual"],
+        "types": ["@aerogel/core", "@aerogel/vite/virtual", "unplugin-icons/types/vue3"],
         "paths": {
-            "@/*": ["./src/*"]
+            "@aerogel/plugin-solid/*": ["./src/*"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.vue"]

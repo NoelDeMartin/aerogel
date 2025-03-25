@@ -1,6 +1,6 @@
 import type { GetClosureArgs } from '@noeldemartin/utils';
 
-import App from '@/services/App';
+import App from '@aerogel/core/services/App';
 
 import type { Plugin } from './Plugin';
 
@@ -13,13 +13,16 @@ export function definePlugin<T extends Plugin>(plugin: T): T {
 export async function installPlugins(plugins: Plugin[], ...args: GetClosureArgs<Plugin['install']>): Promise<void> {
     App.setState(
         'plugins',
-        plugins.reduce((pluginsMap, plugin) => {
-            if (plugin.name) {
-                pluginsMap[plugin.name] = plugin;
-            }
+        plugins.reduce(
+            (pluginsMap, plugin) => {
+                if (plugin.name) {
+                    pluginsMap[plugin.name] = plugin;
+                }
 
-            return pluginsMap;
-        }, {} as Record<string, Plugin>),
+                return pluginsMap;
+            },
+            {} as Record<string, Plugin>,
+        ),
     );
 
     await Promise.all(plugins.map((plugin) => plugin.install(...args)) ?? []);

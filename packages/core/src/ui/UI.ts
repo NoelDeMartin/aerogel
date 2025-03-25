@@ -3,12 +3,17 @@ import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
 
-import App from '@/services/App';
-import Events from '@/services/Events';
-import type { AcceptRefs } from '@/utils';
-import type { Color } from '@/components/constants';
-import type { SnackbarAction, SnackbarColor } from '@/components/headless/snackbars';
-import type { AGAlertModalProps, AGConfirmModalProps, AGLoadingModalProps, AGPromptModalProps } from '@/components';
+import App from '@aerogel/core/services/App';
+import Events from '@aerogel/core/services/Events';
+import type { AcceptRefs } from '@aerogel/core/utils';
+import type { Color } from '@aerogel/core/components/constants';
+import type { SnackbarAction, SnackbarColor } from '@aerogel/core/components/headless/snackbars';
+import type {
+    AGAlertModalProps,
+    AGConfirmModalProps,
+    AGLoadingModalProps,
+    AGPromptModalProps,
+} from '@aerogel/core/components';
 
 import Service from './UI.state';
 import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
@@ -20,9 +25,8 @@ interface ModalCallbacks<T = unknown> {
 }
 
 type ModalProperties<TComponent> = TComponent extends ModalComponent<infer TProperties, unknown> ? TProperties : never;
-type ModalResult<TComponent> = TComponent extends ModalComponent<Record<string, unknown>, infer TResult>
-    ? TResult
-    : never;
+type ModalResult<TComponent> =
+    TComponent extends ModalComponent<Record<string, unknown>, infer TResult> ? TResult : never;
 
 export const UIComponents = {
     AlertModal: 'alert-modal',
@@ -134,7 +138,7 @@ export class UIService extends Service {
         >(this.requireComponent(UIComponents.ConfirmModal), properties);
         const result = await modal.beforeClose;
 
-        const confirmed = typeof result === 'object' ? result[0] : result ?? false;
+        const confirmed = typeof result === 'object' ? result[0] : (result ?? false);
         const checkboxes =
             typeof result === 'object'
                 ? result[1]
@@ -302,7 +306,7 @@ export class UIService extends Service {
         }
     }
 
-    protected async boot(): Promise<void> {
+    protected override async boot(): Promise<void> {
         this.watchModalEvents();
         this.watchMountedEvent();
         this.watchViewportBreakpoints();
@@ -373,7 +377,7 @@ export class UIService extends Service {
 
 export default facade(UIService);
 
-declare module '@/services/Events' {
+declare module '@aerogel/core/services/Events' {
     export interface EventsPayload {
         'close-modal': { id: string; result?: unknown };
         'hide-modal': { id: string };

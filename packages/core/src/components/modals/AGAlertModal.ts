@@ -1,8 +1,8 @@
 import type { ExtractPropTypes } from 'vue';
 import type { ObjectWithout, Pretty } from '@noeldemartin/utils';
 
-import { requiredStringProp, stringProp } from '@/utils';
-import type { AcceptRefs } from '@/utils';
+import { requiredStringProp, stringProp } from '@aerogel/core/utils';
+import type { AcceptRefs } from '@aerogel/core/utils';
 
 export const alertModalProps = {
     title: stringProp(),

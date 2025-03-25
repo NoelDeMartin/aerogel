@@ -1,11 +1,11 @@
 import { formatCodeBlock, stringToStudlyCase } from '@noeldemartin/utils';
 
-import Command from '@/commands/Command';
-import File from '@/lib/File';
-import Log from '@/lib/Log';
-import Template from '@/lib/Template';
-import { templatePath } from '@/lib/utils/paths';
-import type { CommandOptions } from '@/commands/Command';
+import Command from '@aerogel/cli/commands/Command';
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Template from '@aerogel/cli/lib/Template';
+import { templatePath } from '@aerogel/cli/lib/utils/paths';
+import type { CommandOptions } from '@aerogel/cli/commands/Command';
 
 interface Options {
     fields?: string;
@@ -13,10 +13,10 @@ interface Options {
 
 export class GenerateModelCommand extends Command {
 
-    protected static command: string = 'generate:model';
-    protected static description: string = 'Generate an AerogelJS Model';
-    protected static parameters: [string, string][] = [['name', 'Model name']];
-    protected static options: CommandOptions = {
+    protected static override command: string = 'generate:model';
+    protected static override description: string = 'Generate an AerogelJS Model';
+    protected static override parameters: [string, string][] = [['name', 'Model name']];
+    protected static override options: CommandOptions = {
         fields: 'Create model with the given fields',
     };
 
@@ -30,7 +30,7 @@ export class GenerateModelCommand extends Command {
         this.options = options;
     }
 
-    protected async run(): Promise<void> {
+    protected override async run(): Promise<void> {
         this.assertAerogelOrDirectory('src/models');
 
         if (File.exists(`src/models/${this.name}.ts`)) {

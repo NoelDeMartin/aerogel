@@ -4,8 +4,8 @@ import { Renderer, marked } from 'marked';
 
 function makeRenderer(): Renderer {
     return tap(new Renderer(), (renderer) => {
-        renderer.link = function(href, title, text) {
-            return Renderer.prototype.link.apply(this, [href, title, text]).replace('<a', '<a target="_blank"');
+        renderer.link = function(link) {
+            return Renderer.prototype.link.apply(this, [link]).replace('<a', '<a target="_blank"');
         };
     });
 }
@@ -21,7 +21,7 @@ function renderActionLinks(html: string): string {
 }
 
 export function renderMarkdown(markdown: string): string {
-    let html = marked(markdown, { mangle: false, headerIds: false, renderer: makeRenderer() });
+    let html = marked(markdown, { renderer: makeRenderer(), async: false });
 
     html = safeHtml(html);
     html = renderActionLinks(html);
@@ -30,7 +30,5 @@ export function renderMarkdown(markdown: string): string {
 }
 
 export function safeHtml(html: string): string {
-    // TODO improve target="_blank" exception
-    // See https://github.com/cure53/DOMPurify/issues/317
     return DOMPurify.sanitize(html, { ADD_ATTR: ['target'] });
 }

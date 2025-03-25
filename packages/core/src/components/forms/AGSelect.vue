@@ -42,9 +42,9 @@
 <script setup lang="ts">
 import IconCheveronDown from '~icons/zondicons/cheveron-down';
 
-import { componentRef } from '@/utils/vue';
-import { useSelectEmits, useSelectProps } from '@/components/headless/forms/AGHeadlessSelect';
-import type { IAGHeadlessSelect } from '@/components/headless/forms/AGHeadlessSelect';
+import { componentRef } from '@aerogel/core/utils/vue';
+import { useSelectEmits, useSelectProps } from '@aerogel/core/components/headless/forms/AGHeadlessSelect';
+import type { IAGHeadlessSelect } from '@aerogel/core/components/headless/forms/AGHeadlessSelect';
 
 import AGHeadlessSelect from '../headless/forms/AGHeadlessSelect.vue';
 import AGHeadlessSelectButton from '../headless/forms/AGHeadlessSelectButton.vue';

@@ -1,7 +1,7 @@
 import { facade } from '@noeldemartin/utils';
 
-import Events from '@/services/Events';
-import Service from '@/services/Service';
+import Events from '@aerogel/core/services/Events';
+import Service from '@aerogel/core/services/Service';
 
 export class StorageService extends Service {
 
@@ -13,7 +13,7 @@ export class StorageService extends Service {
 
 export default facade(StorageService);
 
-declare module '@/services/Events' {
+declare module '@aerogel/core/services/Events' {
     export interface EventsPayload {
         'purge-storage': void;
     }

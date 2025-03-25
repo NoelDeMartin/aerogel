@@ -1,10 +1,13 @@
-import App from '@/services/App';
+import App from '@aerogel/core/services/App';
 
 import type { LangProvider } from './Lang';
 
 export default class DefaultLangProvider implements LangProvider {
 
-    constructor(private locale: string, private fallbackLocale: string) {}
+    constructor(
+        private locale: string,
+        private fallbackLocale: string,
+    ) {}
 
     public getLocale(): string {
         return this.locale;

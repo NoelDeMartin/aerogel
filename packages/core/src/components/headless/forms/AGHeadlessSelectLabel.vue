@@ -10,8 +10,8 @@
 import { computed, useSlots } from 'vue';
 import { ListboxLabel } from '@headlessui/vue';
 
-import { injectReactiveOrFail } from '@/utils/vue';
-import type { ComponentProps } from '@/utils/vue';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import type { ComponentProps } from '@aerogel/core/utils/vue';
 
 import type { IAGHeadlessSelect } from './AGHeadlessSelect';
 

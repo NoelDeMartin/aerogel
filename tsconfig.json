@@ -1,16 +1,37 @@
 {
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
+    "include": [
+        "packages/*/src/**/*.ts",
+        "packages/*/src/**/*.vue",
+        "playground/src/**/*.ts",
+        "playground/src/**/*.vue"
+    ],
     "compilerOptions": {
-        "target": "esnext",
-        "sourceMap": true,
-        "module": "esnext",
-        "skipLibCheck": true,
-        "moduleResolution": "node",
-        "strict": true,
-        "types": [],
-        "jsx": "preserve",
+        "moduleDetection": "force",
+        "isolatedModules": true,
         "noUncheckedIndexedAccess": true,
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "lib": ["esnext", "dom"]
+        "noImplicitOverride": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./playground/src/*"],
+            "@aerogel/cli": ["./packages/cli/src"],
+            "@aerogel/cli/*": ["./packages/cli/src/*"],
+            "@aerogel/core": ["./packages/core/src"],
+            "@aerogel/core/*": ["./packages/core/src/*"],
+            "@aerogel/cypress": ["./packages/cypress/src"],
+            "@aerogel/cypress/*": ["./packages/cypress/src/*"],
+            "@aerogel/plugin-i18n": ["./packages/plugin-i18n/src"],
+            "@aerogel/plugin-i18n/*": ["./packages/plugin-i18n/src/*"],
+            "@aerogel/plugin-offline-first": ["./packages/plugin-offline-first/src"],
+            "@aerogel/plugin-offline-first/*": ["./packages/plugin-offline-first/src/*"],
+            "@aerogel/plugin-routing": ["./packages/plugin-routing/src"],
+            "@aerogel/plugin-routing/*": ["./packages/plugin-routing/src/*"],
+            "@aerogel/plugin-solid": ["./packages/plugin-solid/src"],
+            "@aerogel/plugin-solid/*": ["./packages/plugin-solid/src/*"],
+            "@aerogel/plugin-soukai": ["./packages/plugin-soukai/src"],
+            "@aerogel/plugin-soukai/*": ["./packages/plugin-soukai/src/*"],
+            "@aerogel/vite": ["./packages/vite/src"],
+            "@aerogel/vite/*": ["./packages/vite/src/*"]
+        }
     }
 }

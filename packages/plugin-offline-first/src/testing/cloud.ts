@@ -1,21 +1,22 @@
 import { App } from '@aerogel/core';
 import { bootSolidModels } from 'soukai-solid';
-import { FakeResponse, fail, mock, required, uuid } from '@noeldemartin/utils';
+import { uuid } from '@noeldemartin/utils';
 import { InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
 import { it } from 'vitest';
 import { resetTrackedModels } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
 import type { App as AppInstance } from 'vue';
 
-import Cloud from '@/services/Cloud';
+import Cloud from '@aerogel/plugin-offline-first/services/Cloud';
 
-import Movie from '@/testing/stubs/Movie';
-import MoviesContainer from '@/testing/stubs/MoviesContainer';
-import SolidMock from '@/testing/mocks/Solid.mock';
-import Task from '@/testing/stubs/Task';
-import TaskSchema from '@/testing/stubs/Task.schema';
-import TasksList from '@/testing/stubs/TasksList';
-import Workspace from '@/testing/stubs/Workspace';
+import Movie from '@aerogel/plugin-offline-first/testing/stubs/Movie';
+import MoviesContainer from '@aerogel/plugin-offline-first/testing/stubs/MoviesContainer';
+import SolidMock from '@aerogel/plugin-offline-first/testing/mocks/Solid.mock';
+import Task from '@aerogel/plugin-offline-first/testing/stubs/Task';
+import TaskSchema from '@aerogel/plugin-offline-first/testing/stubs/Task.schema';
+import TasksList from '@aerogel/plugin-offline-first/testing/stubs/TasksList';
+import Workspace from '@aerogel/plugin-offline-first/testing/stubs/Workspace';
+import { FakeResponse, mock } from '@noeldemartin/testing';
 
 export async function setupCloudTests(): Promise<void> {
     bootSolidModels();
@@ -36,26 +37,24 @@ export function testVariants<T, Variants extends Record<string, T>>(
     description: string,
     variants: Variants,
     test: (variantData: T, variantName: keyof Variants) => unknown,
-    options: { only?: boolean | keyof Variants } = {},
+    options: { skip?: boolean; only?: boolean | keyof Variants } = {},
 ): void {
-    if (typeof options.only === 'string') {
-        const name = options.only;
-        const data = variants[name] ?? fail<T>();
-
-        it.only(`[${name}] ${description}`, () => test(data, name));
-
-        return;
-    }
-
-    if (options.only) {
-        const [name, data] = required(Object.entries(variants)[0]);
-
-        it.only(`[${name}] ${description}`, () => test(data, name));
-
-        return;
-    }
+    const only = typeof options.only === 'string' ? [options.only] : options.only ? Object.keys(variants) : [];
+    const skip = typeof options.skip === 'string' ? [options.skip] : options.skip ? Object.keys(variants) : [];
 
     for (const [name, data] of Object.entries(variants)) {
+        if (only.includes(name)) {
+            it.only(`[${name}] ${description}`, () => test(data, name));
+
+            continue;
+        }
+
+        if (skip.includes(name)) {
+            it.skip(`[${name}] ${description}`, () => test(data, name));
+
+            continue;
+        }
+
         it(`[${name}] ${description}`, () => test(data, name));
     }
 }
@@ -63,7 +62,7 @@ export function testVariants<T, Variants extends Record<string, T>>(
 export function testRegisterVariants(
     description: string,
     test: (registerModels: () => unknown, variant: 'model registration' | 'container registration') => unknown,
-    options: { only?: boolean | 'model registration' | 'container registration' } = {},
+    options: { skip?: boolean; only?: boolean | 'model registration' | 'container registration' } = {},
 ): void {
     testVariants(
         description,

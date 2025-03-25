@@ -9,9 +9,9 @@
 import { computed, inject, provide, readonly, ref } from 'vue';
 import { uuid } from '@noeldemartin/utils';
 
-import { stringProp } from '@/utils/vue';
-import type Form from '@/forms/Form';
-import type { __SetsElement } from '@/components/interfaces';
+import { stringProp } from '@aerogel/core/utils/vue';
+import type Form from '@aerogel/core/forms/Form';
+import type { __SetsElement } from '@aerogel/core/components/interfaces';
 
 import { useInputProps } from './AGHeadlessInput';
 import type { IAGHeadlessInput } from './AGHeadlessInput';
