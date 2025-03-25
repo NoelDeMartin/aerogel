@@ -172,8 +172,8 @@ export class SolidService extends Service {
     }
 
     public async logout(force: boolean = false): Promise<void> {
-        const isCloudReady = !App.plugin('@aerogel/offline-first') || !!App.service('$cloud')?.ready;
-        const hasLocalChanges = !App.plugin('@aerogel/offline-first') || !!App.service('$cloud')?.dirty;
+        const isCloudReady = !App.plugin('@aerogel/local-first') || !!App.service('$cloud')?.ready;
+        const hasLocalChanges = !App.plugin('@aerogel/local-first') || !!App.service('$cloud')?.dirty;
         const [confirmLogout, options] = force
             ? [true, { wipeLocalData: isCloudReady }]
             : await UI.confirm(
@@ -494,7 +494,7 @@ export class SolidService extends Service {
                     await this.refreshUserProfile();
                 }
 
-                App.plugin('@aerogel/offline-first') || setEngine(session.authenticator.engine);
+                App.plugin('@aerogel/local-first') || setEngine(session.authenticator.engine);
 
                 SolidACLAuthorization.setEngine(session.authenticator.engine);
                 SolidTypeIndex.setEngine(session.authenticator.engine);

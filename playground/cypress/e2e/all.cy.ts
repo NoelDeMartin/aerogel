@@ -6,6 +6,6 @@
 // import './components.cy';
 // import './errors.cy';
 // import './forms.cy';
-// import './offline.cy';
+// import './local-first.cy';
 // import './solid.cy';
 // import './storage.cy';

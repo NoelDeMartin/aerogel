@@ -5,7 +5,7 @@ import Content from './Content.vue';
 import Errors from './Errors.vue';
 import Forms from './Forms.vue';
 import Home from './Home.vue';
-import Offline from './offline/Offline.vue';
+import LocalFirst from './local-first/LocalFirst.vue';
 import Solid from './solid/Solid.vue';
 import Storage from './Storage.vue';
 
@@ -46,8 +46,8 @@ export const routes = defineRoutes([
         component: Solid,
     },
     {
-        name: 'offline',
-        path: '/offline',
-        component: Offline,
+        name: 'local-first',
+        path: '/local-first',
+        component: LocalFirst,
     },
 ]);

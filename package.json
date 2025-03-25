@@ -8,7 +8,7 @@
         "packages/plugin-routing",
         "packages/plugin-soukai",
         "packages/plugin-solid",
-        "packages/plugin-offline-first",
+        "packages/plugin-local-first",
         "packages/cypress",
         "packages/create-aerogel",
         "playground"

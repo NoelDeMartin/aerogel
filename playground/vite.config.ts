@@ -41,8 +41,8 @@ export default defineConfig({
             '@aerogel/core': fileURLToPath(new URL('../packages/core/src/', import.meta.url)),
             '@aerogel/cypress': fileURLToPath(new URL('../packages/cypress/src/', import.meta.url)),
             '@aerogel/plugin-i18n': fileURLToPath(new URL('../packages/plugin-i18n/src/', import.meta.url)),
-            '@aerogel/plugin-offline-first': fileURLToPath(
-                new URL('../packages/plugin-offline-first/src/', import.meta.url),
+            '@aerogel/plugin-local-first': fileURLToPath(
+                new URL('../packages/plugin-local-first/src/', import.meta.url),
             ),
             '@aerogel/plugin-routing': fileURLToPath(new URL('../packages/plugin-routing/src/', import.meta.url)),
             '@aerogel/plugin-solid': fileURLToPath(new URL('../packages/plugin-solid/src/', import.meta.url)),

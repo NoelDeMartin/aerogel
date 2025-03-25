@@ -5,6 +5,6 @@ export default [
     'packages/plugin-routing',
     'packages/plugin-solid',
     'packages/plugin-soukai',
-    'packages/plugin-offline-first',
+    'packages/plugin-local-first',
     'packages/vite',
 ];

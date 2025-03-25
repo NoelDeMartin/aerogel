@@ -15,7 +15,7 @@ home:
     forms: Forms
     storage: Storage
     solid: Solid
-    offline: Offline First
+    localFirst: Local First
 
 components:
     title: Components
@@ -121,8 +121,8 @@ solid:
     loginError: There was an error logging in
     reconnect: Reconnect
 
-offline:
-    title: Offline First
+localFirst:
+    title: Local First
 
 ui:
     close: Close

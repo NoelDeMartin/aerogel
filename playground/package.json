@@ -17,7 +17,7 @@
     "dependencies": {
         "@aerogel/core": "*",
         "@aerogel/plugin-i18n": "*",
-        "@aerogel/plugin-offline-first": "*",
+        "@aerogel/plugin-local-first": "*",
         "@aerogel/plugin-routing": "*",
         "@aerogel/plugin-solid": "*",
         "@aerogel/plugin-soukai": "*",
