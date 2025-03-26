@@ -5,6 +5,7 @@
         class="relative flex items-start"
         :class="className"
         :label="label"
+        @update:model-value="$emit('update:modelValue', $event)"
     >
         <div class="flex h-6 items-center">
             <AGHeadlessInputInput
@@ -28,10 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { AGHeadlessInputLabel, componentRef, stringProp, useInputAttrs } from '@aerogel/core';
+import { AGHeadlessInputLabel, componentRef, stringProp, useInputAttrs, useInputEmits } from '@aerogel/core';
 import type { IAGHeadlessInput } from '@aerogel/core';
 
 defineOptions({ inheritAttrs: false });
+defineEmits(useInputEmits());
 defineProps({
     name: stringProp(),
     label: stringProp(),

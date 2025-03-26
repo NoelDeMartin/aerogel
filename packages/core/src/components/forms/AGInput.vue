@@ -4,6 +4,7 @@
         class="relative flex flex-col items-center"
         :class="className"
         v-bind="props"
+        @update:model-value="$emit('update:modelValue', $event)"
     >
         <AGHeadlessInputLabel class="sr-only" />
         <AGHeadlessInputInput
@@ -23,7 +24,7 @@
 <script setup lang="ts">
 import { componentRef } from '@aerogel/core/utils/vue';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
-import { useInputProps } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
+import { useInputEmits, useInputProps } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 
 import AGHeadlessInput from '../headless/forms/AGHeadlessInput.vue';
@@ -33,6 +34,7 @@ import AGHeadlessInputInput from '../headless/forms/AGHeadlessInputInput.vue';
 import AGHeadlessInputLabel from '../headless/forms/AGHeadlessInputLabel.vue';
 
 defineOptions({ inheritAttrs: false });
+defineEmits(useInputEmits());
 
 const props = defineProps(useInputProps());
 const $input = componentRef<IAGHeadlessInput>();

@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { componentRef, stringProp } from '@aerogel/core/utils/vue';
 
+import { useInputEmits } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 
 import AGHeadlessInput from '../headless/forms/AGHeadlessInput.vue';
@@ -35,7 +36,7 @@ import AGHeadlessInputLabel from '../headless/forms/AGHeadlessInputLabel.vue';
 
 defineProps({ name: stringProp() });
 defineOptions({ inheritAttrs: false });
-defineEmits(['update:modelValue']);
+defineEmits(useInputEmits());
 
 const $input = componentRef<IAGHeadlessInput>();
 </script>

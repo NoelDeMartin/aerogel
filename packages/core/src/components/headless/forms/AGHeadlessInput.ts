@@ -1,4 +1,5 @@
 import type { ComputedRef, DeepReadonly, ExtractPropTypes, Ref } from 'vue';
+import type { Writable } from '@noeldemartin/utils';
 
 import { mixedProp, stringProp } from '@aerogel/core/utils';
 import { extractComponentProps } from '@aerogel/core/components/utils';
@@ -22,6 +23,12 @@ export const inputProps = {
     description: stringProp(),
     modelValue: mixedProp<FormFieldValue>([String, Number, Boolean]),
 };
+
+export const inputEmits = ['update:modelValue'] as const;
+
+export function useInputEmits(): Writable<typeof inputEmits> {
+    return [...inputEmits];
+}
 
 export function useInputProps(): typeof inputProps {
     return inputProps;
