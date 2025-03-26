@@ -30,7 +30,7 @@
     "dependencies": {
         "@inrupt/solid-client-authn-browser": "^2.3.0",
         "@noeldemartin/solid-utils": "0.6.0-next.508449b33de64b0bcade86b642c9793381434231",
-        "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
+        "@noeldemartin/utils": "0.7.0-next.9694de027ef8a2d2ce6e0d13d7ff4400032551f5",
         "solid-auth-client": "2.4.1",
         "vue": "^3.3.0"
     },

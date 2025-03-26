@@ -1,5 +1,6 @@
 import Aerogel from 'virtual:aerogel';
 
+import { getEnv } from '@noeldemartin/utils';
 import type { App } from 'vue';
 
 import { defineServiceState } from '@aerogel/core/services/Service';
@@ -10,7 +11,7 @@ export default defineServiceState({
     initialState: {
         plugins: {} as Record<string, Plugin>,
         instance: null as App | null,
-        environment: Aerogel.environment,
+        environment: getEnv() ?? 'development',
         version: Aerogel.version,
         sourceUrl: Aerogel.sourceUrl,
     },

@@ -1,3 +1,4 @@
+import { isTesting } from '@noeldemartin/utils';
 import type { GetClosureArgs } from '@noeldemartin/utils';
 
 import Events from '@aerogel/core/services/Events';
@@ -9,7 +10,7 @@ export interface AerogelTestingRuntime {
 
 export default definePlugin({
     async install() {
-        if (import.meta.env.MODE !== 'testing') {
+        if (!isTesting()) {
             return;
         }
 

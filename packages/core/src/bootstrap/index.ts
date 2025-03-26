@@ -1,6 +1,5 @@
-import Aerogel from 'virtual:aerogel';
-
 import { createApp } from 'vue';
+import { isDevelopment } from '@noeldemartin/utils';
 import type { App as AppInstance, Component } from 'vue';
 
 import App from '@aerogel/core/services/App';
@@ -29,7 +28,7 @@ export async function bootstrapApplication(app: AppInstance, options: AerogelOpt
 export async function bootstrap(rootComponent: Component, options: AerogelOptions = {}): Promise<void> {
     const app = createApp(rootComponent);
 
-    if (Aerogel.environment === 'development') {
+    if (isDevelopment()) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).$aerogel = app;
     }
