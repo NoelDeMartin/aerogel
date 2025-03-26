@@ -136,9 +136,9 @@ jobs:
                       packages/*/dist/**
                       node_modules/**/*
                       packages/*/node_modules/**/*
-            - name: Publish changed packages
+            - name: Publish updated packages
               run: |
-                  for package in $(git diff-tree --no-commit-id --name-only -r HEAD~1 | grep "^packages/" | cut -d/ -f2 | sort -u); do
+                  for package in $(git diff-tree --no-commit-id --name-only -r HEAD | grep "^packages/" | cut -d/ -f2 | sort -u); do
                     echo "Publishing $package..."
                     cd "packages/$package"
                     npx noeldemartin-publish-next
