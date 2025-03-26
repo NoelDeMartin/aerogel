@@ -1,1 +1,1 @@
-/// <reference types="@aerogel/plugin-offline-first" />
+/// <reference types="@aerogel/plugin-local-first" />
