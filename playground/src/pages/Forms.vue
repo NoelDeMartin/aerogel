@@ -6,7 +6,7 @@
         <div class="mt-8 flex flex-col items-center rounded-lg bg-white/60 p-8 pb-4 shadow-sm">
             <div class="flex">
                 <BaseInput
-                    v-initial-focus
+                    autofocus
                     name="name"
                     class="h-full"
                     input-class="h-full"

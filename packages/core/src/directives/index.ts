@@ -2,12 +2,10 @@ import type { Directive } from 'vue';
 
 import { definePlugin } from '@aerogel/core/plugins';
 
-import initialFocus from './initial-focus';
 import measure from './measure';
 
 const builtInDirectives: Record<string, Directive> = {
-    'initial-focus': initialFocus,
-    'measure': measure,
+    measure: measure,
 };
 
 export * from './measure';

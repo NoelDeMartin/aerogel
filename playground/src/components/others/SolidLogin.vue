@@ -2,7 +2,7 @@
     <AGForm :form="form" @submit="$solid.login(form.url)">
         <div class="flex gap-2">
             <BaseInput
-                v-initial-focus
+                autofocus
                 name="url"
                 :aria-label="$t('solid.url')"
                 :placeholder="$t('solid.url_placeholder')"

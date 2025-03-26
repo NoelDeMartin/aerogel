@@ -4,7 +4,7 @@ import { mock } from '@noeldemartin/testing';
 import type { Component } from 'vue';
 
 import Events from '@aerogel/core/services/Events';
-import initialFocus from '@aerogel/core/directives/initial-focus';
+import measure from '@aerogel/core/directives/measure';
 
 import { bootstrap } from './index';
 
@@ -48,10 +48,7 @@ describe('Aerogel', () => {
         await bootstrap(rootComponent);
 
         // Assert
-        expect(vi.mocked(createApp).mock.results[0]?.value.directive).toHaveBeenCalledWith(
-            'initial-focus',
-            initialFocus,
-        );
+        expect(vi.mocked(createApp).mock.results[0]?.value.directive).toHaveBeenCalledWith('measure', measure);
     });
 
 });
