@@ -9,7 +9,8 @@
     },
     "files": [
         "src",
-        "dist"
+        "dist",
+        "templates"
     ],
     "bin": {
         "gel": "./bin/gel"
