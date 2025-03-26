@@ -30,7 +30,7 @@
     },
     "dependencies": {
         "@noeldemartin/solid-utils": "0.6.0-next.508449b33de64b0bcade86b642c9793381434231",
-        "@noeldemartin/utils": "0.7.0-next.26f0bbb6596310f174e1ea368f158997a01c3081",
+        "@noeldemartin/utils": "0.7.0-next.febf11f10be81ab8b5562e4fe2cddbd1929ac9ca",
         "idb": "^8.0.2",
         "vue": "^3.3.0"
     },

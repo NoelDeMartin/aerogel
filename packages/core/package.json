@@ -23,7 +23,7 @@
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.14",
-        "@noeldemartin/utils": "0.7.0-next.26f0bbb6596310f174e1ea368f158997a01c3081",
+        "@noeldemartin/utils": "0.7.0-next.febf11f10be81ab8b5562e4fe2cddbd1929ac9ca",
         "dompurify": "^3.2.4",
         "marked": "^15.0.7",
         "pinia": "^2.1.6",

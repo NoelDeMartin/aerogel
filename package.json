@@ -32,7 +32,7 @@
         "@noeldemartin/scripts": "0.3.0-next.2dfd366e59e45ecf5ead1a617e4d0e870dbea507",
         "@noeldemartin/testing": "0.0.0-next.3aa03a51f580a9508bbc982c55eda4fd2b302f35",
         "@noeldemartin/solid-utils": "0.6.0-next.508449b33de64b0bcade86b642c9793381434231",
-        "@noeldemartin/utils": "0.7.0-next.26f0bbb6596310f174e1ea368f158997a01c3081",
+        "@noeldemartin/utils": "0.7.0-next.febf11f10be81ab8b5562e4fe2cddbd1929ac9ca",
         "@total-typescript/ts-reset": "^0.4.2",
         "@tsconfig/node22": "^22.0.1",
         "@types/mustache": "^4.2.2",
@@ -54,7 +54,7 @@
     },
     "overrides": {
         "@noeldemartin/solid-utils": "0.6.0-next.508449b33de64b0bcade86b642c9793381434231",
-        "@noeldemartin/utils": "0.7.0-next.26f0bbb6596310f174e1ea368f158997a01c3081"
+        "@noeldemartin/utils": "0.7.0-next.febf11f10be81ab8b5562e4fe2cddbd1929ac9ca"
     },
     "eslintConfig": {
         "extends": [

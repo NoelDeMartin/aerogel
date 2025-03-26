@@ -25,7 +25,7 @@
         "@aerogel/core": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.0-next.26f0bbb6596310f174e1ea368f158997a01c3081",
+        "@noeldemartin/utils": "0.7.0-next.febf11f10be81ab8b5562e4fe2cddbd1929ac9ca",
         "vue-i18n": "9.3.0-beta.19"
     },
     "devDependencies": {
