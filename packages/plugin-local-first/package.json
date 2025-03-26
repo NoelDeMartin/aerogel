@@ -29,7 +29,7 @@
         "soukai-solid": "*"
     },
     "dependencies": {
-        "@noeldemartin/solid-utils": "0.6.0-next.cfba421315c47e4aa5a72990714376d9dcd1ffff",
+        "@noeldemartin/solid-utils": "0.6.0-next.508449b33de64b0bcade86b642c9793381434231",
         "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
         "idb": "^8.0.2",
         "vue": "^3.3.0"

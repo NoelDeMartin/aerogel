@@ -31,7 +31,7 @@
         "@noeldemartin/eslint-config-vue": "0.1.1-next.8da46d7532acbe6ee4126f410141b7f281ec349a",
         "@noeldemartin/scripts": "0.3.0-next.2dfd366e59e45ecf5ead1a617e4d0e870dbea507",
         "@noeldemartin/testing": "0.0.0-next.3aa03a51f580a9508bbc982c55eda4fd2b302f35",
-        "@noeldemartin/solid-utils": "0.6.0-next.cfba421315c47e4aa5a72990714376d9dcd1ffff",
+        "@noeldemartin/solid-utils": "0.6.0-next.508449b33de64b0bcade86b642c9793381434231",
         "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca",
         "@total-typescript/ts-reset": "^0.4.2",
         "@tsconfig/node22": "^22.0.1",
@@ -53,7 +53,7 @@
         "vue-tsc": "^2.2.8"
     },
     "overrides": {
-        "@noeldemartin/solid-utils": "0.6.0-next.cfba421315c47e4aa5a72990714376d9dcd1ffff",
+        "@noeldemartin/solid-utils": "0.6.0-next.508449b33de64b0bcade86b642c9793381434231",
         "@noeldemartin/utils": "0.7.0-next.928e77e4d67adf7b9e4e1c5387f321ecfe3b11ca"
     },
     "eslintConfig": {

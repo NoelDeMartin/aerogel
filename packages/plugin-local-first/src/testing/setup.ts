@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto';
 
-import { installVitestSolidMatchers } from '@noeldemartin/solid-utils/testing';
+import { installVitestSolidMatchers } from '@noeldemartin/solid-utils/vitest';
 import { FakeLocalStorage, FakeServer, setupFacadeMocks } from '@noeldemartin/testing';
 import { resetAsyncMemo } from '@noeldemartin/utils';
 import { beforeEach, vi } from 'vitest';
