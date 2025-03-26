@@ -12,6 +12,6 @@
     "author": "Noel De Martin",
     "repository": "github:NoelDeMartin/aerogel",
     "dependencies": {
-        "@aerogel/cli": "0.0.0-next.24ed4c26fdb36195386fee4a81543fb84f51c979"
+        "@aerogel/cli": "0.0.0-next.44f5953d2450ac149ceabae6448a967b9def9d2a"
     }
 }
