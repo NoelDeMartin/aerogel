@@ -6,5 +6,7 @@ export * from './listeners';
 export * from './status';
 
 export async function dispatch(job: Job): Promise<void> {
+    console.log('dispatching job', job);
+
     await job.start();
 }
