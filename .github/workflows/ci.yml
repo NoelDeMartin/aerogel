@@ -120,6 +120,8 @@ jobs:
         needs: [lint, unit-tests, cypress-tests, verify]
         steps:
             - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
             - uses: actions/setup-node@v4
               with:
                   node-version-file: '.nvmrc'
@@ -134,7 +136,7 @@ jobs:
                       packages/*/node_modules/**/*
             - name: Publish changed packages
               run: |
-                  for package in $(git diff-tree --no-commit-id --name-only -r HEAD | grep "^packages/" | cut -d/ -f2 | sort -u); do
+                  for package in $(git diff-tree --no-commit-id --name-only -r HEAD~1 | grep "^packages/" | cut -d/ -f2 | sort -u); do
                     echo "Publishing $package..."
                     cd "packages/$package"
                     npx noeldemartin-publish-next
