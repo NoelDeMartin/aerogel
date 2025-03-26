@@ -6,9 +6,10 @@ import {
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isArray,
+    isTesting,
     parseBoolean,
 } from '@noeldemartin/utils';
-import { App, Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
+import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
@@ -141,13 +142,13 @@ export class CloudService extends Service {
                     return;
                 }
 
-                if (!App.testing) {
+                if (!isTesting()) {
                     await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
                 }
 
                 this.syncJob = null;
             } catch (error) {
-                if (App.testing) {
+                if (isTesting()) {
                     throw error;
                 }
 

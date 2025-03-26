@@ -1,4 +1,4 @@
-import App from '@aerogel/core/services/App';
+import { isDevelopment } from '@noeldemartin/utils';
 
 import type { LangProvider } from './Lang';
 
@@ -31,14 +31,14 @@ export default class DefaultLangProvider implements LangProvider {
 
     public translate(key: string): string {
         // eslint-disable-next-line no-console
-        App.development && console.warn('Lang provider is missing');
+        isDevelopment() && console.warn('Lang provider is missing');
 
         return key;
     }
 
     public translateWithDefault(_: string, defaultMessage: string): string {
         // eslint-disable-next-line no-console
-        App.development && console.warn('Lang provider is missing');
+        isDevelopment() && console.warn('Lang provider is missing');
 
         return defaultMessage;
     }

@@ -8,6 +8,7 @@ import {
     fail,
     getLocationQueryParameter,
     hasLocationQueryParameter,
+    isDevelopment,
     objectWithout,
     objectWithoutEmpty,
     parseBoolean,
@@ -132,7 +133,7 @@ export class SolidService extends Service {
     }
 
     public async login(loginUrl: string, options: LoginOptions = {}): Promise<boolean> {
-        if (App.development && loginUrl === 'dev') {
+        if (isDevelopment() && loginUrl === 'dev') {
             loginUrl = 'http://localhost:3000';
         }
 

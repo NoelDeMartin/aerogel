@@ -1,4 +1,4 @@
-import { JSError, facade, isObject, objectWithoutEmpty, toString } from '@noeldemartin/utils';
+import { JSError, facade, isDevelopment, isObject, isTesting, objectWithoutEmpty, toString } from '@noeldemartin/utils';
 
 import App from '@aerogel/core/services/App';
 import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
@@ -42,11 +42,11 @@ export class ErrorsService extends Service {
     public async report(error: ErrorSource, message?: string): Promise<void> {
         await Events.emit('error', { error, message });
 
-        if (App.testing) {
+        if (isTesting('unit')) {
             throw error;
         }
 
-        if (App.development) {
+        if (isDevelopment()) {
             this.logError(error);
         }
 

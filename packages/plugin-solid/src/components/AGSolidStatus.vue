@@ -57,11 +57,12 @@
 </template>
 
 <script setup lang="ts">
-import { AGButton, AGForm, AGInput, AGLink, AGMarkdown, App, requiredStringInput, useForm } from '@aerogel/core';
+import { AGButton, AGForm, AGInput, AGLink, AGMarkdown, requiredStringInput, useForm } from '@aerogel/core';
+import { isDevelopment } from '@noeldemartin/utils';
 import { computed } from 'vue';
 
 const form = useForm({ url: requiredStringInput() });
 const showDevLogin = computed(
-    () => App.development && (!form.url || form.url === 'dev' || form.url.trim().length === 0),
+    () => isDevelopment() && (!form.url || form.url === 'dev' || form.url.trim().length === 0),
 );
 </script>

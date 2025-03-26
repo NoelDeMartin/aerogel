@@ -1,6 +1,7 @@
 import type { App as VueApp } from 'vue';
 
 import { definePlugin } from '@aerogel/core/plugins';
+import { isDevelopment, isTesting } from '@noeldemartin/utils';
 
 import App from './App';
 import Cache from './Cache';
@@ -39,7 +40,7 @@ export async function bootServices(app: VueApp, services: Record<string, Service
 
     Object.assign(app.config.globalProperties, services);
 
-    if (App.development || App.testing) {
+    if (isDevelopment() || isTesting()) {
         Object.assign(globalThis, services);
     }
 }

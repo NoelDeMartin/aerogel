@@ -1,4 +1,4 @@
-import { after, facade, fail, required, uuid } from '@noeldemartin/utils';
+import { after, facade, fail, isDevelopment, required, uuid } from '@noeldemartin/utils';
 import { markRaw, nextTick } from 'vue';
 import type { Component } from 'vue';
 import type { ObjectValues } from '@noeldemartin/utils';
@@ -155,7 +155,7 @@ export class UIService extends Service {
                 continue;
             }
 
-            if (confirmed && App.development) {
+            if (confirmed && isDevelopment()) {
                 // eslint-disable-next-line no-console
                 console.warn(`Confirmed confirm modal was suppressed because required '${name}' checkbox was missing`);
             }
