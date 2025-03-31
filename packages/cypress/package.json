@@ -35,14 +35,14 @@
         "cypress": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.0-next.5c206fa7d2c7aa3aa156d38935403ee1e4866f59",
+        "@noeldemartin/utils": "^0.7.0",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
         "cypress-solid": "0.2.0-next.35b76704b9336568b176d820c08fd48d198ada0a",
         "idb": "^8.0.2"
     },
     "devDependencies": {
         "@aerogel/plugin-soukai": "*",
-        "soukai": "0.6.0-next.99b8d2509c34fc253150d47a9deed61332bc3065"
+        "soukai": "^0.6.0"
     },
     "eslintConfig": {
         "extends": [

@@ -26,7 +26,7 @@
         "verify": "noeldemartin-verify"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.0-next.febf11f10be81ab8b5562e4fe2cddbd1929ac9ca",
+        "@noeldemartin/utils": "^0.7.0",
         "chalk": "^5.4.1",
         "commander": "^11.0.0",
         "mustache": "^4.2.0",
