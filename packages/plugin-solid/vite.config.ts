@@ -23,6 +23,7 @@ export default defineConfig({
                 'solid-auth-client',
                 'soukai-solid',
                 'soukai',
+                'virtual:aerogel-solid',
                 'vue',
             ],
         },

@@ -14,7 +14,7 @@ export default defineConfig({
             fileName: 'aerogel-plugin-routing',
         },
         rollupOptions: {
-            external: ['@aerogel/core', '@aerogel/vite', '@noeldemartin/utils', 'vue-router', 'vue'],
+            external: ['@aerogel/core', '@aerogel/vite', '@noeldemartin/utils', 'virtual:aerogel', 'vue-router', 'vue'],
         },
     },
     plugins: [
