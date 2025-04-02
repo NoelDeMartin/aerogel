@@ -95,12 +95,10 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             config.optimizeDeps = config.optimizeDeps ?? {};
             config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), ...Object.keys(virtualHandlers)];
 
-            if (process.env.NODE_ENV) {
-                config.define = {
-                    ...(config.define ?? {}),
-                    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-                };
-            }
+            config.define = {
+                ...(config.define ?? {}),
+                __AEROGEL_ENV__: JSON.stringify(process.env.NODE_ENV),
+            };
 
             return config;
         },
