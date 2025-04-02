@@ -27,6 +27,7 @@ export default class LoadsChildren {
             status?: ResourceJobStatus;
             onLoaded?: (urls: string[]) => unknown;
             onMalformedDocument?: (url: string) => unknown;
+            onDocumentRead?: (document: SolidDocument) => unknown;
         } = {},
     ): Promise<SolidModel[]> {
         if (isLocalModel(model)) {
@@ -60,7 +61,13 @@ export default class LoadsChildren {
             await Promise.all(
                 documentUrls.map(async (documentUrl) => {
                     const { children: documentChildren, tombstones: documentTombstones } =
-                        await this.loadDocumentChildren(model, documentUrl, documents, options.onMalformedDocument);
+                        await this.loadDocumentChildren(
+                            model,
+                            documentUrl,
+                            documents,
+                            options.onMalformedDocument,
+                            options.onDocumentRead,
+                        );
 
                     tombstones.push(...documentTombstones);
 
@@ -101,16 +108,18 @@ export default class LoadsChildren {
     }
 
     protected async loadDocumentChildren(
-        model: SolidModel,
+        model: SolidContainer,
         documentUrl: string,
         documents: ObjectsMap<SolidDocument>,
         onMalformedDocument?: (url: string) => unknown,
+        onDocumentRead?: (document: SolidDocument) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const document = documents.get(documentUrl);
 
         if (
             document &&
-            (await DocumentsCache.isFresh(document.url, document.updatedAt ?? new Date())) &&
+            document.updatedAt &&
+            (await DocumentsCache.isFresh(document.url, document.updatedAt)) &&
             this.localModels?.hasKey(model.url)
         ) {
             return {
@@ -119,7 +128,7 @@ export default class LoadsChildren {
             };
         }
 
-        return this.loadDocumentChildrenFromRemote(model, documentUrl, onMalformedDocument);
+        return this.loadDocumentChildrenFromRemote(model, documentUrl, onMalformedDocument, onDocumentRead);
     }
 
     protected async loadDocumentChildrenFromLocal(
@@ -148,20 +157,26 @@ export default class LoadsChildren {
     }
 
     protected async loadDocumentChildrenFromRemote(
-        model: SolidModel,
+        model: SolidContainer,
         documentUrl: string,
         onMalformedDocument?: (url: string) => unknown,
+        onDocumentRead?: (document: SolidDocument) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const children: Record<string, SolidModel[]> = {};
         const tombstones: Tombstone[] = [];
         const readDocument = lazy(async () => {
             try {
+                const documentModel = model.documents.find((document) => document.url === documentUrl);
                 const document = await model.requireEngine().readOne(model.static('collection'), documentUrl);
                 const documentTombstones = await Tombstone.createManyFromEngineDocuments({
                     [documentUrl]: document,
                 });
 
                 tombstones.push(...documentTombstones);
+
+                if (documentModel) {
+                    onDocumentRead?.(documentModel);
+                }
 
                 return document;
             } catch (error) {

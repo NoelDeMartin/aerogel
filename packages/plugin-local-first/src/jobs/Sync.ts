@@ -72,8 +72,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
     protected async run(): Promise<void> {
         const engine = Solid.requireAuthenticator().engine as SolidEngine;
-        const updateDocumentDate = (url: string, { headers }: { headers: Headers }) => {
-            const date = headers?.get('last-modified');
+        const updateDocumentDate = (url: string, { headers }: { headers?: Headers }, fallbackDate?: Date) => {
+            const date = headers?.get('last-modified') ?? fallbackDate;
 
             if (!date || url.endsWith('/')) {
                 return;
@@ -82,8 +82,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             this.documentsModifiedAt[url] = new Date(date);
         };
         const clearListener = engine.listeners.add({
-            onDocumentRead: updateDocumentDate,
-            onDocumentUpdated: updateDocumentDate,
+            onDocumentRead: (url, metadata) => updateDocumentDate(url, metadata),
+            onDocumentUpdated: (url, metadata) => updateDocumentDate(url, metadata, new Date()),
         });
 
         try {
@@ -315,6 +315,13 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                 await this.updateProgress();
             },
             onMalformedDocument: (url) => this.malformedDocuments.add(url),
+            onDocumentRead: (document) => {
+                if (!document.updatedAt || document.url in this.documentsModifiedAt) {
+                    return;
+                }
+
+                this.documentsModifiedAt[document.url] = document.updatedAt;
+            },
         });
 
         for (let index = 0; index < children.length; index++) {
@@ -384,11 +391,13 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         if (!isContainer(model)) {
             if (isRemoteModel(model)) {
                 const documentUrl = model.requireDocumentUrl();
-                const modifiedAt = this.documentsModifiedAt[documentUrl] ?? new Date();
+                const modifiedAt = this.documentsModifiedAt[documentUrl];
 
-                await DocumentsCache.remember(documentUrl, modifiedAt);
+                if (modifiedAt) {
+                    await DocumentsCache.remember(documentUrl, modifiedAt);
 
-                delete this.documentsModifiedAt[documentUrl];
+                    delete this.documentsModifiedAt[documentUrl];
+                }
             }
 
             return;
@@ -552,11 +561,13 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     private async rememberModelDocuments(model: SolidModel): Promise<void> {
         if (!isContainer(model)) {
             const documentUrl = model.requireDocumentUrl();
-            const modifiedAt = this.documentsModifiedAt[documentUrl] ?? new Date();
+            const modifiedAt = this.documentsModifiedAt[documentUrl];
 
-            await DocumentsCache.remember(documentUrl, modifiedAt);
+            if (modifiedAt) {
+                await DocumentsCache.remember(documentUrl, modifiedAt);
 
-            delete this.documentsModifiedAt[documentUrl];
+                delete this.documentsModifiedAt[documentUrl];
+            }
 
             return;
         }
