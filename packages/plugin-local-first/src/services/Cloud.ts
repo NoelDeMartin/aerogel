@@ -438,8 +438,8 @@ export class CloudService extends Service {
 
     private async bustDocumentsCache(): Promise<void> {
         if (
-            hasLocationQueryParameter('bustDocumentsCache') &&
-            parseBoolean(getLocationQueryParameter('bustDocumentsCache'))
+            !hasLocationQueryParameter('bustDocumentsCache') ||
+            !parseBoolean(getLocationQueryParameter('bustDocumentsCache'))
         ) {
             return;
         }

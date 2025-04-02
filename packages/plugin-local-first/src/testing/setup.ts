@@ -1,12 +1,13 @@
 import 'fake-indexeddb/auto';
 
 import { installVitestSolidMatchers } from '@noeldemartin/solid-utils/vitest';
-import { FakeLocalStorage, FakeServer, setupFacadeMocks } from '@noeldemartin/testing';
+import { FakeLocalStorage, FakeServer, mock, setupFacadeMocks } from '@noeldemartin/testing';
 import { resetAsyncMemo } from '@noeldemartin/utils';
 import { beforeEach, vi } from 'vitest';
 
 setupFacadeMocks();
 installVitestSolidMatchers();
+globalThis.location = mock<Location>({ href: 'https://example.com' });
 
 beforeEach(async () => {
     const { Solid } = await import('@aerogel/plugin-solid');
