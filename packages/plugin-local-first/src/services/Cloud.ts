@@ -28,6 +28,7 @@ import {
     updateRemoteModel,
 } from '@aerogel/plugin-local-first/lib/mirroring';
 import Backup from '@aerogel/plugin-local-first/jobs/Backup';
+import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 import Migrate from '@aerogel/plugin-local-first/jobs/Migrate';
 import Sync from '@aerogel/plugin-local-first/jobs/Sync';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
@@ -299,6 +300,8 @@ export class CloudService extends Service {
 
             this.pollingInterval = setInterval(() => this.sync(), this.pollingMinutes * 60 * 1000);
         });
+
+        await this.bustDocumentsCache();
     }
 
     protected getDirtyLocalModels(): SolidModel[] {
@@ -431,6 +434,18 @@ export class CloudService extends Service {
         }
 
         return this.startupSync;
+    }
+
+    private async bustDocumentsCache(): Promise<void> {
+        if (
+            hasLocationQueryParameter('bustDocumentsCache') &&
+            parseBoolean(getLocationQueryParameter('bustDocumentsCache'))
+        ) {
+            return;
+        }
+
+        await DocumentsCache.booted;
+        await DocumentsCache.clear();
     }
 
 }

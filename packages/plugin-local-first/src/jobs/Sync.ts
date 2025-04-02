@@ -316,7 +316,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             },
             onMalformedDocument: (url) => this.malformedDocuments.add(url),
             onDocumentRead: (document) => {
-                if (!document.updatedAt || document.url in this.documentsModifiedAt) {
+                if (document.url.endsWith('/') || !document.updatedAt || document.url in this.documentsModifiedAt) {
                     return;
                 }
 
