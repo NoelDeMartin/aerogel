@@ -101,25 +101,6 @@ export default abstract class Plugin {
         });
     }
 
-    protected async updateTailwindConfig(editor: Editor, options: { content: string }): Promise<void> {
-        await Log.animate('Updating tailwind configuration', async () => {
-            const tailwindConfig = editor.requireSourceFile('tailwind.config.js');
-            const contentArray = this.getTailwindContentArray(tailwindConfig);
-
-            if (!contentArray) {
-                return Log.fail(`
-                    Could not find content array in tailwind config, please add the following manually:
-
-                    ${options.content}
-                `);
-            }
-
-            contentArray.addElement(options.content);
-
-            await editor.save(tailwindConfig);
-        });
-    }
-
     protected getBootstrapPluginsDeclaration(mainConfig: SourceFile): ArrayLiteralExpression | null {
         const bootstrapAppCall = findDescendant(mainConfig, {
             guard: Node.isCallExpression,

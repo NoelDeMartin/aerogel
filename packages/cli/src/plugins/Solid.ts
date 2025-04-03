@@ -13,12 +13,6 @@ export class Solid extends Plugin {
     }
 
     protected override async updateFiles(editor: Editor): Promise<void> {
-        await this.updateTailwindConfig(editor, {
-            content: isLinkedLocalApp()
-                ? `'${packagePath('plugin-solid')}/dist/**/*.js'`
-                : '\'./node_modules/@aerogel/plugin-solid/dist/**/*.js\'',
-        });
-
         await this.updateNpmScripts(editor);
         await this.updateGitIgnore();
         await super.updateFiles(editor);

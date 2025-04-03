@@ -16,7 +16,6 @@ export class Editor {
         this.modifiedFiles = new Set();
 
         this.project.addSourceFilesAtPaths('src/**/*.ts');
-        this.project.addSourceFilesAtPaths('tailwind.config.js');
         this.project.addSourceFilesAtPaths('vite.config.ts');
         this.project.addSourceFilesAtPaths('package.json');
     }
