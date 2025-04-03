@@ -18,9 +18,9 @@
                         })
                     "
                 />
-                <AGButton @click="$solid.logout()">
+                <Button @click="$solid.logout()">
                     {{ $td('solid.logout', 'Logout') }}
-                </AGButton>
+                </Button>
             </div>
         </slot>
 
@@ -32,24 +32,24 @@
                         :aria-label="$td('solid.url', 'Login url')"
                         :placeholder="$td('solid.placeholder', 'https://...')"
                     />
-                    <AGButton v-if="showDevLogin" submit @click="form.url = 'dev'">
+                    <Button v-if="showDevLogin" submit @click="form.url = 'dev'">
                         {{ $td('solid.devLogin', 'Dev login') }}
-                    </AGButton>
-                    <AGButton v-else submit>
+                    </Button>
+                    <Button v-else submit>
                         {{ $td('solid.login', 'Login') }}
-                    </AGButton>
+                    </Button>
                 </AGForm>
-                <AGButton v-if="$solid.wasLoggedIn()" class="mt-3" @click="$solid.reconnect({ force: true })">
+                <Button v-if="$solid.wasLoggedIn()" class="mt-3" @click="$solid.reconnect({ force: true })">
                     {{ $td('solid.reconnect', 'Reconnect') }}
-                </AGButton>
+                </Button>
                 <p
                     v-if="$solid.previousSession?.error || $solid.loginStartupError"
                     class="mt-1 self-center text-sm text-red-800"
                 >
                     <AGMarkdown :text="$td('solid.previousLoginError', 'Previous login attempt failed')" inline />
-                    <AGLink @click="$errors.inspect($solid.previousSession?.error || $solid.loginStartupError)">
+                    <Link @click="$errors.inspect($solid.previousSession?.error || $solid.loginStartupError)">
                         ({{ $td('errors.viewDetails', 'View details') }})
-                    </AGLink>
+                    </Link>
                 </p>
             </div>
         </slot>
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { AGButton, AGForm, AGInput, AGLink, AGMarkdown, requiredStringInput, useForm } from '@aerogel/core';
+import { AGForm, AGInput, AGMarkdown, Button, Link, requiredStringInput, useForm } from '@aerogel/core';
 import { isDevelopment } from '@noeldemartin/utils';
 import { computed } from 'vue';
 

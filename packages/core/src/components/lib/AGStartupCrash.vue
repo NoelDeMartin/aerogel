@@ -14,12 +14,12 @@
                 class="mt-4 text-center"
             />
             <div class="mt-4 flex flex-col space-y-4">
-                <AGButton color="danger" @click="$app.reload()">
+                <Button variant="destructive" @click="$app.reload()">
                     {{ $td('startupCrash.reload', 'Try again') }}
-                </AGButton>
-                <AGButton color="danger" @click="$errors.inspect($errors.startupErrors)">
+                </Button>
+                <Button variant="destructive" @click="$errors.inspect($errors.startupErrors)">
                     {{ $td('startupCrash.inspect', 'View error details') }}
-                </AGButton>
+                </Button>
             </div>
         </div>
     </div>
@@ -27,5 +27,5 @@
 
 <script setup lang="ts">
 import AGMarkdown from './AGMarkdown.vue';
-import AGButton from '../forms/AGButton.vue';
+import Button from '../ui/Button.vue';
 </script>

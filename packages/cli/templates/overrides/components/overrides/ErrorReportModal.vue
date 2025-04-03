@@ -5,20 +5,20 @@
             :current-report="activeReportIndex + 1"
             :total-reports="reports.length"
         />
-        <AGButton color="clear" :disabled="activeReportIndex === 0" @click="activeReportIndex--">
+        <Button color="ghost" :disabled="activeReportIndex === 0" @click="activeReportIndex--">
             {{ previousReportText }}
-        </AGButton>
-        <AGButton color="clear" :disabled="activeReportIndex === reports.length - 1" @click="activeReportIndex++">
+        </Button>
+        <Button color="ghost" :disabled="activeReportIndex === reports.length - 1" @click="activeReportIndex++">
             {{ nextReportText }}
-        </AGButton>
+        </Button>
         <AGErrorReportModalButtons :report="report">
             <template
                 #default="{ url, handler, iconComponent, description }: IAGErrorReportModalButtonsDefaultSlotProps"
             >
-                <AGButton :url="url" :aria-label="description" @click="handler">
+                <Button :url="url" :aria-label="description" @click="handler">
                     <component :is="iconComponent" />
                     {{ description }}
-                </AGButton>
+                </Button>
             </template>
         </AGErrorReportModalButtons>
         <AGMarkdown v-if="report.description" :text="report.description" />

@@ -1,14 +1,14 @@
 <template>
     <AGHeadlessSnackbar class="flex flex-row items-center justify-center gap-3 p-4" :class="styleClasses">
         <AGMarkdown :text="message" inline />
-        <AGButton
+        <Button
             v-for="(action, i) of actions"
             :key="i"
-            :color="color"
+            :variant="colorVariant"
             @click="activate(action)"
         >
             {{ action.text }}
-        </AGButton>
+        </Button>
     </AGHeadlessSnackbar>
 </template>
 
@@ -17,8 +17,9 @@ import { computed } from 'vue';
 
 import { Colors } from '@aerogel/core/components/constants';
 import { useSnackbar, useSnackbarProps } from '@aerogel/core/components/headless/snackbars';
+import type { IButtonVariants } from '@aerogel/core/components/contracts/Button';
 
-import AGButton from '../forms/AGButton.vue';
+import Button from '../ui/Button.vue';
 import AGHeadlessSnackbar from '../headless/snackbars/AGHeadlessSnackbar.vue';
 import AGMarkdown from '../lib/AGMarkdown.vue';
 
@@ -33,4 +34,5 @@ const styleClasses = computed(() => {
             return 'bg-gray-900 text-white';
     }
 });
+const colorVariant = computed(() => props.color as IButtonVariants);
 </script>

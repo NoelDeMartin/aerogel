@@ -14,7 +14,18 @@ export default defineConfig({
             fileName: 'aerogel-core',
         },
         rollupOptions: {
-            external: ['@noeldemartin/utils', 'dompurify', 'marked', 'pinia', 'reka-ui', 'virtual:aerogel', 'vue'],
+            external: [
+                '@noeldemartin/utils',
+                'class-variance-authority',
+                'clsx',
+                'dompurify',
+                'marked',
+                'pinia',
+                'reka-ui',
+                'tailwind-merge',
+                'virtual:aerogel',
+                'vue',
+            ],
         },
     },
     plugins: [

@@ -1,15 +1,15 @@
 <template>
     <div class="flex">
         <slot v-for="(button, i) of buttons" v-bind="button as unknown as ComponentProps" :key="i">
-            <AGButton
-                color="clear"
+            <Button
+                variant="ghost"
                 :url="button.url"
                 :title="$td(`errors.report_${button.id}`, button.description)"
                 :aria-label="$td(`errors.report_${button.id}`, button.description)"
                 @click="button.handler"
             >
                 <component :is="button.iconComponent" class="size-4" aria-hidden="true" />
-            </AGButton>
+            </Button>
         </slot>
     </div>
 </template>
@@ -29,7 +29,7 @@ import { translateWithDefault } from '@aerogel/core/lang/utils';
 import type { ComponentProps } from '@aerogel/core/utils/vue';
 import type { ErrorReport } from '@aerogel/core/errors';
 
-import AGButton from '../forms/AGButton.vue';
+import Button from '../ui/Button.vue';
 import type { IAGErrorReportModalButtonsDefaultSlotProps } from './AGErrorReportModal';
 
 const props = defineProps({

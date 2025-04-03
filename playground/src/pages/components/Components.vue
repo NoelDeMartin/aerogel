@@ -32,15 +32,15 @@
             </div>
             <div class="mt-4 flex items-center gap-2">
                 <span>{{ $t('components.buttons_default') }}:</span>
-                <AGButton>
+                <Button>
                     {{ $t('components.buttons_clickMe') }}
-                </AGButton>
-                <AGButton color="secondary">
+                </Button>
+                <Button variant="secondary">
                     {{ $t('components.buttons_clickMe') }}
-                </AGButton>
-                <AGButton color="clear">
+                </Button>
+                <Button variant="ghost">
                     <i-mdi-help-circle-outline class="size-6" />
-                </AGButton>
+                </Button>
             </div>
         </section>
 

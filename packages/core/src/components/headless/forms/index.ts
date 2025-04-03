@@ -1,9 +1,7 @@
 export * from './composition';
-export * from './AGHeadlessButton';
 export * from './AGHeadlessInput';
 export * from './AGHeadlessSelect';
 export * from './AGHeadlessSelectOption';
-export { default as AGHeadlessButton } from './AGHeadlessButton.vue';
 export { default as AGHeadlessInput } from './AGHeadlessInput.vue';
 export { default as AGHeadlessInputDescription } from './AGHeadlessInputDescription.vue';
 export { default as AGHeadlessInputError } from './AGHeadlessInputError.vue';

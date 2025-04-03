@@ -9,24 +9,24 @@
                         :total-reports="reports.length"
                     />
                     <template v-if="reports.length > 1">
-                        <AGButton
-                            color="clear"
+                        <Button
+                            variant="ghost"
                             :disabled="activeReportIndex === 0"
                             :title="previousReportText"
                             :aria-label="previousReportText"
                             @click="activeReportIndex--"
                         >
                             <IconCheveronLeft aria-hidden="true" class="size-4" />
-                        </AGButton>
-                        <AGButton
-                            color="clear"
+                        </Button>
+                        <Button
+                            variant="ghost"
                             :disabled="activeReportIndex === reports.length - 1"
                             :title="nextReportText"
                             :aria-label="nextReportText"
                             @click="activeReportIndex++"
                         >
                             <IconCheveronRight aria-hidden="true" class="size-4" />
-                        </AGButton>
+                        </Button>
                     </template>
                 </div>
                 <AGErrorReportModalButtons :report="report" />
@@ -43,7 +43,7 @@ import IconCheveronLeft from '~icons/zondicons/cheveron-left';
 
 import { useErrorReportModal, useErrorReportModalProps } from './AGErrorReportModal';
 
-import AGButton from '../forms/AGButton.vue';
+import Button from '../ui/Button.vue';
 import AGErrorReportModalButtons from './AGErrorReportModalButtons.vue';
 import AGErrorReportModalTitle from './AGErrorReportModalTitle.vue';
 import AGMarkdown from '../lib/AGMarkdown.vue';

@@ -24,6 +24,10 @@ export function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
         resolve: (name) => {
+            if (name === 'Button' || name === 'Link') {
+                return { name, as: name, from: '@aerogel/core' };
+            }
+
             if (!name.startsWith('AG') || name.startsWith('AGStory')) {
                 return;
             }

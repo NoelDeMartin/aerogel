@@ -11,19 +11,19 @@
                         })
                     "
                 />
-                <AGButton @click="$cloud.sync(), $emit('sync')">
+                <Button @click="($cloud.sync(), $emit('sync'))">
                     {{ $td('cloud.sync', 'Synchronize') }}
-                </AGButton>
-                <AGButton @click="$solid.logout()">
+                </Button>
+                <Button @click="$solid.logout()">
                     {{ $td('solid.logout', 'Logout') }}
-                </AGButton>
+                </Button>
             </div>
         </template>
     </AGSolidStatus>
 </template>
 
 <script setup lang="ts">
-import { AGButton, AGMarkdown } from '@aerogel/core';
+import { AGMarkdown, Button } from '@aerogel/core';
 import { AGSolidStatus } from '@aerogel/plugin-solid';
 import type { IAGSolidStatusLoggedInSlotProps } from '@aerogel/plugin-solid';
 

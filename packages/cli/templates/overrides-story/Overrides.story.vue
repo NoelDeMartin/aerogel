@@ -2,21 +2,21 @@
     <Story :layout="{ type: 'grid', width: '90%' }">
         <Variant title="Playground">
             <div class="flex space-x-3">
-                <AGButton @click="$ui.alert(alertTitle, alertMessage)">
+                <Button @click="$ui.alert(alertTitle, alertMessage)">
                     Alert
-                </AGButton>
-                <AGButton @click="$ui.confirm(confirmTitle, confirmMessage)">
+                </Button>
+                <Button @click="$ui.confirm(confirmTitle, confirmMessage)">
                     Confirm
-                </AGButton>
-                <AGButton @click="$ui.loading(loadingMessage, after({ seconds: loadingDuration }))">
+                </Button>
+                <Button @click="$ui.loading(loadingMessage, after({ seconds: loadingDuration }))">
                     Loading
-                </AGButton>
-                <AGButton @click="$ui.showSnackbar(snackbarMessage, snackbarOptions)">
+                </Button>
+                <Button @click="$ui.showSnackbar(snackbarMessage, snackbarOptions)">
                     Snackbar
-                </AGButton>
-                <AGButton @click="$errors.inspect(errorReports)">
+                </Button>
+                <Button @click="$errors.inspect(errorReports)">
                     Error Report
-                </AGButton>
+                </Button>
             </div>
 
             <AGAppOverlays />

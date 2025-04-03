@@ -6,30 +6,34 @@
             <AGInput name="draft" :placeholder="placeholder" :label="label" />
 
             <div class="mt-2 flex flex-row-reverse gap-2">
-                <AGButton :color="acceptColor" submit>
+                <Button :variant="acceptColorVariant" submit>
                     {{ renderedAcceptText }}
-                </AGButton>
-                <AGButton :color="cancelColor" @click="close()">
+                </Button>
+                <Button :variant="cancelColorVariant" @click="close()">
                     {{ renderedCancelText }}
-                </AGButton>
+                </Button>
             </div>
         </AGForm>
     </AGModal>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
+import { usePromptModal, usePromptModalProps } from '@aerogel/core/components/modals/AGPromptModal';
+import { requiredStringInput, useForm } from '@aerogel/core/forms';
+import type { IButtonVariants } from '@aerogel/core/components/contracts/Button';
 import type { IModalDefaultSlotProps } from '@aerogel/core/components/contracts/Modal';
 
 import AGModal from './AGModal.vue';
-import { usePromptModal, usePromptModalProps } from './AGPromptModal';
-
-import AGButton from '../forms/AGButton.vue';
+import Button from '../ui/Button.vue';
 import AGForm from '../forms/AGForm.vue';
 import AGInput from '../forms/AGInput.vue';
 import AGMarkdown from '../lib/AGMarkdown.vue';
-import { requiredStringInput, useForm } from '../../forms';
 
 const props = defineProps(usePromptModalProps());
 const form = useForm({ draft: requiredStringInput(props.defaultValue ?? '') });
 const { renderedAcceptText, renderedCancelText } = usePromptModal(props);
+const acceptColorVariant = computed(() => props.acceptColor as IButtonVariants);
+const cancelColorVariant = computed(() => props.cancelColor as IButtonVariants);
 </script>
