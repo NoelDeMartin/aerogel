@@ -36,7 +36,7 @@ describe('Error Handling', () => {
         cy.see('Errors.vue');
 
         // Normalize stacktrace
-        cy.get('[aria-modal="true"] pre').invoke('text', '[stacktrace]');
+        cy.get('[role="dialog"] pre').invoke('text', '[stacktrace]');
         cy.matchImageSnapshot();
     });
 
