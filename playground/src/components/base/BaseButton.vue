@@ -1,6 +1,6 @@
 <template>
     <AGHeadlessButton
-        class="flex items-center gap-1 font-semibold focus-visible:outline focus-visible:outline-2"
+        class="flex items-center gap-1 font-semibold focus-visible:outline-2"
         :class="variantClasses"
         :disabled="disabled"
     >
@@ -20,7 +20,7 @@ const props = defineProps({
 });
 
 const colorClasses = computed(() => {
-    const baseColoredStyles = 'shadow-sm text-white focus-visible:outline-offset-2';
+    const baseColoredStyles = 'shadow-2xs text-white focus-visible:outline-offset-2';
 
     switch (props.color) {
         case Colors.Danger:
@@ -41,7 +41,7 @@ const roundClasses = computed(() => {
     }
 
     if (props.small) {
-        return 'rounded';
+        return 'rounded-xs';
     }
 
     return 'rounded-md';
@@ -49,7 +49,7 @@ const roundClasses = computed(() => {
 
 const sizeClasses = computed(() => {
     if (props.icon) {
-        const dimensionsClasses = props.small ? 'w-7 h-7' : 'w-clickable h-clickable';
+        const dimensionsClasses = props.small ? 'size-7' : 'size-clickable';
 
         return `${dimensionsClasses} flex items-center justify-center`;
     }

@@ -9,7 +9,7 @@
             target="_blank"
             class="flex flex-row items-center text-sm text-gray-600 hover:text-gray-500 hover:underline"
         >
-            <i-mdi-github class="mr-1 h-4 w-4" />
+            <i-mdi-github class="mr-1 size-4" />
             <span>{{ $t('app.viewPageSource') }}</span>
         </a>
     </div>

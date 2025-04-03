@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 
+import TailwindCSS from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -113,6 +114,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
 
     return arrayFilter([
         Vue(),
+        TailwindCSS(),
         !options.lib &&
             VitePWA({
                 registerType: 'autoUpdate',

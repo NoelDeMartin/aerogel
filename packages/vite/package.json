@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "@noeldemartin/utils": "0.7.0-next.31cf84b4b57092d146528f27579439783aca71bb",
+        "@tailwindcss/vite": "^4.1.1",
         "@vitejs/plugin-vue": "^5.2.3",
         "mustache": "^4.2.0",
         "unplugin-vue-components": "^28.4.1",

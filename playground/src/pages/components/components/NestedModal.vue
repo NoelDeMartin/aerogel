@@ -1,6 +1,6 @@
 <template>
     <BaseModal>
-        <AGHeadlessModalTitle class="isolate z-10 text-base font-semibold leading-6 text-gray-900">
+        <AGHeadlessModalTitle class="isolate z-10 text-base leading-6 font-semibold text-gray-900">
             <AGMarkdown lang-key="components.modals_nestedTitle" :lang-params="{ count }" inline />
         </AGHeadlessModalTitle>
         <div class="mt-3 flex flex-col items-center">
@@ -8,7 +8,7 @@
                 <i-twemoji-turtle
                     v-for="i in count"
                     :key="i"
-                    class="-mt-6 mb-4 h-20 w-20"
+                    class="-mt-6 mb-4 size-20"
                     :aria-label="$t('components.modals_nestedTurtle')"
                     :title="$t('components.modals_nestedTurtle')"
                 />

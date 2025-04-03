@@ -11,7 +11,7 @@
             <AGHeadlessInputInput
                 v-bind="attrs"
                 type="checkbox"
-                class="h-4 w-4 rounded hover:bg-gray-200"
+                class="size-4 rounded-xs hover:bg-gray-200"
                 :class="{
                     'border-gray-300 text-indigo-600 hover:text-indigo-400 focus:ring-indigo-600': !$input?.errors,
                     'border-red-200 text-red-600 hover:text-red-400 focus:ring-red-600': $input?.errors,

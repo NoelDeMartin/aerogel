@@ -4,12 +4,12 @@
             v-if="$solid.user?.avatarUrl"
             :src="$solid.user?.avatarUrl"
             alt=""
-            class="absolute inset-0 h-full w-full rounded-full"
+            class="absolute inset-0 size-full rounded-full"
         />
         <span v-else-if="userInitials" class="text-sm font-semibold tracking-wider text-gray-500" aria-hidden="true">
             {{ userInitials }}
         </span>
-        <IconAnonymous v-else class="h-6 w-6 text-gray-500" />
+        <IconAnonymous v-else class="size-6 text-gray-500" />
     </div>
 </template>
 

@@ -21,13 +21,13 @@
             <div class="mt-4 flex items-center gap-2">
                 <span>{{ $t('components.buttons_customWithIcons') }}:</span>
                 <BaseButton icon>
-                    <i-mdi-check class="h-6 w-6" />
+                    <i-mdi-check class="size-6" />
                 </BaseButton>
                 <BaseButton icon color="danger">
-                    <i-mdi-close class="h-6 w-6" />
+                    <i-mdi-close class="size-6" />
                 </BaseButton>
                 <BaseButton icon color="clear">
-                    <i-mdi-help-circle-outline class="h-6 w-6" />
+                    <i-mdi-help-circle-outline class="size-6" />
                 </BaseButton>
             </div>
             <div class="mt-4 flex items-center gap-2">
@@ -39,7 +39,7 @@
                     {{ $t('components.buttons_clickMe') }}
                 </AGButton>
                 <AGButton color="clear">
-                    <i-mdi-help-circle-outline class="h-6 w-6" />
+                    <i-mdi-help-circle-outline class="size-6" />
                 </AGButton>
             </div>
         </section>
@@ -126,12 +126,14 @@
                 </BaseButton>
                 <BaseButton
                     @click="
-                        $ui.openModal(AGConfirmModal, {
-                            title: $t('components.modals_confirmTitle'),
-                            message: $t('components.modals_confirmMessage'),
-                            acceptText: $t('components.modals_confirmAccept'),
-                            cancelText: $t('components.modals_confirmCancel'),
-                        }).then((modal) => confirmResult(modal.afterClose))
+                        $ui
+                            .openModal(AGConfirmModal, {
+                                title: $t('components.modals_confirmTitle'),
+                                message: $t('components.modals_confirmMessage'),
+                                acceptText: $t('components.modals_confirmAccept'),
+                                cancelText: $t('components.modals_confirmCancel'),
+                            })
+                            .then((modal) => confirmResult(modal.afterClose))
                     "
                 >
                     {{ $t('components.modals_defaultConfirm') }}

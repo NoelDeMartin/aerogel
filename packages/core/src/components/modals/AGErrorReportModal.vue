@@ -16,7 +16,7 @@
                             :aria-label="previousReportText"
                             @click="activeReportIndex--"
                         >
-                            <IconCheveronLeft aria-hidden="true" class="h-4 w-4" />
+                            <IconCheveronLeft aria-hidden="true" class="size-4" />
                         </AGButton>
                         <AGButton
                             color="clear"
@@ -25,7 +25,7 @@
                             :aria-label="nextReportText"
                             @click="activeReportIndex++"
                         >
-                            <IconCheveronRight aria-hidden="true" class="h-4 w-4" />
+                            <IconCheveronRight aria-hidden="true" class="size-4" />
                         </AGButton>
                     </template>
                 </div>

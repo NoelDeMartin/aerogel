@@ -16,7 +16,7 @@
             @click="$solid.logout()"
         >
             {{ $t('solid.logout') }}
-            <i-mdi-logout class="h-4 w-4" />
+            <i-mdi-logout class="size-4" />
         </BaseButton>
     </div>
 </template>

@@ -2,8 +2,8 @@
     <PageTitle source="src/pages/Forms.vue">
         {{ $t('forms.title') }}
     </PageTitle>
-    <AGForm :form="form" class="flex flex-grow flex-col items-center" @submit="submit()">
-        <div class="mt-8 flex flex-col items-center rounded-lg bg-white/60 p-8 pb-4 shadow-sm">
+    <AGForm :form="form" class="flex grow flex-col items-center" @submit="submit()">
+        <div class="mt-8 flex flex-col items-center rounded-lg bg-white/60 p-8 pb-4 shadow-2xs">
             <div class="flex">
                 <BaseInput
                     autofocus
@@ -14,7 +14,7 @@
                     :aria-label="$t('forms.name_label')"
                     :placeholder="$t('forms.name_placeholder')"
                 />
-                <BaseButton submit class="ml-2 flex-shrink-0">
+                <BaseButton submit class="ml-2 shrink-0">
                     {{ $t('forms.submit') }}
                 </BaseButton>
             </div>

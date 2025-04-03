@@ -1,5 +1,5 @@
 <template>
-    <AGHeadlessSnackbar class="overflow-hidden rounded-lg shadow-lg ring-1 ring-opacity-5" :class="colorClasses">
+    <AGHeadlessSnackbar class="overflow-hidden rounded-lg shadow-lg ring-1" :class="colorClasses">
         <div class="flex items-center gap-3 p-4">
             <AGMarkdown :text="message" inline />
 
@@ -24,10 +24,10 @@ const { activate } = useSnackbar(props);
 const colorClasses = computed(() => {
     switch (props.color) {
         case Colors.Danger:
-            return 'bg-red-200 ring-red-500 text-red-900';
+            return 'bg-red-200 ring-red-500/5 text-red-900';
         default:
         case Colors.Secondary:
-            return 'bg-white ring-black';
+            return 'bg-white ring-black/5';
     }
 });
 </script>

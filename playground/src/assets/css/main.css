@@ -1,8 +1,13 @@
-@import '../fonts/ubuntu.css';
+@import 'tailwindcss';
+@import '../fonts/ubuntu.css' layer(base);
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@source '../../../../packages/core';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+    --color-red-grey: #ecdcdc;
+    --spacing-clickable: 42px;
+}
 
 @layer base {
     html {

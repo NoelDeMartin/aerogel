@@ -5,10 +5,10 @@
         as="div"
         @update:model-value="$emit('update:modelValue', $event)"
     >
-        <AGHeadlessSelectLabel class="block text-sm font-medium leading-6 text-gray-900" />
+        <AGHeadlessSelectLabel class="block text-sm leading-6 font-medium text-gray-900" />
         <div class="relative" :class="{ 'mt-2': $select?.label }">
             <AGHeadlessSelectButton
-                class="relative w-full cursor-default bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                class="relative w-full cursor-default bg-white py-1.5 pr-10 pl-3 text-left text-gray-900 ring-1 ring-gray-300 ring-inset focus:ring-2 focus:ring-indigo-600 focus:outline-hidden"
                 text-class="block truncate"
                 :class="{
                     'ring-1 ring-red-500': $select?.errors,
@@ -16,18 +16,18 @@
             >
                 <template #icon>
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                        <IconCheveronDown class="h-5 w-5 text-gray-400" />
+                        <IconCheveronDown class="size-5 text-gray-400" />
                     </span>
                 </template>
             </AGHeadlessSelectButton>
             <AGHeadlessSelectOptions
-                class="absolute z-10 mt-1 max-h-60 w-full overflow-auto border bg-white py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="absolute z-10 mt-1 max-h-60 w-full overflow-auto border bg-white py-1 text-base ring-1 ring-black/5 focus:outline-hidden"
             >
                 <AGHeadlessSelectOption
                     v-for="(option, index) in $select?.options ?? []"
                     :key="index"
                     :value="option"
-                    class="relative block cursor-default select-none truncate py-2 pl-3 pr-9"
+                    class="relative block cursor-default truncate py-2 pr-9 pl-3 select-none"
                     selected-class="font-semibold"
                     unselected-class="font-normal"
                     active-class="bg-indigo-600 text-white"

@@ -1,5 +1,5 @@
 <template>
-    <div class="grid flex-grow place-items-center">
+    <div class="grid grow place-items-center">
         <div class="flex flex-col items-center space-y-6 p-8">
             <h1 class="mt-2 text-center text-4xl font-medium text-red-600">
                 {{ $td('startupCrash.title', 'Something went wrong!') }}

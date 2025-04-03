@@ -28,7 +28,7 @@ const jobProgress = ref(0);
 const barClasses = computed(() => {
     const classes = props.barClass ?? '';
 
-    return `h-full w-full transition-transform duration-500 ease-linear ${
+    return `size-full transition-transform duration-500 ease-linear ${
         classes.includes('bg-') ? classes : `${classes} bg-gray-700`
     }`;
 });

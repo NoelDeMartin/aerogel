@@ -14,6 +14,7 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 '@noeldemartin/utils',
+                '@tailwindcss/vite',
                 '@vitejs/plugin-vue',
                 'mustache',
                 'node:child_process',

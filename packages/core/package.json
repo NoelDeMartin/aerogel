@@ -30,8 +30,7 @@
         "vue": "^3.3.0"
     },
     "devDependencies": {
-        "@aerogel/vite": "*",
-        "tailwindcss": "^3.3.5"
+        "@aerogel/vite": "*"
     },
     "eslintConfig": {
         "extends": [

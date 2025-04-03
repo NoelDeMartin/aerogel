@@ -3,7 +3,7 @@
         <li
             v-for="task of tasks"
             :key="task.id"
-            class="flex justify-between overflow-hidden rounded-md bg-white px-6 py-4 shadow"
+            class="flex justify-between overflow-hidden rounded-md bg-white px-6 py-4 shadow-2xs"
         >
             <AGMarkdown :text="task.name" />
 

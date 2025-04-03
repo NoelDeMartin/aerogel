@@ -8,7 +8,7 @@
                 :aria-label="$td(`errors.report_${button.id}`, button.description)"
                 @click="button.handler"
             >
-                <component :is="button.iconComponent" class="h-4 w-4" aria-hidden="true" />
+                <component :is="button.iconComponent" class="size-4" aria-hidden="true" />
             </AGButton>
         </slot>
     </div>

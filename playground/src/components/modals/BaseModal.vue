@@ -9,20 +9,20 @@
             <div class="flex min-h-full items-center justify-center p-4 text-center">
                 <AGHeadlessModalPanel
                     class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all"
-                    :class="{ 'px-4 pb-4 pt-5': !noPadding }"
+                    :class="{ 'px-4 pt-5 pb-4': !noPadding }"
                 >
                     <BaseButton
                         v-if="title && cancellable"
                         color="clear"
-                        class="absolute right-1 top-3"
+                        class="absolute top-3 right-1"
                         icon
                         :title="$t('ui.close')"
                         :aria-label="$t('ui.close')"
                         @click="close()"
                     >
-                        <i-mdi-close class="h-4 w-4" />
+                        <i-mdi-close class="size-4" />
                     </BaseButton>
-                    <AGHeadlessModalTitle v-if="title" class="mr-12 text-base font-semibold leading-6 text-gray-900">
+                    <AGHeadlessModalTitle v-if="title" class="mr-12 text-base leading-6 font-semibold text-gray-900">
                         <AGMarkdown :text="title" inline />
                     </AGHeadlessModalTitle>
                     <div :class="{ 'mt-3': title }">
