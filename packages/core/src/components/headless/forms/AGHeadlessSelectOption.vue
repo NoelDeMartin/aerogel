@@ -1,31 +1,23 @@
 <template>
-    <ListboxOption v-slot="{ active, selected, disabled }: ComponentProps" :value="value" as="template">
-        <slot :active="active" :selected="selected" :disabled="disabled">
-            <li
-                :class="{
-                    [activeClass ?? 'active']: active,
-                    [inactiveClass ?? 'inactive']: !active,
-                    [selectedClass ?? 'selected']: selected,
-                    [unselectedClass ?? 'unselected']: !selected,
-                }"
-            >
+    <SelectItem :value="value" as="template">
+        <SelectItemText>
+            <slot>
                 {{ select.renderText(value) }}
-            </li>
-        </slot>
-    </ListboxOption>
+            </slot>
+        </SelectItemText>
+    </SelectItem>
 </template>
 
 <script setup lang="ts">
-import { ListboxOption } from '@headlessui/vue';
+import { SelectItem, SelectItemText } from 'reka-ui';
 
 import { injectReactiveOrFail, requiredMixedProp, stringProp } from '@aerogel/core/utils/vue';
-import type { ComponentProps } from '@aerogel/core/utils/vue';
-import type { FormFieldValue } from '@aerogel/core/forms/Form';
 
 import type { IAGHeadlessSelect } from './AGHeadlessSelect';
 
 defineProps({
-    value: requiredMixedProp<FormFieldValue>(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value: requiredMixedProp<any>(),
     selectedClass: stringProp(),
     unselectedClass: stringProp(),
     activeClass: stringProp(),

@@ -5,9 +5,8 @@
         as="div"
         @update:model-value="$emit('update:modelValue', $event)"
     >
-        <AGHeadlessSelectLabel class="block text-sm leading-6 font-medium text-gray-900" />
         <div class="relative" :class="{ 'mt-2': $select?.label }">
-            <AGHeadlessSelectButton
+            <AGHeadlessSelectTrigger
                 class="relative w-full cursor-default bg-white py-1.5 pr-10 pl-3 text-left text-gray-900 ring-1 ring-gray-300 ring-inset focus:ring-2 focus:ring-indigo-600 focus:outline-hidden"
                 text-class="block truncate"
                 :class="{
@@ -19,19 +18,15 @@
                         <IconCheveronDown class="size-5 text-gray-400" />
                     </span>
                 </template>
-            </AGHeadlessSelectButton>
+            </AGHeadlessSelectTrigger>
             <AGHeadlessSelectOptions
-                class="absolute z-10 mt-1 max-h-60 w-full overflow-auto border bg-white py-1 text-base ring-1 ring-black/5 focus:outline-hidden"
+                class="absolute z-10 mt-1 max-h-60 w-full overflow-auto border border-gray-300 bg-white py-1 text-base ring-1 ring-black/5 focus:outline-hidden"
             >
                 <AGHeadlessSelectOption
                     v-for="(option, index) in $select?.options ?? []"
                     :key="index"
                     :value="option"
-                    class="relative block cursor-default truncate py-2 pr-9 pl-3 select-none"
-                    selected-class="font-semibold"
-                    unselected-class="font-normal"
-                    active-class="bg-indigo-600 text-white"
-                    inactive-class="text-gray-900"
+                    class="relative block cursor-default truncate py-2 pr-9 pl-3 text-gray-900 select-none data-[highlighted]:bg-indigo-600 data-[highlighted]:text-white data-[state=checked]:font-semibold data-[state=unchecked]:font-normal"
                 />
             </AGHeadlessSelectOptions>
         </div>
@@ -47,11 +42,10 @@ import { useSelectEmits, useSelectProps } from '@aerogel/core/components/headles
 import type { IAGHeadlessSelect } from '@aerogel/core/components/headless/forms/AGHeadlessSelect';
 
 import AGHeadlessSelect from '../headless/forms/AGHeadlessSelect.vue';
-import AGHeadlessSelectButton from '../headless/forms/AGHeadlessSelectButton.vue';
+import AGHeadlessSelectTrigger from '../headless/forms/AGHeadlessSelectTrigger.vue';
 import AGHeadlessSelectError from '../headless/forms/AGHeadlessSelectError.vue';
-import AGHeadlessSelectLabel from '../headless/forms/AGHeadlessSelectLabel.vue';
 import AGHeadlessSelectOption from '../headless/forms/AGHeadlessSelectOption.vue';
-import AGHeadlessSelectOptions from '../headless/forms/AGHeadlessSelectOptions';
+import AGHeadlessSelectOptions from '../headless/forms/AGHeadlessSelectOptions.vue';
 
 defineEmits(useSelectEmits());
 

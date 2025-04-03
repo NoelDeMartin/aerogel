@@ -1,17 +1,14 @@
 <template>
-    <Listbox
-        v-slot="{ value, open, disabled }: ComponentProps"
-        :model-value="selectedOption"
-        @update:model-value="update($event)"
-    >
-        <slot :value="value" :open="open" :disabled="disabled" />
-    </Listbox>
+    <SelectRoot v-slot="{ open }: ComponentProps" :model-value="selectedOption" @update:model-value="update($event)">
+        <slot :model-value="modelValue" :open="open" />
+    </SelectRoot>
 </template>
 
 <script setup lang="ts">
 import { computed, inject, provide } from 'vue';
 import { toString, uuid } from '@noeldemartin/utils';
-import { Listbox } from '@headlessui/vue';
+import { SelectRoot } from 'reka-ui';
+import type { AcceptableValue } from 'reka-ui';
 
 import { mixedProp } from '@aerogel/core/utils/vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
@@ -40,7 +37,9 @@ const renderText = computed(() => {
 });
 const form = inject<Form | null>('form', null);
 const noSelectionText = computed(() => props.noSelectionText ?? translateWithDefault('select.noSelection', '-'));
-const selectedOption = computed(() => (form && props.name ? form.getFieldValue(props.name) : props.modelValue));
+const selectedOption = computed(
+    () => (form && props.name ? form.getFieldValue(props.name) : props.modelValue) as AcceptableValue,
+);
 const errors = computed(() => {
     if (!form || !props.name) {
         return null;
@@ -49,7 +48,8 @@ const errors = computed(() => {
     return form.errors[props.name] ?? null;
 });
 
-function update(value: FormFieldValue) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function update(value: any) {
     if (form && props.name) {
         form.setFieldValue(props.name, value);
 

@@ -14,15 +14,7 @@ export default defineConfig({
             fileName: 'aerogel-core',
         },
         rollupOptions: {
-            external: [
-                '@headlessui/vue',
-                '@noeldemartin/utils',
-                'dompurify',
-                'marked',
-                'pinia',
-                'virtual:aerogel',
-                'vue',
-            ],
+            external: ['@noeldemartin/utils', 'dompurify', 'marked', 'pinia', 'reka-ui', 'virtual:aerogel', 'vue'],
         },
     },
     plugins: [
