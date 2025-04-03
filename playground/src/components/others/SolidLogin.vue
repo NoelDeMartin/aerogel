@@ -17,7 +17,7 @@
             <AGMarkdown lang-key="solid.loginError" />
         </div>
 
-        <div v-else-if="$solid.previousSession" class="mt-4 rounded-md border p-4">
+        <div v-else-if="$solid.previousSession" class="mt-4 rounded-md border border-gray-200 p-4">
             <AGMarkdown
                 :text="
                     $t('solid.previousSession', {
