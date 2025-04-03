@@ -28,3 +28,9 @@ declare module '@aerogel/core/bootstrap/options' {
         directives?: Record<string, Directive>;
     }
 }
+
+declare module 'vue' {
+    interface ComponentCustomDirectives {
+        measure: Directive<string, string>;
+    }
+}

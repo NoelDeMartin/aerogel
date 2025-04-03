@@ -21,14 +21,14 @@
         "@aerogel/core": "<% &dependencies.aerogelCore %>",
         "@aerogel/plugin-i18n": "<% &dependencies.aerogelPluginI18n %>",
         "@aerogel/plugin-soukai": "<% &dependencies.aerogelPluginSoukai %>",
-        "@intlify/unplugin-vue-i18n": "^0.12.2",
+        "@intlify/unplugin-vue-i18n": "^6.0.5",
         "@noeldemartin/utils": "next",
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.16",
         "soukai": "next",
         "tailwindcss": "^4.1.1",
-        "vue": "^3.3.0",
-        "vue-i18n": "9.3.0-beta.19"
+        "vue": "^3.5.13",
+        "vue-i18n": "^11.1.2"
     },
     "devDependencies": {
         "@aerogel/cli": "<% &dependencies.aerogelCli %>",

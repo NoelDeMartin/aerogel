@@ -64,6 +64,6 @@ declare module '@aerogel/core/bootstrap/options' {
     }
 }
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
     interface ComponentCustomProperties extends Services {}
 }

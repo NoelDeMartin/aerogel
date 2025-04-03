@@ -25,7 +25,7 @@ declare module '@aerogel/core/services' {
     export interface Services extends LangServices {}
 }
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
     interface ComponentCustomProperties {
         $td: typeof translateWithDefault;
     }
