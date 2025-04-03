@@ -1,5 +1,5 @@
 <template>
-    <AGModal v-slot="{ close }: IAGModalDefaultSlotProps" :cancellable="false" :title="title">
+    <AGModal v-slot="{ close }: IModalDefaultSlotProps" :cancellable="false" :title="title">
         <AGMarkdown :text="message" />
 
         <AGForm :form="form" @submit="close(form.draft)">
@@ -18,9 +18,10 @@
 </template>
 
 <script setup lang="ts">
+import type { IModalDefaultSlotProps } from '@aerogel/core/components/contracts/Modal';
+
 import AGModal from './AGModal.vue';
 import { usePromptModal, usePromptModalProps } from './AGPromptModal';
-import type { IAGModalDefaultSlotProps } from './AGModal';
 
 import AGButton from '../forms/AGButton.vue';
 import AGForm from '../forms/AGForm.vue';

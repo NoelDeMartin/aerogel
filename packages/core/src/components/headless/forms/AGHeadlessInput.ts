@@ -4,7 +4,7 @@ import type { Writable } from '@noeldemartin/utils';
 import { mixedProp, stringProp } from '@aerogel/core/utils';
 import { extractComponentProps } from '@aerogel/core/components/utils';
 import type { FormFieldValue } from '@aerogel/core/forms/Form';
-import type { HasElement } from '@aerogel/core/components/interfaces';
+import type { HasElement } from '@aerogel/core/components/contracts/shared';
 
 export interface IAGHeadlessInput extends HasElement {
     id: string;

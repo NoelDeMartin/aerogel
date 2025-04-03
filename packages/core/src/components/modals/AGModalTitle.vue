@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import AGHeadlessModalTitle from '../headless/modals/AGHeadlessModalTitle.vue';
+import { AGHeadlessModalTitle } from '@aerogel/core/components/headless/modals';
 </script>

@@ -18,7 +18,7 @@ import { computed, ref, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
-import type { __SetsElement } from '@aerogel/core/components/interfaces';
+import type { __SetsElement } from '@aerogel/core/components/contracts/shared';
 
 import { onFormFocus } from './composition';
 

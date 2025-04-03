@@ -1,5 +1,5 @@
 <template>
-    <AGModal v-slot="{ close }: IAGModalDefaultSlotProps" :cancellable="false" :title="title">
+    <AGModal v-slot="{ close }: IModalDefaultSlotProps" :cancellable="false" :title="title">
         <AGMarkdown :text="message" :actions="actions" />
 
         <div class="mt-2 flex flex-row-reverse gap-2">
@@ -14,9 +14,10 @@
 </template>
 
 <script setup lang="ts">
+import type { IModalDefaultSlotProps } from '@aerogel/core/components/contracts/Modal';
+
 import AGModal from './AGModal.vue';
 import { useConfirmModal, useConfirmModalProps } from './AGConfirmModal';
-import type { IAGModalDefaultSlotProps } from './AGModal';
 
 import AGButton from '../forms/AGButton.vue';
 import AGMarkdown from '../lib/AGMarkdown.vue';

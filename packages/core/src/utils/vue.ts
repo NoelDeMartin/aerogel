@@ -2,17 +2,12 @@ import { fail, toString } from '@noeldemartin/utils';
 import { computed, inject, reactive, ref, watch } from 'vue';
 import type { Directive, InjectionKey, MaybeRef, PropType, Ref, UnwrapNestedRefs } from 'vue';
 
-type BaseProp<T> = {
-    type?: PropType<T>;
-    validator?(value: unknown): boolean;
-};
-
-type RequiredProp<T> = BaseProp<T> & { required: true };
-type OptionalProp<T> = BaseProp<T> & { default: T | (() => T) | null };
-
 export type AcceptRefs<T> = { [K in keyof T]: T[K] | RefUnion<T[K]> };
-export type ComponentProps = Record<string, unknown>;
+export type BaseProp<T> = { type?: PropType<T>; validator?(value: unknown): boolean };
+export type ComponentProps<T = {}> = T & Record<string, unknown>;
+export type OptionalProp<T> = BaseProp<T> & { default: T | (() => T) | null };
 export type RefUnion<T> = T extends infer R ? Ref<R> : never;
+export type RequiredProp<T> = BaseProp<T> & { required: true };
 export type Unref<T> = { [K in keyof T]: T[K] extends MaybeRef<infer Value> ? Value : T[K] };
 
 export function arrayProp<T>(defaultValue?: () => T[]): OptionalProp<T[]> {

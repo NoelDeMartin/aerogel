@@ -2,49 +2,45 @@
     <AGHeadlessModal
         ref="$modal"
         v-slot="{ close }"
-        v-bind="modalProps"
-        class="relative z-50"
+        v-bind="baseModalProps"
+        class="relative"
     >
-        <div class="z-10 overflow-y-auto" :class="{ 'fixed inset-0': !inline }">
-            <div class="flex min-h-full items-center justify-center p-4 text-center">
-                <AGHeadlessModalPanel
-                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all"
-                    :class="{ 'px-4 pt-5 pb-4': !noPadding }"
-                >
-                    <BaseButton
-                        v-if="title && cancellable"
-                        color="clear"
-                        class="absolute top-3 right-1"
-                        icon
-                        :title="$t('ui.close')"
-                        :aria-label="$t('ui.close')"
-                        @click="close()"
-                    >
-                        <i-mdi-close class="size-4" />
-                    </BaseButton>
-                    <AGHeadlessModalTitle v-if="title" class="mr-12 text-base leading-6 font-semibold text-gray-900">
-                        <AGMarkdown :text="title" inline />
-                    </AGHeadlessModalTitle>
-                    <div :class="{ 'mt-3': title }">
-                        <slot :close="close" />
-                    </div>
-                </AGHeadlessModalPanel>
+        <AGHeadlessModalContent
+            class="fixed top-1/2 left-1/2 z-50 max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white text-left shadow-xl"
+            :class="{ 'px-4 pt-5 pb-4': !noPadding }"
+        >
+            <BaseButton
+                v-if="title && cancellable"
+                color="clear"
+                class="absolute top-3 right-1"
+                icon
+                :title="$t('ui.close')"
+                :aria-label="$t('ui.close')"
+                @click="close()"
+            >
+                <i-mdi-close class="size-4" />
+            </BaseButton>
+            <AGHeadlessModalTitle v-if="title" class="mr-12 text-base leading-6 font-semibold text-gray-900">
+                <AGMarkdown :text="title" inline />
+            </AGHeadlessModalTitle>
+            <div :class="{ 'mt-3': title }">
+                <slot :close="close" />
             </div>
-        </div>
+        </AGHeadlessModalContent>
     </AGHeadlessModal>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { booleanProp, extractModalProps, useModalExpose, useModalProps } from '@aerogel/core';
-import type { IAGHeadlessModal, IAGModal } from '@aerogel/core';
+import { booleanProp, extractModalProps, modalExpose, modalProps } from '@aerogel/core';
+import type { IAGHeadlessModal } from '@aerogel/core';
 
 const props = defineProps({
     noPadding: booleanProp(),
-    ...useModalProps(),
+    ...modalProps(),
 });
 const $modal = ref<IAGHeadlessModal>();
-const modalProps = extractModalProps(props);
+const baseModalProps = extractModalProps(props);
 
-defineExpose<IAGModal>(useModalExpose($modal));
+defineExpose(modalExpose($modal));
 </script>

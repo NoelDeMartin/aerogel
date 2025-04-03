@@ -2,7 +2,6 @@ export * from './AGAlertModal';
 export * from './AGConfirmModal';
 export * from './AGErrorReportModal';
 export * from './AGLoadingModal';
-export * from './AGModal';
 export * from './AGModalContext';
 export * from './AGPromptModal';
 

@@ -11,12 +11,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useModalExpose, useModalProps } from '@aerogel/core';
+import { modalExpose, modalProps } from '@aerogel/core';
 import type { IAGHeadlessModal, IAGModal } from '@aerogel/core';
 
-const props = defineProps(useModalProps());
+const props = defineProps(modalProps());
 const $modal = ref<IAGHeadlessModal>();
 
 defineOptions({ inheritAttrs: false });
-defineExpose<IAGModal>(useModalExpose($modal));
+defineExpose(modalExpose($modal));
 </script>

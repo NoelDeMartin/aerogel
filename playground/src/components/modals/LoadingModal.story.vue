@@ -42,22 +42,22 @@ const progress = ref(0);
 const defaultModal = {
     id: uuid(),
     component: LoadingModal,
-    properties: { message, inline: true },
+    properties: { message },
 };
 const progressModal = {
     id: uuid(),
     component: LoadingModal,
-    properties: { message, progress, inline: true },
+    properties: { message, progress },
 };
 const titleModal = {
     id: uuid(),
     component: LoadingModal,
-    properties: { title, message, inline: true },
+    properties: { title, message },
 };
 const titleAndProgressModal = {
     id: uuid(),
     component: LoadingModal,
-    properties: { title, message, progress, inline: true },
+    properties: { title, message, progress },
 };
 
 setInterval(() => {

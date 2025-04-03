@@ -18,7 +18,7 @@
 import { computed, ref, watchEffect } from 'vue';
 
 import { injectReactiveOrFail, stringProp } from '@aerogel/core/utils/vue';
-import type { __SetsElement } from '@aerogel/core/components/interfaces';
+import type { __SetsElement } from '@aerogel/core/components/contracts/shared';
 import type { FormFieldValue } from '@aerogel/core/forms/Form';
 import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
 
