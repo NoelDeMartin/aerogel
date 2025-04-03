@@ -2,8 +2,6 @@ import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Plugin from '@aerogel/cli/plugins/Plugin';
 import Shell from '@aerogel/cli/lib/Shell';
-import { isLinkedLocalApp } from '@aerogel/cli/lib/utils/app';
-import { packagePath } from '@aerogel/cli/lib/utils/paths';
 import type { Editor } from '@aerogel/cli/lib/Editor';
 
 export class Solid extends Plugin {
