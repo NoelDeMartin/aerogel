@@ -1,5 +1,5 @@
-import { FormFieldTypes } from './Form';
-import type { FormFieldDefinition } from './Form';
+import { FormFieldTypes } from './FormController';
+import type { FormFieldDefinition } from './FormController';
 
 export function booleanInput(
     defaultValue?: boolean,

@@ -2,7 +2,7 @@
     <PageTitle source="src/pages/Forms.vue">
         {{ $t('forms.title') }}
     </PageTitle>
-    <AGForm :form="form" class="flex grow flex-col items-center" @submit="submit()">
+    <Form :form="form" class="flex grow flex-col items-center" @submit="submit()">
         <div class="mt-8 flex flex-col items-center rounded-lg bg-white/60 p-8 pb-4 shadow-2xs">
             <div class="flex">
                 <BaseInput
@@ -23,7 +23,7 @@
                 {{ $t('forms.conditions') }}
             </BaseCheckbox>
         </div>
-    </AGForm>
+    </Form>
 </template>
 
 <script setup lang="ts">

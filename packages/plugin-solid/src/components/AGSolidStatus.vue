@@ -26,7 +26,7 @@
 
         <slot v-else name="logged-out">
             <div class="flex flex-col">
-                <AGForm :form="form" class="flex" @submit="$solid.login(form.url)">
+                <Form :form="form" class="flex" @submit="$solid.login(form.url)">
                     <AGInput
                         name="url"
                         :aria-label="$td('solid.url', 'Login url')"
@@ -38,7 +38,7 @@
                     <Button v-else submit>
                         {{ $td('solid.login', 'Login') }}
                     </Button>
-                </AGForm>
+                </Form>
                 <Button v-if="$solid.wasLoggedIn()" class="mt-3" @click="$solid.reconnect({ force: true })">
                     {{ $td('solid.reconnect', 'Reconnect') }}
                 </Button>
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { AGForm, AGInput, AGMarkdown, Button, Link, requiredStringInput, useForm } from '@aerogel/core';
+import { AGInput, AGMarkdown, Button, Form, Link, requiredStringInput, useForm } from '@aerogel/core';
 import { isDevelopment } from '@noeldemartin/utils';
 import { computed } from 'vue';
 

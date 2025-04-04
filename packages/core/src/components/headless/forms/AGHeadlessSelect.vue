@@ -12,8 +12,8 @@ import type { AcceptableValue } from 'reka-ui';
 
 import { mixedProp } from '@aerogel/core/utils/vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
-import type Form from '@aerogel/core/forms/Form';
-import type { FormFieldValue } from '@aerogel/core/forms/Form';
+import type FormController from '@aerogel/core/forms/FormController';
+import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type { ComponentProps } from '@aerogel/core/utils/vue';
 
 import { useSelectEmits, useSelectProps } from './AGHeadlessSelect';
@@ -35,7 +35,7 @@ const renderText = computed(() => {
 
     return (option: FormFieldValue) => toString(option);
 });
-const form = inject<Form | null>('form', null);
+const form = inject<FormController | null>('form', null);
 const noSelectionText = computed(() => props.noSelectionText ?? translateWithDefault('select.noSelection', '-'));
 const selectedOption = computed(
     () => (form && props.name ? form.getFieldValue(props.name) : props.modelValue) as AcceptableValue,

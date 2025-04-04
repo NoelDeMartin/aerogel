@@ -1,6 +1,6 @@
 <template>
     <Modal v-slot="{ close }" :title="title" persistent>
-        <AGForm :form="form" @submit="close([true, form.data()])">
+        <Form :form="form" @submit="close([true, form.data()])">
             <AGMarkdown :text="message" :actions="actions" />
 
             <ul v-if="checkboxes" class="mt-4 flex flex-col text-sm text-gray-600">
@@ -25,12 +25,12 @@
                     {{ renderedCancelText }}
                 </Button>
             </div>
-        </AGForm>
+        </Form>
     </Modal>
 </template>
 
 <script setup lang="ts">
-import AGForm from '@aerogel/core/components/forms/AGForm.vue';
+import Form from '@aerogel/core/components/forms/Form.vue';
 import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';

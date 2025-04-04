@@ -1,14 +1,14 @@
 <template>
     <Story group="base" :layout="{ type: 'grid' }">
         <Variant title="Playground">
-            <AGForm :form="form">
+            <Form :form="form">
                 <BaseSelect
                     name="food"
                     :label="label"
                     :no-selection-text="noSelectionText"
                     :options="options"
                 />
-            </AGForm>
+            </Form>
 
             <template #controls>
                 <HstText v-model="label" title="Label" />
@@ -17,9 +17,9 @@
         </Variant>
 
         <Variant title="Error">
-            <AGForm :form="errorForm">
+            <Form :form="errorForm">
                 <BaseSelect name="food" label="What's the best food?" :options="['Ramen', 'Pizza']" />
-            </AGForm>
+            </Form>
         </Variant>
     </Story>
 </template>

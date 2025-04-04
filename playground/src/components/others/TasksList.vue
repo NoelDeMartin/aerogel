@@ -17,7 +17,7 @@
             </Button>
         </li>
     </ul>
-    <AGForm class="mt-5 flex justify-center" :form="form" @submit="($emit('create', form.draft), form.reset())">
+    <Form class="mt-5 flex justify-center" :form="form" @submit="($emit('create', form.draft), form.reset())">
         <BaseInput
             name="draft"
             class="mr-2 h-full w-full sm:max-w-xs"
@@ -29,7 +29,7 @@
         <Button submit>
             {{ $t('storage.submit') }}
         </Button>
-    </AGForm>
+    </Form>
 </template>
 
 <script setup lang="ts">

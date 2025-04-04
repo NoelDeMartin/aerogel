@@ -23,7 +23,7 @@ export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
 export type FormFieldType = ObjectValues<typeof FormFieldTypes>;
 export type FormFieldValue = GetFormFieldValue<FormFieldType>;
 
-export type FormData<T> = {
+export type FormValues<T> = {
     -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules>
         ? TRules extends 'required'
             ? GetFormFieldValue<TType>
@@ -47,17 +47,17 @@ export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.Strin
             ? Date
             : never;
 
-const validForms: WeakMap<Form, ComputedRef<boolean>> = new WeakMap();
+const validForms: WeakMap<FormController, ComputedRef<boolean>> = new WeakMap();
 
 export type SubmitFormListener = () => unknown;
 export type FocusFormListener = (input: string) => unknown;
 
-export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {
+export default class FormController<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {
 
     public errors: DeepReadonly<UnwrapNestedRefs<FormErrors<Fields>>>;
 
     private _fields: Fields;
-    private _data: FormData<Fields>;
+    private _values: FormValues<Fields>;
     private _submitted: Ref<boolean>;
     private _errors: FormErrors<Fields>;
     private _listeners: { focus?: FocusFormListener[]; submit?: SubmitFormListener[] } = {};
@@ -67,7 +67,7 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
 
         this._fields = fields;
         this._submitted = ref(false);
-        this._data = this.getInitialData(fields);
+        this._values = this.getInitialValues(fields);
         this._errors = this.getInitialErrors(fields);
 
         validForms.set(
@@ -86,13 +86,13 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return this._submitted.value;
     }
 
-    public setFieldValue<T extends keyof Fields>(field: T, value: FormData<Fields>[T]): void {
+    public setFieldValue<T extends keyof Fields>(field: T, value: FormValues<Fields>[T]): void {
         const definition =
             this._fields[field] ?? fail<FormFieldDefinition>(`Trying to set undefined '${toString(field)}' field`);
 
-        this._data[field] =
+        this._values[field] =
             definition.type === FormFieldTypes.String && (definition.trim ?? true)
-                ? (toString(value).trim() as FormData<Fields>[T])
+                ? (toString(value).trim() as FormValues<Fields>[T])
                 : value;
 
         if (this._submitted.value) {
@@ -101,15 +101,15 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
     }
 
     public getFieldValue<T extends keyof Fields>(field: T): GetFormFieldValue<Fields[T]['type']> {
-        return this._data[field] as unknown as GetFormFieldValue<Fields[T]['type']>;
+        return this._values[field] as unknown as GetFormFieldValue<Fields[T]['type']>;
     }
 
     public getFieldRules<T extends keyof Fields>(field: T): string[] {
         return this._fields[field]?.rules?.split('|') ?? [];
     }
 
-    public data(): FormData<Fields> {
-        return { ...this._data };
+    public values(): FormValues<Fields> {
+        return { ...this._values };
     }
 
     public validate(): boolean {
@@ -127,10 +127,10 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return this.valid;
     }
 
-    public reset(options: { keepData?: boolean; keepErrors?: boolean } = {}): void {
+    public reset(options: { keepValues?: boolean; keepErrors?: boolean } = {}): void {
         this._submitted.value = false;
 
-        options.keepData || this.resetData();
+        options.keepValues || this.resetValues();
         options.keepErrors || this.resetErrors();
     }
 
@@ -183,12 +183,12 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
             return;
         }
 
-        this.setFieldValue(property, value as FormData<Fields>[string]);
+        this.setFieldValue(property, value as FormValues<Fields>[string]);
     }
 
     private getFieldErrors(name: keyof Fields, definition: FormFieldDefinition): string[] | null {
         const errors = [];
-        const value = this._data[name];
+        const value = this._values[name];
         const rules = definition.rules?.split('|') ?? [];
 
         for (const rule of rules) {
@@ -202,18 +202,18 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return errors.length > 0 ? errors : null;
     }
 
-    private getInitialData(fields: Fields): FormData<Fields> {
+    private getInitialValues(fields: Fields): FormValues<Fields> {
         if (this.static().isConjuring()) {
-            return {} as FormData<Fields>;
+            return {} as FormValues<Fields>;
         }
 
-        const data = Object.entries(fields).reduce((formData, [name, definition]) => {
-            formData[name as keyof Fields] = (definition.default ?? null) as FormData<Fields>[keyof Fields];
+        const values = Object.entries(fields).reduce((initialValues, [name, definition]) => {
+            initialValues[name as keyof Fields] = (definition.default ?? null) as FormValues<Fields>[keyof Fields];
 
-            return formData;
-        }, {} as FormData<Fields>);
+            return initialValues;
+        }, {} as FormValues<Fields>);
 
-        return reactive(data) as FormData<Fields>;
+        return reactive(values) as FormValues<Fields>;
     }
 
     private getInitialErrors(fields: Fields): FormErrors<Fields> {
@@ -230,9 +230,9 @@ export default class Form<Fields extends FormFieldDefinitions = FormFieldDefinit
         return reactive(errors) as FormErrors<Fields>;
     }
 
-    private resetData(): void {
+    private resetValues(): void {
         for (const [name, field] of Object.entries(this._fields)) {
-            this._data[name as keyof Fields] = (field.default ?? null) as FormData<Fields>[keyof Fields];
+            this._values[name as keyof Fields] = (field.default ?? null) as FormValues<Fields>[keyof Fields];
         }
     }
 

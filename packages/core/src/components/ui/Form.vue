@@ -7,19 +7,18 @@
 <script setup lang="ts">
 import { provide, watchEffect } from 'vue';
 
-import { objectProp } from '@aerogel/core/utils/vue';
-import type Form from '@aerogel/core/forms/Form';
+import type FormController from '@aerogel/core/forms/FormController';
 
 let offSubmit: (() => void) | undefined;
-const props = defineProps({ form: objectProp<Form>() });
+const { form } = defineProps<{ form?: FormController }>();
 const emit = defineEmits<{ submit: [] }>();
 
 watchEffect((onCleanup) => {
     offSubmit?.();
-    offSubmit = props.form?.on('submit', () => emit('submit'));
+    offSubmit = form?.on('submit', () => emit('submit'));
 
     onCleanup(() => offSubmit?.());
 });
 
-provide('form', props.form);
+provide('form', form);
 </script>

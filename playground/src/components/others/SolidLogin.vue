@@ -1,5 +1,5 @@
 <template>
-    <AGForm :form="form" @submit="$solid.login(form.url)">
+    <Form :form="form" @submit="$solid.login(form.url)">
         <div class="flex gap-2">
             <BaseInput
                 autofocus
@@ -31,7 +31,7 @@
                 {{ $t('solid.reconnect') }}
             </Button>
         </div>
-    </AGForm>
+    </Form>
 </template>
 
 <script setup lang="ts">

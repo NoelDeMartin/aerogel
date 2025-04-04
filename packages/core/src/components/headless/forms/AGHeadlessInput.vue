@@ -10,7 +10,7 @@ import { computed, inject, provide, readonly, ref } from 'vue';
 import { uuid } from '@noeldemartin/utils';
 
 import { stringProp } from '@aerogel/core/utils/vue';
-import type Form from '@aerogel/core/forms/Form';
+import type FormController from '@aerogel/core/forms/FormController';
 import type { __SetsElement } from '@aerogel/core/components/contracts/shared';
 
 import { useInputProps } from './AGHeadlessInput';
@@ -29,7 +29,7 @@ const errors = computed(() => {
 
     return form.errors[props.name] ?? null;
 });
-const form = inject<Form | null>('form', null);
+const form = inject<FormController | null>('form', null);
 const api: IAGHeadlessInput & __SetsElement = {
     $el,
     id: `input-${uuid()}`,

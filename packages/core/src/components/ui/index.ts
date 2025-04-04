@@ -4,6 +4,7 @@ export { default as ConfirmModal } from './ConfirmModal.vue';
 export { default as ErrorReportModal } from './ErrorReportModal.vue';
 export { default as ErrorReportModalButtons } from './ErrorReportModalButtons.vue';
 export { default as ErrorReportModalTitle } from './ErrorReportModalTitle.vue';
+export { default as Form } from './Form.vue';
 export { default as Link } from './Link.vue';
 export { default as LoadingModal } from './LoadingModal.vue';
 export { default as Modal } from './Modal.vue';

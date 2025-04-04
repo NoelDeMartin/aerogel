@@ -1,11 +1,11 @@
 <template>
     <Story group="base" :layout="{ type: 'grid' }">
         <Variant title="Playground">
-            <AGForm :form="form" class="m-1">
+            <Form :form="form" class="m-1">
                 <BaseCheckbox name="accept" :form="form">
                     {{ label }}
                 </BaseCheckbox>
-            </AGForm>
+            </Form>
 
             <template #controls>
                 <HstText v-model="label" title="Label" />
@@ -31,11 +31,11 @@
         </Variant>
 
         <Variant title="Error">
-            <AGForm :form="errorForm" class="m-1">
+            <Form :form="errorForm" class="m-1">
                 <BaseCheckbox name="accept">
                     Accept Terms & Conditions
                 </BaseCheckbox>
-            </AGForm>
+            </Form>
         </Variant>
     </Story>
 </template>

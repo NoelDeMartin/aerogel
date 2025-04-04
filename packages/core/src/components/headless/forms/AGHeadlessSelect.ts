@@ -3,7 +3,7 @@ import type { Writable } from '@noeldemartin/utils';
 
 import { mixedProp, requiredArrayProp, stringProp } from '@aerogel/core/utils/vue';
 import { extractComponentProps } from '@aerogel/core/components/utils';
-import type { FormFieldValue } from '@aerogel/core/forms/Form';
+import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 
 export interface IAGHeadlessSelect {
     id: string;

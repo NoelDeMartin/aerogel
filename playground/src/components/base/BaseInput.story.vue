@@ -1,9 +1,9 @@
 <template>
     <Story group="base" :layout="{ type: 'grid' }">
         <Variant title="Playground">
-            <AGForm :form="form">
+            <Form :form="form">
                 <BaseInput name="food" :label="label" :placeholder="placeholder" />
-            </AGForm>
+            </Form>
 
             <template #controls>
                 <HstText v-model="label" title="Label" />
@@ -25,14 +25,14 @@
         </Variant>
 
         <Variant title="Error">
-            <AGForm :form="errorForm">
+            <Form :form="errorForm">
                 <BaseInput
                     name="food"
                     label="What's the best food?"
                     placeholder="Ramen"
                     class=":focus :focus-visible"
                 />
-            </AGForm>
+            </Form>
         </Variant>
     </Story>
 </template>

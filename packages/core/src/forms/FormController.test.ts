@@ -3,9 +3,9 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import { useForm } from '@aerogel/core/forms/composition';
 import { numberInput, requiredStringInput } from '@aerogel/core/forms/utils';
 
-import { FormFieldTypes } from './Form';
+import { FormFieldTypes } from './FormController';
 
-describe('Form', () => {
+describe('FormController', () => {
 
     it('defines magic fields', () => {
         const form = useForm({
