@@ -1,7 +1,7 @@
 <template>
-    <AGHeadlessButton :class="variantClasses" :disabled="disabled">
+    <HeadlessButton :class="variantClasses" :disabled="disabled">
         <slot />
-    </AGHeadlessButton>
+    </HeadlessButton>
 </template>
 
 <script setup lang="ts">

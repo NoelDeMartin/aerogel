@@ -1,7 +1,7 @@
 <template>
-    <AGHeadlessButton :class="renderedClasses" v-bind="props">
+    <HeadlessButton :class="renderedClasses" v-bind="props">
         <slot />
-    </AGHeadlessButton>
+    </HeadlessButton>
 </template>
 
 <script setup lang="ts">
@@ -9,7 +9,7 @@ import { computedVariantClasses } from '@aerogel/core/components/utils';
 import type { IButtonProps } from '@aerogel/core/components/contracts/Button';
 import type { Variants } from '@aerogel/core/components/utils';
 
-import AGHeadlessButton from '../headless/AGHeadlessButton.vue';
+import HeadlessButton from '../headless/HeadlessButton.vue';
 
 const { class: baseClasses, size, variant, ...props } = defineProps<IButtonProps>();
 
@@ -18,7 +18,7 @@ const { class: baseClasses, size, variant, ...props } = defineProps<IButtonProps
 const renderedClasses = computedVariantClasses<Variants<Pick<IButtonProps, 'size' | 'variant'>>>(
     { baseClasses, variant, size },
     {
-        baseClasses: 'cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+        baseClasses: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         variants: {
             variant: {
                 default: 'bg-primary text-white hover:bg-primary/90 focus-visible:outline-primary',

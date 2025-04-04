@@ -24,7 +24,7 @@ export function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
         resolve: (name) => {
-            if (name === 'Button' || name === 'Link') {
+            if (name === 'Button' || name === 'Link' || name === 'HeadlessButton') {
                 return { name, as: name, from: '@aerogel/core' };
             }
 

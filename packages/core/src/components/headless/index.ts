@@ -2,4 +2,4 @@ export * from './forms';
 export * from './modals';
 export * from './snackbars';
 
-export { default as AGHeadlessButton } from './AGHeadlessButton.vue';
+export { default as HeadlessButton } from './HeadlessButton.vue';
