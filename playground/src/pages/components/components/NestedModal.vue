@@ -1,8 +1,8 @@
 <template>
-    <BaseModal>
-        <AGHeadlessModalTitle class="isolate z-10 text-base leading-6 font-semibold text-gray-900">
+    <Modal>
+        <HeadlessModalTitle class="isolate z-10 text-base leading-6 font-semibold text-gray-900">
             <AGMarkdown lang-key="components.modals_nestedTitle" :lang-params="{ count }" inline />
-        </AGHeadlessModalTitle>
+        </HeadlessModalTitle>
         <div class="mt-3 flex flex-col items-center">
             <div class="flex flex-wrap">
                 <i-twemoji-turtle
@@ -18,7 +18,7 @@
                 {{ $t('components.modals_nestedButton') }}
             </Button>
         </div>
-    </BaseModal>
+    </Modal>
 </template>
 
 <script setup lang="ts">

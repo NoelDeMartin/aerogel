@@ -5,11 +5,10 @@
 </template>
 
 <script setup lang="ts">
+import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue';
 import { computedVariantClasses } from '@aerogel/core/components/utils';
 import type { IButtonProps } from '@aerogel/core/components/contracts/Button';
 import type { Variants } from '@aerogel/core/components/utils';
-
-import HeadlessButton from '../headless/HeadlessButton.vue';
 
 const { class: baseClasses, size, variant, ...props } = defineProps<IButtonProps>();
 
@@ -29,9 +28,10 @@ const renderedClasses = computedVariantClasses<Variants<Pick<IButtonProps, 'size
                 link: 'text-primary hover:underline',
             },
             size: {
-                sm: 'rounded px-2 py-1 text-xs',
+                small: 'rounded px-2 py-1 text-xs',
                 default: 'rounded-md px-2.5 py-1.5 text-sm',
-                lg: 'rounded-md px-3 py-2 text-base',
+                large: 'rounded-md px-3 py-2 text-base',
+                icon: 'rounded-full p-2.5',
             },
         },
         compoundVariants: [

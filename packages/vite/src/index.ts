@@ -20,11 +20,18 @@ import type { VirtualAerogel } from 'virtual:aerogel';
 
 export type { Options, AppInfo, ClientIDDocument };
 
+const coreComponents = Object.keys(
+    import.meta.glob(['../../core/src/components/ui/*.vue', '../../core/src/components/headless/*.vue'], {
+        eager: true,
+        query: '?ignore',
+    }),
+).map((filename) => filename.split('/').pop()?.replace('.vue', '') ?? '');
+
 export function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
         resolve: (name) => {
-            if (name === 'Button' || name === 'Link' || name === 'HeadlessButton') {
+            if (coreComponents.includes(name)) {
                 return { name, as: name, from: '@aerogel/core' };
             }
 

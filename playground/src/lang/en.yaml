@@ -29,8 +29,8 @@ components:
     buttons_variants_link: Link
     buttons_sizes: Sizes
     buttons_sizes_default: Default
-    buttons_sizes_sm: Small
-    buttons_sizes_lg: Large
+    buttons_sizes_small: Small
+    buttons_sizes_large: Large
     inputs: Inputs
     inputs_customLabel: Custom
     inputs_customPlaceholder: Type here...
@@ -47,21 +47,25 @@ components:
     checkboxes_custom: This is a custom checkbox.
     checkboxes_default: This is the default checkbox.
     modals: Modals
+    modals_alert: Alert
     modals_alertTitle: Hi there!
     modals_alertMessage: How's your day going? I hope you're having fun :)
-    modals_customAlert: Custom alert
-    modals_defaultAlert: Default alert
+    modals_confirm: Confirm
     modals_confirmTitle: You're about to do something dangerous
     modals_confirmMessage: Are you sure you want to continue?
     modals_confirmAccept: Of course!
+    modals_confirmConditions: I hereby forfeit all my rights.
     modals_confirmCancel: Maybe not
     modals_confirmConfirmed: You were just eaten by a crocodile
     modals_confirmCancelled: You dodged that bullet
-    modals_customConfirm: Custom confirm
-    modals_defaultConfirm: Default confirm
+    modals_confirmWithCheckboxes: Confirm with checkboxes
+    modals_loading: Loading
     modals_loadingMessage: The elfs are working, please wait...
-    modals_customLoading: Custom loading
-    modals_defaultLoading: Default loading
+    modals_loadingWithProgress: Loading with progress
+    modals_prompt: Prompt
+    modals_promptTitle: What is your name?
+    modals_promptPlaceholder: Or nickname...
+    modals_promptResult: Hello, {name}!
     modals_nested: Nested
     modals_nestedTitle: Nested modal ({count})
     modals_nestedMessage: Modals can be nested indefinitely

@@ -27,14 +27,17 @@
             </div>
             <div class="mt-4 flex items-center gap-2">
                 <span>{{ $t('components.buttons_sizes') }}:</span>
-                <Button size="sm">
-                    {{ $t('components.buttons_sizes_sm') }}
+                <Button size="small">
+                    {{ $t('components.buttons_sizes_small') }}
                 </Button>
                 <Button size="default">
                     {{ $t('components.buttons_sizes_default') }}
                 </Button>
-                <Button size="lg">
-                    {{ $t('components.buttons_sizes_lg') }}
+                <Button size="large">
+                    {{ $t('components.buttons_sizes_large') }}
+                </Button>
+                <Button size="icon">
+                    <i-zondicons-close class="size-4" />
                 </Button>
             </div>
         </section>
@@ -91,53 +94,72 @@
             <h2>{{ $t('components.modals') }}</h2>
             <div class="mt-4 flex gap-2">
                 <Button @click="$ui.alert($t('components.modals_alertTitle'), $t('components.modals_alertMessage'))">
-                    {{ $t('components.modals_customAlert') }}
-                </Button>
-                <Button
-                    @click="
-                        $ui.openModal(AGAlertModal, {
-                            title: $t('components.modals_alertTitle'),
-                            message: $t('components.modals_alertMessage'),
-                        })
-                    "
-                >
-                    {{ $t('components.modals_defaultAlert') }}
+                    {{ $t('components.modals_alert') }}
                 </Button>
             </div>
             <div class="mt-4 flex gap-2">
                 <Button
                     @click="
-                        confirmResult(
-                            $ui.confirm($t('components.modals_confirmTitle'), $t('components.modals_confirmMessage'), {
+                        $ui
+                            .confirm($t('components.modals_confirmTitle'), $t('components.modals_confirmMessage'), {
                                 acceptText: $t('components.modals_confirmAccept'),
                                 cancelText: $t('components.modals_confirmCancel'),
                             })
-                        )
+                            .then((confirmed) => {
+                                $ui.alert(
+                                    confirmed
+                                        ? $t('components.modals_confirmConfirmed')
+                                        : $t('components.modals_confirmCancelled')
+                                );
+                            })
                     "
                 >
-                    {{ $t('components.modals_customConfirm') }}
+                    {{ $t('components.modals_confirm') }}
                 </Button>
                 <Button
                     @click="
                         $ui
-                            .openModal(AGConfirmModal, {
-                                title: $t('components.modals_confirmTitle'),
-                                message: $t('components.modals_confirmMessage'),
+                            .confirm($t('components.modals_confirmTitle'), $t('components.modals_confirmMessage'), {
+                                checkboxes: {
+                                    terms: {
+                                        label: $t('components.modals_confirmConditions'),
+                                        required: true,
+                                    },
+                                },
                                 acceptText: $t('components.modals_confirmAccept'),
                                 cancelText: $t('components.modals_confirmCancel'),
                             })
-                            .then((modal) => confirmResult(modal.afterClose))
+                            .then(([confirmed]) => {
+                                $ui.alert(
+                                    confirmed
+                                        ? $t('components.modals_confirmConfirmed')
+                                        : $t('components.modals_confirmCancelled')
+                                );
+                            })
                     "
                 >
-                    {{ $t('components.modals_defaultConfirm') }}
+                    {{ $t('components.modals_confirmWithCheckboxes') }}
                 </Button>
             </div>
             <div class="mt-4 flex gap-2">
                 <Button @click="$ui.loading($t('components.modals_loadingMessage'), after({ seconds: 3 }))">
-                    {{ $t('components.modals_customLoading') }}
+                    {{ $t('components.modals_loading') }}
                 </Button>
-                <Button @click="showDefaultLoading()">
-                    {{ $t('components.modals_defaultLoading') }}
+                <Button @click="showLoadingWithProgress()">
+                    {{ $t('components.modals_loadingWithProgress') }}
+                </Button>
+            </div>
+            <div class="mt-4 flex gap-2">
+                <Button
+                    @click="
+                        $ui
+                            .prompt($t('components.modals_promptTitle'), {
+                                placeholder: $t('components.modals_promptPlaceholder'),
+                            })
+                            .then((name) => name && $ui.alert($t('components.modals_promptResult', { name })))
+                    "
+                >
+                    {{ $t('components.modals_prompt') }}
                 </Button>
             </div>
             <div class="mt-4 flex gap-2">
@@ -233,7 +255,7 @@
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { AGAlertModal, AGConfirmModal, AGLoadingModal, AGSnackbar, UI, translate, useEvent } from '@aerogel/core';
+import { AGSnackbar, UI, translate, useEvent } from '@aerogel/core';
 import { ref } from 'vue';
 
 import CustomModal from './components/CustomModal.vue';
@@ -242,21 +264,24 @@ import NestedModal from './components/NestedModal.vue';
 const customSelectValue = ref(null);
 const defaultSelectValue = ref(null);
 
-useEvent<number | undefined>('all-the-way-down', (count) => UI.openModal(NestedModal, { count }));
+async function showLoadingWithProgress() {
+    const progress = ref(0);
 
-async function confirmResult(result: Promise<unknown>) {
-    const confirmed = await result;
-
-    UI.alert(
-        confirmed ? translate('components.modals_confirmConfirmed') : translate('components.modals_confirmCancelled'),
+    UI.loading(
+        {
+            message: translate('components.modals_loadingMessage'),
+            progress,
+        },
+        after({ seconds: 3 }),
     );
+
+    await after({ seconds: 1 });
+    progress.value = 0.33;
+    await after({ seconds: 1 });
+    progress.value = 0.66;
+    await after({ seconds: 1 });
+    progress.value = 1;
 }
 
-async function showDefaultLoading(): Promise<void> {
-    const modal = await UI.openModal(AGLoadingModal, { message: translate('components.modals_loadingMessage') });
-
-    await after({ seconds: 3 });
-
-    UI.closeModal(modal.id);
-}
+useEvent('all-the-way-down', (count) => UI.openModal(NestedModal, { count }));
 </script>

@@ -4,7 +4,7 @@ import { defineServiceState } from '@aerogel/core/services/Service';
 
 import { Layouts, getCurrentLayout } from './utils';
 
-export interface Modal<T = unknown> {
+export interface UIModal<T = unknown> {
     id: string;
     properties: Record<string, unknown>;
     component: Component;
@@ -14,7 +14,7 @@ export interface Modal<T = unknown> {
 
 export interface ModalComponent<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    Properties extends Record<string, unknown> = Record<string, unknown>,
+    Properties extends object = object,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     Result = unknown,
 > {}
@@ -28,7 +28,7 @@ export interface Snackbar {
 export default defineServiceState({
     name: 'ui',
     initialState: {
-        modals: [] as Modal[],
+        modals: [] as UIModal[],
         snackbars: [] as Snackbar[],
         layout: getCurrentLayout(),
     },

@@ -30,6 +30,16 @@ export default defineConfig({
         exclude: ['node:child_process', 'node:fs', 'node:path'],
     },
     plugins: [
+        {
+            name: 'ignore',
+            load(id) {
+                if (id.endsWith('?ignore')) {
+                    return { code: '', map: null };
+                }
+
+                return null;
+            },
+        },
         dts({
             rollupTypes: true,
             tsconfigPath: './tsconfig.json',

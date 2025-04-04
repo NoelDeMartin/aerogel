@@ -1,9 +1,11 @@
 <template>
     <div class="flex">
-        <slot v-for="(button, i) of buttons" v-bind="button as unknown as ComponentProps" :key="i">
+        <slot v-for="button of buttons" v-bind="button">
             <Button
+                size="icon"
                 variant="ghost"
-                :url="button.url"
+                class="group whitespace-nowrap"
+                :href="button.url"
                 :title="$td(`errors.report_${button.id}`, button.description)"
                 :aria-label="$td(`errors.report_${button.id}`, button.description)"
                 @click="button.handler"
@@ -21,20 +23,27 @@ import IconGitHub from '~icons/mdi/github';
 
 import { computed } from 'vue';
 import { stringExcerpt, tap } from '@noeldemartin/utils';
+import type { Component } from 'vue';
 
 import App from '@aerogel/core/services/App';
+import Button from '@aerogel/core/components/ui/Button.vue';
 import UI from '@aerogel/core/ui/UI';
-import { requiredObjectProp } from '@aerogel/core/utils/vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
-import type { ComponentProps } from '@aerogel/core/utils/vue';
 import type { ErrorReport } from '@aerogel/core/errors';
 
-import Button from '../ui/Button.vue';
-import type { IAGErrorReportModalButtonsDefaultSlotProps } from './AGErrorReportModal';
+interface ErrorReportModalButtonsDefaultSlotProps {
+    id: string;
+    description: string;
+    iconComponent: Component;
+    url?: string;
+    handler?(): void;
+}
 
-const props = defineProps({
-    report: requiredObjectProp<ErrorReport>(),
-});
+defineSlots<{
+    default(props: ErrorReportModalButtonsDefaultSlotProps): unknown;
+}>();
+
+const props = defineProps<{ report: ErrorReport }>();
 const summary = computed(() =>
     props.report.description ? `${props.report.title}: ${props.report.description}` : props.report.title);
 const githubReportUrl = computed(() => {
@@ -94,7 +103,7 @@ const buttons = computed(() =>
                     );
                 },
             },
-        ] as IAGErrorReportModalButtonsDefaultSlotProps[],
+        ] as ErrorReportModalButtonsDefaultSlotProps[],
         (reportButtons) => {
             if (!githubReportUrl.value) {
                 return;

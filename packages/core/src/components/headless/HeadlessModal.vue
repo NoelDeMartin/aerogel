@@ -1,5 +1,5 @@
 <template>
-    <DialogRoot ref="$root" :open="true" @update:open="cancellable && close()">
+    <DialogRoot ref="$root" :open="true" @update:open="persistent || close()">
         <DialogPortal>
             <slot :close="close" />
         </DialogPortal>
@@ -7,25 +7,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef } from 'vue';
+import { ref } from 'vue';
 import { DialogPortal, DialogRoot } from 'reka-ui';
-import type { VNode } from 'vue';
 
 import Events from '@aerogel/core/services/Events';
 import { useEvent } from '@aerogel/core/utils/composition/events';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { IAGModalContext } from '@aerogel/core/components/modals/AGModalContext';
+import type { IModalProps, IModalSlots } from '@aerogel/core/components/contracts/Modal';
 
-import { modalProps } from './AGHeadlessModal';
-import type { IAGHeadlessModal, IAGHeadlessModalDefaultSlotProps } from './AGHeadlessModal';
+defineProps<IModalProps>();
+defineSlots<IModalSlots>();
 
-const props = defineProps(modalProps());
 const $root = ref<{ $el?: HTMLElement } | null>(null);
 const hidden = ref(true);
 const closed = ref(false);
 const { modal } = injectReactiveOrFail<IAGModalContext>(
     'modal',
-    'could not obtain modal reference from <AGHeadlessModal>, ' +
+    'could not obtain modal reference from <HeadlessModal>, ' +
         'did you render this component manually? Show it using $ui.openModal() instead',
 );
 
@@ -82,7 +81,4 @@ useEvent('show-modal', async ({ id }) => {
 
     await show();
 });
-
-defineSlots<{ default(props: IAGHeadlessModalDefaultSlotProps): VNode[] }>();
-defineExpose<IAGHeadlessModal>({ close, cancellable: toRef(props, 'cancellable') });
 </script>

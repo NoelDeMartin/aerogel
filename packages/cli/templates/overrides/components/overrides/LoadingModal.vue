@@ -1,5 +1,5 @@
 <template>
-    <ModalWrapper :cancellable="false">
+    <ModalWrapper persistent>
         <AGMarkdown :text="renderedMessage" />
     </ModalWrapper>
 </template>

@@ -6,7 +6,7 @@
             <Button
                 v-for="(action, i) of actions"
                 :key="i"
-                :color="color"
+                :variant="color"
                 @click="activate(action)"
             >
                 {{ action.text }}

@@ -6,18 +6,16 @@ import type { ObjectValues } from '@noeldemartin/utils';
 import App from '@aerogel/core/services/App';
 import Events from '@aerogel/core/services/Events';
 import type { AcceptRefs } from '@aerogel/core/utils';
-import type { Color } from '@aerogel/core/components/constants';
+import type { IAlertModalProps } from '@aerogel/core/components/contracts/AlertModal';
+import type { IButtonVariants } from '@aerogel/core/components/contracts/Button';
+import type { ConfirmModalCheckboxes, IConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
+import type { ILoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
+import type { IPromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
 import type { SnackbarAction, SnackbarColor } from '@aerogel/core/components/headless/snackbars';
-import type {
-    AGAlertModalProps,
-    AGConfirmModalProps,
-    AGLoadingModalProps,
-    AGPromptModalProps,
-} from '@aerogel/core/components';
 
 import Service from './UI.state';
 import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
-import type { Modal, ModalComponent, Snackbar } from './UI.state';
+import type { ModalComponent, Snackbar, UIModal } from './UI.state';
 
 interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
@@ -40,13 +38,11 @@ export const UIComponents = {
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
 
-export type ConfirmCheckboxes = Record<string, { label: string; default?: boolean; required?: boolean }>;
-
 export type ConfirmOptions = AcceptRefs<{
     acceptText?: string;
-    acceptColor?: Color;
+    acceptVariant?: IButtonVariants;
     cancelText?: string;
-    cancelColor?: Color;
+    cancelVariant?: IButtonVariants;
     actions?: Record<string, () => unknown>;
     required?: boolean;
 }>;
@@ -57,7 +53,8 @@ export type LoadingOptions = AcceptRefs<{
     progress?: number;
 }>;
 
-export interface ConfirmOptionsWithCheckboxes<T extends ConfirmCheckboxes = ConfirmCheckboxes> extends ConfirmOptions {
+export interface ConfirmOptionsWithCheckboxes<T extends ConfirmModalCheckboxes = ConfirmModalCheckboxes>
+    extends ConfirmOptions {
     checkboxes?: T;
 }
 
@@ -66,9 +63,9 @@ export type PromptOptions = AcceptRefs<{
     defaultValue?: string;
     placeholder?: string;
     acceptText?: string;
-    acceptColor?: Color;
+    acceptVariant?: IButtonVariants;
     cancelText?: string;
-    cancelColor?: Color;
+    cancelVariant?: IButtonVariants;
     trim?: boolean;
 }>;
 
@@ -90,7 +87,7 @@ export class UIService extends Service {
     public alert(message: string): void;
     public alert(title: string, message: string): void;
     public alert(messageOrTitle: string, message?: string): void {
-        const getProperties = (): AGAlertModalProps => {
+        const getProperties = (): IAlertModalProps => {
             if (typeof message !== 'string') {
                 return { message: messageOrTitle };
             }
@@ -101,14 +98,17 @@ export class UIService extends Service {
             };
         };
 
-        this.openModal(this.requireComponent(UIComponents.AlertModal), getProperties());
+        this.openModal<ModalComponent<IAlertModalProps>>(
+            this.requireComponent(UIComponents.AlertModal),
+            getProperties(),
+        );
     }
 
     /* eslint-disable max-len */
     public async confirm(message: string, options?: ConfirmOptions): Promise<boolean>;
     public async confirm(title: string, message: string, options?: ConfirmOptions): Promise<boolean>;
-    public async confirm<T extends ConfirmCheckboxes>(message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
-    public async confirm<T extends ConfirmCheckboxes>(title: string, message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
+    public async confirm<T extends ConfirmModalCheckboxes>(message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
+    public async confirm<T extends ConfirmModalCheckboxes>(title: string, message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
     /* eslint-enable max-len */
 
     public async confirm(
@@ -116,7 +116,7 @@ export class UIService extends Service {
         messageOrOptions?: string | ConfirmOptions | ConfirmOptionsWithCheckboxes,
         options?: ConfirmOptions | ConfirmOptionsWithCheckboxes,
     ): Promise<boolean | [boolean, Record<string, boolean>]> {
-        const getProperties = (): AGConfirmModalProps => {
+        const getProperties = (): AcceptRefs<IConfirmModalProps> => {
             if (typeof messageOrOptions !== 'string') {
                 return {
                     ...(messageOrOptions ?? {}),
@@ -132,10 +132,17 @@ export class UIService extends Service {
                 required: !!options?.required,
             };
         };
+
+        type ConfirmModalComponent = ModalComponent<
+            AcceptRefs<IConfirmModalProps>,
+            boolean | [boolean, Record<string, boolean>]
+        >;
+
         const properties = getProperties();
-        const modal = await this.openModal<
-            ModalComponent<AGConfirmModalProps, boolean | [boolean, Record<string, boolean>]>
-        >(this.requireComponent(UIComponents.ConfirmModal), properties);
+        const modal = await this.openModal<ConfirmModalComponent>(
+            this.requireComponent(UIComponents.ConfirmModal),
+            properties,
+        );
         const result = await modal.beforeClose;
 
         const confirmed = typeof result === 'object' ? result[0] : (result ?? false);
@@ -174,22 +181,22 @@ export class UIService extends Service {
         options?: PromptOptions,
     ): Promise<string | null> {
         const trim = options?.trim ?? true;
-        const getProperties = (): AGPromptModalProps => {
+        const getProperties = (): IPromptModalProps => {
             if (typeof messageOrOptions !== 'string') {
                 return {
                     message: messageOrTitle,
                     ...(messageOrOptions ?? {}),
-                } as AGPromptModalProps;
+                } as IPromptModalProps;
             }
 
             return {
                 title: messageOrTitle,
                 message: messageOrOptions,
                 ...(options ?? {}),
-            } as AGPromptModalProps;
+            } as IPromptModalProps;
         };
 
-        const modal = await this.openModal<ModalComponent<AGPromptModalProps, string | null>>(
+        const modal = await this.openModal<ModalComponent<IPromptModalProps, string | null>>(
             this.requireComponent(UIComponents.PromptModal),
             getProperties(),
         );
@@ -207,7 +214,7 @@ export class UIService extends Service {
         operation?: Promise<T> | (() => T),
     ): Promise<T> {
         const processOperation = (o: Promise<T> | (() => T)) => (typeof o === 'function' ? Promise.resolve(o()) : o);
-        const processArgs = (): { operationPromise: Promise<T>; props?: AGLoadingModalProps } => {
+        const processArgs = (): { operationPromise: Promise<T>; props?: AcceptRefs<ILoadingModalProps> } => {
             if (typeof operationOrMessageOrOptions === 'string') {
                 return {
                     props: { message: operationOrMessageOrOptions },
@@ -229,7 +236,9 @@ export class UIService extends Service {
         const modal = await this.openModal(this.requireComponent(UIComponents.LoadingModal), props);
 
         try {
-            const [result] = await Promise.all([operationPromise, after({ seconds: 1 })]);
+            const result = await operationPromise;
+
+            await after({ ms: 500 });
 
             return result;
         } finally {
@@ -263,10 +272,10 @@ export class UIService extends Service {
     public async openModal<TModalComponent extends ModalComponent>(
         component: TModalComponent,
         properties?: ModalProperties<TModalComponent>,
-    ): Promise<Modal<ModalResult<TModalComponent>>> {
+    ): Promise<UIModal<ModalResult<TModalComponent>>> {
         const id = uuid();
         const callbacks: Partial<ModalCallbacks<ModalResult<TModalComponent>>> = {};
-        const modal: Modal<ModalResult<TModalComponent>> = {
+        const modal: UIModal<ModalResult<TModalComponent>> = {
             id,
             properties: properties ?? {},
             component: markRaw(component),
@@ -382,8 +391,8 @@ declare module '@aerogel/core/services/Events' {
         'close-modal': { id: string; result?: unknown };
         'hide-modal': { id: string };
         'hide-overlays-backdrop': void;
-        'modal-closed': { modal: Modal; result?: unknown };
-        'modal-will-close': { modal: Modal; result?: unknown };
+        'modal-closed': { modal: UIModal; result?: unknown };
+        'modal-will-close': { modal: UIModal; result?: unknown };
         'show-modal': { id: string };
         'show-overlays-backdrop': void;
     }

@@ -1,16 +1,9 @@
-import type { Ref } from 'vue';
-
-export interface IModal {
-    cancellable: Ref<boolean>;
-    close(result?: unknown): Promise<void>;
-}
-
 export interface IModalProps {
-    cancellable: boolean;
-    title: string | null;
-    description: string | null;
+    persistent?: boolean;
+    title?: string;
+    description?: string;
 }
 
-export interface IModalDefaultSlotProps {
-    close(result?: unknown): Promise<void>;
+export interface IModalSlots {
+    default(props: { close(result?: unknown): Promise<void> }): unknown;
 }
