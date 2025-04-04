@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import Form from '@aerogel/core/components/forms/Form.vue';
+import Form from '@aerogel/core/components/ui/Form.vue';
 import AGInput from '@aerogel/core/components/forms/AGInput.vue';
 import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
