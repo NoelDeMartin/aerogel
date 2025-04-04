@@ -7,4 +7,5 @@ export { default as ErrorReportModalTitle } from './ErrorReportModalTitle.vue';
 export { default as Link } from './Link.vue';
 export { default as LoadingModal } from './LoadingModal.vue';
 export { default as Modal } from './Modal.vue';
+export { default as ProgressBar } from './ProgressBar.vue';
 export { default as PromptModal } from './PromptModal.vue';
