@@ -3,12 +3,12 @@
         <AGMarkdown :text="message" :actions="actions" />
 
         <div class="mt-4 flex flex-row-reverse gap-2">
-            <BaseButton :color="acceptColor" @click="close(true)">
+            <Button :color="acceptColor" @click="close(true)">
                 {{ renderedAcceptText }}
-            </BaseButton>
-            <BaseButton v-if="!required" :color="cancelColor" @click="close(false)">
+            </Button>
+            <Button v-if="!required" :color="cancelColor" @click="close(false)">
                 {{ renderedCancelText }}
-            </BaseButton>
+            </Button>
         </div>
     </BaseModal>
 </template>

@@ -7,10 +7,10 @@
                 :aria-label="$t('solid.url')"
                 :placeholder="$t('solid.url_placeholder')"
             />
-            <BaseButton submit>
+            <Button submit>
                 {{ $t('solid.login') }}
                 <i-mdi-login class="size-4" />
-            </BaseButton>
+            </Button>
         </div>
 
         <div v-if="!$solid.ignorePreviousSessionError && $solid.previousSession?.error">
@@ -27,9 +27,9 @@
                 "
                 class="max-w-none text-sm"
             />
-            <BaseButton small class="mt-2" @click="$solid.reconnect()">
+            <Button small class="mt-2" @click="$solid.reconnect()">
                 {{ $t('solid.reconnect') }}
-            </BaseButton>
+            </Button>
         </div>
     </AGForm>
 </template>

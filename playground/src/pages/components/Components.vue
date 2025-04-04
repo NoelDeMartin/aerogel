@@ -7,39 +7,34 @@
         <section>
             <h2>{{ $t('components.buttons') }}</h2>
             <div class="mt-4 flex items-center gap-2">
-                <span>{{ $t('components.buttons_custom') }}:</span>
-                <BaseButton>
-                    {{ $t('components.buttons_clickMe') }}
-                </BaseButton>
-                <BaseButton color="danger">
-                    {{ $t('components.buttons_clickMe') }}
-                </BaseButton>
-                <BaseButton color="clear">
-                    {{ $t('components.buttons_clickMe') }}
-                </BaseButton>
-            </div>
-            <div class="mt-4 flex items-center gap-2">
-                <span>{{ $t('components.buttons_customWithIcons') }}:</span>
-                <BaseButton icon>
-                    <i-mdi-check class="size-6" />
-                </BaseButton>
-                <BaseButton icon color="danger">
-                    <i-mdi-close class="size-6" />
-                </BaseButton>
-                <BaseButton icon color="clear">
-                    <i-mdi-help-circle-outline class="size-6" />
-                </BaseButton>
-            </div>
-            <div class="mt-4 flex items-center gap-2">
-                <span>{{ $t('components.buttons_default') }}:</span>
-                <Button>
-                    {{ $t('components.buttons_clickMe') }}
-                </Button>
+                <span>{{ $t('components.buttons_variants') }}:</span>
+                <Button> {{ $t('components.buttons_variants_default') }} </Button>
                 <Button variant="secondary">
-                    {{ $t('components.buttons_clickMe') }}
+                    {{ $t('components.buttons_variants_secondary') }}
+                </Button>
+                <Button variant="danger">
+                    {{ $t('components.buttons_variants_danger') }}
                 </Button>
                 <Button variant="ghost">
-                    <i-mdi-help-circle-outline class="size-6" />
+                    {{ $t('components.buttons_variants_ghost') }}
+                </Button>
+                <Button variant="outline">
+                    {{ $t('components.buttons_variants_outline') }}
+                </Button>
+                <Button variant="link">
+                    {{ $t('components.buttons_variants_link') }}
+                </Button>
+            </div>
+            <div class="mt-4 flex items-center gap-2">
+                <span>{{ $t('components.buttons_sizes') }}:</span>
+                <Button size="sm">
+                    {{ $t('components.buttons_sizes_sm') }}
+                </Button>
+                <Button size="default">
+                    {{ $t('components.buttons_sizes_default') }}
+                </Button>
+                <Button size="lg">
+                    {{ $t('components.buttons_sizes_lg') }}
                 </Button>
             </div>
         </section>
@@ -95,12 +90,10 @@
         <section>
             <h2>{{ $t('components.modals') }}</h2>
             <div class="mt-4 flex gap-2">
-                <BaseButton
-                    @click="$ui.alert($t('components.modals_alertTitle'), $t('components.modals_alertMessage'))"
-                >
+                <Button @click="$ui.alert($t('components.modals_alertTitle'), $t('components.modals_alertMessage'))">
                     {{ $t('components.modals_customAlert') }}
-                </BaseButton>
-                <BaseButton
+                </Button>
+                <Button
                     @click="
                         $ui.openModal(AGAlertModal, {
                             title: $t('components.modals_alertTitle'),
@@ -109,10 +102,10 @@
                     "
                 >
                     {{ $t('components.modals_defaultAlert') }}
-                </BaseButton>
+                </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton
+                <Button
                     @click="
                         confirmResult(
                             $ui.confirm($t('components.modals_confirmTitle'), $t('components.modals_confirmMessage'), {
@@ -123,8 +116,8 @@
                     "
                 >
                     {{ $t('components.modals_customConfirm') }}
-                </BaseButton>
-                <BaseButton
+                </Button>
+                <Button
                     @click="
                         $ui
                             .openModal(AGConfirmModal, {
@@ -137,40 +130,40 @@
                     "
                 >
                     {{ $t('components.modals_defaultConfirm') }}
-                </BaseButton>
+                </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton @click="$ui.loading($t('components.modals_loadingMessage'), after({ seconds: 3 }))">
+                <Button @click="$ui.loading($t('components.modals_loadingMessage'), after({ seconds: 3 }))">
                     {{ $t('components.modals_customLoading') }}
-                </BaseButton>
-                <BaseButton @click="showDefaultLoading()">
+                </Button>
+                <Button @click="showDefaultLoading()">
                     {{ $t('components.modals_defaultLoading') }}
-                </BaseButton>
+                </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton @click="$events.emit('all-the-way-down')">
+                <Button @click="$events.emit('all-the-way-down')">
                     {{ $t('components.modals_nested') }}
-                </BaseButton>
+                </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton @click="$ui.openModal(CustomModal)">
+                <Button @click="$ui.openModal(CustomModal)">
                     {{ $t('components.modals_custom') }}
-                </BaseButton>
+                </Button>
             </div>
         </section>
 
         <section>
             <h2>{{ $t('components.snackbars') }}</h2>
             <div class="mt-4 flex gap-2">
-                <BaseButton @click="$ui.showSnackbar($t('components.snackbars_message'))">
+                <Button @click="$ui.showSnackbar($t('components.snackbars_message'))">
                     {{ $t('components.snackbars_custom') }}
-                </BaseButton>
-                <BaseButton @click="$ui.showSnackbar($t('components.snackbars_message'), { component: AGSnackbar })">
+                </Button>
+                <Button @click="$ui.showSnackbar($t('components.snackbars_message'), { component: AGSnackbar })">
                     {{ $t('components.snackbars_default') }}
-                </BaseButton>
+                </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton
+                <Button
                     @click="
                         $ui.showSnackbar($t('components.snackbars_message'), {
                             actions: [{ text: $t('components.snackbars_action'), dismiss: true }],
@@ -178,8 +171,8 @@
                     "
                 >
                     {{ $t('components.snackbars_customWithActions') }}
-                </BaseButton>
-                <BaseButton
+                </Button>
+                <Button
                     @click="
                         $ui.showSnackbar($t('components.snackbars_message'), {
                             component: AGSnackbar,
@@ -188,10 +181,10 @@
                     "
                 >
                     {{ $t('components.snackbars_defaultWithActions') }}
-                </BaseButton>
+                </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <BaseButton
+                <Button
                     @click="
                         $ui.showSnackbar($t('components.snackbars_message'), {
                             color: 'danger',
@@ -199,8 +192,8 @@
                     "
                 >
                     {{ $t('components.snackbars_customDanger') }}
-                </BaseButton>
-                <BaseButton
+                </Button>
+                <Button
                     @click="
                         $ui.showSnackbar($t('components.snackbars_message'), {
                             component: AGSnackbar,
@@ -209,10 +202,10 @@
                     "
                 >
                     {{ $t('components.snackbars_defaultDanger') }}
-                </BaseButton>
+                </Button>
             </div>
             <div class="mt-4 flex flex-wrap gap-2">
-                <BaseButton
+                <Button
                     @click="
                         $ui.showSnackbar($t('components.snackbars_message'), {
                             color: 'danger',
@@ -221,8 +214,8 @@
                     "
                 >
                     {{ $t('components.snackbars_customDangerWithActions') }}
-                </BaseButton>
-                <BaseButton
+                </Button>
+                <Button
                     @click="
                         $ui.showSnackbar($t('components.snackbars_message'), {
                             component: AGSnackbar,
@@ -232,7 +225,7 @@
                     "
                 >
                     {{ $t('components.snackbars_defaultDangerWithActions') }}
-                </BaseButton>
+                </Button>
             </div>
         </section>
     </div>

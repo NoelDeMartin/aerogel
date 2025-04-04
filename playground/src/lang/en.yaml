@@ -20,10 +20,17 @@ home:
 components:
     title: Components
     buttons: Buttons
-    buttons_clickMe: Click me!
-    buttons_custom: Custom
-    buttons_customWithIcons: Custom with icons
-    buttons_default: Default
+    buttons_variants: Variants
+    buttons_variants_default: Default
+    buttons_variants_secondary: Secondary
+    buttons_variants_danger: Danger
+    buttons_variants_ghost: Ghost
+    buttons_variants_outline: Outline
+    buttons_variants_link: Link
+    buttons_sizes: Sizes
+    buttons_sizes_default: Default
+    buttons_sizes_sm: Small
+    buttons_sizes_lg: Large
     inputs: Inputs
     inputs_customLabel: Custom
     inputs_customPlaceholder: Type here...

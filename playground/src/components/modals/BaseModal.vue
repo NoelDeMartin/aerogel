@@ -9,7 +9,7 @@
             class="fixed top-1/2 left-1/2 z-50 max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white text-left shadow-xl"
             :class="{ 'px-4 pt-5 pb-4': !noPadding }"
         >
-            <BaseButton
+            <Button
                 v-if="title && cancellable"
                 color="clear"
                 class="absolute top-3 right-1"
@@ -19,7 +19,7 @@
                 @click="close()"
             >
                 <i-mdi-close class="size-4" />
-            </BaseButton>
+            </Button>
             <AGHeadlessModalTitle v-if="title" class="mr-12 text-base leading-6 font-semibold text-gray-900">
                 <AGMarkdown :text="title" inline />
             </AGHeadlessModalTitle>

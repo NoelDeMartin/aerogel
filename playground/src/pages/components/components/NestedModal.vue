@@ -14,9 +14,9 @@
                 />
             </div>
             <AGMarkdown lang-key="components.modals_nestedMessage" class="mb-4" />
-            <BaseButton @click="$events.emit('all-the-way-down', count + 1)">
+            <Button @click="$events.emit('all-the-way-down', count + 1)">
                 {{ $t('components.modals_nestedButton') }}
-            </BaseButton>
+            </Button>
         </div>
     </BaseModal>
 </template>

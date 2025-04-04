@@ -7,14 +7,14 @@
         >
             <AGMarkdown :text="task.name" />
 
-            <BaseButton
+            <Button
                 small
                 color="danger"
                 :aria-label="$t('storage.deleteTask_a11y', { task: task.name })"
                 @click="$emit('delete', task)"
             >
                 {{ $t('storage.deleteTask') }}
-            </BaseButton>
+            </Button>
         </li>
     </ul>
     <AGForm class="mt-5 flex justify-center" :form="form" @submit="($emit('create', form.draft), form.reset())">
@@ -26,9 +26,9 @@
             :aria-label="$t('storage.taskName')"
             :placeholder="$t('storage.newTask')"
         />
-        <BaseButton submit>
+        <Button submit>
             {{ $t('storage.submit') }}
-        </BaseButton>
+        </Button>
     </AGForm>
 </template>
 

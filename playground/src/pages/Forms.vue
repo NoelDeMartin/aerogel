@@ -14,9 +14,9 @@
                     :aria-label="$t('forms.name_label')"
                     :placeholder="$t('forms.name_placeholder')"
                 />
-                <BaseButton submit class="ml-2 shrink-0">
+                <Button submit class="ml-2 shrink-0">
                     {{ $t('forms.submit') }}
-                </BaseButton>
+                </Button>
             </div>
 
             <BaseCheckbox name="accept" class="mt-4">

@@ -3,14 +3,14 @@
         <div class="flex items-center gap-3 p-4">
             <AGMarkdown :text="message" inline />
 
-            <BaseButton
+            <Button
                 v-for="(action, i) of actions"
                 :key="i"
                 :color="color"
                 @click="activate(action)"
             >
                 {{ action.text }}
-            </BaseButton>
+            </Button>
         </div>
     </AGHeadlessSnackbar>
 </template>

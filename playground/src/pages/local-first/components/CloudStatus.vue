@@ -11,14 +11,14 @@
             "
         />
         <div class="mt-1 flex gap-2">
-            <BaseButton small @click="$cloud.sync()">
+            <Button small @click="$cloud.sync()">
                 {{ $t('cloud.sync') }}
                 <i-mdi-reload class="size-4" />
-            </BaseButton>
-            <BaseButton small color="clear" @click="$solid.logout()">
+            </Button>
+            <Button small color="clear" @click="$solid.logout()">
                 {{ $t('solid.logout') }}
                 <i-mdi-logout class="size-4" />
-            </BaseButton>
+            </Button>
         </div>
     </span>
 </template>

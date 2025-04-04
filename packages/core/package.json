@@ -4,6 +4,7 @@
     "type": "module",
     "sideEffects": false,
     "exports": {
+        "style": "./src/index.css",
         "types": "./dist/aerogel-core.d.ts",
         "default": "./dist/aerogel-core.js"
     },

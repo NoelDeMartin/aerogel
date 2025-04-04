@@ -1,9 +1,9 @@
 <template>
     <Story group="modals" :layout="{ type: 'grid' }">
         <Variant title="Playground">
-            <BaseButton @click="showModal()">
+            <Button @click="showModal()">
                 Show modal
-            </BaseButton>
+            </Button>
 
             <AGAppOverlays />
 

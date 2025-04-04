@@ -3,20 +3,20 @@
         {{ $t('errors.title') }}
     </PageTitle>
     <div class="flex w-full flex-wrap items-center justify-center gap-3">
-        <BaseButton @click="throwError()">
+        <Button @click="throwError()">
             {{ $t('errors.throw') }}
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
             @click="$errors.report({ name: $t('errors.throwWithoutTraceName'), message: $t('errors.throwMessage') })"
         >
             {{ $t('errors.throwWithoutTrace') }}
-        </BaseButton>
-        <BaseButton @click="$errors.inspect($errors.logs.map(({ report }) => report))">
+        </Button>
+        <Button @click="$errors.inspect($errors.logs.map(({ report }) => report))">
             {{ $t('errors.all', { count: $errors.logs.length }) }}
-        </BaseButton>
-        <BaseButton @click="$app.reload({ startupCrash: 'true' })">
+        </Button>
+        <Button @click="$app.reload({ startupCrash: 'true' })">
             {{ $t('errors.startupCrash') }}
-        </BaseButton>
+        </Button>
     </div>
 </template>
 

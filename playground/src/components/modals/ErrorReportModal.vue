@@ -11,7 +11,7 @@
                         :total-reports="reports.length"
                     />
                     <span v-if="reports.length > 1" class="flex gap-0.5">
-                        <BaseButton
+                        <Button
                             icon
                             color="clear"
                             :disabled="activeReportIndex === 0"
@@ -20,8 +20,8 @@
                             @click="activeReportIndex--"
                         >
                             <i-zondicons-cheveron-left class="size-4" />
-                        </BaseButton>
-                        <BaseButton
+                        </Button>
+                        <Button
                             icon
                             color="clear"
                             :disabled="activeReportIndex === reports.length - 1"
@@ -30,7 +30,7 @@
                             @click="activeReportIndex++"
                         >
                             <i-zondicons-cheveron-right class="size-4" />
-                        </BaseButton>
+                        </Button>
                     </span>
                 </div>
                 <AGErrorReportModalButtons :report="report" class="gap-0.5">
@@ -42,7 +42,7 @@
                             description,
                         }: IAGErrorReportModalButtonsDefaultSlotProps"
                     >
-                        <BaseButton
+                        <Button
                             color="clear"
                             class="group whitespace-nowrap"
                             :url="url"
@@ -55,7 +55,7 @@
                             >
                                 {{ description }}
                             </AGMeasured>
-                        </BaseButton>
+                        </Button>
                     </template>
                 </AGErrorReportModalButtons>
             </h2>

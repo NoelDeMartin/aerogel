@@ -14,10 +14,10 @@
                 class="mt-4 text-center"
             />
             <div class="mt-4 flex flex-col space-y-4">
-                <Button variant="destructive" @click="$app.reload()">
+                <Button variant="danger" @click="$app.reload()">
                     {{ $td('startupCrash.reload', 'Try again') }}
                 </Button>
-                <Button variant="destructive" @click="$errors.inspect($errors.startupErrors)">
+                <Button variant="danger" @click="$errors.inspect($errors.startupErrors)">
                     {{ $td('startupCrash.inspect', 'View error details') }}
                 </Button>
             </div>

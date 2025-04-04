@@ -1,8 +1,22 @@
+import clsx from 'clsx';
+import { computed, customRef, unref } from 'vue';
+import { cva } from 'class-variance-authority';
 import { isObject } from '@noeldemartin/utils';
-import { customRef } from 'vue';
-import type { ExtractPropTypes, PropType, Ref, UnwrapNestedRefs } from 'vue';
+import { twMerge } from 'tailwind-merge';
+import type { ComputedRef, ExtractPropTypes, PropType, Ref, UnwrapNestedRefs } from 'vue';
+import type { GetClosureArgs, GetClosureResult } from '@noeldemartin/utils';
 
 import type { HasElement } from '@aerogel/core/components/contracts/shared';
+
+export type CVAConfig<T> = NonNullable<GetClosureArgs<typeof cva<T>>[1]>;
+export type CVAProps<T> = NonNullable<GetClosureArgs<GetClosureResult<typeof cva<T>>>[0]>;
+export type RefsObject<T> = { [K in keyof T]: Ref<T[K]> | T[K] };
+
+export type Variants<T extends Record<string, string>> = Required<{
+    [K in keyof T]: {
+        [key in T[K]]: string;
+    };
+}>;
 
 export type ComponentPropDefinitions<T> = {
     [K in keyof T]: {
@@ -14,6 +28,24 @@ export type ComponentPropDefinitions<T> = {
 export type PickComponentProps<TValues, TDefinitions> = {
     [K in keyof TValues]: K extends keyof TDefinitions ? TValues[K] : never;
 };
+
+export function computedVariantClasses<T>(
+    value: RefsObject<{ baseClasses?: string } & CVAProps<T>>,
+    config: { baseClasses?: string } & CVAConfig<T>,
+): ComputedRef<string> {
+    return computed(() => {
+        const { baseClasses: valueBaseClasses, ...valueRefs } = value;
+        const { baseClasses: configBaseClasses, ...configs } = config;
+        const variants = cva(configBaseClasses, configs as CVAConfig<T>);
+        const values = Object.entries(valueRefs).reduce((extractedValues, [name, valueRef]) => {
+            extractedValues[name as keyof CVAProps<T>] = unref(valueRef);
+
+            return extractedValues;
+        }, {} as CVAProps<T>);
+
+        return twMerge(clsx(variants(values), unref(valueBaseClasses)));
+    });
+}
 
 export function elementRef(): Ref<HTMLElement | undefined> {
     return customRef((track, trigger) => {

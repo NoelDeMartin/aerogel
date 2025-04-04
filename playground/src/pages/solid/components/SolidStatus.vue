@@ -9,7 +9,7 @@
             "
         />
 
-        <BaseButton
+        <Button
             small
             color="clear"
             class="mt-1"
@@ -17,6 +17,6 @@
         >
             {{ $t('solid.logout') }}
             <i-mdi-logout class="size-4" />
-        </BaseButton>
+        </Button>
     </div>
 </template>

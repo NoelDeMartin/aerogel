@@ -11,7 +11,7 @@ import { objectWithoutEmpty } from '@noeldemartin/utils';
 
 import type { IButtonProps } from '@aerogel/core/components/contracts/Button';
 
-const { as, link, route, routeParams, routeQuery, submit, class: classes } = defineProps<IButtonProps>();
+const { as, href, route, routeParams, routeQuery, submit, class: classes } = defineProps<IButtonProps>();
 
 const props = computed(() => {
     if (as) {
@@ -29,11 +29,11 @@ const props = computed(() => {
         };
     }
 
-    if (link) {
+    if (href) {
         return {
             as: 'a',
             target: '_blank',
-            href: link,
+            href,
         };
     }
 
