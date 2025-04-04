@@ -1,5 +1,5 @@
 <template>
-    <AGAppLayout class="bg-background">
+    <AppLayout class="bg-background">
         <AppHeader />
         <main class="flex grow p-4">
             <div class="mx-auto flex w-full max-w-(--breakpoint-lg) grow flex-col">
@@ -7,5 +7,5 @@
             </div>
         </main>
         <AppFooter />
-    </AGAppLayout>
+    </AppLayout>
 </template>

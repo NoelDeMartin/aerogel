@@ -4,7 +4,6 @@ import TailwindCSS from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
 import { VitePWA } from 'vite-plugin-pwa';
-import type { ComponentResolver } from 'unplugin-vue-components';
 import type { Plugin } from 'vite';
 
 import { generate404Assets } from '@aerogel/vite/lib/404';
@@ -20,37 +19,7 @@ import type { VirtualAerogel } from 'virtual:aerogel';
 
 export type { Options, AppInfo, ClientIDDocument };
 
-const coreComponents = Object.keys(
-    import.meta.glob(['../../core/src/components/ui/*.vue', '../../core/src/components/headless/*.vue'], {
-        eager: true,
-        query: '?ignore',
-    }),
-).map((filename) => filename.split('/').pop()?.replace('.vue', '') ?? '');
-
-export function AerogelResolver(): ComponentResolver {
-    return {
-        type: 'component',
-        resolve: (name) => {
-            if (coreComponents.includes(name)) {
-                return { name, as: name, from: '@aerogel/core' };
-            }
-
-            if (!name.startsWith('AG') || name.startsWith('AGStory')) {
-                return;
-            }
-
-            if (name.startsWith('AGSolid')) {
-                return { name, as: name, from: '@aerogel/plugin-solid' };
-            }
-
-            if (name.startsWith('AGCloud')) {
-                return { name, as: name, from: '@aerogel/plugin-local-first' };
-            }
-
-            return { name, as: name, from: '@aerogel/core' };
-        },
-    };
-}
+export * from './resolvers';
 
 export default function Aerogel(options: Options = {}): Plugin[] {
     const app: AppInfo = {

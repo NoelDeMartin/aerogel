@@ -1,7 +1,7 @@
-import AGAppLayout from './AGAppLayout.vue';
-import AGAppOverlays from './AGAppOverlays.vue';
+import AppLayout from './AppLayout.vue';
+import AppOverlays from './AppOverlays.vue';
 
-export { AGAppLayout, AGAppOverlays };
+export { AppLayout, AppOverlays };
 
 export * from './composition';
 export * from './constants';

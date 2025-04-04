@@ -19,7 +19,7 @@
                 </Button>
             </div>
 
-            <AGAppOverlays />
+            <AppOverlays />
 
             <template #controls>
                 <HstText v-model="alertTitle" title="Alert Title" />
