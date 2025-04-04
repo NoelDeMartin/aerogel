@@ -1,15 +1,15 @@
 import type { PrimitiveProps } from 'reka-ui';
 import type { HTMLAttributes } from 'vue';
 
-export type IButtonVariants = 'default' | 'secondary' | 'danger' | 'ghost' | 'outline' | 'link';
-export type IButtonSizes = 'default' | 'small' | 'large' | 'icon';
-export interface IButtonProps extends PrimitiveProps {
+export type ButtonVariant = 'default' | 'secondary' | 'danger' | 'ghost' | 'outline' | 'link';
+export type ButtonSize = 'default' | 'small' | 'large' | 'icon';
+export interface ButtonProps extends PrimitiveProps {
     class?: HTMLAttributes['class'];
     href?: string;
     route?: string;
     routeParams?: object;
     routeQuery?: object;
-    size?: IButtonSizes;
+    size?: ButtonSize;
     submit?: boolean;
-    variant?: IButtonVariants;
+    variant?: ButtonVariant;
 }

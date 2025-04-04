@@ -17,7 +17,7 @@ import { computed } from 'vue';
 
 import { Colors } from '@aerogel/core/components/constants';
 import { useSnackbar, useSnackbarProps } from '@aerogel/core/components/headless/snackbars';
-import type { IButtonVariants } from '@aerogel/core/components/contracts/Button';
+import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 
 import Button from '../ui/Button.vue';
 import AGHeadlessSnackbar from '../headless/snackbars/AGHeadlessSnackbar.vue';
@@ -34,5 +34,5 @@ const styleClasses = computed(() => {
             return 'bg-gray-900 text-white';
     }
 });
-const colorVariant = computed(() => props.color as IButtonVariants);
+const colorVariant = computed(() => props.color as ButtonVariant);
 </script>

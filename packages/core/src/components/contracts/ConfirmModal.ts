@@ -2,25 +2,25 @@ import { computed } from 'vue';
 
 import { translateWithDefault } from '@aerogel/core/lang';
 import { FormFieldTypes, useForm } from '@aerogel/core/forms';
-import type { IButtonVariants } from '@aerogel/core/components/contracts/Button';
+import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 import type { FormFieldDefinition } from '@aerogel/core/forms';
 
 export type ConfirmModalCheckboxes = Record<string, { label: string; default?: boolean; required?: boolean }>;
 
-export interface IConfirmModalProps {
+export interface ConfirmModalProps {
     title?: string;
     message: string;
     acceptText?: string;
-    acceptVariant?: IButtonVariants;
+    acceptVariant?: ButtonVariant;
     cancelText?: string;
-    cancelVariant?: IButtonVariants;
+    cancelVariant?: ButtonVariant;
     checkboxes?: ConfirmModalCheckboxes;
     actions?: Record<string, () => unknown>;
     required?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function useConfirmModal(props: IConfirmModalProps) {
+export function useConfirmModal(props: ConfirmModalProps) {
     const form = useForm(
         Object.entries(props.checkboxes ?? {}).reduce(
             (values, [name, checkbox]) => ({

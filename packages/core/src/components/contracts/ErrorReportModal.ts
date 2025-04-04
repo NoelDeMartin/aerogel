@@ -3,12 +3,12 @@ import { computed, ref } from 'vue';
 import { translateWithDefault } from '@aerogel/core/lang';
 import type { ErrorReport } from '@aerogel/core/errors';
 
-export interface IErrorReportModalProps {
+export interface ErrorReportModalProps {
     reports: ErrorReport[];
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function useErrorReportModal(props: IErrorReportModalProps) {
+export function useErrorReportModal(props: ErrorReportModalProps) {
     const activeReportIndex = ref(0);
     const report = computed(() => props.reports[activeReportIndex.value] as ErrorReport);
     const details = computed(

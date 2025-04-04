@@ -28,8 +28,8 @@ import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { usePromptModal } from '@aerogel/core/components/contracts/PromptModal';
-import type { IPromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
+import type { PromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
 
-const { cancelVariant = 'secondary', ...props } = defineProps<IPromptModalProps>();
+const { cancelVariant = 'secondary', ...props } = defineProps<PromptModalProps>();
 const { form, renderedAcceptText, renderedCancelText } = usePromptModal(props);
 </script>

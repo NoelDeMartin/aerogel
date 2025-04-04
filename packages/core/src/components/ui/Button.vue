@@ -7,14 +7,14 @@
 <script setup lang="ts">
 import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue';
 import { computedVariantClasses } from '@aerogel/core/components/utils';
-import type { IButtonProps } from '@aerogel/core/components/contracts/Button';
+import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
 import type { Variants } from '@aerogel/core/components/utils';
 
-const { class: baseClasses, size, variant, ...props } = defineProps<IButtonProps>();
+const { class: baseClasses, size, variant, ...props } = defineProps<ButtonProps>();
 
 /* eslint-disable vue/max-len */
 // prettier-ignore
-const renderedClasses = computedVariantClasses<Variants<Pick<IButtonProps, 'size' | 'variant'>>>(
+const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size' | 'variant'>>>(
     { baseClasses, variant, size },
     {
         baseClasses: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',

@@ -6,7 +6,7 @@ import UI, { UIComponents } from '@aerogel/core/ui/UI';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
 import { Colors } from '@aerogel/core/components/constants';
 import { Events } from '@aerogel/core/services';
-import type { IErrorReportModalProps } from '@aerogel/core/components/contracts/ErrorReportModal';
+import type { ErrorReportModalProps } from '@aerogel/core/components/contracts/ErrorReportModal';
 import type { ModalComponent } from '@aerogel/core/ui/UI.state';
 
 import Service from './Errors.state';
@@ -34,7 +34,7 @@ export class ErrorsService extends Service {
             return;
         }
 
-        UI.openModal<ModalComponent<IErrorReportModalProps>>(UI.requireComponent(UIComponents.ErrorReportModal), {
+        UI.openModal<ModalComponent<ErrorReportModalProps>>(UI.requireComponent(UIComponents.ErrorReportModal), {
             reports,
         });
     }
@@ -81,7 +81,7 @@ export class ErrorsService extends Service {
                         text: translateWithDefault('errors.viewDetails', 'View details'),
                         dismiss: true,
                         handler: () =>
-                            UI.openModal<ModalComponent<IErrorReportModalProps>>(
+                            UI.openModal<ModalComponent<ErrorReportModalProps>>(
                                 UI.requireComponent(UIComponents.ErrorReportModal),
                                 { reports: [report] },
                             ),

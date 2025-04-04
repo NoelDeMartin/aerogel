@@ -6,11 +6,11 @@ import type { ObjectValues } from '@noeldemartin/utils';
 import App from '@aerogel/core/services/App';
 import Events from '@aerogel/core/services/Events';
 import type { AcceptRefs } from '@aerogel/core/utils';
-import type { IAlertModalProps } from '@aerogel/core/components/contracts/AlertModal';
-import type { IButtonVariants } from '@aerogel/core/components/contracts/Button';
-import type { ConfirmModalCheckboxes, IConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
-import type { ILoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
-import type { IPromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
+import type { AlertModalProps } from '@aerogel/core/components/contracts/AlertModal';
+import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
+import type { ConfirmModalCheckboxes, ConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
+import type { LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
+import type { PromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
 import type { SnackbarAction, SnackbarColor } from '@aerogel/core/components/headless/snackbars';
 
 import Service from './UI.state';
@@ -40,9 +40,9 @@ export type UIComponent = ObjectValues<typeof UIComponents>;
 
 export type ConfirmOptions = AcceptRefs<{
     acceptText?: string;
-    acceptVariant?: IButtonVariants;
+    acceptVariant?: ButtonVariant;
     cancelText?: string;
-    cancelVariant?: IButtonVariants;
+    cancelVariant?: ButtonVariant;
     actions?: Record<string, () => unknown>;
     required?: boolean;
 }>;
@@ -63,9 +63,9 @@ export type PromptOptions = AcceptRefs<{
     defaultValue?: string;
     placeholder?: string;
     acceptText?: string;
-    acceptVariant?: IButtonVariants;
+    acceptVariant?: ButtonVariant;
     cancelText?: string;
-    cancelVariant?: IButtonVariants;
+    cancelVariant?: ButtonVariant;
     trim?: boolean;
 }>;
 
@@ -87,7 +87,7 @@ export class UIService extends Service {
     public alert(message: string): void;
     public alert(title: string, message: string): void;
     public alert(messageOrTitle: string, message?: string): void {
-        const getProperties = (): IAlertModalProps => {
+        const getProperties = (): AlertModalProps => {
             if (typeof message !== 'string') {
                 return { message: messageOrTitle };
             }
@@ -98,7 +98,7 @@ export class UIService extends Service {
             };
         };
 
-        this.openModal<ModalComponent<IAlertModalProps>>(
+        this.openModal<ModalComponent<AlertModalProps>>(
             this.requireComponent(UIComponents.AlertModal),
             getProperties(),
         );
@@ -116,7 +116,7 @@ export class UIService extends Service {
         messageOrOptions?: string | ConfirmOptions | ConfirmOptionsWithCheckboxes,
         options?: ConfirmOptions | ConfirmOptionsWithCheckboxes,
     ): Promise<boolean | [boolean, Record<string, boolean>]> {
-        const getProperties = (): AcceptRefs<IConfirmModalProps> => {
+        const getProperties = (): AcceptRefs<ConfirmModalProps> => {
             if (typeof messageOrOptions !== 'string') {
                 return {
                     ...(messageOrOptions ?? {}),
@@ -134,7 +134,7 @@ export class UIService extends Service {
         };
 
         type ConfirmModalComponent = ModalComponent<
-            AcceptRefs<IConfirmModalProps>,
+            AcceptRefs<ConfirmModalProps>,
             boolean | [boolean, Record<string, boolean>]
         >;
 
@@ -181,22 +181,22 @@ export class UIService extends Service {
         options?: PromptOptions,
     ): Promise<string | null> {
         const trim = options?.trim ?? true;
-        const getProperties = (): IPromptModalProps => {
+        const getProperties = (): PromptModalProps => {
             if (typeof messageOrOptions !== 'string') {
                 return {
                     message: messageOrTitle,
                     ...(messageOrOptions ?? {}),
-                } as IPromptModalProps;
+                } as PromptModalProps;
             }
 
             return {
                 title: messageOrTitle,
                 message: messageOrOptions,
                 ...(options ?? {}),
-            } as IPromptModalProps;
+            } as PromptModalProps;
         };
 
-        const modal = await this.openModal<ModalComponent<IPromptModalProps, string | null>>(
+        const modal = await this.openModal<ModalComponent<PromptModalProps, string | null>>(
             this.requireComponent(UIComponents.PromptModal),
             getProperties(),
         );
@@ -214,7 +214,7 @@ export class UIService extends Service {
         operation?: Promise<T> | (() => T),
     ): Promise<T> {
         const processOperation = (o: Promise<T> | (() => T)) => (typeof o === 'function' ? Promise.resolve(o()) : o);
-        const processArgs = (): { operationPromise: Promise<T>; props?: AcceptRefs<ILoadingModalProps> } => {
+        const processArgs = (): { operationPromise: Promise<T>; props?: AcceptRefs<LoadingModalProps> } => {
             if (typeof operationOrMessageOrOptions === 'string') {
                 return {
                     props: { message: operationOrMessageOrOptions },

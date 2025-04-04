@@ -35,8 +35,8 @@ import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { useConfirmModal } from '@aerogel/core/components/contracts/ConfirmModal';
-import type { IConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
+import type { ConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
 
-const { cancelVariant = 'secondary', ...props } = defineProps<IConfirmModalProps>();
+const { cancelVariant = 'secondary', ...props } = defineProps<ConfirmModalProps>();
 const { form, renderedAcceptText, renderedCancelText } = useConfirmModal(props);
 </script>

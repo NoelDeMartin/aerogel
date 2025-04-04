@@ -9,9 +9,9 @@ import { computed } from 'vue';
 import { Primitive } from 'reka-ui';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 
-import type { IButtonProps } from '@aerogel/core/components/contracts/Button';
+import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
 
-const { as, href, route, routeParams, routeQuery, submit, class: classes } = defineProps<IButtonProps>();
+const { as, href, route, routeParams, routeQuery, submit, class: classes } = defineProps<ButtonProps>();
 
 const props = computed(() => {
     if (as) {

@@ -54,9 +54,9 @@ import ErrorReportModalButtons from '@aerogel/core/components/ui/ErrorReportModa
 import ErrorReportModalTitle from '@aerogel/core/components/ui/ErrorReportModalTitle.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { useErrorReportModal } from '@aerogel/core/components/contracts/ErrorReportModal';
-import type { IErrorReportModalProps } from '@aerogel/core/components/contracts/ErrorReportModal';
+import type { ErrorReportModalProps } from '@aerogel/core/components/contracts/ErrorReportModal';
 
-const props = defineProps<IErrorReportModalProps>();
+const props = defineProps<ErrorReportModalProps>();
 
 const { activeReportIndex, details, nextReportText, previousReportText, report } = useErrorReportModal(props);
 </script>

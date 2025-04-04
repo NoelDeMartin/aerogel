@@ -2,22 +2,22 @@ import { computed } from 'vue';
 
 import { requiredStringInput, useForm } from '@aerogel/core/forms';
 import { translateWithDefault } from '@aerogel/core/lang';
-import type { IButtonVariants } from '@aerogel/core/components/contracts/Button';
+import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 
-export interface IPromptModalProps {
+export interface PromptModalProps {
     title?: string;
     message: string;
     label?: string;
     defaultValue?: string;
     placeholder?: string;
     acceptText?: string;
-    acceptVariant?: IButtonVariants;
+    acceptVariant?: ButtonVariant;
     cancelText?: string;
-    cancelVariant?: IButtonVariants;
+    cancelVariant?: ButtonVariant;
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function usePromptModal(props: IPromptModalProps) {
+export function usePromptModal(props: PromptModalProps) {
     const form = useForm({
         draft: requiredStringInput(props.defaultValue ?? ''),
     });

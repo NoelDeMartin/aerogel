@@ -33,7 +33,7 @@ import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModa
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
 import { classes } from '@aerogel/core/components/utils';
-import type { IModalProps, IModalSlots } from '@aerogel/core/components/contracts/Modal';
+import type { ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 const {
     class: contentClass = '',
@@ -41,9 +41,9 @@ const {
     title,
     persistent,
     ...props
-} = defineProps<IModalProps & { wrapperClass?: HTMLAttributes['class']; class?: HTMLAttributes['class'] }>();
+} = defineProps<ModalProps & { wrapperClass?: HTMLAttributes['class']; class?: HTMLAttributes['class'] }>();
 
-defineSlots<IModalSlots>();
+defineSlots<ModalSlots>();
 
 const renderedContentClass = computed(() => classes({ 'mt-2': title }, contentClass));
 const renderedWrapperClass = computed(() =>

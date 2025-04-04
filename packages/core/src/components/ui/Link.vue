@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import Button from '@aerogel/core/components/ui/Button.vue';
-import type { IButtonProps } from '@aerogel/core/components/contracts/Button';
+import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
 
-const props = defineProps<Omit<IButtonProps, 'variant'>>();
+const props = defineProps<Omit<ButtonProps, 'variant'>>();
 </script>

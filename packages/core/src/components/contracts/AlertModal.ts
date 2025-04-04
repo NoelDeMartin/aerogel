@@ -1,4 +1,4 @@
-export interface IAlertModalProps {
+export interface AlertModalProps {
     title?: string;
     message: string;
 }

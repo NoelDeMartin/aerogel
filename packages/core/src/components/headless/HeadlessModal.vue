@@ -14,10 +14,10 @@ import Events from '@aerogel/core/services/Events';
 import { useEvent } from '@aerogel/core/utils/composition/events';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { IAGModalContext } from '@aerogel/core/components/modals/AGModalContext';
-import type { IModalProps, IModalSlots } from '@aerogel/core/components/contracts/Modal';
+import type { ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
-defineProps<IModalProps>();
-defineSlots<IModalSlots>();
+defineProps<ModalProps>();
+defineSlots<ModalSlots>();
 
 const $root = ref<{ $el?: HTMLElement } | null>(null);
 const hidden = ref(true);
