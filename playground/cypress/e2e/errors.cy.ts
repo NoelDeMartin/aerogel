@@ -5,7 +5,7 @@ describe('Error Handling', () => {
         cy.visit('/errors');
     });
 
-    it.only('Handles runtime errors', () => {
+    it('Handles runtime errors', () => {
         // Error with stack trace
         cy.press('Throw error');
         cy.see('See all (1)');
@@ -13,7 +13,7 @@ describe('Error Handling', () => {
         cy.press('View details');
         cy.see('Copy to clipboard');
         cy.see('Log to console');
-        cy.see('Report in GitHub');
+        cy.contains('a', 'Report in GitHub');
         cy.see('This error was thrown for testing purposes');
         cy.see('throwError');
         cy.see('Errors.vue');

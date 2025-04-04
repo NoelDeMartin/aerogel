@@ -7,9 +7,9 @@
                 class="group whitespace-nowrap"
                 :href="button.url"
                 :title="$td(`errors.report_${button.id}`, button.description)"
-                :aria-label="$td(`errors.report_${button.id}`, button.description)"
                 @click="button.handler"
             >
+                <span class="sr-only">{{ $td(`errors.report_${button.id}`, button.description) }}</span>
                 <component :is="button.iconComponent" class="size-4" aria-hidden="true" />
             </Button>
         </slot>

@@ -10,13 +10,13 @@ describe('Components', () => {
     });
 
     it('Modals', () => {
-        cy.press('Custom alert');
+        cy.press('Alert');
         cy.see('How\'s your day going?');
         cy.matchImageSnapshot('Alert');
         cy.get('body').type('{esc}');
         cy.dontSee('How\'s your day going?');
 
-        cy.press('Custom confirm');
+        cy.press('Confirm');
         cy.see('You\'re about to do something dangerous');
         cy.see('Are you sure you want to continue?');
         cy.matchImageSnapshot('Confirm');
@@ -25,14 +25,14 @@ describe('Components', () => {
         cy.dontSee('Are you sure you want to continue?');
         cy.get('body').type('{esc}');
 
-        cy.press('Custom confirm');
+        cy.press('Confirm');
         cy.see('Are you sure you want to continue?');
         cy.press('Maybe not');
         cy.see('You dodged that bullet');
         cy.dontSee('Are you sure you want to continue?');
         cy.get('body').type('{esc}');
 
-        cy.press('Custom loading');
+        cy.press('Loading');
         cy.see('The elfs are working, please wait...');
         cy.dontSee('The elfs are working, please wait...');
 

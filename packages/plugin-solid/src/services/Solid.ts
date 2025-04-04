@@ -17,7 +17,7 @@ import {
     tap,
     urlRoot,
 } from '@noeldemartin/utils';
-import { App, Colors, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
+import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { setEngine } from 'soukai';
 import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex } from 'soukai-solid';
@@ -199,7 +199,7 @@ export class SolidService extends Service {
                     ),
                 {
                     acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
-                    acceptColor: Colors.Danger,
+                    acceptVariant: 'danger',
                     cancelText: translateWithDefault(
                         'solid.logoutConfirmCancel',
                         translateWithDefault('ui.cancel', 'Cancel'),
