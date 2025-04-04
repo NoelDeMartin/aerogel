@@ -2,7 +2,7 @@
     <DialogContent>
         <slot />
 
-        <AGModalContext v-if="childModal" :child-index="childIndex + 1" :modal="childModal" />
+        <ModalContext v-if="childModal" :child-index="childIndex + 1" :modal="childModal" />
     </DialogContent>
 </template>
 
@@ -10,12 +10,12 @@
 import { computed } from 'vue';
 import { DialogContent } from 'reka-ui';
 
-import AGModalContext from '@aerogel/core/components/modals/AGModalContext.vue';
+import ModalContext from '@aerogel/core/components/ui/ModalContext.vue';
 import UI from '@aerogel/core/ui/UI';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { IAGModalContext } from '@aerogel/core/components/modals/AGModalContext';
+import type { UIModalContext } from '@aerogel/core/ui/UI.state';
 
-const { childIndex } = injectReactiveOrFail<IAGModalContext>(
+const { childIndex = 0 } = injectReactiveOrFail<UIModalContext>(
     'modal',
     'could not obtain modal reference from <HeadlessModalContent>, ' +
         'did you render this component manually? Show it using $ui.openModal() instead',

@@ -9,6 +9,5 @@ export * from './contracts';
 export * from './forms';
 export * from './headless';
 export * from './lib';
-export * from './modals';
 export * from './snackbars';
 export * from './ui';

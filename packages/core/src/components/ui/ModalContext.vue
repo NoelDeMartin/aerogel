@@ -5,15 +5,13 @@
 <script setup lang="ts">
 import { computed, provide, toRef, unref } from 'vue';
 
-import { numberProp, requiredObjectProp } from '@aerogel/core/utils/vue';
-import type { UIModal } from '@aerogel/core/ui/UI.state';
+import type { UIModal, UIModalContext } from '@aerogel/core/ui/UI.state';
+import type { AcceptRefs } from '@aerogel/core/utils/vue';
 
-import type { IAGModalContext } from './AGModalContext';
-
-const props = defineProps({
-    modal: requiredObjectProp<UIModal>(),
-    childIndex: numberProp(0),
-});
+const props = defineProps<{
+    modal: UIModal;
+    childIndex?: number;
+}>();
 
 const modalProperties = computed(() => {
     const properties = {} as typeof props.modal.properties;
@@ -25,7 +23,7 @@ const modalProperties = computed(() => {
     return properties;
 });
 
-provide<IAGModalContext>('modal', {
+provide<AcceptRefs<UIModalContext>>('modal', {
     modal: toRef(props, 'modal'),
     childIndex: toRef(props, 'childIndex'),
 });

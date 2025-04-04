@@ -13,7 +13,7 @@ import { DialogPortal, DialogRoot } from 'reka-ui';
 import Events from '@aerogel/core/services/Events';
 import { useEvent } from '@aerogel/core/utils/composition/events';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { IAGModalContext } from '@aerogel/core/components/modals/AGModalContext';
+import type { UIModalContext } from '@aerogel/core/ui/UI.state';
 import type { ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 defineProps<ModalProps>();
@@ -22,7 +22,7 @@ defineSlots<ModalSlots>();
 const $root = ref<{ $el?: HTMLElement } | null>(null);
 const hidden = ref(true);
 const closed = ref(false);
-const { modal } = injectReactiveOrFail<IAGModalContext>(
+const { modal } = injectReactiveOrFail<UIModalContext>(
     'modal',
     'could not obtain modal reference from <HeadlessModal>, ' +
         'did you render this component manually? Show it using $ui.openModal() instead',
