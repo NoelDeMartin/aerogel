@@ -8,6 +8,5 @@ export * from './constants';
 export * from './contracts';
 export * from './forms';
 export * from './headless';
-export * from './lib';
 export * from './snackbars';
 export * from './ui';

@@ -1,7 +1,7 @@
 import type { Component } from 'vue';
 
 import AGSnackbar from '@aerogel/core/components/snackbars/AGSnackbar.vue';
-import AGStartupCrash from '@aerogel/core/components/lib/AGStartupCrash.vue';
+import StartupCrash from '@aerogel/core/components/ui/StartupCrash.vue';
 import AlertModal from '@aerogel/core/components/ui/AlertModal.vue';
 import ConfirmModal from '@aerogel/core/components/ui/ConfirmModal.vue';
 import ErrorReportModal from '@aerogel/core/components/ui/ErrorReportModal.vue';
@@ -30,7 +30,7 @@ export default definePlugin({
             [UIComponents.LoadingModal]: LoadingModal,
             [UIComponents.PromptModal]: PromptModal,
             [UIComponents.Snackbar]: AGSnackbar,
-            [UIComponents.StartupCrash]: AGStartupCrash,
+            [UIComponents.StartupCrash]: StartupCrash,
         };
 
         Object.entries({
