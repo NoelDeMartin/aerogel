@@ -1,13 +1,6 @@
 export * from './composition';
-export * from './AGHeadlessInput';
 export * from './AGHeadlessSelect';
 export * from './AGHeadlessSelectOption';
-export { default as AGHeadlessInput } from './AGHeadlessInput.vue';
-export { default as AGHeadlessInputDescription } from './AGHeadlessInputDescription.vue';
-export { default as AGHeadlessInputError } from './AGHeadlessInputError.vue';
-export { default as AGHeadlessInputInput } from './AGHeadlessInputInput.vue';
-export { default as AGHeadlessInputLabel } from './AGHeadlessInputLabel.vue';
-export { default as AGHeadlessInputTextArea } from './AGHeadlessInputTextArea.vue';
 export { default as AGHeadlessSelect } from './AGHeadlessSelect.vue';
 export { default as AGHeadlessSelectTrigger } from './AGHeadlessSelectTrigger.vue';
 export { default as AGHeadlessSelectError } from './AGHeadlessSelectError.vue';

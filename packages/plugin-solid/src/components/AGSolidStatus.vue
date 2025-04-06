@@ -27,7 +27,7 @@
         <slot v-else name="logged-out">
             <div class="flex flex-col">
                 <Form :form="form" class="flex" @submit="$solid.login(form.url)">
-                    <AGInput
+                    <Input
                         name="url"
                         :aria-label="$td('solid.url', 'Login url')"
                         :placeholder="$td('solid.placeholder', 'https://...')"
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { AGInput, AGMarkdown, Button, Form, Link, requiredStringInput, useForm } from '@aerogel/core';
+import { AGMarkdown, Button, Form, Input, Link, requiredStringInput, useForm } from '@aerogel/core';
 import { isDevelopment } from '@noeldemartin/utils';
 import { computed } from 'vue';
 

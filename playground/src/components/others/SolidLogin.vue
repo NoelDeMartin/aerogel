@@ -1,7 +1,7 @@
 <template>
     <Form :form="form" @submit="$solid.login(form.url)">
         <div class="flex gap-2">
-            <BaseInput
+            <Input
                 autofocus
                 name="url"
                 :aria-label="$t('solid.url')"

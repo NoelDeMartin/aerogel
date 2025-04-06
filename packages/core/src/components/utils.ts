@@ -1,13 +1,14 @@
 import clsx from 'clsx';
-import { computed, customRef, unref } from 'vue';
+import { computed, customRef, inject, onUnmounted, unref } from 'vue';
 import { cva } from 'class-variance-authority';
 import { isObject } from '@noeldemartin/utils';
 import { twMerge } from 'tailwind-merge';
 import type { ClassValue } from 'clsx';
 import type { ComputedRef, ExtractPropTypes, PropType, Ref, UnwrapNestedRefs } from 'vue';
-import type { GetClosureArgs, GetClosureResult } from '@noeldemartin/utils';
+import type { GetClosureArgs, GetClosureResult, Nullable } from '@noeldemartin/utils';
 
 import type { HasElement } from '@aerogel/core/components/contracts/shared';
+import type { FormController } from '@aerogel/core/forms';
 
 export type CVAConfig<T> = NonNullable<GetClosureArgs<typeof cva<T>>[1]>;
 export type CVAProps<T> = NonNullable<GetClosureArgs<GetClosureResult<typeof cva<T>>>[0]>;
@@ -96,4 +97,11 @@ export function getElement(value: unknown): HTMLElement | undefined {
 
 export function hasElement(value: unknown): value is UnwrapNestedRefs<HasElement> {
     return isObject(value) && '$el' in value;
+}
+
+export function onFormFocus(input: { name: Nullable<string> }, listener: () => unknown): void {
+    const form = inject<FormController | null>('form', null);
+    const stop = form?.on('focus', (name) => input.name === name && listener());
+
+    onUnmounted(() => stop?.());
 }

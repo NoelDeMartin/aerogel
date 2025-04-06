@@ -17,26 +17,18 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue';
 
-import { injectReactiveOrFail, stringProp } from '@aerogel/core/utils/vue';
-import type { __SetsElement } from '@aerogel/core/components/contracts/shared';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { onFormFocus } from '@aerogel/core/components/utils';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
-import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
+import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 
-import { onFormFocus } from './composition';
-
-const props = defineProps({
-    type: stringProp('text'),
-});
-
+const { type = 'text' } = defineProps<{ type?: string }>();
 const $input = ref<HTMLInputElement>();
-const input = injectReactiveOrFail<IAGHeadlessInput>(
-    'input',
-    '<AGHeadlessInputInput> must be a child of a <AGHeadlessInput>',
-);
+const input = injectReactiveOrFail<InputExpose>('input', '<HeadlessInputInput> must be a child of a <HeadlessInput>');
 const name = computed(() => input.name ?? undefined);
 const value = computed(() => input.value);
 const checked = computed(() => {
-    if (props.type !== 'checkbox') {
+    if (type !== 'checkbox') {
         return;
     }
 
@@ -56,7 +48,7 @@ function getValue(): FormFieldValue | null {
         return null;
     }
 
-    switch (props.type) {
+    switch (type) {
         case 'checkbox':
             return $input.value.checked;
         case 'date':
@@ -67,18 +59,17 @@ function getValue(): FormFieldValue | null {
 }
 
 onFormFocus(input, () => $input.value?.focus());
-watchEffect(() => (input as unknown as __SetsElement).__setElement($input.value));
 watchEffect(() => {
     if (!$input.value) {
         return;
     }
 
-    if (props.type === 'date') {
+    if (type === 'date') {
         $input.value.valueAsDate = value.value as Date;
 
         return;
     }
 
-    $input.value.value = value.value as string;
+    $input.value.value = (value.value as string) ?? null;
 });
 </script>

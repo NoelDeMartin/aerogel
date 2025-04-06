@@ -9,13 +9,9 @@ import { computed } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
+import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 
-import type { IAGHeadlessInput } from './AGHeadlessInput';
-
-const input = injectReactiveOrFail<IAGHeadlessInput>(
-    'input',
-    '<AGHeadlessInputError> must be a child of a <AGHeadlessInput>',
-);
+const input = injectReactiveOrFail<InputExpose>('input', '<HeadlessInputError> must be a child of a <HeadlessInput>');
 const errorMessage = computed(() => {
     if (!input.errors) {
         return null;

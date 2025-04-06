@@ -1,26 +1,26 @@
 <template>
-    <AGHeadlessInput
+    <HeadlessInput
         ref="$input"
         :name="name"
         :class="className"
         :label="label"
     >
-        <AGHeadlessInputInput
+        <HeadlessInputInput
             v-bind="attrs"
             type="checkbox"
         />
         <div v-if="$slots.default">
-            <AGHeadlessInputLabel>
+            <HeadlessInputLabel>
                 <slot />
-            </AGHeadlessInputLabel>
-            <AGHeadlessInputError />
+            </HeadlessInputLabel>
+            <HeadlessInputError />
         </div>
-    </AGHeadlessInput>
+    </HeadlessInput>
 </template>
 
 <script setup lang="ts">
-import { AGHeadlessInputLabel, componentRef, stringProp, useInputAttrs } from '@aerogel/core';
-import type { IAGHeadlessInput } from '@aerogel/core';
+import { HeadlessInputLabel, componentRef, stringProp, useInputAttrs } from '@aerogel/core';
+import type { IHeadlessInput } from '@aerogel/core';
 
 defineOptions({ inheritAttrs: false });
 defineProps({
@@ -29,6 +29,6 @@ defineProps({
     inputClass: stringProp(''),
 });
 
-const $input = componentRef<IAGHeadlessInput>();
+const $input = componentRef<IHeadlessInput>();
 const [attrs, className] = useInputAttrs();
 </script>

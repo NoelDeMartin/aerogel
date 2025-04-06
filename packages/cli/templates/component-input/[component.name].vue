@@ -1,10 +1,10 @@
 <template>
-    <AGHeadlessInput v-bind="props">
-        <AGHeadlessInputLabel />
-        <AGHeadlessInputInput v-bind="attrs" />
-        <AGHeadlessInputDescription />
-        <AGHeadlessInputError />
-    </AGHeadlessInput>
+    <HeadlessInput v-bind="props">
+        <HeadlessInputLabel />
+        <HeadlessInputInput v-bind="attrs" />
+        <HeadlessInputDescription />
+        <HeadlessInputError />
+    </HeadlessInput>
 </template>
 
 <script setup lang="ts">

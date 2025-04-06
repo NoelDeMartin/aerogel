@@ -18,7 +18,7 @@
         </li>
     </ul>
     <Form class="mt-5 flex justify-center" :form="form" @submit="($emit('create', form.draft), form.reset())">
-        <BaseInput
+        <Input
             name="draft"
             class="mr-2 h-full w-full sm:max-w-xs"
             input-class="h-full"

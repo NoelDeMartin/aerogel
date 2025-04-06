@@ -10,13 +10,9 @@
 import { computed, useSlots } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 
-import type { IAGHeadlessInput } from './AGHeadlessInput';
-
-const input = injectReactiveOrFail<IAGHeadlessInput>(
-    'input',
-    '<AGHeadlessInputLabel> must be a child of a <AGHeadlessInput>',
-);
+const input = injectReactiveOrFail<InputExpose>('input', '<HeadlessInputLabel> must be a child of a <HeadlessInput>');
 const slots = useSlots();
 const show = computed(() => !!(input.label || slots.default));
 </script>

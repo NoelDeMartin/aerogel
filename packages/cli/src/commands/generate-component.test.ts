@@ -60,7 +60,7 @@ describe('Generate Component command', () => {
         await GenerateComponentCommand.run('FooBar', { input: true, story: true });
 
         // Assert
-        FileMock.expectCreated('src/components/FooBar.vue').toContain('<AGHeadlessInputInput v-bind="attrs" />');
+        FileMock.expectCreated('src/components/FooBar.vue').toContain('<HeadlessInputInput v-bind="attrs" />');
         FileMock.expectCreated('src/components/FooBar.story.vue').toContain('.story-foobar .variant-playground');
         FileMock.expectCreated('src/components/FooBar.story.vue').toContain(
             '<FooBar name="food" :label="label" :placeholder="placeholder" />',

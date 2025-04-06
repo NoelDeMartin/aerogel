@@ -44,15 +44,21 @@
 
         <section>
             <h2>{{ $t('components.inputs') }}</h2>
-            <div class="mt-4 flex gap-2">
-                <BaseInput
-                    :label="$t('components.inputs_customLabel')"
-                    :placeholder="$t('components.inputs_customPlaceholder')"
+            <div class="mt-4">
+                <Input :label="$t('components.inputs_text')" :placeholder="$t('components.inputs_textPlaceholder')" />
+            </div>
+            <div class="mt-4">
+                <Input
+                    type="number"
+                    :label="$t('components.inputs_number')"
+                    :placeholder="$t('components.inputs_numberPlaceholder')"
                 />
-                <label>
-                    {{ $t('components.inputs_defaultLabel') }}
-                    <AGInput :placeholder="$t('components.inputs_defaultPlaceholder')" class="mt-1" />
-                </label>
+            </div>
+            <div class="mt-4">
+                <Input type="date" :label="$t('components.inputs_date')" />
+            </div>
+            <div class="mt-4">
+                <Checkbox :label="$t('components.inputs_checkbox')" />
             </div>
         </section>
 
@@ -82,12 +88,6 @@
                     "
                 />
             </div>
-        </section>
-
-        <section>
-            <h2>{{ $t('components.checkboxes') }}</h2>
-            <BaseCheckbox>{{ $t('components.checkboxes_custom') }}</BaseCheckbox>
-            <AGCheckbox>{{ $t('components.checkboxes_default') }}</AGCheckbox>
         </section>
 
         <section>

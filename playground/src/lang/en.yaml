@@ -32,10 +32,12 @@ components:
     buttons_sizes_small: Small
     buttons_sizes_large: Large
     inputs: Inputs
-    inputs_customLabel: Custom
-    inputs_customPlaceholder: Type here...
-    inputs_defaultLabel: Default
-    inputs_defaultPlaceholder: Type here...
+    inputs_text: Text
+    inputs_textPlaceholder: Type here...
+    inputs_number: Number
+    inputs_numberPlaceholder: Set a number
+    inputs_date: Date
+    inputs_checkbox: This is a checkbox.
     selects: Selects
     selects_customLabel: Custom
     selects_customNoSelectionText: Select one...
@@ -43,9 +45,6 @@ components:
     selects_defaultLabel: Default
     selects_defaultNoSelectionText: Select one...
     selects_defaultOptions: One, Two, Three
-    checkboxes: Checkboxes
-    checkboxes_custom: This is a custom checkbox.
-    checkboxes_default: This is the default checkbox.
     modals: Modals
     modals_alert: Alert
     modals_alertTitle: Hi there!

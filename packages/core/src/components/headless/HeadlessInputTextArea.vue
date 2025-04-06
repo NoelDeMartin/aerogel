@@ -14,18 +14,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref } from 'vue';
 
+import { onFormFocus } from '@aerogel/core/components/utils';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { IAGHeadlessInput } from '@aerogel/core/components/headless/forms/AGHeadlessInput';
-import type { __SetsElement } from '@aerogel/core/components/contracts/shared';
-
-import { onFormFocus } from './composition';
+import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 
 const $textArea = ref<HTMLTextAreaElement>();
-const input = injectReactiveOrFail<IAGHeadlessInput>(
+const input = injectReactiveOrFail<InputExpose>(
     'input',
-    '<AGHeadlessInputTextArea> must be a child of a <AGHeadlessInput>',
+    '<HeadlessInputTextArea> must be a child of a <HeadlessInput>',
 );
 const name = computed(() => input.name ?? undefined);
 const value = computed(() => input.value as string);
@@ -38,6 +36,5 @@ function update() {
     input.update($textArea.value.value);
 }
 
-watchEffect(() => (input as unknown as __SetsElement).__setElement($textArea.value));
 onFormFocus(input, () => $textArea.value?.focus());
 </script>
