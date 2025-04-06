@@ -1,6 +1,6 @@
 <template>
     <AGHeadlessSnackbar :class="colorClasses">
-        <AGMarkdown :text="message" inline />
+        <Markdown :text="message" inline />
 
         <Button
             v-for="(action, i) of actions"

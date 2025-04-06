@@ -1,6 +1,6 @@
 <template>
     <div>
-        <AGMarkdown
+        <Markdown
             :text="
                 $t('solid.welcome', {
                     name: $solid.user?.name ?? $solid.user?.webId,

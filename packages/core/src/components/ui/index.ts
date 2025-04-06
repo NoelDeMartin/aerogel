@@ -9,6 +9,7 @@ export { default as Form } from './Form.vue';
 export { default as Input } from './Input.vue';
 export { default as Link } from './Link.vue';
 export { default as LoadingModal } from './LoadingModal.vue';
+export { default as Markdown } from './Markdown.vue';
 export { default as Modal } from './Modal.vue';
 export { default as ModalContext } from './ModalContext.vue';
 export { default as ProgressBar } from './ProgressBar.vue';

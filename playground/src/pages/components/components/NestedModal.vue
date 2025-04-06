@@ -1,7 +1,7 @@
 <template>
     <Modal>
         <HeadlessModalTitle class="isolate z-10 text-base leading-6 font-semibold text-gray-900">
-            <AGMarkdown lang-key="components.modals_nestedTitle" :lang-params="{ count }" inline />
+            <Markdown lang-key="components.modals_nestedTitle" :lang-params="{ count }" inline />
         </HeadlessModalTitle>
         <div class="mt-3 flex flex-col items-center">
             <div class="flex flex-wrap">
@@ -13,7 +13,7 @@
                     :title="$t('components.modals_nestedTurtle')"
                 />
             </div>
-            <AGMarkdown lang-key="components.modals_nestedMessage" class="mb-4" />
+            <Markdown lang-key="components.modals_nestedMessage" class="mb-4" />
             <Button @click="$events.emit('all-the-way-down', count + 1)">
                 {{ $t('components.modals_nestedButton') }}
             </Button>

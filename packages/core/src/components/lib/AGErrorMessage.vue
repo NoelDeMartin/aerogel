@@ -1,5 +1,5 @@
 <template>
-    <AGMarkdown :text="message" inline />
+    <Markdown :text="message" inline />
 </template>
 
 <script setup lang="ts">
@@ -9,7 +9,7 @@ import { requiredObjectProp } from '@aerogel/core/utils/vue';
 import { getErrorMessage } from '@aerogel/core/errors/utils';
 import type { ErrorSource } from '@aerogel/core/errors/Errors.state';
 
-import AGMarkdown from './AGMarkdown.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 
 const props = defineProps({ error: requiredObjectProp<ErrorSource>() });
 const message = computed(() => getErrorMessage(props.error));

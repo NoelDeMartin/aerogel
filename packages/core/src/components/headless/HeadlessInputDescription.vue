@@ -1,6 +1,6 @@
 <template>
     <slot :id="`${input.id}-description`">
-        <AGMarkdown
+        <Markdown
             v-if="show"
             v-bind="$attrs"
             :id="`${input.id}-description`"
@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 

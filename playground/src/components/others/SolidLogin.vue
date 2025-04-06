@@ -14,11 +14,11 @@
         </div>
 
         <div v-if="!$solid.ignorePreviousSessionError && $solid.previousSession?.error">
-            <AGMarkdown lang-key="solid.loginError" />
+            <Markdown lang-key="solid.loginError" />
         </div>
 
         <div v-else-if="$solid.previousSession" class="mt-4 rounded-md border border-gray-200 p-4">
-            <AGMarkdown
+            <Markdown
                 :text="
                     $t('solid.previousSession', {
                         name: $solid.previousSession.loginUrl,

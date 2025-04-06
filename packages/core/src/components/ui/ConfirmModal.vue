@@ -1,7 +1,7 @@
 <template>
     <Modal v-slot="{ close }" :title="title" persistent>
         <Form :form="form" @submit="close([true, form.data()])">
-            <AGMarkdown :text="message" :actions="actions" />
+            <Markdown :text="message" :actions="actions" />
 
             <ul v-if="checkboxes" class="mt-4 flex flex-col text-sm text-gray-600">
                 <li v-for="(checkbox, name) of checkboxes" :key="name">
@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import Form from '@aerogel/core/components/ui/Form.vue';
-import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { useConfirmModal } from '@aerogel/core/components/contracts/ConfirmModal';

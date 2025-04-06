@@ -1,6 +1,6 @@
 <template>
     <ModalWrapper persistent>
-        <AGMarkdown :text="renderedMessage" />
+        <Markdown :text="renderedMessage" />
     </ModalWrapper>
 </template>
 

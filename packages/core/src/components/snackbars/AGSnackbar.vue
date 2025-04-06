@@ -1,6 +1,6 @@
 <template>
     <AGHeadlessSnackbar class="flex flex-row items-center justify-center gap-3 p-4" :class="styleClasses">
-        <AGMarkdown :text="message" inline />
+        <Markdown :text="message" inline />
         <Button
             v-for="(action, i) of actions"
             :key="i"
@@ -21,7 +21,7 @@ import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 
 import Button from '../ui/Button.vue';
 import AGHeadlessSnackbar from '../headless/snackbars/AGHeadlessSnackbar.vue';
-import AGMarkdown from '../lib/AGMarkdown.vue';
+import Markdown from '../ui/Markdown.vue';
 
 const props = defineProps(useSnackbarProps());
 const { activate } = useSnackbar(props);

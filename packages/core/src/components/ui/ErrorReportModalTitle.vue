@@ -1,11 +1,11 @@
 <template>
-    <AGMarkdown :text="text" inline />
+    <Markdown :text="text" inline />
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import type { ErrorReport } from '@aerogel/core/errors';
 
 const { totalReports, currentReport, report } = defineProps<{

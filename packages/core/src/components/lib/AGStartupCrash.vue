@@ -4,7 +4,7 @@
             <h1 class="mt-2 text-center text-4xl font-medium text-red-600">
                 {{ $td('startupCrash.title', 'Something went wrong!') }}
             </h1>
-            <AGMarkdown
+            <Markdown
                 :text="
                     $td(
                         'startupCrash.message',
@@ -26,6 +26,6 @@
 </template>
 
 <script setup lang="ts">
-import AGMarkdown from './AGMarkdown.vue';
-import Button from '../ui/Button.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
+import Button from '@aerogel/core/components/ui/Button.vue';
 </script>

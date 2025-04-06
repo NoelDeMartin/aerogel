@@ -1,8 +1,8 @@
 <template>
     <SolidLogin v-if="$cloud.disconnected" />
-    <AGMarkdown v-else-if="$cloud.syncing" lang-key="cloud.syncing" />
+    <Markdown v-else-if="$cloud.syncing" lang-key="cloud.syncing" />
     <span v-else>
-        <AGMarkdown
+        <Markdown
             :text="
                 $t('solid.welcome', {
                     name: $solid.user?.name ?? $solid.user?.webId,

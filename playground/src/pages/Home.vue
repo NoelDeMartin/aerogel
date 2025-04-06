@@ -1,7 +1,7 @@
 <template>
     <div class="flex grow flex-col items-center">
         <PageTitle>{{ $t('home.title') }}</PageTitle>
-        <AGMarkdown lang-key="home.description" class="text-center" />
+        <Markdown lang-key="home.description" class="text-center" />
         <ul class="mt-2 flex w-full max-w-prose flex-wrap justify-center gap-3">
             <li v-for="section of sections" :key="section.route">
                 <RouterLink

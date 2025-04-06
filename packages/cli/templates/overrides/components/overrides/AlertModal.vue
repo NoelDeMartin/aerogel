@@ -1,6 +1,6 @@
 <template>
     <ModalWrapper :title="title">
-        <AGMarkdown :text="message" />
+        <Markdown :text="message" />
     </ModalWrapper>
 </template>
 

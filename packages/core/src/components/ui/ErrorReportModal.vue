@@ -35,7 +35,7 @@
                 </div>
                 <ErrorReportModalButtons :report="report" class="gap-0.5" />
             </h2>
-            <AGMarkdown v-if="report.description" :text="report.description" class="text-gray-600" />
+            <Markdown v-if="report.description" :text="report.description" class="text-gray-600" />
         </div>
         <div class="-mt-2 max-h-[80vh] overflow-auto bg-red-800/10">
             <pre class="p-4 text-xs text-red-800" v-text="details" />
@@ -48,7 +48,7 @@ import IconCheveronLeft from '~icons/zondicons/cheveron-left';
 import IconCheveronRight from '~icons/zondicons/cheveron-right';
 import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
 
-import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import ErrorReportModalButtons from '@aerogel/core/components/ui/ErrorReportModalButtons.vue';
 import ErrorReportModalTitle from '@aerogel/core/components/ui/ErrorReportModalTitle.vue';

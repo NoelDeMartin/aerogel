@@ -1,16 +1,16 @@
 <template>
     <div>
         <slot v-if="$solid.loginStale" name="login-stale">
-            <AGMarkdown :text="$td('solid.loginStale', 'This is taking too long...')" />
+            <Markdown :text="$td('solid.loginStale', 'This is taking too long...')" />
         </slot>
 
         <slot v-if="$solid.loginOngoing" name="login-ongoing">
-            <AGMarkdown :text="$td('ui.loading', 'Loading...')" />
+            <Markdown :text="$td('ui.loading', 'Loading...')" />
         </slot>
 
         <slot v-else-if="$solid.isLoggedIn()" name="logged-in" :session="$solid.session">
             <div class="flex flex-col gap-3">
-                <AGMarkdown
+                <Markdown
                     :text="
                         $td('solid.loggedIn', 'You are logged in as [{userName}]({userWebId})', {
                             userName: $solid.user.name ?? $solid.user.webId,
@@ -46,7 +46,7 @@
                     v-if="$solid.previousSession?.error || $solid.loginStartupError"
                     class="mt-1 self-center text-sm text-red-800"
                 >
-                    <AGMarkdown :text="$td('solid.previousLoginError', 'Previous login attempt failed')" inline />
+                    <Markdown :text="$td('solid.previousLoginError', 'Previous login attempt failed')" inline />
                     <Link @click="$errors.inspect($solid.previousSession?.error || $solid.loginStartupError)">
                         ({{ $td('errors.viewDetails', 'View details') }})
                     </Link>
@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { AGMarkdown, Button, Form, Input, Link, requiredStringInput, useForm } from '@aerogel/core';
+import { Button, Form, Input, Link, Markdown, requiredStringInput, useForm } from '@aerogel/core';
 import { isDevelopment } from '@noeldemartin/utils';
 import { computed } from 'vue';
 

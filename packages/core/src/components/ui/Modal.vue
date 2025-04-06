@@ -11,7 +11,7 @@
             </div>
 
             <HeadlessModalTitle v-if="title" class="text-base font-semibold text-gray-900">
-                <AGMarkdown :text="title" inline />
+                <Markdown :text="title" inline />
             </HeadlessModalTitle>
 
             <div :class="renderedContentClass">
@@ -27,7 +27,7 @@ import IconClose from '~icons/zondicons/close';
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
-import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import HeadlessModal from '@aerogel/core/components/headless/HeadlessModal.vue';
 import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModalContent.vue';
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';

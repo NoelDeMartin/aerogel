@@ -1,6 +1,6 @@
 <template>
     <ModalWrapper v-slot="{ close }" :title="title" persistent>
-        <AGMarkdown :text="message" :actions="actions" />
+        <Markdown :text="message" :actions="actions" />
         <div class="mt-4 flex flex-row-reverse">
             <Button :variant="acceptColor" @click="close(true)">
                 {{ renderedAcceptText }}

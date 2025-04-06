@@ -5,22 +5,30 @@
 <script setup lang="ts">
 import { computed, h, useAttrs } from 'vue';
 import { isInstanceOf } from '@noeldemartin/utils';
+import type { VNode } from 'vue';
 
 import { renderMarkdown } from '@aerogel/core/utils/markdown';
-import { booleanProp, mixedProp, objectProp, stringProp } from '@aerogel/core/utils/vue';
 import { translate } from '@aerogel/core/lang';
+import { renderNode } from '@aerogel/core/utils/vdom';
 
-const props = defineProps({
-    as: stringProp(),
-    inline: booleanProp(),
-    langKey: stringProp(),
-    langParams: mixedProp<number | Record<string, unknown>>(),
-    text: stringProp(),
-    actions: objectProp<Record<string, () => unknown>>(),
-});
+const { as, inline, langKey, langParams, text, actions } = defineProps<{
+    as?: string;
+    inline?: boolean;
+    langKey?: string;
+    langParams?: number | Record<string, unknown>;
+    text?: string;
+    actions?: Record<string, () => unknown>;
+}>();
 
 const attrs = useAttrs();
-const markdown = computed(() => props.text ?? (props.langKey && translate(props.langKey, props.langParams ?? {})));
+const slots = defineSlots<{ default?(): VNode[] }>();
+const markdown = computed(() => {
+    if (slots.default) {
+        return slots.default().map(renderNode).join('');
+    }
+
+    return text ?? (langKey && translate(langKey, langParams ?? {}));
+});
 const html = computed(() => {
     if (!markdown.value) {
         return null;
@@ -28,25 +36,25 @@ const html = computed(() => {
 
     let renderedHtml = renderMarkdown(markdown.value);
 
-    if (props.inline) {
+    if (inline) {
         renderedHtml = renderedHtml.replace('<p>', '<span>').replace('</p>', '</span>');
     }
 
     return renderedHtml;
 });
 const root = () =>
-    h(props.as ?? (props.inline ? 'span' : 'div'), {
+    h(as ?? (inline ? 'span' : 'div'), {
         innerHTML: html.value,
         onClick,
         ...attrs,
-        class: `${attrs.class ?? ''} ${props.inline ? '' : 'prose'}`,
+        class: `${attrs.class ?? ''} ${inline ? '' : 'prose'}`,
     });
 
 async function onClick(event: Event) {
     const { target } = event;
 
     if (isInstanceOf(target, HTMLElement) && target.dataset.markdownAction) {
-        props.actions?.[target.dataset.markdownAction]?.();
+        actions?.[target.dataset.markdownAction]?.();
 
         return;
     }

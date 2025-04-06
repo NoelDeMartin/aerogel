@@ -2,7 +2,7 @@
     <AGHeadlessModal ref="$modal" v-slot="{ close }" v-bind="props">
         <AGHeadlessModalPanel>
             <AGHeadlessModalTitle v-if="title">
-                <AGMarkdown :text="title" inline />
+                <Markdown :text="title" inline />
             </AGHeadlessModalTitle>
             <slot :close="close" />
         </AGHeadlessModalPanel>

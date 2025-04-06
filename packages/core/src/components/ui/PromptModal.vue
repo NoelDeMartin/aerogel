@@ -1,7 +1,7 @@
 <template>
     <Modal v-slot="{ close }" :title="title" persistent>
         <Form :form="form" @submit="close(form.draft)">
-            <AGMarkdown :text="message" />
+            <Markdown :text="message" />
             <Input
                 name="draft"
                 class="mt-2"
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import AGMarkdown from '@aerogel/core/components/lib/AGMarkdown.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import Form from '@aerogel/core/components/ui/Form.vue';
 import Input from '@aerogel/core/components/ui/Input.vue';
