@@ -5,7 +5,7 @@
                 {{ $t('footer.about') }}
             </AppFooterLink>
             <span class="text-gray-600">|</span>
-            <AppFooterLink href="https://github.com/NoelDeMartin/aerogel/tree/main/packages/playground">
+            <AppFooterLink href="https://github.com/NoelDeMartin/aerogel/tree/main/playground">
                 {{ $t('footer.source') }}
             </AppFooterLink>
         </div>

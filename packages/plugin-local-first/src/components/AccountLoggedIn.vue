@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
-import { translate, translateWithDefault } from '@aerogel/core';
+import { translateWithDefault } from '@aerogel/core';
 
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';

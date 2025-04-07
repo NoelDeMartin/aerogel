@@ -87,13 +87,13 @@ jobs:
               if: ${{ failure() }}
               with:
                   name: cypress_screenshots
-                  path: packages/playground/cypress/screenshots
+                  path: playground/cypress/screenshots
             - name: Upload Cypress snapshots
               uses: actions/upload-artifact@v4
               if: ${{ failure() }}
               with:
                   name: cypress_snapshots
-                  path: packages/playground/cypress/snapshots
+                  path: playground/cypress/snapshots
 
     verify:
         runs-on: ubuntu-latest
