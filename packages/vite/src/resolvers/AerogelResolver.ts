@@ -7,6 +7,20 @@ const coreComponents = Object.keys(
     }),
 ).map((filename) => filename.split('/').pop()?.replace('.vue', '') ?? '');
 
+const solidComponents = Object.keys(
+    import.meta.glob('../../../plugin-solid/src/components/**/*.vue', {
+        eager: true,
+        query: '?ignore',
+    }),
+).map((filename) => filename.split('/').pop()?.replace('.vue', '') ?? '');
+
+const localFirstComponents = Object.keys(
+    import.meta.glob('../../../plugin-local-first/src/components/**/*.vue', {
+        eager: true,
+        query: '?ignore',
+    }),
+).map((filename) => filename.split('/').pop()?.replace('.vue', '') ?? '');
+
 export default function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
@@ -15,11 +29,11 @@ export default function AerogelResolver(): ComponentResolver {
                 return { name, as: name, from: '@aerogel/core' };
             }
 
-            if (name.startsWith('AGSolid')) {
+            if (solidComponents.includes(name)) {
                 return { name, as: name, from: '@aerogel/plugin-solid' };
             }
 
-            if (name.startsWith('AGCloud')) {
+            if (localFirstComponents.includes(name)) {
                 return { name, as: name, from: '@aerogel/plugin-local-first' };
             }
         },

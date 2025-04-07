@@ -3,13 +3,13 @@
 </template>
 
 <script setup lang="ts">
-import { Cache, computedAsync, requiredStringProp } from '@aerogel/core';
+import { Cache, computedAsync } from '@aerogel/core';
 
 import Solid from '@aerogel/plugin-solid/services/Solid';
 
-const props = defineProps({ src: requiredStringProp() });
+const { src } = defineProps<{ src: string }>();
 const sourceUrl = computedAsync(async () => {
-    const cachedResponse = (await Cache.get(props.src)) ?? (await downloadImage(props.src));
+    const cachedResponse = (await Cache.get(src)) ?? (await downloadImage(src));
     const blob = await cachedResponse?.blob();
 
     return blob && URL.createObjectURL(blob);

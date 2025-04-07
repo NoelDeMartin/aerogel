@@ -8,14 +8,15 @@ import { isInstanceOf } from '@noeldemartin/utils';
 import type { VNode } from 'vue';
 
 import { renderMarkdown } from '@aerogel/core/utils/markdown';
-import { translate } from '@aerogel/core/lang';
+import { translate, translateWithDefault } from '@aerogel/core/lang';
 import { renderNode } from '@aerogel/core/utils/vdom';
 
-const { as, inline, langKey, langParams, text, actions } = defineProps<{
+const { as, inline, langKey, langParams, langDefault, text, actions } = defineProps<{
     as?: string;
     inline?: boolean;
     langKey?: string;
     langParams?: number | Record<string, unknown>;
+    langDefault?: string;
     text?: string;
     actions?: Record<string, () => unknown>;
 }>();
@@ -27,7 +28,13 @@ const markdown = computed(() => {
         return slots.default().map(renderNode).join('');
     }
 
-    return text ?? (langKey && translate(langKey, langParams ?? {}));
+    return (
+        text ??
+        (langKey &&
+            (langDefault
+                ? translateWithDefault(langKey, langDefault, langParams ?? {})
+                : translate(langKey, langParams ?? {})))
+    );
 });
 const html = computed(() => {
     if (!markdown.value) {

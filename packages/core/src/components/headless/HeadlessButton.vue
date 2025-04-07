@@ -1,5 +1,10 @@
 <template>
-    <Primitive :class="classes" :as-child="asChild" v-bind="props">
+    <Primitive
+        :class="classes"
+        :as-child="asChild"
+        :disabled="disabled"
+        v-bind="props"
+    >
         <slot />
     </Primitive>
 </template>
@@ -11,7 +16,7 @@ import { objectWithoutEmpty } from '@noeldemartin/utils';
 
 import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
 
-const { as, href, route, routeParams, routeQuery, submit, class: classes } = defineProps<ButtonProps>();
+const { as, href, route, routeParams, routeQuery, submit, disabled, class: classes } = defineProps<ButtonProps>();
 
 const props = computed(() => {
     if (as) {

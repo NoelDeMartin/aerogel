@@ -13,10 +13,10 @@ import type { FormController } from '@aerogel/core/forms';
 export type CVAConfig<T> = NonNullable<GetClosureArgs<typeof cva<T>>[1]>;
 export type CVAProps<T> = NonNullable<GetClosureArgs<GetClosureResult<typeof cva<T>>>[0]>;
 export type RefsObject<T> = { [K in keyof T]: Ref<T[K]> | T[K] };
-export type Variants<T extends Record<string, string>> = Required<{
-    [K in keyof T]: {
-        [key in T[K]]: string;
-    };
+export type Variants<T extends Record<string, string | boolean>> = Required<{
+    [K in keyof T]: Exclude<T[K], undefined> extends string
+        ? { [key in Exclude<T[K], undefined>]: string | null }
+        : { true: string | null; false: string | null };
 }>;
 
 export type ComponentPropDefinitions<T> = {

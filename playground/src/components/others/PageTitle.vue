@@ -1,30 +1,34 @@
 <template>
     <div class="mb-4 flex flex-row items-center justify-between" :class="{ 'w-full': source }">
-        <h2 class="text-xl">
-            <slot />
-        </h2>
-        <a
-            v-if="sourceUrl"
-            :href="sourceUrl"
-            target="_blank"
-            class="flex flex-row items-center text-sm text-gray-600 hover:text-gray-500 hover:underline"
-        >
-            <i-mdi-github class="mr-1 size-4" />
-            <span>{{ $t('app.viewPageSource') }}</span>
-        </a>
+        <div class="flex flex-row items-center gap-2">
+            <h2 class="text-xl">
+                <slot />
+            </h2>
+            <Button
+                v-if="sourceUrl"
+                variant="ghost"
+                size="icon"
+                class="p-0 text-gray-600 hover:text-gray-800"
+                :href="sourceUrl"
+                :title="$t('app.viewPageSource')"
+                :aria-label="$t('app.viewPageSource')"
+            >
+                <i-mdi-github class="size-5" />
+            </Button>
+        </div>
+        <slot name="end" />
     </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { stringProp } from '@aerogel/core';
 
-const props = defineProps({ source: stringProp() });
+const { source } = defineProps<{ source?: string }>();
 const sourceUrl = computed(() => {
-    if (!props.source) {
+    if (!source) {
         return;
     }
 
-    return `https://github.com/noeldemartin/aerogel/blob/main/packages/playground/${props.source}`;
+    return `https://github.com/noeldemartin/aerogel/blob/main/playground/${source}`;
 });
 </script>

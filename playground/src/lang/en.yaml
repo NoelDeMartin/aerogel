@@ -31,6 +31,8 @@ components:
     buttons_sizes_default: Default
     buttons_sizes_small: Small
     buttons_sizes_large: Large
+    buttons_states: States
+    buttons_states_disabled: Disabled
     inputs: Inputs
     inputs_text: Text
     inputs_textPlaceholder: Type here...
@@ -151,7 +153,3 @@ errors:
     nextReport: Show next report
     all: See all ({count})
     required: This is required
-
-cloud:
-    sync: Sync
-    syncing: Syncing...

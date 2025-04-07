@@ -1,9 +1,14 @@
 <template>
-    <HeadlessModal v-slot="{ close }" :persistent="persistent" v-bind="props">
+    <HeadlessModal
+        v-slot="{ close }"
+        v-bind="props"
+        ref="$modal"
+        :persistent="persistent"
+    >
         <HeadlessModalOverlay class="fixed inset-0 bg-gray-500/75" />
 
         <HeadlessModalContent :class="renderedWrapperClass">
-            <div v-if="!persistent" class="absolute top-0 right-0 hidden pt-1.5 pr-1.5 sm:block">
+            <div v-if="!persistent && dismissable" class="absolute top-0 right-0 hidden pt-1.5 pr-1.5 sm:block">
                 <Button variant="ghost" size="icon" @click="close()">
                     <span class="sr-only">{{ $td('ui.close', 'Close') }}</span>
                     <IconClose class="size-3 text-gray-400" />
@@ -33,18 +38,25 @@ import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModa
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
 import { classes } from '@aerogel/core/components/utils';
-import type { ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
+import { componentRef } from '@aerogel/core/utils';
+import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 const {
     class: contentClass = '',
+    dismissable = true,
     wrapperClass = '',
     title,
     persistent,
     ...props
-} = defineProps<ModalProps & { wrapperClass?: HTMLAttributes['class']; class?: HTMLAttributes['class'] }>();
+} = defineProps<
+    ModalProps & {
+        dismissable?: boolean;
+        wrapperClass?: HTMLAttributes['class'];
+        class?: HTMLAttributes['class'];
+    }
+>();
 
-defineSlots<ModalSlots>();
-
+const $modal = componentRef<ModalExpose>();
 const renderedContentClass = computed(() => classes({ 'mt-2': title }, contentClass));
 const renderedWrapperClass = computed(() =>
     classes(
@@ -52,4 +64,7 @@ const renderedWrapperClass = computed(() =>
         'fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl sm:max-w-lg',
         wrapperClass,
     ));
+
+defineSlots<ModalSlots>();
+defineExpose<ModalExpose>({ close: async () => $modal.value?.close() });
 </script>

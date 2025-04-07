@@ -1,4 +1,2 @@
-export { default as AGSolidImage } from './AGSolidImage.vue';
-export { default as AGSolidStatus } from './AGSolidStatus.vue';
-export { default as AGSolidUserAvatar } from './AGSolidUserAvatar.vue';
-export type { IAGSolidStatusLoggedInSlotProps } from './AGSolidStatus';
+export { default as SolidAvatar } from './SolidAvatar.vue';
+export { default as SolidImage } from './SolidImage.vue';

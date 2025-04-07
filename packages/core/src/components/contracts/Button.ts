@@ -5,6 +5,7 @@ export type ButtonVariant = 'default' | 'secondary' | 'danger' | 'ghost' | 'outl
 export type ButtonSize = 'default' | 'small' | 'large' | 'icon';
 export interface ButtonProps extends PrimitiveProps {
     class?: HTMLAttributes['class'];
+    disabled?: boolean;
     href?: string;
     route?: string;
     routeParams?: object;

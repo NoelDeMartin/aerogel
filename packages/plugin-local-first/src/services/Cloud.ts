@@ -143,7 +143,7 @@ export class CloudService extends Service {
                     return;
                 }
 
-                if (!isTesting()) {
+                if (!isTesting('unit')) {
                     await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
                 }
 

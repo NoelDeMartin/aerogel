@@ -40,6 +40,12 @@
                     <i-zondicons-close class="size-4" />
                 </Button>
             </div>
+            <div class="mt-4 flex items-center gap-2">
+                <span>{{ $t('components.buttons_states') }}:</span>
+                <Button size="small" disabled>
+                    {{ $t('components.buttons_states_disabled') }}
+                </Button>
+            </div>
         </section>
 
         <section>

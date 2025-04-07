@@ -1,8 +1,26 @@
 @source './';
+@source '../../plugin-local-first/src';
+@source '../../plugin-solid/src';
 
 @theme {
     --color-background: oklch(1 0 0);
     --color-primary: oklch(0.205 0 0);
     --color-danger: oklch(0.577 0.245 27.325);
     --color-accent: oklch(0.97 0 0);
+}
+
+.clickable {
+    position: relative;
+}
+
+.clickable::after {
+    --clickable-size: 44px;
+    --clickable-inset-by: min(0px, calc((100% - var(--clickable-size)) / 2));
+
+    content: '';
+    position: absolute;
+    top: var(--clickable-inset-by);
+    left: var(--clickable-inset-by);
+    right: var(--clickable-inset-by);
+    bottom: var(--clickable-inset-by);
 }

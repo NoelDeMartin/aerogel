@@ -22,7 +22,5 @@
 </template>
 
 <script setup lang="ts">
-import { numberProp } from '@aerogel/core';
-
-defineProps({ count: numberProp(1) });
+const { count = 1 } = defineProps<{ count: number }>();
 </script>

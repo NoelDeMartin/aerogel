@@ -14,11 +14,14 @@ describe('Local First', () => {
         cy.intercept('DELETE', podUrl('/tasks/*')).as('deleteTask');
 
         // Log in
+        cy.ariaLabel('Configuration').click();
         cy.ariaInput('Login url').type(`${urlClean(serverUrl(), { protocol: false })}{enter}`);
         cy.solidLogin();
-        cy.see('You are logged in as Alice Cooper!');
+        cy.ariaLabel('Open account').click();
+        cy.see('Alice Cooper');
 
         // Creates local tasks
+        cy.get(':focus').type('{esc}');
         cy.ariaInput('Task name').type('Hello World!{enter}');
         cy.see('Hello World!');
         cy.ariaInput('Task name').type('It works!{enter}');
@@ -27,8 +30,8 @@ describe('Local First', () => {
         cy.get('@updateTask.all').should('have.length', 0);
 
         // Sync tasks
-        cy.see('Syncing...');
-        cy.dontSee('Syncing...');
+        cy.see('Synchronization in progress');
+        cy.dontSee('Synchronization in progress');
 
         cy.get('@updateTask.all').should('have.length', 2);
         cy.get('@updateTask.1').its('request.body').should('contain', 'Hello World!');
@@ -43,8 +46,8 @@ describe('Local First', () => {
         cy.get('@deleteTask.all').should('have.length', 0);
 
         // Sync tasks
-        cy.see('Syncing...');
-        cy.dontSee('Syncing...');
+        cy.see('Synchronization in progress');
+        cy.dontSee('Synchronization in progress');
 
         cy.get('@deleteTask.all').should('have.length', 0);
         cy.get('@updateTask.all').should('have.length', 3);

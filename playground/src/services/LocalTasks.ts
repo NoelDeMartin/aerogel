@@ -14,9 +14,9 @@ export class LocalTasksService extends Service {
         await Cloud.register(LocalTask);
 
         Cloud.whenReady(async () => {
-            const tasksContainer = await SolidTasks.tasksContainer;
+            this.tasksContainerUrl ??= (await SolidTasks.tasksContainer).url;
 
-            LocalTask.collection = tasksContainer.url;
+            LocalTask.collection = this.tasksContainerUrl;
         });
 
         await trackModels(LocalTask, {

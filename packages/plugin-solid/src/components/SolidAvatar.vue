@@ -1,6 +1,6 @@
 <template>
     <div class="relative flex items-center justify-center rounded-full bg-gray-200">
-        <AGSolidImage
+        <SolidImage
             v-if="$solid.user?.avatarUrl"
             :src="$solid.user?.avatarUrl"
             alt=""
@@ -20,7 +20,7 @@ import { computed } from 'vue';
 
 import Solid from '@aerogel/plugin-solid/services/Solid';
 
-import AGSolidImage from './AGSolidImage.vue';
+import SolidImage from './SolidImage.vue';
 
 const userInitials = computed(() => {
     const name = Solid.user?.name ?? '';

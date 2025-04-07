@@ -3,7 +3,7 @@
         <li
             v-for="task of tasks"
             :key="task.id"
-            class="flex justify-between overflow-hidden rounded-md bg-white px-6 py-4 shadow-2xs"
+            class="flex justify-between overflow-hidden rounded-md bg-gray-100 px-6 py-4 shadow-2xs"
         >
             <Markdown :text="task.name" />
 
@@ -33,12 +33,15 @@
 </template>
 
 <script setup lang="ts">
-import { requiredArrayProp, requiredStringInput, useForm } from '@aerogel/core';
+import { requiredStringInput, useForm } from '@aerogel/core';
 
 import type ITask from '@/models/ITask';
 
-defineProps({ tasks: requiredArrayProp<ITask>() });
-defineEmits(['create', 'delete']);
+defineProps<{ tasks: ITask[] }>();
+defineEmits<{
+    (event: 'create', value: string): void;
+    (event: 'delete', value: ITask): void;
+}>();
 
 const form = useForm({ draft: requiredStringInput() });
 </script>

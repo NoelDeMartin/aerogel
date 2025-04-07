@@ -14,7 +14,7 @@ import Events from '@aerogel/core/services/Events';
 import { useEvent } from '@aerogel/core/utils/composition/events';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { UIModalContext } from '@aerogel/core/ui/UI.state';
-import type { ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
+import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 defineProps<ModalProps>();
 defineSlots<ModalSlots>();
@@ -81,4 +81,6 @@ useEvent('show-modal', async ({ id }) => {
 
     await show();
 });
+
+defineExpose<ModalExpose>({ close });
 </script>

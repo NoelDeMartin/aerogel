@@ -221,7 +221,7 @@ export class SolidService extends Service {
                             wipeLocalData: {
                                 label: translateWithDefault(
                                     'solid.logoutConfirmWipe',
-                                    'Also remove all existing data (tasks, lists, etc.)',
+                                    'Also remove all existing data',
                                 ),
                                 default: false,
                             },
