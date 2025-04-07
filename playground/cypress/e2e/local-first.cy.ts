@@ -19,9 +19,10 @@ describe('Local First', () => {
         cy.solidLogin();
         cy.ariaLabel('Open account').click();
         cy.see('Alice Cooper');
+        cy.get(':focus').type('{esc}');
+        cy.dontSee('Synchronization in progress');
 
         // Creates local tasks
-        cy.get(':focus').type('{esc}');
         cy.ariaInput('Task name').type('Hello World!{enter}');
         cy.see('Hello World!');
         cy.ariaInput('Task name').type('It works!{enter}');
