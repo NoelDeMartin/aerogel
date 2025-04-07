@@ -111,9 +111,10 @@ import {
     useEvent,
 } from '@aerogel/core';
 import { computed, ref } from 'vue';
-import { Cloud } from '@aerogel/plugin-local-first';
 import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
 import type { ModalExpose } from '@aerogel/core';
+
+import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 
 const $modal = componentRef<ModalExpose>();
 const cancellingSync = ref(false);
