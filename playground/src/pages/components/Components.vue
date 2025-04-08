@@ -249,9 +249,6 @@ import { ref } from 'vue';
 import CustomModal from './components/CustomModal.vue';
 import NestedModal from './components/NestedModal.vue';
 
-const customSelectValue = ref(null);
-const defaultSelectValue = ref(null);
-
 async function showLoadingWithProgress() {
     const progress = ref(0);
 
