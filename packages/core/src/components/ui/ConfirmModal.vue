@@ -1,7 +1,7 @@
 <template>
-    <Modal v-slot="{ close }" :title="title" persistent>
-        <Form :form="form" @submit="close([true, form.data()])">
-            <Markdown :text="message" :actions="actions" />
+    <Modal v-slot="{ close }" :title persistent>
+        <Form :form @submit="close([true, form.data()])">
+            <Markdown :text="message" :actions />
 
             <ul v-if="checkboxes" class="mt-4 flex flex-col text-sm text-gray-600">
                 <li v-for="(checkbox, name) of checkboxes" :key="name">

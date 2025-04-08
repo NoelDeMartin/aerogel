@@ -1,5 +1,5 @@
 <template>
-    <DialogRoot ref="$root" :open="true" @update:open="persistent || close()">
+    <DialogRoot ref="$root" open @update:open="persistent || close()">
         <DialogPortal>
             <slot :close="close" />
         </DialogPortal>

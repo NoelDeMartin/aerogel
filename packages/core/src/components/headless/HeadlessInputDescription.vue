@@ -4,7 +4,7 @@
             v-if="show"
             v-bind="$attrs"
             :id="`${input.id}-description`"
-            :text="text"
+            :text
         />
     </slot>
 </template>

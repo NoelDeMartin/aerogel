@@ -1,6 +1,6 @@
 <template>
     <Modal :title="$td('cloud.logIn.title', 'Connect account')">
-        <Form :form="form" @submit="$solid.login(form.url)">
+        <Form :form @submit="$solid.login(form.url)">
             <Markdown
                 lang-key="cloud.logIn.info"
                 lang-default="Log in to your [Solid account](https://solidproject.org) to keep data safe across devices."

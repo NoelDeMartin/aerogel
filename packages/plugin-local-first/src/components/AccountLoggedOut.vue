@@ -1,5 +1,6 @@
 <template>
     <DropdownMenu
+        align="start"
         :options="[{ label: $td('user.logIn', 'Connect account'), click: () => $ui.openModal(AccountLoginModal) }]"
     >
         <Button

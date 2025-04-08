@@ -3,13 +3,13 @@
         persistent
         class="flex"
         wrapper-class="w-auto"
-        :title="title"
+        :title
         :class="{ 'flex-col-reverse': showProgress, 'items-center justify-center gap-2': !showProgress }"
     >
         <ProgressBar
             v-if="showProgress"
-            :progress="progress"
-            :job="job"
+            :progress
+            :job
             class="min-w-[min(400px,80vw)]"
         />
         <IconSpinner v-else class="text-primary mr-1 size-6" />

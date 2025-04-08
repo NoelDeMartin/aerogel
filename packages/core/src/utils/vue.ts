@@ -24,10 +24,6 @@ export function booleanProp(defaultValue: boolean = false): OptionalProp<boolean
     };
 }
 
-export function componentRef<T>(): Ref<UnwrapNestedRefs<T> | undefined> {
-    return ref<UnwrapNestedRefs<T>>();
-}
-
 export function computedAsync<T>(getter: () => Promise<T>): Ref<T | undefined> {
     const result = ref<T>();
     const asyncValue = computed(getter);

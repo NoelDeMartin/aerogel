@@ -1,5 +1,5 @@
 <template>
-    <Markdown :text="text" inline />
+    <Markdown :text inline />
 </template>
 
 <script setup lang="ts">

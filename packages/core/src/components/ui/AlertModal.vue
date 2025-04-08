@@ -1,5 +1,5 @@
 <template>
-    <Modal :title="title">
+    <Modal :title>
         <Markdown :text="message" />
     </Modal>
 </template>

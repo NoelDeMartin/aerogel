@@ -17,7 +17,7 @@
             </Button>
         </li>
     </ul>
-    <Form class="mt-5 flex justify-center" :form="form" @submit="($emit('create', form.draft), form.reset())">
+    <Form class="mt-5 flex justify-center" :form @submit="($emit('create', form.draft), form.reset())">
         <Input
             name="draft"
             class="mr-2 h-full w-full sm:max-w-xs"

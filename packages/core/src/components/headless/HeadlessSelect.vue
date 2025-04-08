@@ -1,6 +1,6 @@
 <template>
     <SelectRoot v-slot="{ open }: ComponentProps" :model-value="acceptableValue" @update:model-value="update($event)">
-        <slot :model-value="modelValue" :open="open">
+        <slot :model-value :open>
             <HeadlessSelectTrigger />
             <HeadlessSelectOptions />
         </slot>

@@ -145,17 +145,15 @@ import {
     Markdown,
     Modal,
     ProgressBar,
-    componentRef,
     translateWithDefault,
     useEvent,
 } from '@aerogel/core';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
-import type { ModalExpose } from '@aerogel/core';
 
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 
-const $modal = componentRef<ModalExpose>();
+const $modal = useTemplateRef('$modal');
 const cancellingSync = ref(false);
 const pollingText = translateWithDefault('cloud.advanced.polling', 'Synchronize every {minutes} minutes', {
     minutes: '%%separator%%',

@@ -1,5 +1,5 @@
 <template>
-    <HeadlessButton :class="renderedClasses" :disabled="disabled" v-bind="props">
+    <HeadlessButton :class="renderedClasses" :disabled v-bind="props">
         <slot />
     </HeadlessButton>
 </template>

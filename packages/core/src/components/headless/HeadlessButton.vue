@@ -1,8 +1,8 @@
 <template>
     <Primitive
         :class="classes"
-        :as-child="asChild"
-        :disabled="disabled"
+        :as-child
+        :disabled
         v-bind="props"
     >
         <slot />

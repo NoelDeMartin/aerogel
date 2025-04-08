@@ -2,14 +2,14 @@
     <input
         :id="input.id"
         ref="$input"
-        :name="name"
-        :type="type"
+        :name
+        :type
+        :checked
         :required="input.required ?? undefined"
         :aria-invalid="input.errors ? 'true' : 'false'"
         :aria-describedby="
             input.errors ? `${input.id}-error` : input.description ? `${input.id}-description` : undefined
         "
-        :checked="checked"
         @input="update"
     >
 </template>

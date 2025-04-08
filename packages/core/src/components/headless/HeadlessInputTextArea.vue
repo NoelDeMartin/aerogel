@@ -2,9 +2,9 @@
     <textarea
         :id="input.id"
         ref="$textArea"
-        :name="name"
+        :name
+        :value
         :required="input.required ?? undefined"
-        :value="value"
         :aria-invalid="input.errors ? 'true' : 'false'"
         :aria-describedby="
             input.errors ? `${input.id}-error` : input.description ? `${input.id}-description` : undefined

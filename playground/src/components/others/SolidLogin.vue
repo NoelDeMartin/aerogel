@@ -1,5 +1,5 @@
 <template>
-    <Form :form="form" @submit="$solid.login(form.url)">
+    <Form :form @submit="$solid.login(form.url)">
         <div class="flex gap-2">
             <Input
                 autofocus

@@ -3,7 +3,7 @@
         v-slot="{ close }"
         v-bind="props"
         ref="$modal"
-        :persistent="persistent"
+        :persistent
     >
         <HeadlessModalOverlay class="fixed inset-0 bg-gray-500/75" />
 
@@ -20,7 +20,7 @@
             </HeadlessModalTitle>
 
             <div :class="renderedContentClass">
-                <slot :close="close" />
+                <slot :close />
             </div>
         </HeadlessModalContent>
     </HeadlessModal>
@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import IconClose from '~icons/zondicons/close';
 
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
@@ -39,7 +39,6 @@ import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModa
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
 import { classes } from '@aerogel/core/components/utils';
-import { componentRef } from '@aerogel/core/utils';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 const {
@@ -57,7 +56,7 @@ const {
     }
 >();
 
-const $modal = componentRef<ModalExpose>();
+const $modal = useTemplateRef('$modal');
 const renderedContentClass = computed(() => classes({ 'mt-2': title }, contentClass));
 const renderedWrapperClass = computed(() =>
     classes(

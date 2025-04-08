@@ -1,8 +1,8 @@
 <template>
     <Story group="base" :layout="{ type: 'grid' }">
         <Variant title="Playground">
-            <Form :form="form" class="m-1">
-                <<% component.name %> name="accept" :form="form">
+            <Form :form class="m-1">
+                <<% component.name %> name="accept" :form>
                     {{ label }}
                 </<% component.name %>>
             </Form>

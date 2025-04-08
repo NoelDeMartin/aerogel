@@ -1,12 +1,12 @@
 <template>
-    <Modal v-slot="{ close }" :title="title" persistent>
-        <Form :form="form" @submit="close(form.draft)">
+    <Modal v-slot="{ close }" :title persistent>
+        <Form :form @submit="close(form.draft)">
             <Markdown :text="message" />
             <Input
                 name="draft"
                 class="mt-2"
-                :placeholder="placeholder"
-                :label="label"
+                :placeholder
+                :label
             />
 
             <div class="mt-4 flex flex-row-reverse gap-2">

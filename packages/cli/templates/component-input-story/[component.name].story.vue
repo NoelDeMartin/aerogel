@@ -1,7 +1,7 @@
 <template>
     <Story :layout="{ type: 'grid' }">
         <Variant title="Playground">
-            <Form :form="form">
+            <Form :form>
                 <<% component.name %> name="food" :label="label" :placeholder="placeholder" />
             </Form>
 

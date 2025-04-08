@@ -33,7 +33,7 @@
                         </Button>
                     </span>
                 </div>
-                <ErrorReportModalButtons :report="report" class="gap-0.5" />
+                <ErrorReportModalButtons :report class="gap-0.5" />
             </h2>
             <Markdown v-if="report.description" :text="report.description" class="text-gray-600" />
         </div>

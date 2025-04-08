@@ -22,13 +22,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
+import HeadlessInput from '@aerogel/core/components/headless/HeadlessInput.vue';
+import HeadlessInputError from '@aerogel/core/components/headless/HeadlessInputError.vue';
+import HeadlessInputInput from '@aerogel/core/components/headless/HeadlessInputInput.vue';
+import HeadlessInputLabel from '@aerogel/core/components/headless/HeadlessInputLabel.vue';
 import { classes } from '@aerogel/core/components/utils';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
-import { componentRef } from '@aerogel/core/utils/vue';
-import type { InputEmits, InputExpose, InputProps } from '@aerogel/core/components/contracts/Input';
+import type { InputEmits, InputProps } from '@aerogel/core/components/contracts/Input';
 
 defineOptions({ inheritAttrs: false });
 defineEmits<InputEmits>();
@@ -37,7 +40,7 @@ const { inputClass, labelClass, ...props } = defineProps<
     InputProps & { inputClass?: HTMLAttributes['class']; labelClass?: HTMLAttributes['class'] }
 >();
 
-const $input = componentRef<InputExpose>();
+const $input = useTemplateRef('$input');
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedClasses = computed(() => classes('relative flex items-start', rootClasses.value));
 const renderedInputClasses = computed(() =>

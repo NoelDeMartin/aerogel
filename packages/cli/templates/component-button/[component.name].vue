@@ -1,5 +1,5 @@
 <template>
-    <HeadlessButton :class="variantClasses" :disabled="disabled">
+    <HeadlessButton :class="variantClasses" :disabled>
         <slot />
     </HeadlessButton>
 </template>

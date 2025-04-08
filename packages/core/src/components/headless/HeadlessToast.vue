@@ -2,7 +2,7 @@
     <ToastRoot>
         <slot>
             <span v-if="message">{{ message }}</span>
-            <HeadlessToastAction v-for="(action, index) of actions" :key="index" :action="action" />
+            <HeadlessToastAction v-for="(action, key) of actions" :key :action />
         </slot>
     </ToastRoot>
 </template>

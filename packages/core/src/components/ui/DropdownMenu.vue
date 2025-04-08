@@ -4,10 +4,10 @@
             <slot />
         </DropdownMenuTrigger>
         <DropdownMenuPortal>
-            <DropdownMenuContent class="gap-y-0.5 rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-black/5">
+            <DropdownMenuContent class="gap-y-0.5 rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-black/5" :align>
                 <DropdownMenuItem
-                    v-for="(option, index) in options"
-                    :key="index"
+                    v-for="(option, key) in options"
+                    :key
                     class="flex w-full items-center rounded-lg px-2 py-2 text-sm text-gray-900 data-[highlighted]:bg-gray-100"
                     @select="option.click"
                 >

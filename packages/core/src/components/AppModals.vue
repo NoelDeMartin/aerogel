@@ -1,6 +1,6 @@
 <template>
     <aside v-if="modal">
-        <ModalContext :child-index="1" :modal="modal" />
+        <ModalContext :child-index="1" :modal />
     </aside>
 </template>
 

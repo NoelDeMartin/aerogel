@@ -13,7 +13,7 @@
                 v-model="draft"
                 :tabindex="tabindex ?? undefined"
                 :aria-label="ariaLabel ?? undefined"
-                :type="type"
+                :type
                 :class="[
                     renderedInputClass,
                     { 'opacity-0': !editing, 'appearance-textfield': !editing && type === 'number' },

@@ -3,11 +3,11 @@
         <Markdown v-if="message" :text="message" inline />
 
         <Button
-            v-for="(action, index) of actions"
-            :key="index"
+            v-for="(action, key) of actions"
+            :key
+            :action
+            :variant
             :as="HeadlessToastAction"
-            :action="action"
-            :variant="variant"
         />
     </HeadlessToast>
 </template>
