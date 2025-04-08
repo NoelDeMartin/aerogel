@@ -1,7 +1,7 @@
 import Plugin from '@aerogel/cli/plugins/Plugin';
 import Shell from '@aerogel/cli/lib/Shell';
 
-export class Soukai extends Plugin {
+export default class Soukai extends Plugin {
 
     constructor() {
         super('soukai');

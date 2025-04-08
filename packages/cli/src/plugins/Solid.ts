@@ -4,7 +4,7 @@ import Plugin from '@aerogel/cli/plugins/Plugin';
 import Shell from '@aerogel/cli/lib/Shell';
 import type { Editor } from '@aerogel/cli/lib/Editor';
 
-export class Solid extends Plugin {
+export default class Solid extends Plugin {
 
     constructor() {
         super('solid');

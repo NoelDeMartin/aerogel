@@ -1,4 +1,5 @@
 import { Node, SyntaxKind } from 'ts-morph';
+import { stringToCamelCase } from '@noeldemartin/utils';
 import type { ArrayLiteralExpression, ImportDeclarationStructure, OptionalKind, SourceFile } from 'ts-morph';
 
 import Log from '@aerogel/cli/lib/Log';
@@ -135,7 +136,7 @@ export default abstract class Plugin {
 
     protected getBootstrapImport(): OptionalKind<ImportDeclarationStructure> {
         return {
-            defaultImport: this.name,
+            defaultImport: stringToCamelCase(this.name),
             moduleSpecifier: `@aerogel/plugin-${this.name}`,
         };
     }
@@ -153,7 +154,7 @@ export default abstract class Plugin {
     }
 
     protected getBootstrapConfig(): string {
-        return `${this.name}()`;
+        return `${stringToCamelCase(this.name)}()`;
     }
 
 }

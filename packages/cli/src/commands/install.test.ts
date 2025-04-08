@@ -24,4 +24,12 @@ describe('Install plugin command', () => {
         ShellMock.expectRan('npm install @aerogel/plugin-soukai@next --save-exact');
     });
 
+    it('installs local-first', async () => {
+        // Act
+        await InstallCommand.run('local-first');
+
+        // Assert
+        ShellMock.expectRan('npm install @aerogel/plugin-local-first@next --save-exact');
+    });
+
 });

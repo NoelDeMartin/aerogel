@@ -1,10 +1,11 @@
 import Command from '@aerogel/cli/commands/Command';
+import LocalFirst from '@aerogel/cli/plugins/LocalFirst';
 import Log from '@aerogel/cli/lib/Log';
-import { Solid } from '@aerogel/cli/plugins/Solid';
-import { Soukai } from '@aerogel/cli/plugins/Soukai';
+import Solid from '@aerogel/cli/plugins/Solid';
+import Soukai from '@aerogel/cli/plugins/Soukai';
 import type Plugin from '@aerogel/cli/plugins/Plugin';
 
-const plugins = [new Soukai(), new Solid()].reduce(
+const plugins = [new Soukai(), new Solid(), new LocalFirst()].reduce(
     (pluginsObject, plugin) => Object.assign(pluginsObject, { [plugin.name]: plugin }),
     {} as Record<string, Plugin>,
 );
