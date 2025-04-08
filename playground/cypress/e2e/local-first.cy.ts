@@ -15,6 +15,7 @@ describe('Local First', () => {
 
         // Log in
         cy.ariaLabel('Configuration').click();
+        cy.press('Connect account');
         cy.ariaInput('Login url').type(`${urlClean(serverUrl(), { protocol: false })}{enter}`);
         cy.solidLogin();
         cy.ariaLabel('Open account').click();

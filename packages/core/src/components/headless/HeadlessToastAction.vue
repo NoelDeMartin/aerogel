@@ -1,5 +1,5 @@
 <template>
-    <component :is="action.dismiss ? ToastClose : 'button'" type="button" @click="action.handler">
+    <component :is="action.dismiss ? ToastClose : 'button'" type="button" @click="action.click">
         {{ action.label }}
     </component>
 </template>

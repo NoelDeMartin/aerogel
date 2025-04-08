@@ -175,7 +175,7 @@
                                 { label: $t('components.toasts_close'), dismiss: true },
                                 {
                                     label: $t('components.toasts_greet'),
-                                    handler: () => $ui.alert($t('components.toasts_greetMessage')),
+                                    click: () => $ui.alert($t('components.toasts_greetMessage')),
                                 },
                             ],
                         })
@@ -196,7 +196,7 @@
                                 { label: $t('components.toasts_close'), dismiss: true },
                                 {
                                     label: $t('components.toasts_greet'),
-                                    handler: () => $ui.alert($t('components.toasts_greetMessage')),
+                                    click: () => $ui.alert($t('components.toasts_greetMessage')),
                                 },
                             ],
                         })

@@ -7,7 +7,7 @@
                 class="group whitespace-nowrap"
                 :href="button.url"
                 :title="$td(`errors.report_${button.id}`, button.description)"
-                @click="button.handler"
+                @click="button.click"
             >
                 <span class="sr-only">{{ $td(`errors.report_${button.id}`, button.description) }}</span>
                 <component :is="button.iconComponent" class="size-4" aria-hidden="true" />
@@ -36,7 +36,7 @@ interface ErrorReportModalButtonsDefaultSlotProps {
     description: string;
     iconComponent: Component;
     url?: string;
-    handler?(): void;
+    click?(): void;
 }
 
 defineSlots<{
@@ -75,7 +75,7 @@ const buttons = computed(() =>
                 id: 'clipboard',
                 description: 'Copy to clipboard',
                 iconComponent: IconCopy,
-                async handler() {
+                async click() {
                     await navigator.clipboard.writeText(`${summary.value}\n\n${props.report.details}`);
 
                     UI.toast(translateWithDefault('errors.copiedToClipboard', 'Debug information copied to clipboard'));
@@ -85,7 +85,7 @@ const buttons = computed(() =>
                 id: 'console',
                 description: 'Log to console',
                 iconComponent: IconConsole,
-                handler() {
+                click() {
                     const error = props.report.error ?? props.report;
 
                     (window as { error?: unknown }).error = error;

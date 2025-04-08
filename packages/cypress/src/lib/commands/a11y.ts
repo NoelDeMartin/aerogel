@@ -10,7 +10,7 @@ export function dontSee(text: string, options?: Cypress.Timeoutable): void {
 
 export function press(
     label: string,
-    selector: string = 'button:visible, a:visible, label:visible, details:visible',
+    selector: string = 'button:visible, a:visible, label:visible, details:visible, [role="menuitem"]:visible',
 ): void {
     cy.contains(selector, label).click();
 }

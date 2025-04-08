@@ -1,19 +1,22 @@
 <template>
-    <Button
-        size="icon"
-        variant="ghost"
-        :aria-label="$td('user.menu', 'Configuration')"
-        :title="$td('user.menu', 'Configuration')"
-        @click="$ui.openModal(AccountLoginModal)"
+    <DropdownMenu
+        :options="[{ label: $td('user.logIn', 'Connect account'), click: () => $ui.openModal(AccountLoginModal) }]"
     >
-        <IconCog class="size-5" />
-    </Button>
+        <Button
+            size="icon"
+            variant="ghost"
+            :aria-label="$td('user.menu', 'Configuration')"
+            :title="$td('user.menu', 'Configuration')"
+        >
+            <IconCog class="size-5" />
+        </Button>
+    </DropdownMenu>
 </template>
 
 <script setup lang="ts">
 import IconCog from '~icons/zondicons/cog';
 
-import { Button } from '@aerogel/core';
+import { Button, DropdownMenu } from '@aerogel/core';
 
 import AccountLoginModal from './AccountLoginModal.vue';
 </script>

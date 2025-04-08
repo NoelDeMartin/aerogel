@@ -1,7 +1,7 @@
 export interface ToastAction {
     label: string;
     dismiss?: boolean;
-    handler?(): unknown;
+    click?(): unknown;
 }
 
 export type ToastVariant = 'secondary' | 'danger';

@@ -2,6 +2,7 @@ export { default as AlertModal } from './AlertModal.vue';
 export { default as Button } from './Button.vue';
 export { default as Checkbox } from './Checkbox.vue';
 export { default as ConfirmModal } from './ConfirmModal.vue';
+export { default as DropdownMenu } from './DropdownMenu.vue';
 export { default as ErrorMessage } from './ErrorMessage.vue';
 export { default as ErrorReportModal } from './ErrorReportModal.vue';
 export { default as ErrorReportModalButtons } from './ErrorReportModalButtons.vue';

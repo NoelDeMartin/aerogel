@@ -79,7 +79,7 @@ export class ErrorsService extends Service {
                     {
                         label: translateWithDefault('errors.viewDetails', 'View details'),
                         dismiss: true,
-                        handler: () =>
+                        click: () =>
                             UI.openModal<ModalComponent<ErrorReportModalProps>>(
                                 UI.requireComponent(UIComponents.ErrorReportModal),
                                 { reports: [report] },
