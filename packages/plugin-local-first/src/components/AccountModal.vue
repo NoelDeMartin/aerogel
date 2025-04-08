@@ -58,6 +58,43 @@
                     lang-default="You are disconnected from your Solid account, all the changes you make will remain in your device."
                 />
             </div>
+            <AdvancedOptions class="mt-2">
+                <ul class="flex flex-col gap-2">
+                    <li>
+                        <Checkbox
+                            v-model="$solid.autoReconnect"
+                            label-class="text-base"
+                            :label="$td('cloud.advanced.reconnect', 'Reconnect on startup')"
+                        />
+                    </li>
+                    <li>
+                        <Checkbox
+                            v-model="$cloud.startupSync"
+                            label-class="text-base"
+                            :label="$td('cloud.advanced.startupSync', 'Synchronize on startup')"
+                        />
+                    </li>
+                    <li>
+                        <Checkbox v-model="$cloud.pollingEnabled" label-class="text-base">
+                            <div class="flex items-center">
+                                <span aria-hidden="true">{{ pollingText[0] }}</span>
+                                <EditableContent
+                                    type="number"
+                                    :text="`${$cloud.pollingMinutes}`"
+                                    :aria-label="
+                                        $td('cloud.advanced.pollingMinutes', 'Synchronization interval (in minutes)')
+                                    "
+                                    class="focus-within:border-primary mx-1 -mb-px border-b"
+                                    @update="$cloud.pollingMinutes = $event as number"
+                                >
+                                    {{ $cloud.pollingMinutes }}
+                                </EditableContent>
+                                <span v-if="pollingText.length > 1" aria-hidden="true">{{ pollingText[1] }}</span>
+                            </div>
+                        </Checkbox>
+                    </li>
+                </ul>
+            </AdvancedOptions>
         </div>
 
         <div v-if="!$solid.loginOngoing" class="mt-4 flex flex-row-reverse justify-start gap-2">
@@ -101,7 +138,9 @@ import IconCloudUpload from '~icons/ic/sharp-cloud-upload';
 import IconStop from '~icons/ic/baseline-stop';
 
 import {
+    AdvancedOptions,
     Button,
+    EditableContent,
     Link,
     Markdown,
     Modal,
@@ -118,6 +157,9 @@ import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 
 const $modal = componentRef<ModalExpose>();
 const cancellingSync = ref(false);
+const pollingText = translateWithDefault('cloud.advanced.polling', 'Synchronize every {minutes} minutes', {
+    minutes: '%%separator%%',
+}).split('%%separator%%');
 const error = computed(() => Solid.error ?? Cloud.syncError);
 const errorDescription = computed(() => {
     if (!error.value) {

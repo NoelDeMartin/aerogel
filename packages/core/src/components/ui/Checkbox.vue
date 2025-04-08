@@ -8,15 +8,15 @@
         <div class="flex h-6 items-center">
             <HeadlessInputInput v-bind="inputAttrs" type="checkbox" :class="renderedInputClasses" />
         </div>
-        <div v-if="$slots.default" class="ml-2 text-sm leading-6">
+        <div v-if="$slots.default" :class="renderedLabelClasses">
             <HeadlessInputLabel class="text-gray-900">
                 <slot />
             </HeadlessInputLabel>
-            <HeadlessInputError class="text-sm text-red-600" />
+            <HeadlessInputError class="text-red-600" />
         </div>
-        <div v-else-if="label" class="ml-2 text-sm leading-6">
-            <HeadlessInputLabel />
-            <HeadlessInputError class="text-sm text-red-600" />
+        <div v-else-if="label" :class="renderedLabelClasses">
+            <HeadlessInputLabel class="text-gray-900" />
+            <HeadlessInputError class="text-red-600" />
         </div>
     </HeadlessInput>
 </template>
@@ -32,7 +32,10 @@ import type { InputEmits, InputExpose, InputProps } from '@aerogel/core/componen
 
 defineOptions({ inheritAttrs: false });
 defineEmits<InputEmits>();
-const { inputClass, ...props } = defineProps<InputProps & { inputClass?: HTMLAttributes['class'] }>();
+
+const { inputClass, labelClass, ...props } = defineProps<
+    InputProps & { inputClass?: HTMLAttributes['class']; labelClass?: HTMLAttributes['class'] }
+>();
 
 const $input = componentRef<InputExpose>();
 const [inputAttrs, rootClasses] = useInputAttrs();
@@ -46,4 +49,5 @@ const renderedInputClasses = computed(() =>
         },
         inputClass,
     ));
+const renderedLabelClasses = computed(() => classes('ml-2 text-sm leading-6', labelClass));
 </script>

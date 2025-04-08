@@ -39,8 +39,8 @@ import type ITask from '@/models/ITask';
 
 defineProps<{ tasks: ITask[] }>();
 defineEmits<{
-    (event: 'create', value: string): void;
-    (event: 'delete', value: ITask): void;
+    create: [value: string];
+    delete: [task: ITask];
 }>();
 
 const form = useForm({ draft: requiredStringInput() });

@@ -11,7 +11,7 @@ export interface InputProps {
 }
 
 export interface InputEmits {
-    (event: 'update:modelValue', value: Nullable<FormFieldValue>): void;
+    'update:modelValue': [value: Nullable<FormFieldValue>];
 }
 
 export interface InputExpose {

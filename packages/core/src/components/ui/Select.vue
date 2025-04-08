@@ -44,10 +44,10 @@ import HeadlessSelectTrigger from '@aerogel/core/components/headless/HeadlessSel
 import HeadlessSelectOptions from '@aerogel/core/components/headless/HeadlessSelectOptions.vue';
 import HeadlessSelectOption from '@aerogel/core/components/headless/HeadlessSelectOption.vue';
 import HeadlessSelectValue from '@aerogel/core/components/headless/HeadlessSelectValue.vue';
-import type { SelectProps } from '@aerogel/core/components/contracts/Select';
+import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
 
 defineProps<SelectProps>();
-defineEmits(['update:modelValue']);
+defineEmits<SelectEmits>();
 
 const $select = useTemplateRef('$select');
 </script>
