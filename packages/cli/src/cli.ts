@@ -6,7 +6,6 @@ import { URL, fileURLToPath } from 'node:url';
 import { CreateCommand } from '@aerogel/cli/commands/create';
 import { GenerateComponentCommand } from '@aerogel/cli/commands/generate-component';
 import { GenerateModelCommand } from '@aerogel/cli/commands/generate-model';
-import { GenerateOverridesCommand } from '@aerogel/cli/commands/generate-overrides';
 import { GenerateServiceCommand } from '@aerogel/cli/commands/generate-service';
 import { InfoCommand } from '@aerogel/cli/commands/info';
 import { InstallCommand } from '@aerogel/cli/commands/install';
@@ -21,7 +20,6 @@ export class CLIService {
         CreateCommand.define(program);
         GenerateComponentCommand.define(program);
         GenerateModelCommand.define(program);
-        GenerateOverridesCommand.define(program);
         GenerateServiceCommand.define(program);
         InfoCommand.define(program);
         InstallCommand.define(program);

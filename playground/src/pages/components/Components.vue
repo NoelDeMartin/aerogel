@@ -163,78 +163,46 @@
         </section>
 
         <section>
-            <h2>{{ $t('components.snackbars') }}</h2>
+            <h2>{{ $t('components.toasts') }}</h2>
             <div class="mt-4 flex gap-2">
-                <Button @click="$ui.showSnackbar($t('components.snackbars_message'))">
-                    {{ $t('components.snackbars_custom') }}
+                <Button @click="$ui.toast($t('components.toasts_message'))">
+                    {{ $t('components.toasts_default') }}
                 </Button>
-                <Button @click="$ui.showSnackbar($t('components.snackbars_message'), { component: AGSnackbar })">
-                    {{ $t('components.snackbars_default') }}
+                <Button
+                    @click="
+                        $ui.toast($t('components.toasts_message'), {
+                            actions: [
+                                { label: $t('components.toasts_close'), dismiss: true },
+                                {
+                                    label: $t('components.toasts_greet'),
+                                    handler: () => $ui.alert($t('components.toasts_greetMessage')),
+                                },
+                            ],
+                        })
+                    "
+                >
+                    {{ $t('components.toasts_defaultWithActions') }}
                 </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <Button
-                    @click="
-                        $ui.showSnackbar($t('components.snackbars_message'), {
-                            actions: [{ text: $t('components.snackbars_action'), dismiss: true }],
-                        })
-                    "
-                >
-                    {{ $t('components.snackbars_customWithActions') }}
+                <Button @click="$ui.toast($t('components.toasts_message'), { variant: 'danger' })">
+                    {{ $t('components.toasts_danger') }}
                 </Button>
                 <Button
                     @click="
-                        $ui.showSnackbar($t('components.snackbars_message'), {
-                            component: AGSnackbar,
-                            actions: [{ text: $t('components.snackbars_action'), dismiss: true }],
+                        $ui.toast($t('components.toasts_message'), {
+                            variant: 'danger',
+                            actions: [
+                                { label: $t('components.toasts_close'), dismiss: true },
+                                {
+                                    label: $t('components.toasts_greet'),
+                                    handler: () => $ui.alert($t('components.toasts_greetMessage')),
+                                },
+                            ],
                         })
                     "
                 >
-                    {{ $t('components.snackbars_defaultWithActions') }}
-                </Button>
-            </div>
-            <div class="mt-4 flex gap-2">
-                <Button
-                    @click="
-                        $ui.showSnackbar($t('components.snackbars_message'), {
-                            color: 'danger',
-                        })
-                    "
-                >
-                    {{ $t('components.snackbars_customDanger') }}
-                </Button>
-                <Button
-                    @click="
-                        $ui.showSnackbar($t('components.snackbars_message'), {
-                            component: AGSnackbar,
-                            color: 'danger',
-                        })
-                    "
-                >
-                    {{ $t('components.snackbars_defaultDanger') }}
-                </Button>
-            </div>
-            <div class="mt-4 flex flex-wrap gap-2">
-                <Button
-                    @click="
-                        $ui.showSnackbar($t('components.snackbars_message'), {
-                            color: 'danger',
-                            actions: [{ text: $t('components.snackbars_action'), dismiss: true }],
-                        })
-                    "
-                >
-                    {{ $t('components.snackbars_customDangerWithActions') }}
-                </Button>
-                <Button
-                    @click="
-                        $ui.showSnackbar($t('components.snackbars_message'), {
-                            component: AGSnackbar,
-                            color: 'danger',
-                            actions: [{ text: $t('components.snackbars_action'), dismiss: true }],
-                        })
-                    "
-                >
-                    {{ $t('components.snackbars_defaultDangerWithActions') }}
+                    {{ $t('components.toasts_dangerWithActions') }}
                 </Button>
             </div>
         </section>
@@ -243,7 +211,7 @@
 
 <script setup lang="ts">
 import { after } from '@noeldemartin/utils';
-import { AGSnackbar, UI, translate, useEvent } from '@aerogel/core';
+import { UI, translate, useEvent } from '@aerogel/core';
 import { ref } from 'vue';
 
 import CustomModal from './components/CustomModal.vue';

@@ -58,18 +58,14 @@ describe('Components', () => {
         cy.dontSee('You can also create your own modals');
     });
 
-    it('Snackbars', () => {
-        cy.contains('h2', 'Snackbars')
+    it('Toasts', () => {
+        cy.contains('h2', 'Toasts')
             .parent('section')
             .within(() => {
-                cy.press('Custom');
                 cy.press('Default');
-                cy.press('Custom with actions');
                 cy.press('Default with actions');
-                cy.press('Custom danger');
-                cy.press('Default danger');
-                cy.press('Custom danger with actions');
-                cy.press('Default danger with actions');
+                cy.press('Danger');
+                cy.press('Danger with actions');
             });
 
         cy.matchImageSnapshot();

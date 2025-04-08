@@ -78,9 +78,7 @@ const buttons = computed(() =>
                 async handler() {
                     await navigator.clipboard.writeText(`${summary.value}\n\n${props.report.details}`);
 
-                    UI.showSnackbar(
-                        translateWithDefault('errors.copiedToClipboard', 'Debug information copied to clipboard'),
-                    );
+                    UI.toast(translateWithDefault('errors.copiedToClipboard', 'Debug information copied to clipboard'));
                 },
             },
             {
@@ -95,7 +93,7 @@ const buttons = computed(() =>
                     // eslint-disable-next-line no-console
                     console.error(error);
 
-                    UI.showSnackbar(
+                    UI.toast(
                         translateWithDefault(
                             'errors.addedToConsole',
                             'You can now use the **error** variable in the console',

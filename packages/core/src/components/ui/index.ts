@@ -17,3 +17,4 @@ export { default as ProgressBar } from './ProgressBar.vue';
 export { default as PromptModal } from './PromptModal.vue';
 export { default as Select } from './Select.vue';
 export { default as StartupCrash } from './StartupCrash.vue';
+export { default as Toast } from './Toast.vue';

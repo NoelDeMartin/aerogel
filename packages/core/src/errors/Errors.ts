@@ -4,7 +4,6 @@ import App from '@aerogel/core/services/App';
 import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
 import UI, { UIComponents } from '@aerogel/core/ui/UI';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
-import { Colors } from '@aerogel/core/components/constants';
 import { Events } from '@aerogel/core/services';
 import type { ErrorReportModalProps } from '@aerogel/core/components/contracts/ErrorReportModal';
 import type { ModalComponent } from '@aerogel/core/ui/UI.state';
@@ -71,14 +70,14 @@ export class ErrorsService extends Service {
             date: new Date(),
         };
 
-        UI.showSnackbar(
+        UI.toast(
             message ??
                 translateWithDefault('errors.notice', 'Something went wrong, but it\'s not your fault. Try again!'),
             {
-                color: Colors.Danger,
+                variant: 'danger',
                 actions: [
                     {
-                        text: translateWithDefault('errors.viewDetails', 'View details'),
+                        label: translateWithDefault('errors.viewDetails', 'View details'),
                         dismiss: true,
                         handler: () =>
                             UI.openModal<ModalComponent<ErrorReportModalProps>>(

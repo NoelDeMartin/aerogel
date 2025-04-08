@@ -24,7 +24,7 @@ export interface ModalComponent<
     Result = unknown,
 > {}
 
-export interface Snackbar {
+export interface UIToast {
     id: string;
     component: Component;
     properties: Record<string, unknown>;
@@ -34,7 +34,7 @@ export default defineServiceState({
     name: 'ui',
     initialState: {
         modals: [] as UIModal[],
-        snackbars: [] as Snackbar[],
+        toasts: [] as UIToast[],
         layout: getCurrentLayout(),
     },
     computed: {

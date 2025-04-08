@@ -1,5 +1,3 @@
-export * from './snackbars';
-
 export { default as HeadlessButton } from './HeadlessButton.vue';
 export { default as HeadlessInput } from './HeadlessInput.vue';
 export { default as HeadlessInputDescription } from './HeadlessInputDescription.vue';
@@ -17,3 +15,4 @@ export { default as HeadlessSelectOption } from './HeadlessSelectOption.vue';
 export { default as HeadlessSelectOptions } from './HeadlessSelectOptions.vue';
 export { default as HeadlessSelectTrigger } from './HeadlessSelectTrigger.vue';
 export { default as HeadlessSelectValue } from './HeadlessSelectValue.vue';
+export { default as HeadlessToast } from './HeadlessToast.vue';

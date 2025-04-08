@@ -70,17 +70,15 @@ components:
     modals_custom: Custom content
     modals_customContent: You can also create your own modals, like this one!
     modals_customClose: Nice!
-    snackbars: Snackbars
-    snackbars_message: Hey, it works!
-    snackbars_action: Close
-    snackbars_custom: Custom
-    snackbars_customWithActions: Custom with actions
-    snackbars_customDanger: Custom danger
-    snackbars_customDangerWithActions: Custom danger with actions
-    snackbars_default: Default
-    snackbars_defaultWithActions: Default with actions
-    snackbars_defaultDanger: Default danger
-    snackbars_defaultDangerWithActions: Default danger with actions
+    toasts: Toasts
+    toasts_message: Hey, it works!
+    toasts_close: Close
+    toasts_greet: Greet
+    toasts_greetMessage: Hello!
+    toasts_default: Default
+    toasts_defaultWithActions: Default with actions
+    toasts_danger: Danger
+    toasts_dangerWithActions: Danger with actions
 
 content:
     title: Formatted Content

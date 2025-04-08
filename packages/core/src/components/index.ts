@@ -1,11 +1,7 @@
-import AppLayout from './AppLayout.vue';
-import AppOverlays from './AppOverlays.vue';
-
-export { AppLayout, AppOverlays };
+export { default as AppLayout } from './AppLayout.vue';
+export { default as AppOverlays } from './AppOverlays.vue';
 
 export * from './composition';
-export * from './constants';
 export * from './contracts';
 export * from './headless';
-export * from './snackbars';
 export * from './ui';

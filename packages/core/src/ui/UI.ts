@@ -11,11 +11,11 @@ import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 import type { ConfirmModalCheckboxes, ConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
 import type { LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
 import type { PromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
-import type { SnackbarAction, SnackbarColor } from '@aerogel/core/components/headless/snackbars';
+import type { ToastAction, ToastVariant } from '@aerogel/core/components/contracts/Toast';
 
 import Service from './UI.state';
 import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
-import type { ModalComponent, Snackbar, UIModal } from './UI.state';
+import type { ModalComponent, UIModal, UIToast } from './UI.state';
 
 interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
@@ -32,7 +32,7 @@ export const UIComponents = {
     ErrorReportModal: 'error-report-modal',
     LoadingModal: 'loading-modal',
     PromptModal: 'prompt-modal',
-    Snackbar: 'snackbar',
+    Toast: 'toast',
     StartupCrash: 'startup-crash',
 } as const;
 
@@ -69,10 +69,10 @@ export type PromptOptions = AcceptRefs<{
     trim?: boolean;
 }>;
 
-export interface ShowSnackbarOptions {
+export interface ToastOptions {
     component?: Component;
-    color?: SnackbarColor;
-    actions?: SnackbarAction[];
+    variant?: ToastVariant;
+    actions?: ToastAction[];
 }
 
 export class UIService extends Service {
@@ -246,23 +246,15 @@ export class UIService extends Service {
         }
     }
 
-    public showSnackbar(message: string, options: ShowSnackbarOptions = {}): void {
-        const snackbar: Snackbar = {
+    public toast(message: string, options: ToastOptions = {}): void {
+        const { component, ...otherOptions } = options;
+        const toast: UIToast = {
             id: uuid(),
-            properties: { message, ...options },
-            component: markRaw(options.component ?? this.requireComponent(UIComponents.Snackbar)),
+            properties: { message, ...otherOptions },
+            component: markRaw(component ?? this.requireComponent(UIComponents.Toast)),
         };
 
-        this.setState('snackbars', this.snackbars.concat(snackbar));
-
-        setTimeout(() => this.hideSnackbar(snackbar.id), 5000);
-    }
-
-    public hideSnackbar(id: string): void {
-        this.setState(
-            'snackbars',
-            this.snackbars.filter((snackbar) => snackbar.id !== id),
-        );
+        this.setState('toasts', this.toasts.concat(toast));
     }
 
     public registerComponent(name: UIComponent, component: Component): void {
