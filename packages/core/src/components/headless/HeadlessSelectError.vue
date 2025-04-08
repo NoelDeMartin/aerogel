@@ -9,12 +9,11 @@ import { computed } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
+import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 
-import type { IAGHeadlessSelect } from './AGHeadlessSelect';
-
-const select = injectReactiveOrFail<IAGHeadlessSelect>(
+const select = injectReactiveOrFail<SelectExpose>(
     'select',
-    '<AGHeadlessSelectError> must be a child of a <AGHeadlessSelect>',
+    '<HeadlessSelectError> must be a child of a <HeadlessSelect>',
 );
 const errorMessage = computed(() => {
     if (!select.errors) {

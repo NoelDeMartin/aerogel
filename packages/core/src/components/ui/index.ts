@@ -15,4 +15,5 @@ export { default as Modal } from './Modal.vue';
 export { default as ModalContext } from './ModalContext.vue';
 export { default as ProgressBar } from './ProgressBar.vue';
 export { default as PromptModal } from './PromptModal.vue';
+export { default as Select } from './Select.vue';
 export { default as StartupCrash } from './StartupCrash.vue';

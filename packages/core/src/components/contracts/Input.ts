@@ -1,7 +1,7 @@
+import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import type { FormFieldValue } from '@aerogel/core/forms';
-import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 
 export interface InputProps {
     name?: string;
@@ -10,9 +10,9 @@ export interface InputProps {
     modelValue?: FormFieldValue;
 }
 
-export type InputEmits = {
+export interface InputEmits {
     (event: 'update:modelValue', value: Nullable<FormFieldValue>): void;
-};
+}
 
 export interface InputExpose {
     id: string;

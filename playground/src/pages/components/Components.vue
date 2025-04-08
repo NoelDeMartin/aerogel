@@ -66,29 +66,11 @@
             <div class="mt-4">
                 <Checkbox :label="$t('components.inputs_checkbox')" />
             </div>
-        </section>
-
-        <section>
-            <h2>{{ $t('components.selects') }}</h2>
-            <div class="not-prose mt-4 flex gap-2">
-                <BaseSelect
-                    v-model="customSelectValue"
-                    class="min-w-[150px]"
-                    :label="$t('components.selects_customLabel')"
-                    :no-selection-text="$t('components.selects_customNoSelectionText')"
+            <div class="mt-4">
+                <Select
+                    :label="$t('components.inputs_select')"
                     :options="
-                        $t('components.selects_customOptions')
-                            .split(',')
-                            .map((o) => o.trim())
-                    "
-                />
-                <AGSelect
-                    v-model="defaultSelectValue"
-                    class="min-w-[150px]"
-                    :label="$t('components.selects_defaultLabel')"
-                    :no-selection-text="$t('components.selects_defaultNoSelectionText')"
-                    :options="
-                        $t('components.selects_defaultOptions')
+                        $t('components.inputs_select_options')
                             .split(',')
                             .map((o) => o.trim())
                     "

@@ -1,5 +1,5 @@
 <template>
-    <DialogTitle v-bind="props">
+    <DialogTitle v-bind="$props">
         <slot />
     </DialogTitle>
 </template>
@@ -8,5 +8,5 @@
 import { DialogTitle } from 'reka-ui';
 import type { DialogTitleProps } from 'reka-ui';
 
-const props = defineProps<DialogTitleProps>();
+defineProps<DialogTitleProps>();
 </script>

@@ -24,6 +24,11 @@ import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
+import HeadlessInput from '@aerogel/core/components/headless/HeadlessInput.vue';
+import HeadlessInputLabel from '@aerogel/core/components/headless/HeadlessInputLabel.vue';
+import HeadlessInputInput from '@aerogel/core/components/headless/HeadlessInputInput.vue';
+import HeadlessInputDescription from '@aerogel/core/components/headless/HeadlessInputDescription.vue';
+import HeadlessInputError from '@aerogel/core/components/headless/HeadlessInputError.vue';
 import { classes } from '@aerogel/core/components/utils';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
 import { componentRef } from '@aerogel/core/utils/vue';

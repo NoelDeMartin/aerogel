@@ -40,13 +40,8 @@ components:
     inputs_numberPlaceholder: Set a number
     inputs_date: Date
     inputs_checkbox: This is a checkbox.
-    selects: Selects
-    selects_customLabel: Custom
-    selects_customNoSelectionText: Select one...
-    selects_customOptions: One, Two, Three
-    selects_defaultLabel: Default
-    selects_defaultNoSelectionText: Select one...
-    selects_defaultOptions: One, Two, Three
+    inputs_select: Select
+    inputs_select_options: One, Two, Three
     modals: Modals
     modals_alert: Alert
     modals_alertTitle: Hi there!
