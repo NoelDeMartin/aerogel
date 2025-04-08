@@ -33,6 +33,7 @@ import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
+import Button from '@aerogel/core/components/ui/Button.vue';
 import HeadlessModal from '@aerogel/core/components/headless/HeadlessModal.vue';
 import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModalContent.vue';
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
