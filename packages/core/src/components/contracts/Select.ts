@@ -1,5 +1,5 @@
-import type { AcceptableValue } from 'reka-ui';
-import type { ComputedRef } from 'vue';
+import type { AcceptableValue, AsTag } from 'reka-ui';
+import type { Component, ComputedRef } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import type { InputEmits, InputExpose, InputProps } from './Input';
@@ -15,9 +15,12 @@ export interface HasSelectOptionLabel {
 }
 
 export interface SelectProps extends InputProps {
-    options?: unknown[];
+    as?: AsTag | Component;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    options?: any[];
     placeholder?: string;
-    renderOption?: (option: unknown) => string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    renderOption?: (option: any) => string;
 }
 
 export interface SelectEmits extends InputEmits {}

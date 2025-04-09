@@ -1,7 +1,10 @@
 <template>
     <DropdownMenu
         align="start"
-        :options="[{ label: $td('user.logIn', 'Connect account'), click: () => $ui.openModal(AccountLoginModal) }]"
+        :options="[
+            { label: $td('user.logIn', 'Connect account'), click: () => $ui.openModal(AccountLoginModal) },
+            { label: $td('user.settings', 'Settings'), click: () => $ui.openModal(SettingsModal) },
+        ]"
     >
         <Button
             size="icon"
@@ -17,7 +20,7 @@
 <script setup lang="ts">
 import IconCog from '~icons/zondicons/cog';
 
-import { Button, DropdownMenu } from '@aerogel/core';
+import { Button, DropdownMenu, SettingsModal } from '@aerogel/core';
 
 import AccountLoginModal from './AccountLoginModal.vue';
 </script>

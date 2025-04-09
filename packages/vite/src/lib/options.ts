@@ -22,4 +22,5 @@ export interface AppInfo {
     baseUrl?: string;
     sourceUrl?: string;
     plugins?: string[];
+    locales?: Record<string, string>;
 }

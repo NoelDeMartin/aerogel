@@ -7,7 +7,7 @@ export interface InputProps {
     name?: string;
     label?: string;
     description?: string;
-    modelValue?: FormFieldValue;
+    modelValue?: Nullable<FormFieldValue>;
 }
 
 export interface InputEmits {

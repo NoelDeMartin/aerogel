@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import type { VirtualAerogel } from 'virtual:aerogel';
 
 import TailwindCSS from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
@@ -10,12 +11,11 @@ import { generate404Assets } from '@aerogel/vite/lib/404';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
 import { getSourceHash } from '@aerogel/vite/lib/git';
 import { guessMediaType } from '@aerogel/vite/lib/media-types';
+import { loadLocales } from '@aerogel/vite/lib/lang';
 import { loadPackageInfo } from '@aerogel/vite/lib/package-parser';
 import { renderHTML } from '@aerogel/vite/lib/html';
 import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
-
-import type { VirtualAerogel } from 'virtual:aerogel';
 
 export type { Options, AppInfo, ClientIDDocument };
 
@@ -45,6 +45,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 sourceHash: app.sourceHash,
                 basePath: app.basePath,
                 sourceUrl: app.sourceUrl,
+                locales: app.locales ?? { en: 'English' },
             };
 
             return `export default ${JSON.stringify(virtual)};`;
@@ -59,6 +60,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             }
 
             loadPackageInfo(app, resolve(buildOptions.input[0], '../package.json'));
+            loadLocales(app, resolve(buildOptions.input[0], './lang/locales.json'));
         },
         configureServer(server) {
             server.httpServer?.once('listening', async () => {
@@ -70,6 +72,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             server.middlewares.use(solidMiddleware(app, options));
 
             loadPackageInfo(app, `${server.config.root}/package.json`);
+            loadLocales(app, `${server.config.root}/src/lang/locales.json`);
         },
         config: (config) => {
             app.basePath = config.base ?? app.basePath;

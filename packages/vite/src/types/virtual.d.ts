@@ -5,6 +5,7 @@ declare module 'virtual:aerogel' {
         basePath: string;
         sourceHash: string;
         sourceUrl?: string;
+        locales: Record<string, string>;
     }
 
     const virtual: VirtualAerogel;

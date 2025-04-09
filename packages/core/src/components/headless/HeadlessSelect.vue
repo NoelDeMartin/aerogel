@@ -1,9 +1,11 @@
 <template>
     <SelectRoot v-slot="{ open }: ComponentProps" :model-value="acceptableValue" @update:model-value="update($event)">
-        <slot :model-value :open>
-            <HeadlessSelectTrigger />
-            <HeadlessSelectOptions />
-        </slot>
+        <component :is="as" v-bind="$attrs">
+            <slot :model-value :open>
+                <HeadlessSelectTrigger />
+                <HeadlessSelectOptions />
+            </slot>
+        </component>
     </SelectRoot>
 </template>
 
@@ -23,7 +25,18 @@ import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import HeadlessSelectTrigger from './HeadlessSelectTrigger.vue';
 import HeadlessSelectOptions from './HeadlessSelectOptions.vue';
 
-const { name, label, options, renderOption, description, placeholder, modelValue } = defineProps<SelectProps>();
+defineOptions({ inheritAttrs: false });
+
+const {
+    name,
+    as = 'template',
+    label,
+    options,
+    renderOption,
+    description,
+    placeholder,
+    modelValue,
+} = defineProps<SelectProps>();
 const emit = defineEmits<SelectEmits>();
 const form = inject<FormController | null>('form', null);
 const acceptableValue = computed(() => modelValue as AcceptableValue);

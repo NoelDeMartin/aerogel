@@ -1,5 +1,5 @@
-export { default as AlertModal } from './AlertModal.vue';
 export { default as AdvancedOptions } from './AdvancedOptions.vue';
+export { default as AlertModal } from './AlertModal.vue';
 export { default as Button } from './Button.vue';
 export { default as Checkbox } from './Checkbox.vue';
 export { default as ConfirmModal } from './ConfirmModal.vue';
@@ -19,5 +19,9 @@ export { default as ModalContext } from './ModalContext.vue';
 export { default as ProgressBar } from './ProgressBar.vue';
 export { default as PromptModal } from './PromptModal.vue';
 export { default as Select } from './Select.vue';
+export { default as SelectLabel } from './SelectLabel.vue';
+export { default as SelectOptions } from './SelectOptions.vue';
+export { default as SelectTrigger } from './SelectTrigger.vue';
+export { default as SettingsModal } from './SettingsModal.vue';
 export { default as StartupCrash } from './StartupCrash.vue';
 export { default as Toast } from './Toast.vue';

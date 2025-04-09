@@ -8,6 +8,16 @@
                     {{ $solid.user?.webId }}
                 </Link>
             </div>
+            <Button
+                size="icon"
+                variant="ghost"
+                class="absolute top-1 right-1 hover:bg-gray-200"
+                :aria-label="$td('user.settings', 'Settings')"
+                :title="$td('user.settings', 'Settings')"
+                @click="$ui.openModal(SettingsModal)"
+            >
+                <IconCog class="size-5" />
+            </Button>
         </div>
 
         <div class="px-2">
@@ -130,12 +140,13 @@
 </template>
 
 <script setup lang="ts">
-import IconRefresh from '~icons/zondicons/refresh';
 import IconCheckmarkOutline from '~icons/zondicons/checkmark-outline';
-import IconWarning from '~icons/ion/warning';
-import IconLogout from '~icons/material-symbols/logout-rounded';
 import IconCloudUpload from '~icons/ic/sharp-cloud-upload';
+import IconCog from '~icons/zondicons/cog';
+import IconLogout from '~icons/material-symbols/logout-rounded';
+import IconRefresh from '~icons/zondicons/refresh';
 import IconStop from '~icons/ic/baseline-stop';
+import IconWarning from '~icons/ion/warning';
 
 import {
     AdvancedOptions,
@@ -145,6 +156,7 @@ import {
     Markdown,
     Modal,
     ProgressBar,
+    SettingsModal,
     translateWithDefault,
     useEvent,
 } from '@aerogel/core';
