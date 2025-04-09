@@ -1,6 +1,11 @@
+@import 'tailwindcss';
+
 @source './';
 @source '../../plugin-local-first/src';
 @source '../../plugin-solid/src';
+
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
 
 @theme {
     --color-background: oklch(1 0 0);
