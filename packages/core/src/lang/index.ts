@@ -1,7 +1,9 @@
+import App from '@aerogel/core/services/App';
 import { bootServices } from '@aerogel/core/services';
 import { definePlugin } from '@aerogel/core/plugins';
 
 import Lang from './Lang';
+import settings from './settings';
 import type { LangProvider } from './Lang';
 import { translate, translateWithDefault } from './utils';
 
@@ -16,6 +18,7 @@ export default definePlugin({
     async install(app) {
         app.config.globalProperties.$t ??= translate;
         app.config.globalProperties.$td = translateWithDefault;
+        App.settings.push(...settings);
 
         await bootServices(app, services);
     },

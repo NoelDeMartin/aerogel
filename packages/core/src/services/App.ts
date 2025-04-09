@@ -8,6 +8,9 @@ import type { Services } from '@aerogel/core/services';
 
 import Service from './App.state';
 
+export { defineSettings } from './App.state';
+export type { AppSetting } from './App.state';
+
 export class AppService extends Service {
 
     public readonly name = Aerogel.name;

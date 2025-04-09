@@ -9,6 +9,7 @@ import Events from './Events';
 import Service from './Service';
 import Storage from './Storage';
 import { getPiniaStore } from './store';
+import type { AppSetting } from './App.state';
 
 export * from './App';
 export * from './Cache';
@@ -53,6 +54,7 @@ export default definePlugin({
         };
 
         app.use(getPiniaStore());
+        App.settings.push(...(options.settings ?? []));
 
         await bootServices(app, services);
     },
@@ -61,6 +63,7 @@ export default definePlugin({
 declare module '@aerogel/core/bootstrap/options' {
     export interface AerogelOptions {
         services?: Record<string, Service>;
+        settings?: AppSetting[];
     }
 }
 
