@@ -65,9 +65,6 @@ jobs:
                   # Install plugin
                   npx gel install solid
 
-                  # Add Solid status component
-                  sed -i "10i\            <AGSolidStatus v-if=\"!\$solid.isLoggedIn()\" class=\"mt-4\" />" ./src/App.vue
-
                   # Configure snapshots
                   sed -i "7i\        cy.matchImageSnapshot();" ./cypress/e2e/app.cy.ts
                   mkdir cypress/snapshots/app.cy.ts -p
