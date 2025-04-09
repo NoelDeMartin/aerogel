@@ -1,7 +1,16 @@
 import { objectWithout } from '@noeldemartin/utils';
-import { computed, useAttrs } from 'vue';
+import { computed, inject, onUnmounted, useAttrs } from 'vue';
 import type { ClassValue } from 'clsx';
 import type { ComputedRef } from 'vue';
+import type { FormController } from '@aerogel/core/forms';
+import type { Nullable } from '@noeldemartin/utils';
+
+export function onFormFocus(input: { name: Nullable<string> }, listener: () => unknown): void {
+    const form = inject<FormController | null>('form', null);
+    const stop = form?.on('focus', (name) => input.name === name && listener());
+
+    onUnmounted(() => stop?.());
+}
 
 export function useInputAttrs(): [ComputedRef<{}>, ComputedRef<ClassValue>] {
     const attrs = useAttrs();

@@ -14,7 +14,7 @@ import type { HTMLAttributes } from 'vue';
 import HeadlessSelectTrigger from '@aerogel/core/components/headless/HeadlessSelectTrigger.vue';
 import HeadlessSelectValue from '@aerogel/core/components/headless/HeadlessSelectValue.vue';
 import { injectReactiveOrFail } from '@aerogel/core/utils';
-import { classes } from '@aerogel/core/components/utils';
+import { classes } from '@aerogel/core/utils/classes';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 
 const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class'] }>();

@@ -9,7 +9,7 @@ import type { VNode } from 'vue';
 
 import { renderMarkdown } from '@aerogel/core/utils/markdown';
 import { translate, translateWithDefault } from '@aerogel/core/lang';
-import { renderNode } from '@aerogel/core/utils/vdom';
+import { renderVNode } from '@aerogel/core/utils/vue';
 
 const { as, inline, langKey, langParams, langDefault, text, actions } = defineProps<{
     as?: string;
@@ -25,7 +25,7 @@ const attrs = useAttrs();
 const slots = defineSlots<{ default?(): VNode[] }>();
 const markdown = computed(() => {
     if (slots.default) {
-        return slots.default().map(renderNode).join('');
+        return slots.default().map(renderVNode).join('');
     }
 
     return (

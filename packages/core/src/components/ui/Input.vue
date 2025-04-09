@@ -29,7 +29,7 @@ import HeadlessInputLabel from '@aerogel/core/components/headless/HeadlessInputL
 import HeadlessInputInput from '@aerogel/core/components/headless/HeadlessInputInput.vue';
 import HeadlessInputDescription from '@aerogel/core/components/headless/HeadlessInputDescription.vue';
 import HeadlessInputError from '@aerogel/core/components/headless/HeadlessInputError.vue';
-import { classes } from '@aerogel/core/components/utils';
+import { classes } from '@aerogel/core/utils/classes';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
 import type { InputEmits, InputProps } from '@aerogel/core/components/contracts/Input';
 

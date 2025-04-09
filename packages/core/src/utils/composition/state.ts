@@ -1,10 +1,19 @@
 import { debounce } from '@noeldemartin/utils';
-import { ref, watchEffect } from 'vue';
-import type { ComputedGetter, ComputedRef } from '@vue/runtime-core';
+import { computed, ref, watch, watchEffect } from 'vue';
+import type { ComputedGetter, ComputedRef, Ref } from 'vue';
 
 export interface ComputedDebounceOptions<T> {
     initial?: T;
     delay?: number;
+}
+
+export function computedAsync<T>(getter: () => Promise<T>): Ref<T | undefined> {
+    const result = ref<T>();
+    const asyncValue = computed(getter);
+
+    watch(asyncValue, async () => (result.value = await asyncValue.value), { immediate: true });
+
+    return result;
 }
 
 export function computedDebounce<T>(options: ComputedDebounceOptions<T>, getter: ComputedGetter<T>): ComputedRef<T>;

@@ -1,53 +1,19 @@
 import { fail, toString } from '@noeldemartin/utils';
-import { computed, inject, reactive, ref, watch } from 'vue';
-import type { Directive, InjectionKey, MaybeRef, PropType, Ref, UnwrapNestedRefs } from 'vue';
+import { Comment, Static, Text, inject, reactive } from 'vue';
+import type { Directive, InjectionKey, MaybeRef, Ref, UnwrapNestedRefs, VNode } from 'vue';
 
 export type AcceptRefs<T> = { [K in keyof T]: T[K] | RefUnion<T[K]> };
-export type BaseProp<T> = { type?: PropType<T>; validator?(value: unknown): boolean };
-export type ComponentProps<T = {}> = T & Record<string, unknown>;
-export type OptionalProp<T> = BaseProp<T> & { default: T | (() => T) | null };
 export type RefUnion<T> = T extends infer R ? Ref<R> : never;
-export type RequiredProp<T> = BaseProp<T> & { required: true };
 export type Unref<T> = { [K in keyof T]: T[K] extends MaybeRef<infer Value> ? Value : T[K] };
 
-export function arrayProp<T>(defaultValue?: () => T[]): OptionalProp<T[]> {
-    return {
-        type: Array as PropType<T[]>,
-        default: defaultValue ?? (() => []),
-    };
-}
-
-export function booleanProp(defaultValue: boolean = false): OptionalProp<boolean> {
-    return {
-        type: Boolean,
-        default: defaultValue,
-    };
-}
-
-export function computedAsync<T>(getter: () => Promise<T>): Ref<T | undefined> {
-    const result = ref<T>();
-    const asyncValue = computed(getter);
-
-    watch(asyncValue, async () => (result.value = await asyncValue.value), { immediate: true });
-
-    return result;
+function renderVNodeAttrs(node: VNode): string {
+    return Object.entries(node.props ?? {}).reduce((attrs, [name, value]) => {
+        return attrs + `${name}="${toString(value)}"`;
+    }, '');
 }
 
 export function defineDirective(directive: Directive): Directive {
     return directive;
-}
-
-export function enumProp<Enum extends Record<string, unknown>>(
-    enumeration: Enum,
-    defaultValue?: Enum[keyof Enum],
-): OptionalProp<Enum[keyof Enum]> {
-    const values = Object.values(enumeration) as Enum[keyof Enum][];
-
-    return {
-        type: String as unknown as PropType<Enum[keyof Enum]>,
-        default: defaultValue ?? values[0] ?? null,
-        validator: (value) => values.includes(value as Enum[keyof Enum]),
-    };
 }
 
 export function injectReactive<T extends object>(key: InjectionKey<T> | string): UnwrapNestedRefs<T> | undefined {
@@ -67,92 +33,24 @@ export function injectOrFail<T>(key: InjectionKey<T> | string, errorMessage?: st
     return inject(key) ?? fail(errorMessage ?? `Could not resolve '${toString(key)}' injection key`);
 }
 
-export function listenerProp<T extends Function = Function>(): OptionalProp<T | null> {
-    return {
-        type: Function as PropType<T>,
-        default: null,
-    };
-}
+export function renderVNode(node: VNode | string): string {
+    if (typeof node === 'string') {
+        return node;
+    }
 
-export function mixedProp<T>(type?: PropType<T>): OptionalProp<T | null>;
-export function mixedProp<T>(type: PropType<T>, defaultValue: T): OptionalProp<T>;
-export function mixedProp<T>(type?: PropType<T>, defaultValue?: T): OptionalProp<T | null> {
-    return {
-        type,
-        default: defaultValue ?? null,
-    };
-}
+    if (node.type === Comment) {
+        return '';
+    }
 
-export function numberProp(): OptionalProp<number | null>;
-export function numberProp(defaultValue: number): OptionalProp<number>;
-export function numberProp(defaultValue: number | null = null): OptionalProp<number | null> {
-    return {
-        type: Number,
-        default: defaultValue,
-    };
-}
+    if (node.type === Text || node.type === Static) {
+        return node.children as string;
+    }
 
-export function objectProp<T = Object>(): OptionalProp<T | null>;
-export function objectProp<T>(defaultValue: () => T): OptionalProp<T>;
-export function objectProp<T = Object>(defaultValue: (() => T) | null = null): OptionalProp<T | null> {
-    return {
-        type: Object,
-        default: defaultValue,
-    };
-}
+    if (node.type === 'br') {
+        return '\n\n';
+    }
 
-export function requiredArrayProp<T>(): RequiredProp<T[]> {
-    return {
-        type: Array as PropType<T[]>,
-        required: true,
-    };
-}
-
-export function requiredEnumProp<Enum extends Record<string, unknown>>(
-    enumeration: Enum,
-): RequiredProp<Enum[keyof Enum]> {
-    const values = Object.values(enumeration);
-
-    return {
-        type: String as unknown as PropType<Enum[keyof Enum]>,
-        required: true,
-        validator: (value) => values.includes(value),
-    };
-}
-
-export function requiredMixedProp<T>(type?: PropType<T>): RequiredProp<T> {
-    return {
-        type,
-        required: true,
-    };
-}
-
-export function requiredNumberProp(): RequiredProp<number> {
-    return {
-        type: Number,
-        required: true,
-    };
-}
-
-export function requiredObjectProp<T = Object>(): RequiredProp<T> {
-    return {
-        type: Object,
-        required: true,
-    };
-}
-
-export function requiredStringProp(): RequiredProp<string> {
-    return {
-        type: String,
-        required: true,
-    };
-}
-
-export function stringProp(): OptionalProp<string | null>;
-export function stringProp(defaultValue: string): OptionalProp<string>;
-export function stringProp(defaultValue: string | null = null): OptionalProp<string | null> {
-    return {
-        type: String,
-        default: defaultValue,
-    };
+    return `<${node.type} ${renderVNodeAttrs(node)}>${Array.from(node.children as Array<VNode | string>)
+        .map(renderVNode)
+        .join('')}</${node.type}>`;
 }

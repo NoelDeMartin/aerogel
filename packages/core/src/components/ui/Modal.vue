@@ -38,7 +38,7 @@ import HeadlessModal from '@aerogel/core/components/headless/HeadlessModal.vue';
 import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModalContent.vue';
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
-import { classes } from '@aerogel/core/components/utils';
+import { classes } from '@aerogel/core/utils/classes';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 const {

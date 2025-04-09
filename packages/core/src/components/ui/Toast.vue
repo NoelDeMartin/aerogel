@@ -19,9 +19,9 @@ import Button from '@aerogel/core/components/ui/Button.vue';
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import HeadlessToast from '@aerogel/core/components/headless/HeadlessToast.vue';
 import HeadlessToastAction from '@aerogel/core/components/headless/HeadlessToastAction.vue';
-import { computedVariantClasses } from '@aerogel/core/components/utils';
+import { computedVariantClasses } from '@aerogel/core/utils/classes';
 import type { ToastProps } from '@aerogel/core/components/contracts/Toast';
-import type { Variants } from '@aerogel/core/components/utils';
+import type { Variants } from '@aerogel/core/utils/classes';
 
 const { class: baseClasses, variant = 'secondary' } = defineProps<ToastProps & { class?: HTMLAttributes['class'] }>();
 const renderedClasses = computedVariantClasses<Variants<Pick<ToastProps, 'variant'>>>(

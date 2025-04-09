@@ -30,7 +30,7 @@
 import { computed, ref, watchEffect } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
-import { classes } from '@aerogel/core/components/utils';
+import { classes } from '@aerogel/core/utils/classes';
 
 const emit = defineEmits<{ update: [value: string | number]; save: [] }>();
 const {

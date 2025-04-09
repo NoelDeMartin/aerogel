@@ -1,5 +1,5 @@
 <template>
-    <SelectRoot v-slot="{ open }: ComponentProps" :model-value="acceptableValue" @update:model-value="update($event)">
+    <SelectRoot v-slot="{ open }" :model-value="acceptableValue" @update:model-value="update($event)">
         <component :is="as" v-bind="$attrs">
             <slot :model-value :open>
                 <HeadlessSelectTrigger />
@@ -18,7 +18,6 @@ import type { AcceptableValue } from 'reka-ui';
 import { translateWithDefault } from '@aerogel/core/lang';
 import { hasSelectOptionLabel } from '@aerogel/core/components/contracts/Select';
 import type FormController from '@aerogel/core/forms/FormController';
-import type { ComponentProps } from '@aerogel/core/utils/vue';
 import type { SelectEmits, SelectExpose, SelectProps } from '@aerogel/core/components/contracts/Select';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 

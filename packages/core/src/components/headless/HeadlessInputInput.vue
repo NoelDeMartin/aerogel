@@ -18,7 +18,7 @@
 import { computed, ref, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import { onFormFocus } from '@aerogel/core/components/utils';
+import { onFormFocus } from '@aerogel/core/utils/composition/forms';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 

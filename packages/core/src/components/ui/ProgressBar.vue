@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue';
 
-import { classes } from '@aerogel/core/components/utils';
+import { classes } from '@aerogel/core/utils/classes';
 import type Job from '@aerogel/core/jobs/Job';
 
 const { filledClass, progress, job } = defineProps<{

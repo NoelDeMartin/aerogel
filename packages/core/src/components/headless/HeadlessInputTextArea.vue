@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { onFormFocus } from '@aerogel/core/components/utils';
+import { onFormFocus } from '@aerogel/core/utils/composition/forms';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 

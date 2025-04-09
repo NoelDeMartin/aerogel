@@ -6,9 +6,9 @@
 
 <script setup lang="ts">
 import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue';
-import { computedVariantClasses } from '@aerogel/core/components/utils';
+import { computedVariantClasses } from '@aerogel/core/utils/classes';
 import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
-import type { Variants } from '@aerogel/core/components/utils';
+import type { Variants } from '@aerogel/core/utils/classes';
 
 const { class: baseClasses, size, variant, disabled, ...props } = defineProps<ButtonProps>();
 
