@@ -1,7 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
-import Mustache from 'mustache';
 import { facade } from '@noeldemartin/utils';
 
 export class FileService {
