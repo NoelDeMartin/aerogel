@@ -1,19 +1,11 @@
-import { stringToSlug } from '@noeldemartin/utils';
+import { resolve } from 'node:path';
 
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Template from '@aerogel/cli/lib/Template';
 import { packNotFound, packagePackPath, packagePath, templatePath } from '@aerogel/cli/lib/utils/paths';
 import { Editor } from '@aerogel/cli/lib/Editor';
-
-interface Dependencies {
-    aerogelCli: string;
-    aerogelCore: string;
-    aerogelCypress: string;
-    aerogelPluginI18n: string;
-    aerogelPluginSoukai: string;
-    aerogelVite: string;
-}
+import { simpleGit } from 'simple-git';
 
 export interface Options {
     local?: boolean;
@@ -27,28 +19,36 @@ export default class App {
         protected options: Options = {},
     ) {}
 
-    public create(path: string): void {
+    public async create(path: string): Promise<void> {
         if (File.exists(path) && (!File.isDirectory(path) || !File.isEmptyDirectory(path))) {
             Log.fail(`Folder at '${path}' already exists!`);
         }
 
-        Template.instantiate(templatePath('app'), path, {
-            app: {
-                name: this.name,
-                slug: stringToSlug(this.name),
-            },
-            dependencies: this.getDependencies(),
-            contentPath: this.options.linkedLocal
-                ? `${packagePath('core')}/dist/**/*.js`
-                : './node_modules/@aerogel/core/dist/**/*.js',
-        });
+        // Clone repository
+        await simpleGit().clone('https://github.com/NoelDeMartin/aerogel-template.git', path);
+
+        // Apply replacements
+        const dependencies = this.getDependencies();
+
+        File.replace(
+            resolve(path, 'vite.config.ts'),
+            'Aerogel({ name: \'Aerogel\' })',
+            `Aerogel({ name: '${this.name}' })`,
+        );
+
+        for (const [name, version] of Object.entries(dependencies)) {
+            File.replace(resolve(path, 'package.json'), new RegExp(`"${name}": ".*?"`, 'g'), `"${name}": "${version}"`);
+        }
+
+        // Copy template
+        Template.instantiate(templatePath('app'), path, { app: { name: this.name } });
     }
 
     public edit(): Editor {
         return new Editor();
     }
 
-    protected getDependencies(): Dependencies {
+    protected getDependencies(): Record<string, string> {
         const withFilePrefix = <T extends Record<string, string>>(paths: T) =>
             Object.entries(paths).reduce(
                 (pathsWithFile, [name, path]) => Object.assign(pathsWithFile, { [name]: `file:${path}` }) as T,
@@ -57,34 +57,27 @@ export default class App {
 
         if (this.options.linkedLocal) {
             return withFilePrefix({
-                aerogelCli: packagePath('cli'),
-                aerogelCore: packagePath('core'),
-                aerogelCypress: packagePath('cypress'),
-                aerogelPluginI18n: packagePath('plugin-i18n'),
-                aerogelPluginSoukai: packagePath('plugin-soukai'),
-                aerogelVite: packagePath('vite'),
+                '@aerogel/cli': packagePath('cli'),
+                '@aerogel/core': packagePath('core'),
+                '@aerogel/cypress': packagePath('cypress'),
+                '@aerogel/plugin-i18n': packagePath('plugin-i18n'),
+                '@aerogel/plugin-soukai': packagePath('plugin-soukai'),
+                '@aerogel/vite': packagePath('vite'),
             });
         }
 
         if (this.options.local) {
             return withFilePrefix({
-                aerogelCli: packagePackPath('cli') ?? packNotFound('cli'),
-                aerogelCore: packagePackPath('core') ?? packNotFound('core'),
-                aerogelCypress: packagePackPath('cypress') ?? packNotFound('cypress'),
-                aerogelPluginI18n: packagePackPath('plugin-i18n') ?? packNotFound('plugin-i18n'),
-                aerogelPluginSoukai: packagePackPath('plugin-soukai') ?? packNotFound('plugin-soukai'),
-                aerogelVite: packagePackPath('vite') ?? packNotFound('vite'),
+                '@aerogel/cli': packagePackPath('cli') ?? packNotFound('cli'),
+                '@aerogel/core': packagePackPath('core') ?? packNotFound('core'),
+                '@aerogel/cypress': packagePackPath('cypress') ?? packNotFound('cypress'),
+                '@aerogel/plugin-i18n': packagePackPath('plugin-i18n') ?? packNotFound('plugin-i18n'),
+                '@aerogel/plugin-soukai': packagePackPath('plugin-soukai') ?? packNotFound('plugin-soukai'),
+                '@aerogel/vite': packagePackPath('vite') ?? packNotFound('vite'),
             });
         }
 
-        return {
-            aerogelCli: 'next',
-            aerogelCore: 'next',
-            aerogelCypress: 'next',
-            aerogelPluginI18n: 'next',
-            aerogelPluginSoukai: 'next',
-            aerogelVite: 'next',
-        };
+        return {};
     }
 
 }

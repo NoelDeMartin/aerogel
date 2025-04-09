@@ -1,4 +1,0 @@
-@import 'tailwindcss';
-@import '@aerogel/core';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';

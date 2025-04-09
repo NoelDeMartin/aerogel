@@ -30,6 +30,7 @@
         "chalk": "^5.4.1",
         "commander": "^11.0.0",
         "mustache": "^4.2.0",
+        "simple-git": "^3.27.0",
         "ts-morph": "^20.0.0"
     },
     "eslintConfig": {

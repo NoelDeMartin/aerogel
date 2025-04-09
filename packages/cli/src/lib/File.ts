@@ -1,6 +1,8 @@
 import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { facade } from '@noeldemartin/utils';
 import { dirname, resolve } from 'node:path';
+
+import Mustache from 'mustache';
+import { facade } from '@noeldemartin/utils';
 
 export class FileService {
 
@@ -24,6 +26,16 @@ export class FileService {
         }
 
         return readFileSync(path).toString();
+    }
+
+    public replace(path: string, search: string | RegExp, replacement: string): void {
+        const contents = this.read(path);
+
+        if (!contents) {
+            return;
+        }
+
+        this.write(path, contents.replaceAll(search, replacement));
     }
 
     public getFiles(directoryPath: string): string[] {

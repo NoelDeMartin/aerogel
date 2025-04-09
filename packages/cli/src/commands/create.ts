@@ -47,7 +47,6 @@ export class CreateCommand extends Command {
         Shell.setWorkingDirectory(path);
 
         await this.createApp(name, path);
-        await this.installDependencies();
         await this.initializeGit();
 
         Log.success(`
@@ -55,6 +54,7 @@ export class CreateCommand extends Command {
             That's it! You can start working on **${name}** doing the following:
 
                 cd ${path}
+                npm install
                 npm run dev
 
             Have fun!
@@ -64,16 +64,12 @@ export class CreateCommand extends Command {
     protected async createApp(name: string, path: string): Promise<void> {
         Log.info(`Creating **${name}**...`);
 
-        new App(name, {
+        const app = new App(name, {
             local: this.options.local,
             linkedLocal: this.options.local && !this.options.copy,
-        }).create(path);
-    }
-
-    protected async installDependencies(): Promise<void> {
-        await Log.animate('Installing dependencies', async () => {
-            await Shell.run('npm install');
         });
+
+        await app.create(path);
     }
 
     protected async initializeGit(): Promise<void> {

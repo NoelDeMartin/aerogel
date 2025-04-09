@@ -48,6 +48,12 @@ vi.mock('@aerogel/cli/lib/utils/edit', async () => {
     };
 });
 
+vi.mock('simple-git', () => ({
+    simpleGit: () => ({
+        clone: () => Promise.resolve(),
+    }),
+}));
+
 // TODO find out why these need to be mocked
 vi.mock('@aerogel/cli/lib/utils/paths', async () => {
     const original = (await vi.importActual('@aerogel/cli/lib/utils/paths')) as object;

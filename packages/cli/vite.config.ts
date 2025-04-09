@@ -18,6 +18,7 @@ export default defineConfig({
                 'commander',
                 'mustache',
                 'node:child_process',
+                'simple-git',
                 'node:fs',
                 'node:path',
                 'node:readline',
