@@ -1,5 +1,8 @@
 <template>
-    <SelectValue :placeholder="select.placeholder" />
+    <SelectValue v-if="$slots.default" :placeholder="select.placeholder">
+        <slot />
+    </SelectValue>
+    <SelectValue v-else :placeholder="select.placeholder" />
 </template>
 
 <script setup lang="ts">

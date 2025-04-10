@@ -45,7 +45,7 @@ const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedClasses = computed(() => classes('relative flex items-start', rootClasses.value));
 const renderedInputClasses = computed(() =>
     classes(
-        'size-4 rounded text-primary hover:bg-gray-200 checked:hover:bg-primary/80 checked:border-0',
+        'size-4 rounded text-primary not-checked:hover:bg-gray-200 checked:hover:text-primary/80 checked:border-0',
         {
             'border-gray-300 focus:ring-primary': !$input.value?.errors,
             'border-red-400 border-2 focus:ring-red-600': $input.value?.errors,

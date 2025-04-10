@@ -1,7 +1,12 @@
 <template>
     <SelectPortal>
-        <SelectContent :class="classes">
-            <SelectViewport>
+        <SelectContent
+            position="popper"
+            :class="$props.class"
+            :align="select.align"
+            :side="select.side"
+        >
+            <SelectViewport :class="innerClass">
                 <slot>
                     <HeadlessSelectOption
                         v-for="option in select.options ?? []"
@@ -16,13 +21,15 @@
 
 <script setup lang="ts">
 import { SelectContent, SelectPortal, SelectViewport } from 'reka-ui';
+import type { HTMLAttributes } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 
 import HeadlessSelectOption from './HeadlessSelectOption.vue';
 
-const { class: classes } = defineProps<{ class?: string }>();
+defineProps<{ class?: HTMLAttributes['class']; innerClass?: HTMLAttributes['class'] }>();
+
 const select = injectReactiveOrFail<SelectExpose>(
     'select',
     '<HeadlessSelectOptions> must be a child of a <HeadlessSelect>',

@@ -23,7 +23,7 @@ const errors = computed(() => {
     return form.errors[name] ?? null;
 });
 
-const context = {
+const expose = {
     id: `input-${uuid()}`,
     name: computed(() => name),
     label: computed(() => label),
@@ -54,6 +54,6 @@ const context = {
     },
 } satisfies InputExpose;
 
-provide('input', context);
-defineExpose(context);
+provide('input', expose);
+defineExpose(expose);
 </script>

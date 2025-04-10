@@ -7,6 +7,7 @@ export { default as HeadlessInputLabel } from './HeadlessInputLabel.vue';
 export { default as HeadlessInputTextArea } from './HeadlessInputTextArea.vue';
 export { default as HeadlessModal } from './HeadlessModal.vue';
 export { default as HeadlessModalContent } from './HeadlessModalContent.vue';
+export { default as HeadlessModalDescription } from './HeadlessModalDescription.vue';
 export { default as HeadlessModalOverlay } from './HeadlessModalOverlay.vue';
 export { default as HeadlessModalTitle } from './HeadlessModalTitle.vue';
 export { default as HeadlessSelect } from './HeadlessSelect.vue';

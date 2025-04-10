@@ -1,6 +1,6 @@
 <template>
     <SelectItem v-bind="$props">
-        <SelectItemText class="the-text">
+        <SelectItemText>
             <slot>
                 {{ renderedLabel }}
             </slot>

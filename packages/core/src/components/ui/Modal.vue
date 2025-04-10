@@ -19,6 +19,10 @@
                 <Markdown :text="title" inline />
             </HeadlessModalTitle>
 
+            <HeadlessModalDescription v-if="description">
+                <Markdown :text="description" class="mt-1 text-sm leading-6 text-gray-500" />
+            </HeadlessModalDescription>
+
             <div :class="renderedContentClass">
                 <slot :close />
             </div>
@@ -36,6 +40,7 @@ import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import HeadlessModal from '@aerogel/core/components/headless/HeadlessModal.vue';
 import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModalContent.vue';
+import HeadlessModalDescription from '@aerogel/core/components/headless/HeadlessModalDescription.vue';
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
 import { classes } from '@aerogel/core/utils/classes';

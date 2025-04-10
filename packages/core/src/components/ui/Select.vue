@@ -1,5 +1,5 @@
 <template>
-    <HeadlessSelect v-bind="$props" @update:model-value="$emit('update:modelValue', $event)">
+    <HeadlessSelect :ref="forwardRef" v-bind="$props" @update:model-value="$emit('update:modelValue', $event)">
         <SelectLabel />
         <slot>
             <SelectTrigger />
@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { useForwardExpose } from 'reka-ui';
+
 import HeadlessSelect from '@aerogel/core/components/headless/HeadlessSelect.vue';
 import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
 
@@ -18,4 +20,6 @@ import SelectTrigger from './SelectTrigger.vue';
 
 defineProps<SelectProps>();
 defineEmits<SelectEmits>();
+
+const { forwardRef } = useForwardExpose();
 </script>

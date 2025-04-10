@@ -64,9 +64,6 @@
                 <Input type="date" :label="$t('components.inputs_date')" />
             </div>
             <div class="mt-4">
-                <Checkbox :label="$t('components.inputs_checkbox')" />
-            </div>
-            <div class="mt-4">
                 <Select
                     :label="$t('components.inputs_select')"
                     :options="
@@ -75,6 +72,9 @@
                             .map((o) => o.trim())
                     "
                 />
+            </div>
+            <div class="mt-4">
+                <Checkbox :label="$t('components.inputs_checkbox')" />
             </div>
         </section>
 

@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { RouterLink } from 'vue-router';
 import { Primitive } from 'reka-ui';
 import { objectWithoutEmpty } from '@noeldemartin/utils';
 
@@ -25,7 +26,7 @@ const props = computed(() => {
 
     if (route) {
         return {
-            as: 'router-link',
+            as: RouterLink,
             to: objectWithoutEmpty({
                 name: route,
                 params: routeParams,

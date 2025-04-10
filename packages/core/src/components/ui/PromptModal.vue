@@ -1,7 +1,7 @@
 <template>
-    <Modal v-slot="{ close }" :title persistent>
+    <Modal v-slot="{ close }" :title="renderedTitle" persistent>
         <Form :form @submit="close(form.draft)">
-            <Markdown :text="message" />
+            <Markdown v-if="renderedMessage" :text="renderedMessage" />
             <Input
                 name="draft"
                 class="mt-2"
@@ -31,5 +31,5 @@ import { usePromptModal } from '@aerogel/core/components/contracts/PromptModal';
 import type { PromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
 
 const { cancelVariant = 'secondary', ...props } = defineProps<PromptModalProps>();
-const { form, renderedAcceptText, renderedCancelText } = usePromptModal(props);
+const { form, renderedTitle, renderedMessage, renderedAcceptText, renderedCancelText } = usePromptModal(props);
 </script>

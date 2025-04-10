@@ -28,17 +28,28 @@ defineOptions({ inheritAttrs: false });
 
 const {
     name,
-    as = 'template',
+    as = 'div',
     label,
     options,
+    labelClass,
+    optionsClass,
     renderOption,
     description,
     placeholder,
     modelValue,
+    align,
+    side,
 } = defineProps<SelectProps>();
 const emit = defineEmits<SelectEmits>();
 const form = inject<FormController | null>('form', null);
-const acceptableValue = computed(() => modelValue as AcceptableValue);
+const computedValue = computed(() => {
+    if (form && name) {
+        return form.getFieldValue(name);
+    }
+
+    return modelValue;
+});
+const acceptableValue = computed(() => computedValue.value as AcceptableValue);
 const errors = computed(() => {
     if (!form || !name) {
         return null;
@@ -61,7 +72,12 @@ const computedOptions = computed(() => {
         value: option as AcceptableValue,
     }));
 });
-const context = {
+const expose = {
+    labelClass,
+    optionsClass,
+    align,
+    side,
+    value: computedValue,
     id: `select-${uuid()}`,
     name: computed(() => name),
     label: computed(() => label),
@@ -69,13 +85,6 @@ const context = {
     placeholder: computed(() => placeholder ?? translateWithDefault('ui.select', 'Select an option')),
     options: computedOptions,
     selectedOption: computed(() => computedOptions.value?.find((option) => option.value === modelValue)),
-    value: computed(() => {
-        if (form && name) {
-            return form.getFieldValue(name);
-        }
-
-        return modelValue;
-    }),
     errors: readonly(errors),
     required: computed(() => {
         if (!name || !form) {
@@ -96,9 +105,9 @@ const context = {
 } satisfies SelectExpose;
 
 function update(value: AcceptableValue) {
-    context.update(value as FormFieldValue);
+    expose.update(value as FormFieldValue);
 }
 
-provide('select', context);
-defineExpose(context);
+provide('select', expose);
+defineExpose(expose);
 </script>

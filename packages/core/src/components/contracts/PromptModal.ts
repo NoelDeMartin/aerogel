@@ -21,8 +21,10 @@ export function usePromptModal(props: PromptModalProps) {
     const form = useForm({
         draft: requiredStringInput(props.defaultValue ?? ''),
     });
+    const renderedTitle = computed(() => props.title ?? props.message);
+    const renderedMessage = computed(() => (props.title ? props.message : null));
     const renderedAcceptText = computed(() => props.acceptText ?? translateWithDefault('ui.accept', 'Ok'));
     const renderedCancelText = computed(() => props.cancelText ?? translateWithDefault('ui.cancel', 'Cancel'));
 
-    return { form, renderedAcceptText, renderedCancelText };
+    return { form, renderedTitle, renderedMessage, renderedAcceptText, renderedCancelText };
 }
