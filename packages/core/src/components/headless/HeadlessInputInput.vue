@@ -1,7 +1,7 @@
 <template>
     <input
         :id="input.id"
-        ref="$input"
+        ref="$inputRef"
         :name
         :type
         :checked
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, useTemplateRef, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
@@ -23,7 +23,7 @@ import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 
 const { type = 'text' } = defineProps<{ type?: string }>();
-const $input = ref<HTMLInputElement>();
+const $input = useTemplateRef('$inputRef');
 const input = injectReactiveOrFail<InputExpose>('input', '<HeadlessInputInput> must be a child of a <HeadlessInput>');
 const name = computed(() => input.name ?? undefined);
 const value = computed(() => input.value);

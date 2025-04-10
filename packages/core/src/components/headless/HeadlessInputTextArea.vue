@@ -1,7 +1,7 @@
 <template>
     <textarea
         :id="input.id"
-        ref="$textArea"
+        ref="$textAreaRef"
         :name
         :value
         :required="input.required ?? undefined"
@@ -14,13 +14,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 
-const $textArea = ref<HTMLTextAreaElement>();
+const $textArea = useTemplateRef('$textAreaRef');
 const input = injectReactiveOrFail<InputExpose>(
     'input',
     '<HeadlessInputTextArea> must be a child of a <HeadlessInput>',

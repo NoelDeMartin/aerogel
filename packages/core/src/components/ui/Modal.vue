@@ -2,7 +2,7 @@
     <HeadlessModal
         v-slot="{ close }"
         v-bind="props"
-        ref="$modal"
+        ref="$modalRef"
         :persistent
     >
         <HeadlessModalOverlay class="fixed inset-0 bg-gray-500/75" />
@@ -56,7 +56,7 @@ const {
     }
 >();
 
-const $modal = useTemplateRef('$modal');
+const $modal = useTemplateRef('$modalRef');
 const renderedContentClass = computed(() => classes({ 'mt-2': title }, contentClass));
 const renderedWrapperClass = computed(() =>
     classes(

@@ -9,7 +9,7 @@
         <span v-if="type === 'number'" class="inline-block transition-[width]" :class="editing ? 'w-5' : 'w-0'" />
         <form class="w-full" :aria-hidden="formAriaHidden" @submit.prevent="$input?.blur()">
             <input
-                ref="$input"
+                ref="$inputRef"
                 v-model="draft"
                 :tabindex="tabindex ?? undefined"
                 :aria-label="ariaLabel ?? undefined"
@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref, useTemplateRef, watchEffect } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 import { classes } from '@aerogel/core/utils/classes';
@@ -50,7 +50,7 @@ const {
     text: string;
     disabled?: boolean;
 }>();
-const $input = ref<HTMLElement>();
+const $input = useTemplateRef('$inputRef');
 const editing = ref<string | null>(null);
 const draft = ref(text);
 const renderedContentClass = computed(() => classes('inline whitespace-pre', contentClass));

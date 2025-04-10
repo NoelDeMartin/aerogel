@@ -1,5 +1,5 @@
 <template>
-    <DialogRoot ref="$root" open @update:open="persistent || close()">
+    <DialogRoot ref="$rootRef" open @update:open="persistent || close()">
         <DialogPortal>
             <slot :close="close" />
         </DialogPortal>
@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import { DialogPortal, DialogRoot } from 'reka-ui';
 
 import Events from '@aerogel/core/services/Events';
@@ -19,7 +19,7 @@ import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/componen
 defineProps<ModalProps>();
 defineSlots<ModalSlots>();
 
-const $root = ref<{ $el?: HTMLElement } | null>(null);
+const $root = useTemplateRef('$rootRef');
 const hidden = ref(true);
 const closed = ref(false);
 const { modal } = injectReactiveOrFail<UIModalContext>(

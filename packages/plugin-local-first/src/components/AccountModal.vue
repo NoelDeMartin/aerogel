@@ -1,5 +1,5 @@
 <template>
-    <Modal ref="$modal" :dismissable="false">
+    <Modal ref="$modalRef" :dismissable="false">
         <div class="relative flex items-center rounded-md bg-gray-100 p-4 pr-12">
             <SolidAvatar class="mr-2 size-16 shrink-0" />
             <div class="flex flex-col overflow-hidden">
@@ -165,7 +165,7 @@ import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
 
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 
-const $modal = useTemplateRef('$modal');
+const $modal = useTemplateRef('$modalRef');
 const cancellingSync = ref(false);
 const pollingText = translateWithDefault('cloud.advanced.polling', 'Synchronize every {minutes} minutes', {
     minutes: '%%separator%%',

@@ -1,6 +1,6 @@
 <template>
     <HeadlessInput
-        ref="$input"
+        ref="$inputRef"
         :class="renderedClasses"
         v-bind="props"
         @update:model-value="$emit('update:modelValue', $event)"
@@ -40,7 +40,7 @@ const { inputClass, labelClass, ...props } = defineProps<
     InputProps & { inputClass?: HTMLAttributes['class']; labelClass?: HTMLAttributes['class'] }
 >();
 
-const $input = useTemplateRef('$input');
+const $input = useTemplateRef('$inputRef');
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedClasses = computed(() => classes('relative flex items-start', rootClasses.value));
 const renderedInputClasses = computed(() =>

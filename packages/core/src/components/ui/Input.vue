@@ -1,6 +1,6 @@
 <template>
     <HeadlessInput
-        ref="$input"
+        ref="$inputRef"
         :label="label"
         :class="rootClasses"
         v-bind="props"
@@ -38,7 +38,7 @@ defineEmits<InputEmits>();
 const { label, inputClass, wrapperClass, ...props } = defineProps<
     InputProps & { inputClass?: HTMLAttributes['class']; wrapperClass?: HTMLAttributes['class'] }
 >();
-const $input = useTemplateRef('$input');
+const $input = useTemplateRef('$inputRef');
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedWrapperClasses = computed(() =>
     classes('relative rounded-md shadow-2xs', { 'mt-1': label }, wrapperClass));
