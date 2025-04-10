@@ -5,4 +5,5 @@ export * from './composition/hooks';
 export * from './composition/persistent';
 export * from './composition/state';
 export * from './markdown';
+export * from './types';
 export * from './vue';

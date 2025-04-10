@@ -16,14 +16,15 @@ import { computed, onUnmounted, ref, watch } from 'vue';
 
 import { classes } from '@aerogel/core/utils/classes';
 import type Job from '@aerogel/core/jobs/Job';
+import type { Falsifiable } from '@aerogel/core/utils';
 
 const { filledClass, progress, job } = defineProps<{
     filledClass?: string;
     progress?: number;
-    job?: Job;
+    job?: Falsifiable<Job>;
 }>();
 
-let cleanup: Function | undefined;
+let cleanup: Falsifiable<Function>;
 const jobProgress = ref(0);
 const filledClasses = computed(() =>
     classes('size-full transition-transform duration-500 rounded-r-full ease-linear bg-primary', filledClass));
@@ -38,13 +39,13 @@ const renderedProgress = computed(() => {
 watch(
     () => job,
     () => {
-        cleanup?.();
+        cleanup && cleanup();
 
-        jobProgress.value = job?.progress ?? 0;
-        cleanup = job?.listeners.add({ onUpdated: (value) => (jobProgress.value = value) });
+        jobProgress.value = job ? job.progress : 0;
+        cleanup = job && job.listeners.add({ onUpdated: (value) => (jobProgress.value = value) });
     },
     { immediate: true },
 );
 
-onUnmounted(() => cleanup?.());
+onUnmounted(() => cleanup && cleanup());
 </script>

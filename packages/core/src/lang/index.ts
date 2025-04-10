@@ -18,7 +18,8 @@ export default definePlugin({
     async install(app) {
         app.config.globalProperties.$t ??= translate;
         app.config.globalProperties.$td = translateWithDefault;
-        App.settings.push(...settings);
+
+        settings.forEach((setting) => App.addSetting(setting));
 
         await bootServices(app, services);
     },

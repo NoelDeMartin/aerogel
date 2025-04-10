@@ -2,11 +2,10 @@
     <HeadlessModal
         v-slot="{ close }"
         v-bind="props"
-        ref="$modalRef"
+        :ref="($modal) => forwardRef($modal as HeadlessModalInstance)"
         :persistent
     >
-        <HeadlessModalOverlay class="fixed inset-0 bg-gray-500/75" />
-
+        <HeadlessModalOverlay class="fixed inset-0 bg-black/30" />
         <HeadlessModalContent :class="renderedWrapperClass">
             <div v-if="!persistent && dismissable" class="absolute top-0 right-0 hidden pt-1.5 pr-1.5 sm:block">
                 <Button variant="ghost" size="icon" @click="close()">
@@ -33,8 +32,10 @@
 <script setup lang="ts">
 import IconClose from '~icons/zondicons/close';
 
-import { computed, useTemplateRef } from 'vue';
-import type { HTMLAttributes } from 'vue';
+import { computed } from 'vue';
+import { useForwardExpose } from 'reka-ui';
+import type { HTMLAttributes, Ref } from 'vue';
+import type { Nullable } from '@noeldemartin/utils';
 
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
@@ -45,6 +46,9 @@ import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModa
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
 import { classes } from '@aerogel/core/utils/classes';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
+import type { AcceptRefs } from '@aerogel/core/utils';
+
+type HeadlessModalInstance = InstanceType<typeof HeadlessModal>;
 
 const {
     class: contentClass = '',
@@ -61,7 +65,13 @@ const {
     }
 >();
 
-const $modal = useTemplateRef('$modalRef');
+defineExpose<AcceptRefs<ModalExpose>>({
+    close: async (result) => $modal.value?.close(result),
+    $content: computed(() => $modal.value?.$content),
+});
+
+const { forwardRef, currentRef } = useForwardExpose<HeadlessModalInstance>();
+const $modal = currentRef as Ref<Nullable<HeadlessModalInstance>>;
 const renderedContentClass = computed(() => classes({ 'mt-2': title }, contentClass));
 const renderedWrapperClass = computed(() =>
     classes(
@@ -71,5 +81,4 @@ const renderedWrapperClass = computed(() =>
     ));
 
 defineSlots<ModalSlots>();
-defineExpose<ModalExpose>({ close: async () => $modal.value?.close() });
 </script>

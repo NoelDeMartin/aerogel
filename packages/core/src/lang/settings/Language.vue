@@ -16,7 +16,7 @@
                 class="mt-1 text-sm text-gray-500"
             />
         </div>
-        <Button variant="ghost" :as="SelectTrigger" class="w-auto outline-none" />
+        <Button variant="ghost" :as="SelectTrigger" class="grid w-auto outline-none" />
         <SelectOptions />
     </Select>
 </template>

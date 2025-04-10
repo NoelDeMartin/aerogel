@@ -54,7 +54,7 @@ export default definePlugin({
         };
 
         app.use(getPiniaStore());
-        App.settings.push(...(options.settings ?? []));
+        options.settings?.forEach((setting) => App.addSetting(setting));
 
         await bootServices(app, services);
     },

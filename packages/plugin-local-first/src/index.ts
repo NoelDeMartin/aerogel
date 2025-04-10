@@ -18,7 +18,7 @@ export default function localFirst(): Plugin {
     return {
         name: '@aerogel/local-first',
         async install(app) {
-            App.settings.push(...settings);
+            settings.forEach((setting) => App.addSetting(setting));
 
             await bootServices(app, {
                 ...services,
