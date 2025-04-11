@@ -43,17 +43,30 @@ export default class I18nLangProvider implements LangProvider {
         return this.messages.getLocales();
     }
 
-    public translate(key: string, parameters?: Record<string, unknown>): string {
-        return this.i18n.t(key, parameters ?? {});
+    public translate(key: string, parameters?: Record<string, unknown> | number): string {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return this.i18n.t(key, (parameters as any) ?? {});
     }
 
-    public translateWithDefault(key: string, defaultMessage: string, parameters?: Record<string, unknown>): string {
-        const message = this.i18n.t(key, parameters ?? {}, { missingWarn: false });
+    public translateWithDefault(
+        key: string,
+        defaultMessage: string,
+        parameters?: Record<string, unknown> | number,
+    ): string {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const message = this.i18n.t(key, (parameters as any) ?? {}, { missingWarn: false });
 
         return message === key ? this.replaceParameters(defaultMessage, parameters) : message;
     }
 
-    private replaceParameters(message: string, parameters: Record<string, unknown> = {}): string {
+    private replaceParameters(message: string, parameters: Record<string, unknown> | number = {}): string {
+        if (typeof parameters === 'number') {
+            const plurals = message.split('|').map((plural) => plural.trim());
+            const pluralMessage = plurals[parameters] ?? plurals[2] ?? message;
+
+            return this.replaceParameters(pluralMessage, { n: parameters });
+        }
+
         return Object.entries(parameters).reduce((text, [name, value]) => {
             return text.replace(new RegExp(`\\{.*${name}[^}]*\\}`), toString(value));
         }, message);
