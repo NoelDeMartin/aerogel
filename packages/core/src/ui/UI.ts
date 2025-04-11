@@ -19,7 +19,7 @@ import type { ModalComponent, UIModal, UIToast } from './UI.state';
 
 interface ModalCallbacks<T = unknown> {
     willClose(result: T | undefined): void;
-    closed(result: T | undefined): void;
+    hasClosed(result: T | undefined): void;
 }
 
 type ModalProperties<TComponent> = TComponent extends ModalComponent<infer TProperties, unknown> ? TProperties : never;
@@ -274,12 +274,12 @@ export class UIService extends Service {
         const callbacks: Partial<ModalCallbacks<ModalResult<TModalComponent>>> = {};
         const modal: UIModal<ModalResult<TModalComponent>> = {
             id,
+            closing: false,
             properties: properties ?? {},
             component: markRaw(component),
             beforeClose: new Promise((resolve) => (callbacks.willClose = resolve)),
-            afterClose: new Promise((resolve) => (callbacks.closed = resolve)),
+            afterClose: new Promise((resolve) => (callbacks.hasClosed = resolve)),
         };
-        const activeModal = this.modals.at(-1);
         const modals = this.modals.concat(modal);
 
         this.modalCallbacks[modal.id] = callbacks;
@@ -287,11 +287,6 @@ export class UIService extends Service {
         this.setState({ modals });
 
         await nextTick();
-        await (activeModal && Events.emit('hide-modal', { id: activeModal.id }));
-        await Promise.all([
-            activeModal || Events.emit('show-overlays-backdrop'),
-            Events.emit('show-modal', { id: modal.id }),
-        ]);
 
         return modal;
     }
@@ -324,25 +319,23 @@ export class UIService extends Service {
             this.modals.filter((m) => m.id !== id),
         );
 
-        this.modalCallbacks[id]?.closed?.(result);
+        this.modalCallbacks[id]?.hasClosed?.(result);
 
         delete this.modalCallbacks[id];
-
-        const activeModal = this.modals.at(-1);
-
-        await (activeModal && Events.emit('show-modal', { id: activeModal.id }));
     }
 
     private watchModalEvents(): void {
-        Events.on('modal-will-close', ({ modal, result }) => {
-            this.modalCallbacks[modal.id]?.willClose?.(result);
+        Events.on('modal-will-close', ({ modal: { id }, result }) => {
+            const modal = this.modals.find((_modal) => id === _modal.id);
 
-            if (this.modals.length === 1) {
-                Events.emit('hide-overlays-backdrop');
+            if (modal) {
+                modal.closing = true;
             }
+
+            this.modalCallbacks[id]?.willClose?.(result);
         });
 
-        Events.on('modal-closed', async ({ modal: { id }, result }) => {
+        Events.on('modal-has-closed', async ({ modal: { id }, result }) => {
             await this.removeModal(id, result);
         });
     }
@@ -386,11 +379,7 @@ export default facade(UIService);
 declare module '@aerogel/core/services/Events' {
     export interface EventsPayload {
         'close-modal': { id: string; result?: unknown };
-        'hide-modal': { id: string };
-        'hide-overlays-backdrop': void;
-        'modal-closed': { modal: UIModal; result?: unknown };
         'modal-will-close': { modal: UIModal; result?: unknown };
-        'show-modal': { id: string };
-        'show-overlays-backdrop': void;
+        'modal-has-closed': { modal: UIModal; result?: unknown };
     }
 }

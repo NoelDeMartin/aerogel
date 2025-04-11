@@ -8,6 +8,7 @@ export interface UIModal<T = unknown> {
     id: string;
     properties: Record<string, unknown>;
     component: Component;
+    closing: boolean;
     beforeClose: Promise<T | undefined>;
     afterClose: Promise<T | undefined>;
 }
@@ -38,7 +39,8 @@ export default defineServiceState({
         layout: getCurrentLayout(),
     },
     computed: {
-        mobile: ({ layout }) => layout === Layouts.Mobile,
         desktop: ({ layout }) => layout === Layouts.Desktop,
+        mobile: ({ layout }) => layout === Layouts.Mobile,
+        openModals: ({ modals }) => modals.filter(({ closing }) => !closing),
     },
 });

@@ -30,8 +30,7 @@ defineProps<ModalProps>();
 defineSlots<ModalSlots>();
 defineExpose<AcceptRefs<ModalExpose>>({ close, $content });
 
-const { forwardRef, currentElement } = useForwardExpose();
-const hidden = ref(true);
+const { forwardRef } = useForwardExpose();
 const closed = ref(false);
 
 provide('$modalContentRef', $content);
@@ -44,49 +43,15 @@ useEvent('close-modal', async ({ id, result }) => {
     await close(result);
 });
 
-useEvent('hide-modal', async ({ id }) => {
-    if (id !== modal.id) {
-        return;
-    }
-
-    await hide();
-});
-
-useEvent('show-modal', async ({ id }) => {
-    if (id !== modal.id) {
-        return;
-    }
-
-    await show();
-});
-
-async function hide(): Promise<void> {
-    if (!currentElement.value) {
-        return;
-    }
-
-    hidden.value = true;
-}
-
-async function show(): Promise<void> {
-    if (!currentElement.value) {
-        return;
-    }
-
-    hidden.value = false;
-}
-
 async function close(result?: unknown) {
     if (closed.value) {
         return;
     }
 
-    Events.emit('modal-will-close', { modal, result });
-
-    await hide();
+    await Events.emit('modal-will-close', { modal, result });
 
     closed.value = true;
 
-    Events.emit('modal-closed', { modal, result });
+    await Events.emit('modal-has-closed', { modal, result });
 }
 </script>

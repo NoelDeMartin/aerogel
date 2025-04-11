@@ -1,6 +1,26 @@
 @import '@aerogel/core/index.css';
+@import '@aerogel/plugin-solid/index.css';
+@import '@aerogel/plugin-local-first/index.css';
 @import '../fonts/ubuntu.css' layer(base);
 
 :root {
     --color-primary: oklch(62.3% 0.214 259.815);
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes grow {
+    0% {
+        scale: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
