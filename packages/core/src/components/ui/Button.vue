@@ -79,7 +79,7 @@ const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size'
             {
                 variant: 'danger',
                 disabled: false,
-                class: 'hover:bg-red-50',
+                class: 'hover:bg-red-500',
             },
             {
                 variant: 'link',
