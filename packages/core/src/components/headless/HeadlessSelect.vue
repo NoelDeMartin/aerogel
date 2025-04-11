@@ -1,5 +1,10 @@
 <template>
-    <SelectRoot v-slot="{ open }" :model-value="acceptableValue" @update:model-value="update($event)">
+    <SelectRoot
+        v-slot="{ open }"
+        :model-value="acceptableValue"
+        :by="(a, b) => a === b"
+        @update:model-value="update($event)"
+    >
         <component :is="as" v-bind="$attrs">
             <slot :model-value :open>
                 <HeadlessSelectTrigger />
