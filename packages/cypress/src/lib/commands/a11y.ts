@@ -1,3 +1,5 @@
+import { uuid } from '@noeldemartin/utils';
+
 export type SeeOptions = Partial<
     Cypress.Timeoutable & {
         srOnly: boolean;
@@ -26,15 +28,27 @@ export function see<E extends Node = HTMLElement>(
     selectorOrOptions: string | SeeOptions = {},
     options: SeeOptions = {},
 ): Cypress.Chainable<JQuery<E>> {
+    const id = uuid();
     const { srOnly, ...baseOptions } = typeof selectorOrOptions === 'string' ? options : selectorOrOptions;
-    const element =
-        typeof selectorOrOptions === 'string'
-            ? cy.contains<E>(selectorOrOptions, text, baseOptions)
-            : cy.a11yGet(text, baseOptions);
 
-    return srOnly ? element.should('exist') : element.scrollIntoView().should('be.visible');
+    if (typeof selectorOrOptions === 'string') {
+        cy.contains<E>(selectorOrOptions, text, baseOptions).as(id);
+    } else {
+        cy.a11yGet(text, baseOptions).as(id);
+    }
+
+    if (srOnly) {
+        return cy.get<E>(`@${id}`).should('exist');
+    }
+
+    cy.get(`@${id}`).scrollIntoView();
+
+    return cy.get<E>(`@${id}`).should('be.visible');
 }
 
 export function seeImage(text: string): void {
-    cy.get(`img[alt="${text}"]`).scrollIntoView().should('be.visible');
+    const id = uuid();
+
+    cy.get(`img[alt="${text}"]`).as(id).scrollIntoView();
+    cy.get(`@${id}`).should('be.visible');
 }
