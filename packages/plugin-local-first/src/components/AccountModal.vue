@@ -1,5 +1,10 @@
 <template>
-    <Modal ref="$modalRef" :dismissable="false">
+    <Modal
+        ref="$modalRef"
+        title-hidden
+        :dismissable="false"
+        :title="$td('account.title', 'Account')"
+    >
         <div class="relative flex items-center rounded-md bg-gray-100 p-4 pr-12">
             <SolidAvatar class="mr-2 size-16 shrink-0" />
             <div class="flex flex-col overflow-hidden">
@@ -94,7 +99,7 @@
                                     :aria-label="
                                         $td('cloud.advanced.pollingMinutes', 'Synchronization interval (in minutes)')
                                     "
-                                    class="focus-within:border-primary mx-1 -mb-px border-b"
+                                    class="focus-within:border-primary-600 mx-1 -mb-px border-b"
                                     @update="$cloud.pollingMinutes = $event as number"
                                 >
                                     {{ $cloud.pollingMinutes }}
@@ -151,6 +156,7 @@ import IconWarning from '~icons/ion/warning';
 import {
     AdvancedOptions,
     Button,
+    Checkbox,
     EditableContent,
     Link,
     Markdown,

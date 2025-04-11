@@ -1,17 +1,25 @@
 @import 'tailwindcss';
 
-@source './';
-@source '../../plugin-local-first/src';
-@source '../../plugin-solid/src';
-
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+@source './';
+
 @theme {
     --color-background: oklch(1 0 0);
+
     --color-primary: oklch(0.205 0 0);
-    --color-danger: oklch(0.577 0.245 27.325);
-    --color-accent: oklch(0.97 0 0);
+    --color-primary-50: color-mix(in_oklab, var(--color-primary-600) 5%, transparent);
+    --color-primary-100: color-mix(in_oklab, var(--color-primary-600) 15%, transparent);
+    --color-primary-200: color-mix(in_oklab, var(--color-primary-600) 30%, transparent);
+    --color-primary-300: color-mix(in_oklab, var(--color-primary-600) 50%, transparent);
+    --color-primary-400: color-mix(in_oklab, var(--color-primary-600) 65%, transparent);
+    --color-primary-500: color-mix(in_oklab, var(--color-primary-600) 80%, transparent);
+    --color-primary-600: var(--color-primary);
+    --color-primary-700: color-mix(in_oklab, var(--color-primary-600) 90%, black);
+    --color-primary-800: color-mix(in_oklab, var(--color-primary-600) 80%, black);
+    --color-primary-900: color-mix(in_oklab, var(--color-primary-600) 70%, black);
+    --color-primary-950: color-mix(in_oklab, var(--color-primary-600) 50%, black);
 }
 
 .clickable {

@@ -12,7 +12,7 @@
             :job
             class="min-w-[min(400px,80vw)]"
         />
-        <IconSpinner v-else class="text-primary mr-1 size-6" />
+        <IconSpinner v-else class="text-primary-600 mr-1 size-6" />
         <Markdown :text="renderedMessage" />
     </Modal>
 </template>

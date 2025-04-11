@@ -5,6 +5,7 @@
     "sideEffects": false,
     "exports": {
         "types": "./dist/aerogel-plugin-local-first.d.ts",
+        "style": "./src/index.css",
         "default": "./dist/aerogel-plugin-local-first.js"
     },
     "files": [

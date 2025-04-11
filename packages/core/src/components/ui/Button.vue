@@ -20,12 +20,12 @@ const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size'
         baseClasses: 'flex items-center justify-center gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         variants: {
             variant: {
-                default: 'bg-primary text-white focus-visible:outline-primary',
+                default: 'bg-primary-600 text-white focus-visible:outline-primary-600',
                 secondary: 'bg-background text-gray-900 ring-gray-300',
-                danger: 'bg-danger text-white focus-visible:outline-danger',
+                danger: 'bg-red-600 text-white focus-visible:outline-red-600',
                 ghost: 'bg-transparent',
-                outline: 'bg-transparent text-primary ring-primary',
-                link: 'text-primary',
+                outline: 'bg-transparent text-primary-600 ring-primary-600',
+                link: 'text-primary-600',
             },
             size: {
                 small: 'text-xs',
@@ -69,17 +69,17 @@ const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size'
             {
                 variant: 'default',
                 disabled: false,
-                class: 'hover:bg-primary/90',
+                class: 'hover:bg-primary-500',
             },
             {
                 variant: ['secondary', 'ghost', 'outline'],
                 disabled: false,
-                class: 'hover:bg-accent',
+                class: 'hover:bg-gray-50',
             },
             {
                 variant: 'danger',
                 disabled: false,
-                class: 'hover:bg-danger/80',
+                class: 'hover:bg-red-50',
             },
             {
                 variant: 'link',

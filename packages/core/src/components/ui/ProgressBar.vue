@@ -27,7 +27,7 @@ const { filledClass, progress, job } = defineProps<{
 let cleanup: Falsifiable<Function>;
 const jobProgress = ref(0);
 const filledClasses = computed(() =>
-    classes('size-full transition-transform duration-500 rounded-r-full ease-linear bg-primary', filledClass));
+    classes('size-full transition-transform duration-500 rounded-r-full ease-linear bg-primary-600', filledClass));
 const renderedProgress = computed(() => {
     if (typeof progress === 'number') {
         return progress;
