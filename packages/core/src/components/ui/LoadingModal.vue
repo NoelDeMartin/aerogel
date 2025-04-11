@@ -3,7 +3,8 @@
         persistent
         class="flex"
         wrapper-class="w-auto"
-        :title
+        :title="renderedTitle"
+        :title-hidden
         :class="{ 'flex-col-reverse': showProgress, 'items-center justify-center gap-2': !showProgress }"
     >
         <ProgressBar
@@ -27,6 +28,5 @@ import { useLoadingModal } from '@aerogel/core/components/contracts/LoadingModal
 import type { LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
 
 const props = defineProps<LoadingModalProps>();
-
-const { renderedMessage, showProgress } = useLoadingModal(props);
+const { renderedTitle, renderedMessage, titleHidden, showProgress } = useLoadingModal(props);
 </script>

@@ -6,7 +6,9 @@ export type ModalContentInstance = Nullable<InstanceType<typeof DialogContent>>;
 export interface ModalProps {
     persistent?: boolean;
     title?: string;
+    titleHidden?: boolean;
     description?: string;
+    descriptionHidden?: boolean;
 }
 
 export interface ModalSlots {

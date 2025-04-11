@@ -20,6 +20,11 @@ import type { UIModalContext } from '@aerogel/core/ui/UI.state';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 const $content = ref<Nullable<InstanceType<typeof DialogContent>>>(null);
+const { modal } = injectReactiveOrFail<UIModalContext>(
+    'modal',
+    'could not obtain modal reference from <HeadlessModal>, ' +
+        'did you render this component manually? Show it using $ui.openModal() instead',
+);
 
 defineProps<ModalProps>();
 defineSlots<ModalSlots>();
@@ -28,11 +33,6 @@ defineExpose<AcceptRefs<ModalExpose>>({ close, $content });
 const { forwardRef, currentElement } = useForwardExpose();
 const hidden = ref(true);
 const closed = ref(false);
-const { modal } = injectReactiveOrFail<UIModalContext>(
-    'modal',
-    'could not obtain modal reference from <HeadlessModal>, ' +
-        'did you render this component manually? Show it using $ui.openModal() instead',
-);
 
 provide('$modalContentRef', $content);
 

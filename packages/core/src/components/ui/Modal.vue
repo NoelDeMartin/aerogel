@@ -6,7 +6,7 @@
         :persistent
     >
         <HeadlessModalOverlay class="fixed inset-0 bg-black/30" />
-        <HeadlessModalContent :class="renderedWrapperClass">
+        <HeadlessModalContent v-bind="contentProps" :class="renderedWrapperClass">
             <div v-if="!persistent && dismissable" class="absolute top-0 right-0 hidden pt-1.5 pr-1.5 sm:block">
                 <Button variant="ghost" size="icon" @click="close()">
                     <span class="sr-only">{{ $td('ui.close', 'Close') }}</span>
@@ -14,11 +14,15 @@
                 </Button>
             </div>
 
-            <HeadlessModalTitle v-if="title" class="text-base font-semibold text-gray-900">
+            <HeadlessModalTitle
+                v-if="title"
+                class="text-base font-semibold text-gray-900"
+                :class="{ 'sr-only': titleHidden }"
+            >
                 <Markdown :text="title" inline />
             </HeadlessModalTitle>
 
-            <HeadlessModalDescription v-if="description">
+            <HeadlessModalDescription v-if="description" :class="{ 'sr-only': descriptionHidden }">
                 <Markdown :text="description" class="mt-1 text-sm leading-6 text-gray-500" />
             </HeadlessModalDescription>
 
@@ -55,6 +59,8 @@ const {
     dismissable = true,
     wrapperClass = '',
     title,
+    titleHidden,
+    description,
     persistent,
     ...props
 } = defineProps<
@@ -72,7 +78,8 @@ defineExpose<AcceptRefs<ModalExpose>>({
 
 const { forwardRef, currentRef } = useForwardExpose<HeadlessModalInstance>();
 const $modal = currentRef as Ref<Nullable<HeadlessModalInstance>>;
-const renderedContentClass = computed(() => classes({ 'mt-2': title }, contentClass));
+const contentProps = computed(() => (description ? {} : { 'aria-describedby': undefined }));
+const renderedContentClass = computed(() => classes({ 'mt-2': title && !titleHidden }, contentClass));
 const renderedWrapperClass = computed(() =>
     classes(
         // eslint-disable-next-line vue/max-len

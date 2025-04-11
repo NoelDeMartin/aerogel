@@ -11,8 +11,12 @@ export interface LoadingModalProps {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useLoadingModal(props: LoadingModalProps) {
-    const renderedMessage = computed(() => props.message ?? translateWithDefault('ui.loading', 'Loading...'));
+    const renderedTitle = computed(() => props.title ?? translateWithDefault('ui.loading', 'Loading'));
+    const renderedMessage = computed(
+        () => props.message ?? translateWithDefault('ui.loadingInProgress', 'Loading in progress...'),
+    );
     const showProgress = computed(() => typeof props.progress === 'number' || !!props.job);
+    const titleHidden = computed(() => !props.title);
 
-    return { renderedMessage, showProgress };
+    return { renderedTitle, renderedMessage, titleHidden, showProgress };
 }
