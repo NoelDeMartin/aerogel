@@ -2,6 +2,8 @@ import type { AcceptableValue, AsTag, SelectContentProps } from 'reka-ui';
 import type { Component, ComputedRef, HTMLAttributes } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
+import type { FormFieldValue } from '@aerogel/core/forms';
+
 import type { InputEmits, InputExpose, InputProps } from './Input';
 
 export type SelectOptionData = {
@@ -14,22 +16,20 @@ export interface HasSelectOptionLabel {
     label: string | (() => string);
 }
 
-export interface SelectProps extends InputProps {
+export interface SelectProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputProps<T> {
     as?: AsTag | Component;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    options?: any[];
+    options?: T[];
     placeholder?: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    renderOption?: (option: any) => string;
+    renderOption?: (option: T) => string;
     labelClass?: HTMLAttributes['class'];
     optionsClass?: HTMLAttributes['class'];
     align?: SelectContentProps['align'];
     side?: SelectContentProps['side'];
 }
 
-export interface SelectEmits extends InputEmits {}
+export interface SelectEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputEmits<T> {}
 
-export interface SelectExpose extends InputExpose {
+export interface SelectExpose<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputExpose<T> {
     options: ComputedRef<Nullable<SelectOptionData[]>>;
     selectedOption: ComputedRef<Nullable<SelectOptionData>>;
     placeholder: ComputedRef<string>;

@@ -14,11 +14,12 @@
     </SelectRoot>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
 import { computed, inject, provide, readonly } from 'vue';
 import { value as evaluate, toString, uuid } from '@noeldemartin/utils';
 import { SelectRoot } from 'reka-ui';
 import type { AcceptableValue } from 'reka-ui';
+import type { Nullable } from '@noeldemartin/utils';
 
 import { translateWithDefault } from '@aerogel/core/lang';
 import { hasSelectOptionLabel } from '@aerogel/core/components/contracts/Select';
@@ -44,15 +45,15 @@ const {
     modelValue,
     align,
     side,
-} = defineProps<SelectProps>();
-const emit = defineEmits<SelectEmits>();
+} = defineProps<SelectProps<T>>();
+const emit = defineEmits<SelectEmits<T>>();
 const form = inject<FormController | null>('form', null);
 const computedValue = computed(() => {
     if (form && name) {
-        return form.getFieldValue(name);
+        return form.getFieldValue(name) as T;
     }
 
-    return modelValue;
+    return modelValue as T;
 });
 const acceptableValue = computed(() => computedValue.value as AcceptableValue);
 const errors = computed(() => {
@@ -107,10 +108,10 @@ const expose = {
 
         emit('update:modelValue', value);
     },
-} satisfies SelectExpose;
+} satisfies SelectExpose<T>;
 
 function update(value: AcceptableValue) {
-    expose.update(value as FormFieldValue);
+    expose.update(value as T);
 }
 
 provide('select', expose);

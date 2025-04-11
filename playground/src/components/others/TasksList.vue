@@ -32,15 +32,15 @@
     </Form>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends ITask">
 import { requiredStringInput, useForm } from '@aerogel/core';
 
 import type ITask from '@/models/ITask';
 
-defineProps<{ tasks: ITask[] }>();
+defineProps<{ tasks: T[] }>();
 defineEmits<{
     create: [value: string];
-    delete: [task: ITask];
+    delete: [task: T];
 }>();
 
 const form = useForm({ draft: requiredStringInput() });

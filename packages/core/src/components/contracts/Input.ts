@@ -3,24 +3,24 @@ import type { Nullable } from '@noeldemartin/utils';
 
 import type { FormFieldValue } from '@aerogel/core/forms';
 
-export interface InputProps {
+export interface InputProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
     name?: string;
     label?: string;
     description?: string;
-    modelValue?: Nullable<FormFieldValue>;
+    modelValue?: T;
 }
 
-export interface InputEmits {
-    'update:modelValue': [value: Nullable<FormFieldValue>];
+export interface InputEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
+    'update:modelValue': [value: T];
 }
 
-export interface InputExpose {
+export interface InputExpose<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
     id: string;
     name: ComputedRef<Nullable<string>>;
     label: ComputedRef<Nullable<string>>;
     description: ComputedRef<Nullable<string | boolean>>;
-    value: ComputedRef<Nullable<FormFieldValue>>;
+    value: ComputedRef<T>;
     required: ComputedRef<Nullable<boolean>>;
     errors: DeepReadonly<Ref<Nullable<string[]>>>;
-    update(value: Nullable<FormFieldValue>): void;
+    update(value: T): void;
 }
