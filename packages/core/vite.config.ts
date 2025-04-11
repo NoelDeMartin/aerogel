@@ -25,7 +25,6 @@ export default defineConfig({
                 'tailwind-merge',
                 'virtual:aerogel',
                 'vue',
-                'vue-router',
             ],
         },
     },

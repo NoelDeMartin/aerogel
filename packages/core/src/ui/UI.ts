@@ -34,6 +34,7 @@ export const UIComponents = {
     PromptModal: 'prompt-modal',
     Toast: 'toast',
     StartupCrash: 'startup-crash',
+    RouterLink: 'router-link',
 } as const;
 
 export type UIComponent = ObjectValues<typeof UIComponents>;
@@ -80,8 +81,12 @@ export class UIService extends Service {
     private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Partial<Record<UIComponent, Component>> = {};
 
+    public resolveComponent(name: UIComponent): Component | null {
+        return this.components[name] ?? null;
+    }
+
     public requireComponent(name: UIComponent): Component {
-        return this.components[name] ?? fail(`UI Component '${name}' is not defined!`);
+        return this.resolveComponent(name) ?? fail(`UI Component '${name}' is not defined!`);
     }
 
     public alert(message: string): void;
