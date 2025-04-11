@@ -151,7 +151,7 @@
                 </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <Button @click="$events.emit('all-the-way-down')">
+                <Button @click="$events.emit('all-the-way-down', 1)">
                     {{ $t('components.modals_nested') }}
                 </Button>
             </div>
@@ -237,4 +237,10 @@ async function showLoadingWithProgress() {
 }
 
 useEvent('all-the-way-down', (count) => UI.openModal(NestedModal, { count }));
+
+declare module '@aerogel/core' {
+    interface EventsPayload {
+        'all-the-way-down': number;
+    }
+}
 </script>
