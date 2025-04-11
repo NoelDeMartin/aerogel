@@ -10,12 +10,12 @@ describe('Events', () => {
         // Arrange
         let counter = 0;
 
-        Events.on('trigger', () => counter++);
+        Events.on('application-mounted', () => counter++);
 
         // Act
-        await Events.emit('trigger');
-        await Events.emit('trigger');
-        await Events.emit('trigger');
+        await Events.emit('application-mounted');
+        await Events.emit('application-mounted');
+        await Events.emit('application-mounted');
 
         // Assert
         expect(counter).toEqual(3);
@@ -25,12 +25,12 @@ describe('Events', () => {
         // Arrange
         const storage: string[] = [];
 
-        Events.on('trigger', () => storage.push('second'));
-        Events.on('trigger', { priority: EventListenerPriorities.Low }, () => storage.push('third'));
-        Events.on('trigger', { priority: EventListenerPriorities.High }, () => storage.push('first'));
+        Events.on('application-mounted', () => storage.push('second'));
+        Events.on('application-mounted', { priority: EventListenerPriorities.Low }, () => storage.push('third'));
+        Events.on('application-mounted', { priority: EventListenerPriorities.High }, () => storage.push('first'));
 
         // Act
-        await Events.emit('trigger');
+        await Events.emit('application-mounted');
 
         // Assert
         expect(storage).toEqual(['first', 'second', 'third']);

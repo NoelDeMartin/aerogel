@@ -10,7 +10,6 @@ export type AerogelGlobalEvents = Partial<{ [Event in EventWithoutPayload]: () =
     Partial<{ [Event in EventWithPayload]: EventListener<EventsPayload[Event]> }>;
 
 export type EventListener<T = unknown> = (payload: T) => unknown;
-export type UnknownEvent<T> = T extends keyof EventsPayload ? never : T;
 
 export type EventWithoutPayload = {
     [K in keyof EventsPayload]: EventsPayload[K] extends void ? K : never;
@@ -34,12 +33,12 @@ export class EventsService extends Service {
 
     protected override async boot(): Promise<void> {
         Object.entries(globalThis.__aerogelEvents__ ?? {}).forEach(([event, listener]) =>
-            this.on(event as string, listener as EventListener));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            this.on(event as any, listener as EventListener));
     }
 
     public emit<Event extends EventWithoutPayload>(event: Event): Promise<void>;
     public emit<Event extends EventWithPayload>(event: Event, payload: EventsPayload[Event]): Promise<void>;
-    public emit<Event extends string>(event: UnknownEvent<Event>, payload?: unknown): Promise<void>;
     public async emit(event: string, payload?: unknown): Promise<void> {
         const listeners = this.listeners[event] ?? { priorities: [], handlers: {} };
 
@@ -55,9 +54,6 @@ export class EventsService extends Service {
     public on<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
     public on<Event extends EventWithPayload>(event: Event, priority: EventListenerPriority, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
     public on<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
-    public on<Event extends string>(event: UnknownEvent<Event>, listener: EventListener): () => void;
-    public on<Event extends string>(event: UnknownEvent<Event>, priority: EventListenerPriority, listener: EventListener): () => void; // prettier-ignore
-    public on<Event extends string>(event: UnknownEvent<Event>, options: Partial<EventListenerOptions>, listener: EventListener): () => void; // prettier-ignore
     /* eslint-enable max-len */
 
     public on(
@@ -83,8 +79,6 @@ export class EventsService extends Service {
     public once<Event extends EventWithoutPayload>(event: Event, options: Partial<EventListenerOptions>, listener: () => unknown): () => void; // prettier-ignore
     public once<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
     public once<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
-    public once<Event extends string>(event: UnknownEvent<Event>, listener: EventListener): () => void;
-    public once<Event extends string>(event: UnknownEvent<Event>, options: Partial<EventListenerOptions>, listener: EventListener): () => void; // prettier-ignore
     /* eslint-enable max-len */
 
     public once(
