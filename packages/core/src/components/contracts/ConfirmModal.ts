@@ -1,9 +1,10 @@
 import { computed } from 'vue';
 
 import { translateWithDefault } from '@aerogel/core/lang';
-import { FormFieldTypes, useForm } from '@aerogel/core/forms';
+import { FormFieldTypes } from '@aerogel/core/forms/FormController';
+import { useForm } from '@aerogel/core/utils/composition/forms';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
-import type { FormFieldDefinition } from '@aerogel/core/forms';
+import type { FormFieldDefinition } from '@aerogel/core/forms/FormController';
 
 export type ConfirmModalCheckboxes = Record<string, { label: string; default?: boolean; required?: boolean }>;
 

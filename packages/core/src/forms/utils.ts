@@ -51,6 +51,16 @@ export function requiredNumberInput(
     };
 }
 
+export function requiredObjectInput<T extends object>(
+    defaultValue?: T,
+): FormFieldDefinition<typeof FormFieldTypes.Object, 'required', T> {
+    return {
+        default: defaultValue,
+        type: FormFieldTypes.Object,
+        rules: 'required',
+    };
+}
+
 export function requiredStringInput(
     defaultValue?: string,
 ): FormFieldDefinition<typeof FormFieldTypes.String, 'required'> {
@@ -68,6 +78,17 @@ export function numberInput(
     return {
         default: defaultValue,
         type: FormFieldTypes.Number,
+        rules: options.rules,
+    };
+}
+
+export function objectInput<T extends object>(
+    defaultValue?: T,
+    options: { rules?: string } = {},
+): FormFieldDefinition<typeof FormFieldTypes.Object, string, T> {
+    return {
+        default: defaultValue,
+        type: FormFieldTypes.Object,
         rules: options.rules,
     };
 }

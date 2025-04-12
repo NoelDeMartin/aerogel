@@ -12,11 +12,18 @@ export const FormFieldTypes = {
     Date: 'date',
 } as const;
 
-export interface FormFieldDefinition<TType extends FormFieldType = FormFieldType, TRules extends string = string> {
+export const __objectType: unique symbol = Symbol();
+
+export interface FormFieldDefinition<
+    TType extends FormFieldType = FormFieldType,
+    TRules extends string = string,
+    TObjectType = object,
+> {
     type: TType;
     trim?: boolean;
     default?: GetFormFieldValue<TType>;
     rules?: TRules;
+    [__objectType]?: TObjectType;
 }
 
 export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
@@ -24,10 +31,10 @@ export type FormFieldType = ObjectValues<typeof FormFieldTypes>;
 export type FormFieldValue = GetFormFieldValue<FormFieldType>;
 
 export type FormData<T> = {
-    -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules>
+    -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules, infer TObjectType>
         ? TRules extends 'required'
-            ? GetFormFieldValue<TType>
-            : GetFormFieldValue<TType> | null
+            ? GetFormFieldValue<TType, TObjectType>
+            : GetFormFieldValue<TType, TObjectType> | null
         : never;
 };
 
@@ -35,14 +42,16 @@ export type FormErrors<T> = {
     [k in keyof T]: string[] | null;
 };
 
-export type GetFormFieldValue<TType> = TType extends typeof FormFieldTypes.String
+export type GetFormFieldValue<TType, TObjectType = object> = TType extends typeof FormFieldTypes.String
     ? string
     : TType extends typeof FormFieldTypes.Number
       ? number
       : TType extends typeof FormFieldTypes.Boolean
         ? boolean
         : TType extends typeof FormFieldTypes.Object
-          ? object
+          ? TObjectType extends object
+              ? TObjectType
+              : object
           : TType extends typeof FormFieldTypes.Date
             ? Date
             : never;

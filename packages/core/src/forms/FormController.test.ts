@@ -1,7 +1,16 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
+import { tt } from '@noeldemartin/testing';
+import type { Equals } from '@noeldemartin/utils';
+import type { Expect } from '@noeldemartin/testing';
 
-import { useForm } from '@aerogel/core/forms/composition';
-import { numberInput, requiredStringInput } from '@aerogel/core/forms/utils';
+import {
+    numberInput,
+    objectInput,
+    requiredObjectInput,
+    requiredStringInput,
+    stringInput,
+} from '@aerogel/core/forms/utils';
+import { useForm } from '@aerogel/core/utils/composition/forms';
 
 import { FormFieldTypes } from './FormController';
 
@@ -82,6 +91,22 @@ describe('FormController', () => {
         expect(form.trimmed).toEqual('');
         expect(form.untrimmed).toEqual('   ');
         expect(form.errors).toEqual({ trimmed: ['required'], untrimmed: null });
+    });
+
+    it('infers field types', () => {
+        const form = useForm({
+            one: stringInput(),
+            two: requiredStringInput(),
+            three: objectInput(),
+            four: requiredObjectInput<{ foo: string; bar?: number }>(),
+        });
+
+        tt<
+            | Expect<Equals<typeof form.one, string | null>>
+            | Expect<Equals<typeof form.two, string>>
+            | Expect<Equals<typeof form.three, object | null>>
+            | Expect<Equals<typeof form.four, { foo: string; bar?: number }>>
+        >();
     });
 
 });

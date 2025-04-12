@@ -1,6 +1,7 @@
 import { computed } from 'vue';
 
-import { requiredStringInput, useForm } from '@aerogel/core/forms';
+import { useForm } from '@aerogel/core/utils/composition/forms';
+import { requiredStringInput } from '@aerogel/core/forms/utils';
 import { translateWithDefault } from '@aerogel/core/lang';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 

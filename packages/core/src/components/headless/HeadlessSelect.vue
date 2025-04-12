@@ -2,7 +2,7 @@
     <SelectRoot
         v-slot="{ open }"
         :model-value="acceptableValue"
-        :by="(a, b) => a === b"
+        :by="compareOptions as Closure<[AcceptableValue, AcceptableValue], boolean>"
         @update:model-value="update($event)"
     >
         <component :is="as" v-bind="$attrs">
@@ -19,7 +19,7 @@ import { computed, inject, provide, readonly } from 'vue';
 import { value as evaluate, toString, uuid } from '@noeldemartin/utils';
 import { SelectRoot } from 'reka-ui';
 import type { AcceptableValue } from 'reka-ui';
-import type { Nullable } from '@noeldemartin/utils';
+import type { Closure, Nullable } from '@noeldemartin/utils';
 
 import { translateWithDefault } from '@aerogel/core/lang';
 import { hasSelectOptionLabel } from '@aerogel/core/components/contracts/Select';
@@ -40,6 +40,7 @@ const {
     labelClass,
     optionsClass,
     renderOption,
+    compareOptions = (a, b) => a === b,
     description,
     placeholder,
     modelValue,

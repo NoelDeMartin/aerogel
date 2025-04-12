@@ -21,6 +21,7 @@ export interface SelectProps<T extends Nullable<FormFieldValue> = Nullable<FormF
     options?: T[];
     placeholder?: string;
     renderOption?: (option: T) => string;
+    compareOptions?: (a: T, b: T) => boolean;
     labelClass?: HTMLAttributes['class'];
     optionsClass?: HTMLAttributes['class'];
     align?: SelectContentProps['align'];
