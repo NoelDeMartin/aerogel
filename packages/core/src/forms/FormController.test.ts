@@ -12,8 +12,6 @@ import {
 } from '@aerogel/core/forms/utils';
 import { useForm } from '@aerogel/core/utils/composition/forms';
 
-import { FormFieldTypes } from './FormController';
-
 describe('FormController', () => {
 
     it('defines magic fields', () => {
@@ -30,7 +28,7 @@ describe('FormController', () => {
         // Arrange
         const form = useForm({
             name: {
-                type: FormFieldTypes.String,
+                type: 'string',
                 rules: 'required',
             },
         });
@@ -48,7 +46,7 @@ describe('FormController', () => {
         // Arrange
         const form = useForm({
             name: {
-                type: FormFieldTypes.String,
+                type: 'string',
                 rules: 'required',
             },
         });
@@ -69,11 +67,11 @@ describe('FormController', () => {
         // Arrange
         const form = useForm({
             trimmed: {
-                type: FormFieldTypes.String,
+                type: 'string',
                 rules: 'required',
             },
             untrimmed: {
-                type: FormFieldTypes.String,
+                type: 'string',
                 rules: 'required',
                 trim: false,
             },

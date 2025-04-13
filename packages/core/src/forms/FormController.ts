@@ -1,16 +1,8 @@
 import { computed, nextTick, reactive, readonly, ref } from 'vue';
 import { MagicObject, arrayRemove, fail, toString } from '@noeldemartin/utils';
-import { validate } from './validation';
-import type { ObjectValues } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 
-export const FormFieldTypes = {
-    String: 'string',
-    Number: 'number',
-    Boolean: 'boolean',
-    Object: 'object',
-    Date: 'date',
-} as const;
+import { validate } from './validation';
 
 export const __objectType: unique symbol = Symbol();
 
@@ -26,9 +18,9 @@ export interface FormFieldDefinition<
     [__objectType]?: TObjectType;
 }
 
-export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
-export type FormFieldType = ObjectValues<typeof FormFieldTypes>;
+export type FormFieldType = 'string' | 'number' | 'boolean' | 'object' | 'date';
 export type FormFieldValue = GetFormFieldValue<FormFieldType>;
+export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
 
 export type FormData<T> = {
     -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules, infer TObjectType>
@@ -42,17 +34,17 @@ export type FormErrors<T> = {
     [k in keyof T]: string[] | null;
 };
 
-export type GetFormFieldValue<TType, TObjectType = object> = TType extends typeof FormFieldTypes.String
+export type GetFormFieldValue<TType, TObjectType = object> = TType extends 'string'
     ? string
-    : TType extends typeof FormFieldTypes.Number
+    : TType extends 'number'
       ? number
-      : TType extends typeof FormFieldTypes.Boolean
+      : TType extends 'boolean'
         ? boolean
-        : TType extends typeof FormFieldTypes.Object
+        : TType extends 'object'
           ? TObjectType extends object
               ? TObjectType
               : object
-          : TType extends typeof FormFieldTypes.Date
+          : TType extends 'date'
             ? Date
             : never;
 
@@ -100,7 +92,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
             this._fields[field] ?? fail<FormFieldDefinition>(`Trying to set undefined '${toString(field)}' field`);
 
         this._data[field] =
-            definition.type === FormFieldTypes.String && (definition.trim ?? true)
+            definition.type === 'string' && (definition.trim ?? true)
                 ? (toString(value).trim() as FormData<Fields>[T])
                 : value;
 

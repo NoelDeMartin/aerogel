@@ -1,7 +1,6 @@
 import { computed } from 'vue';
 
 import { translateWithDefault } from '@aerogel/core/lang';
-import { FormFieldTypes } from '@aerogel/core/forms/FormController';
 import { useForm } from '@aerogel/core/utils/composition/forms';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 import type { FormFieldDefinition } from '@aerogel/core/forms/FormController';
@@ -30,13 +29,13 @@ export function useConfirmModal(props: ConfirmModalProps) {
         Object.entries(props.checkboxes ?? {}).reduce(
             (values, [name, checkbox]) => ({
                 [name]: {
-                    type: FormFieldTypes.Boolean,
+                    type: 'boolean',
                     default: checkbox.default,
                     required: checkbox.required ? 'required' : undefined,
                 },
                 ...values,
             }),
-            {} as Record<string, FormFieldDefinition<typeof FormFieldTypes.Boolean>>,
+            {} as Record<string, FormFieldDefinition<'boolean'>>,
         ),
     );
 

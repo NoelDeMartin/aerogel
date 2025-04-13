@@ -1,83 +1,65 @@
-import { FormFieldTypes } from './FormController';
 import type { FormFieldDefinition } from './FormController';
 
-export function booleanInput(
-    defaultValue?: boolean,
-    options: { rules?: string } = {},
-): FormFieldDefinition<typeof FormFieldTypes.Boolean> {
+export function booleanInput(defaultValue?: boolean, options: { rules?: string } = {}): FormFieldDefinition<'boolean'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Boolean,
+        type: 'boolean',
         rules: options.rules,
     };
 }
 
-export function dateInput(
-    defaultValue?: Date,
-    options: { rules?: string } = {},
-): FormFieldDefinition<typeof FormFieldTypes.Date> {
+export function dateInput(defaultValue?: Date, options: { rules?: string } = {}): FormFieldDefinition<'date'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Date,
+        type: 'date',
         rules: options.rules,
     };
 }
 
-export function requiredBooleanInput(
-    defaultValue?: boolean,
-): FormFieldDefinition<typeof FormFieldTypes.Boolean, 'required'> {
+export function requiredBooleanInput(defaultValue?: boolean): FormFieldDefinition<'boolean', 'required'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Boolean,
+        type: 'boolean',
         rules: 'required',
     };
 }
 
-export function requiredDateInput(defaultValue?: Date): FormFieldDefinition<typeof FormFieldTypes.Date> {
+export function requiredDateInput(defaultValue?: Date): FormFieldDefinition<'date', 'required'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Date,
+        type: 'date',
         rules: 'required',
     };
 }
 
-export function requiredNumberInput(
-    defaultValue?: number,
-): FormFieldDefinition<typeof FormFieldTypes.Number, 'required'> {
+export function requiredNumberInput(defaultValue?: number): FormFieldDefinition<'number', 'required'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Number,
+        type: 'number',
         rules: 'required',
     };
 }
 
-export function requiredObjectInput<T extends object>(
-    defaultValue?: T,
-): FormFieldDefinition<typeof FormFieldTypes.Object, 'required', T> {
+export function requiredObjectInput<T extends object>(defaultValue?: T): FormFieldDefinition<'object', 'required', T> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Object,
+        type: 'object',
         rules: 'required',
     };
 }
 
-export function requiredStringInput(
-    defaultValue?: string,
-): FormFieldDefinition<typeof FormFieldTypes.String, 'required'> {
+export function requiredStringInput(defaultValue?: string): FormFieldDefinition<'string', 'required'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.String,
+        type: 'string',
         rules: 'required',
     };
 }
 
-export function numberInput(
-    defaultValue?: number,
-    options: { rules?: string } = {},
-): FormFieldDefinition<typeof FormFieldTypes.Number> {
+export function numberInput(defaultValue?: number, options: { rules?: string } = {}): FormFieldDefinition<'number'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Number,
+        type: 'number',
         rules: options.rules,
     };
 }
@@ -85,21 +67,18 @@ export function numberInput(
 export function objectInput<T extends object>(
     defaultValue?: T,
     options: { rules?: string } = {},
-): FormFieldDefinition<typeof FormFieldTypes.Object, string, T> {
+): FormFieldDefinition<'object', string, T> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.Object,
+        type: 'object',
         rules: options.rules,
     };
 }
 
-export function stringInput(
-    defaultValue?: string,
-    options: { rules?: string } = {},
-): FormFieldDefinition<typeof FormFieldTypes.String> {
+export function stringInput(defaultValue?: string, options: { rules?: string } = {}): FormFieldDefinition<'string'> {
     return {
         default: defaultValue,
-        type: FormFieldTypes.String,
+        type: 'string',
         rules: options.rules,
     };
 }
