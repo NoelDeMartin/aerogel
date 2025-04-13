@@ -45,7 +45,7 @@ describe('Solid', () => {
         cy.dontSee('Logging out');
         cy.visit('/solid');
         cy.dontSee('You are logged in');
-        cy.see('Login');
+        cy.see('Log in');
     });
 
 });

@@ -117,9 +117,6 @@ storage:
 
 solid:
     title: Solid
-    url: Login url
-    url_placeholder: https://...
-    login: Login
     welcome: You are logged in as [{name}]({url})!
     logout: logout
     previousSession: You were previously logged in at [{name}]({url}). Do you want to log in again?
