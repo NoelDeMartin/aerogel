@@ -1,6 +1,6 @@
 import Aerogel from 'virtual:aerogel';
 
-import { UI, UIComponents, bootServices } from '@aerogel/core';
+import { UI, bootServices } from '@aerogel/core';
 import { RouterLink, createRouter, createWebHistory } from 'vue-router';
 import type { Plugin } from '@aerogel/core';
 import type { RouteRecordRaw } from 'vue-router';
@@ -30,7 +30,7 @@ export default function routing(options: Options): Plugin {
                 history: createWebHistory(options.basePath ?? Aerogel.basePath),
             });
 
-            UI.registerComponent(UIComponents.RouterLink, RouterLink);
+            UI.registerComponent('router-link', RouterLink);
             Router.use(router, options);
             app.use(router);
 

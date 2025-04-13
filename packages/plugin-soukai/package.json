@@ -30,8 +30,8 @@
     },
     "devDependencies": {
         "@aerogel/core": "*",
-        "@aerogel/plugin-solid": "*",
-        "@aerogel/plugin-local-first": "*",
+        "@aerogel/plugin-local-first": "0.0.0-next.4acd5ba45cff8f2ad835a2f7ed8132dcb161865e",
+        "@aerogel/plugin-solid": "0.0.1-next.4acd5ba45cff8f2ad835a2f7ed8132dcb161865e",
         "@aerogel/vite": "*"
     },
     "eslintConfig": {
