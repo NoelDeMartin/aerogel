@@ -20,7 +20,7 @@ import type { ModalContentInstance } from '@aerogel/core/components/contracts/Mo
 const { childIndex = 0 } = injectReactiveOrFail<UIModalContext>(
     'modal',
     'could not obtain modal reference from <HeadlessModalContent>, ' +
-        'did you render this component manually? Show it using $ui.openModal() instead',
+        'did you render this component manually? Show it using $ui.modal() instead',
 );
 const $modalContentRef = injectOrFail<Ref<ModalContentInstance>>('$modalContentRef');
 const $content = useTemplateRef('$contentRef');

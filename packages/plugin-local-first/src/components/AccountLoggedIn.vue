@@ -5,7 +5,7 @@
             type="button"
             :aria-label="$td('account.open', 'Open account')"
             :title="$td('account.open', 'Open account')"
-            @click="$ui.openModal(AccountModal)"
+            @click="$ui.modal(AccountModal)"
         >
             <SolidAvatar class="size-full" />
             <div

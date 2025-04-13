@@ -119,7 +119,7 @@ export class UIService extends Service {
             };
         };
 
-        this.openModal(this.requireComponent('alert-modal'), getProperties());
+        this.modal(this.requireComponent('alert-modal'), getProperties());
     }
 
     /* eslint-disable max-len */
@@ -152,9 +152,7 @@ export class UIService extends Service {
         };
 
         const properties = getProperties();
-        const modal = await this.openModal(this.requireComponent('confirm-modal'), properties);
-        const result = await modal.beforeClose;
-
+        const result = await this.modalForm(this.requireComponent('confirm-modal'), properties);
         const confirmed = typeof result === 'object' ? result[0] : (result ?? false);
         const checkboxes =
             typeof result === 'object'
@@ -206,8 +204,7 @@ export class UIService extends Service {
             } as PromptModalProps;
         };
 
-        const modal = await this.openModal(this.requireComponent('prompt-modal'), getProperties());
-        const rawResult = await modal.beforeClose;
+        const rawResult = await this.modalForm(this.requireComponent('prompt-modal'), getProperties());
         const result = trim && typeof rawResult === 'string' ? rawResult?.trim() : rawResult;
 
         return result ?? null;
@@ -240,7 +237,7 @@ export class UIService extends Service {
         };
 
         const { operationPromise, props } = processArgs();
-        const modal = await this.openModal(this.requireComponent('loading-modal'), props);
+        const modal = await this.modal(this.requireComponent('loading-modal'), props);
 
         try {
             const result = await operationPromise;
@@ -264,16 +261,13 @@ export class UIService extends Service {
         this.setState('toasts', this.toasts.concat(toast));
     }
 
-    public openModal<T extends Component>(
+    public modal<T extends Component>(
         ...args: {} extends ComponentProps<T>
             ? [component: T, props?: AcceptRefs<ComponentProps<T>>]
             : [component: T, props: AcceptRefs<ComponentProps<T>>]
     ): Promise<UIModal<ModalResult<T>>>;
 
-    public async openModal<T extends Component>(
-        component: T,
-        props?: ComponentProps<T>,
-    ): Promise<UIModal<ModalResult<T>>> {
+    public async modal<T extends Component>(component: T, props?: ComponentProps<T>): Promise<UIModal<ModalResult<T>>> {
         const id = uuid();
         const callbacks: Partial<ModalCallbacks<ModalResult<T>>> = {};
         const modal: UIModal<ModalResult<T>> = {
@@ -293,6 +287,22 @@ export class UIService extends Service {
         await nextTick();
 
         return modal;
+    }
+
+    public modalForm<T extends Component>(
+        ...args: {} extends ComponentProps<T>
+            ? [component: T, props?: AcceptRefs<ComponentProps<T>>]
+            : [component: T, props: AcceptRefs<ComponentProps<T>>]
+    ): Promise<ModalResult<T> | undefined>;
+
+    public async modalForm<T extends Component>(
+        component: T,
+        props?: ComponentProps<T>,
+    ): Promise<ModalResult<T> | undefined> {
+        const modal = await this.modal<T>(component, props as ComponentProps<T>);
+        const result = await modal.beforeClose;
+
+        return result;
     }
 
     public async closeModal(id: string, result?: unknown): Promise<void> {

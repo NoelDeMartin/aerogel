@@ -31,7 +31,7 @@ export class ErrorsService extends Service {
             return;
         }
 
-        UI.openModal(UI.requireComponent('error-report-modal'), { reports });
+        UI.modal(UI.requireComponent('error-report-modal'), { reports });
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
@@ -75,7 +75,7 @@ export class ErrorsService extends Service {
                     {
                         label: translateWithDefault('errors.viewDetails', 'View details'),
                         dismiss: true,
-                        click: () => UI.openModal(UI.requireComponent('error-report-modal'), { reports: [report] }),
+                        click: () => UI.modal(UI.requireComponent('error-report-modal'), { reports: [report] }),
                     },
                 ],
             },

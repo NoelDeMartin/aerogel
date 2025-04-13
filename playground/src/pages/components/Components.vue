@@ -156,7 +156,7 @@
                 </Button>
             </div>
             <div class="mt-4 flex gap-2">
-                <Button @click="$ui.openModal(CustomModal)">
+                <Button @click="$ui.modal(CustomModal)">
                     {{ $t('components.modals_custom') }}
                 </Button>
             </div>
@@ -236,7 +236,7 @@ async function showLoadingWithProgress() {
     progress.value = 1;
 }
 
-useEvent('all-the-way-down', (count) => UI.openModal(NestedModal, { count }));
+useEvent('all-the-way-down', (count) => UI.modal(NestedModal, { count }));
 
 declare module '@aerogel/core' {
     interface EventsPayload {

@@ -2,8 +2,8 @@
     <DropdownMenu
         align="start"
         :options="[
-            { label: $td('user.logIn', 'Connect account'), click: () => $ui.openModal(AccountLoginModal) },
-            { label: $td('user.settings', 'Settings'), click: () => $ui.openModal(SettingsModal) },
+            { label: $td('user.logIn', 'Connect account'), click: () => $ui.modal(AccountLoginModal) },
+            { label: $td('user.settings', 'Settings'), click: () => $ui.modal(SettingsModal) },
         ]"
     >
         <Button

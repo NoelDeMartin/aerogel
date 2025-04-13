@@ -29,9 +29,7 @@ async function purgeData(): Promise<void> {
         {
             acceptVariant: 'danger',
             acceptText: translateWithDefault('settings.purgeConfirmAccept', 'Purge data'),
-            actions: {
-                connect: () => UI.openModal(AccountLoginModal),
-            },
+            actions: { connect: () => UI.modal(AccountLoginModal) },
         },
     );
 
