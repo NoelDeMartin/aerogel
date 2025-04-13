@@ -5,6 +5,8 @@ import { FormFieldTypes } from '@aerogel/core/forms/FormController';
 import { useForm } from '@aerogel/core/utils/composition/forms';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 import type { FormFieldDefinition } from '@aerogel/core/forms/FormController';
+import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
+import type { Nullable } from '@noeldemartin/utils';
 
 export type ConfirmModalCheckboxes = Record<string, { label: string; default?: boolean; required?: boolean }>;
 
@@ -20,6 +22,8 @@ export interface ConfirmModalProps {
     required?: boolean;
 }
 
+export interface ConfirmModalExpose extends ModalExpose<boolean | [boolean, Record<string, Nullable<boolean>>]> {}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useConfirmModal(props: ConfirmModalProps) {
     const form = useForm(
@@ -32,9 +36,10 @@ export function useConfirmModal(props: ConfirmModalProps) {
                 },
                 ...values,
             }),
-            {} as Record<string, FormFieldDefinition>,
+            {} as Record<string, FormFieldDefinition<typeof FormFieldTypes.Boolean>>,
         ),
     );
+
     const renderedAcceptText = computed(() => props.acceptText ?? translateWithDefault('ui.accept', 'Ok'));
     const renderedCancelText = computed(() => props.cancelText ?? translateWithDefault('ui.cancel', 'Cancel'));
 

@@ -1,4 +1,5 @@
 <template>
+    <!-- @vue-generic {T} -->
     <HeadlessModal
         v-slot="{ close }"
         v-bind="props"
@@ -43,13 +44,13 @@
     </HeadlessModal>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T = void">
 import IconClose from '~icons/zondicons/close';
 
 import { after } from '@noeldemartin/utils';
 import { computed } from 'vue';
 import { useForwardExpose } from 'reka-ui';
-import type { HTMLAttributes, Ref } from 'vue';
+import type { ComponentPublicInstance, HTMLAttributes, Ref } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
@@ -64,9 +65,9 @@ import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { useEvent } from '@aerogel/core/utils/composition/events';
 import type { AcceptRefs } from '@aerogel/core/utils/vue';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
-import type { UIModalContext } from '@aerogel/core/ui/UI.state';
+import type { UIModalContext } from '@aerogel/core/ui/UI';
 
-type HeadlessModalInstance = InstanceType<typeof HeadlessModal>;
+type HeadlessModalInstance = ComponentPublicInstance & ModalExpose<T>;
 
 const {
     class: contentClass = '',
@@ -85,8 +86,8 @@ const {
     }
 >();
 
-defineSlots<ModalSlots>();
-defineExpose<AcceptRefs<ModalExpose>>({
+defineSlots<ModalSlots<T>>();
+defineExpose<AcceptRefs<ModalExpose<T>>>({
     close: async (result) => $modal.value?.close(result),
     $content: computed(() => $modal.value?.$content),
 });

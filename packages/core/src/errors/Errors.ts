@@ -2,11 +2,9 @@ import { JSError, facade, isDevelopment, isObject, isTesting, objectWithoutEmpty
 
 import App from '@aerogel/core/services/App';
 import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
-import UI, { UIComponents } from '@aerogel/core/ui/UI';
+import UI from '@aerogel/core/ui/UI';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
 import { Events } from '@aerogel/core/services';
-import type { ErrorReportModalProps } from '@aerogel/core/components/contracts/ErrorReportModal';
-import type { ModalComponent } from '@aerogel/core/ui/UI.state';
 
 import Service from './Errors.state';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
@@ -33,9 +31,7 @@ export class ErrorsService extends Service {
             return;
         }
 
-        UI.openModal<ModalComponent<ErrorReportModalProps>>(UI.requireComponent(UIComponents.ErrorReportModal), {
-            reports,
-        });
+        UI.openModal(UI.requireComponent('error-report-modal'), { reports });
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
@@ -79,11 +75,7 @@ export class ErrorsService extends Service {
                     {
                         label: translateWithDefault('errors.viewDetails', 'View details'),
                         dismiss: true,
-                        click: () =>
-                            UI.openModal<ModalComponent<ErrorReportModalProps>>(
-                                UI.requireComponent(UIComponents.ErrorReportModal),
-                                { reports: [report] },
-                            ),
+                        click: () => UI.openModal(UI.requireComponent('error-report-modal'), { reports: [report] }),
                     },
                 ],
             },

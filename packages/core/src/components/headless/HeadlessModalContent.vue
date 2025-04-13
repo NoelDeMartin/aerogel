@@ -14,7 +14,7 @@ import type { Ref } from 'vue';
 import ModalContext from '@aerogel/core/components/ui/ModalContext.vue';
 import UI from '@aerogel/core/ui/UI';
 import { injectOrFail, injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { UIModalContext } from '@aerogel/core/ui/UI.state';
+import type { UIModalContext } from '@aerogel/core/ui/UI';
 import type { ModalContentInstance } from '@aerogel/core/components/contracts/Modal';
 
 const { childIndex = 0 } = injectReactiveOrFail<UIModalContext>(

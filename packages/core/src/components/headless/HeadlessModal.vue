@@ -6,7 +6,7 @@
     </DialogRoot>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T = void">
 import { provide, ref } from 'vue';
 import { DialogPortal, DialogRoot, useForwardExpose } from 'reka-ui';
 import type { DialogContent } from 'reka-ui';
@@ -16,7 +16,7 @@ import Events from '@aerogel/core/services/Events';
 import { useEvent } from '@aerogel/core/utils/composition/events';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { AcceptRefs } from '@aerogel/core/utils/vue';
-import type { UIModalContext } from '@aerogel/core/ui/UI.state';
+import type { UIModalContext } from '@aerogel/core/ui/UI';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 
 const $content = ref<Nullable<InstanceType<typeof DialogContent>>>(null);
@@ -27,8 +27,8 @@ const { modal } = injectReactiveOrFail<UIModalContext>(
 );
 
 defineProps<ModalProps>();
-defineSlots<ModalSlots>();
-defineExpose<AcceptRefs<ModalExpose>>({ close, $content });
+defineSlots<ModalSlots<T>>();
+defineExpose<AcceptRefs<ModalExpose<T>>>({ close, $content });
 
 const { forwardRef } = useForwardExpose();
 const closed = ref(false);

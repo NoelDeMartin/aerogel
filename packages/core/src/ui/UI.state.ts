@@ -13,18 +13,6 @@ export interface UIModal<T = unknown> {
     afterClose: Promise<T | undefined>;
 }
 
-export interface UIModalContext {
-    modal: UIModal;
-    childIndex?: number;
-}
-
-export interface ModalComponent<
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    Properties extends object = object,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    Result = unknown,
-> {}
-
 export interface UIToast {
     id: string;
     component: Component;

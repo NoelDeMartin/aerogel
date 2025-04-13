@@ -1,6 +1,8 @@
-import type { Job } from '@aerogel/core/jobs';
-import { translateWithDefault } from '@aerogel/core/lang';
 import { computed } from 'vue';
+
+import { translateWithDefault } from '@aerogel/core/lang';
+import type { Job } from '@aerogel/core/jobs';
+import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
 
 export interface LoadingModalProps {
     title?: string;
@@ -8,6 +10,8 @@ export interface LoadingModalProps {
     progress?: number;
     job?: Job;
 }
+
+export interface LoadingModalExpose extends ModalExpose {}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useLoadingModal(props: LoadingModalProps) {

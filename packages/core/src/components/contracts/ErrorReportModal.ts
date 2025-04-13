@@ -2,10 +2,13 @@ import { computed, ref } from 'vue';
 
 import { translateWithDefault } from '@aerogel/core/lang';
 import type { ErrorReport } from '@aerogel/core/errors';
+import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
 
 export interface ErrorReportModalProps {
     reports: ErrorReport[];
 }
+
+export interface ErrorReportModalExpose extends ModalExpose {}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useErrorReportModal(props: ErrorReportModalProps) {

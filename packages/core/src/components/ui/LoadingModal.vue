@@ -25,8 +25,10 @@ import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 import ProgressBar from '@aerogel/core/components/ui/ProgressBar.vue';
 import { useLoadingModal } from '@aerogel/core/components/contracts/LoadingModal';
-import type { LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
+import type { LoadingModalExpose, LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
 
 const props = defineProps<LoadingModalProps>();
 const { renderedTitle, renderedMessage, titleHidden, showProgress } = useLoadingModal(props);
+
+defineExpose<LoadingModalExpose>();
 </script>

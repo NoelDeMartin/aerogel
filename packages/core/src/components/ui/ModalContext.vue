@@ -5,7 +5,8 @@
 <script setup lang="ts">
 import { computed, provide, toRef, unref } from 'vue';
 
-import type { UIModal, UIModalContext } from '@aerogel/core/ui/UI.state';
+import type { UIModal } from '@aerogel/core/ui/UI.state';
+import type { UIModalContext } from '@aerogel/core/ui/UI';
 import type { AcceptRefs } from '@aerogel/core/utils/vue';
 
 const props = defineProps<{
