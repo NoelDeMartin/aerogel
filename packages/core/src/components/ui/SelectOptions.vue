@@ -1,11 +1,11 @@
 <template>
     <HeadlessSelectOptions :class="renderedClasses">
-        <slot v-if="select?.options?.length">
+        <slot v-if="select.options?.length">
             <SelectOption v-for="option of select?.options ?? []" :key="option.key" :value="option.value">
                 {{ option.label }}
             </SelectOption>
         </slot>
-        <slot v-else name="empty">
+        <slot v-else>
             <SelectOption disabled :value="null">
                 {{ $td('ui.selectEmpty', 'No options available') }}
             </SelectOption>
