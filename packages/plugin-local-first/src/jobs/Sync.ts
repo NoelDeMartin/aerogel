@@ -15,7 +15,7 @@ import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { JobListener, JobStatus } from '@aerogel/core';
-import type { SolidContainsRelation, SolidEngine, SolidTypeRegistration } from 'soukai-solid';
+import type { SolidContainsRelation, SolidEngine, SolidTypeIndex } from 'soukai-solid';
 
 import {
     clearLocalModelUpdates,
@@ -189,46 +189,13 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
 
         const remoteModels: SolidModel[] = [];
-        const processedContainerUrls = new Set();
-        const registeredModels = [...Cloud.registeredModels].map(({ modelClass }) => {
-            const registeredChildren = isContainerClass(modelClass) ? getContainerRegisteredClasses(modelClass) : [];
-
-            return {
-                modelClass,
-                rdfsClasses:
-                    registeredChildren.length > 0
-                        ? registeredChildren.map((childrenClass) => childrenClass.rdfsClasses).flat()
-                        : modelClass.rdfsClasses,
-            };
-        });
-        const registrations = typeIndex.registrations
-            .map((registration) => {
-                const registeredModel = registeredModels.find(
-                    ({ rdfsClasses }) =>
-                        !!registration.instanceContainer &&
-                        rdfsClasses.some((rdfsClass) => registration.forClass.includes(rdfsClass)),
-                );
-
-                if (
-                    !registeredModel ||
-                    !registration.instanceContainer ||
-                    processedContainerUrls.has(registration.instanceContainer)
-                ) {
-                    return null;
-                }
-
-                processedContainerUrls.add(registration.instanceContainer);
-
-                return [registration, registeredModel] as [SolidTypeRegistration, (typeof registeredModels)[number]];
-            })
-            .filter((match) => !!match);
+        const registrations = this.getTypeRegistrations(typeIndex);
 
         pullStatus.children = registrations.map(() => ({ completed: false }));
 
         for (let index = 0; index < registrations.length; index++) {
             await this.ignoringDocumentErrors(async () => {
-                const registration = required(registrations[index])[0];
-                const registeredModel = required(registrations[index])[1];
+                const { registration, registeredModel } = required(registrations[index]);
                 const remoteClass = getRemoteClass(registeredModel.modelClass);
 
                 if (!registration.instanceContainer) {
@@ -290,6 +257,54 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
 
         return completeRemoteModels(models, remoteModels, this.documentsWithErrors);
+    }
+
+    private getTypeRegistrations(typeIndex: SolidTypeIndex) {
+        const processedContainerUrls = new Set();
+        const registeredModels = [...Cloud.registeredModels].map(({ modelClass }) => {
+            const registeredChildren = isContainerClass(modelClass) ? getContainerRegisteredClasses(modelClass) : [];
+
+            return {
+                modelClass,
+                rdfsClasses:
+                    registeredChildren.length > 0
+                        ? registeredChildren.map((childrenClass) => childrenClass.rdfsClasses).flat()
+                        : modelClass.rdfsClasses,
+            };
+        });
+        const registrations = typeIndex.registrations
+            .map((registration) => {
+                const registeredModel = registeredModels.find(
+                    ({ rdfsClasses }) =>
+                        !!registration.instanceContainer &&
+                        rdfsClasses.some((rdfsClass) => registration.forClass.includes(rdfsClass)),
+                );
+
+                if (
+                    !registeredModel ||
+                    !registration.instanceContainer ||
+                    processedContainerUrls.has(registration.instanceContainer)
+                ) {
+                    return null;
+                }
+
+                processedContainerUrls.add(registration.instanceContainer);
+
+                return { registration, registeredModel };
+            })
+            .filter((match) => !!match);
+
+        // Removed nested registrations.
+        const containerUrls = registrations.map(({ registration }) => registration.instanceContainer);
+
+        return registrations.filter(({ registration }) => {
+            return !containerUrls.some(
+                (containerUrl) =>
+                    containerUrl &&
+                    containerUrl !== registration.instanceContainer &&
+                    registration.instanceContainer?.startsWith(containerUrl),
+            );
+        });
     }
 
     private async updateTypeRegistrations(remoteModel: SolidModel): Promise<void> {

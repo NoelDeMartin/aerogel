@@ -725,6 +725,44 @@ describe('Sync', () => {
         expect(Cloud.localModelUpdates).toEqual({ [movie.url]: 1 });
     });
 
+    it('Ignores nested container registrations', async () => {
+        // Arrange - Mint urls
+        const rootContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = fakeContainerUrl({ baseUrl: rootContainerUrl });
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const parentDocumentUrl = fakeDocumentUrl({ containerUrl: parentContainerUrl });
+        const documentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare responses
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+
+        FakeServer.respond(
+            typeIndexUrl,
+            typeIndexResponse({
+                [parentContainerUrl]: '<https://schema.org/Movie>',
+                [containerUrl]: '<https://schema.org/Movie>',
+            }),
+        );
+        FakeServer.respond(parentContainerUrl, containerResponse({ documentUrls: [containerUrl, parentDocumentUrl] }));
+        FakeServer.respond(containerUrl, containerResponse({ documentUrls: [documentUrl] }));
+        FakeServer.respond(parentDocumentUrl, movieResponse());
+
+        // Arrange - Prepare service
+        await Cloud.launch();
+        await Cloud.register(MoviesContainer);
+        await Events.emit('application-ready');
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(parentContainerUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(parentDocumentUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests()).toHaveLength(4);
+    });
+
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
