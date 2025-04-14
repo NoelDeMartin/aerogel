@@ -128,7 +128,7 @@ export function containerResponse(
     `);
 }
 
-export function movieResponse(title: string): Response {
+export function movieResponse(title: string = 'Spirited Away'): Response {
     return FakeResponse.success(`
         @prefix schema: <https://schema.org/>.
         @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
