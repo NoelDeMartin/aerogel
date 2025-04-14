@@ -1,6 +1,5 @@
 import { arrayChunk, arrayFrom, isInstanceOf, map, required } from '@noeldemartin/utils';
 import { DocumentNotFound } from 'soukai';
-import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Tombstone } from 'soukai-solid';
 import type { JobStatus } from '@aerogel/core';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -25,8 +24,8 @@ export default class LoadsChildren {
         options: {
             ignoreTombstones?: boolean;
             status?: ResourceJobStatus;
-            onLoaded?: (urls: string[]) => unknown;
-            onMalformedDocument?: (url: string) => unknown;
+            onDocumentsLoaded?: (urls: string[]) => unknown;
+            onDocumentError?: (error: unknown) => unknown;
             onDocumentRead?: (document: SolidDocument) => unknown;
         } = {},
     ): Promise<SolidModel[]> {
@@ -65,7 +64,7 @@ export default class LoadsChildren {
                             model,
                             documentUrl,
                             documents,
-                            options.onMalformedDocument,
+                            options.onDocumentError,
                             options.onDocumentRead,
                         );
 
@@ -87,7 +86,7 @@ export default class LoadsChildren {
                 required(statusChildrenMap.get(documentUrl)).completed = true;
             }
 
-            await options.onLoaded?.(documentUrls);
+            await options.onDocumentsLoaded?.(documentUrls);
         }
 
         for (const [relation, relationModels] of Object.entries(children)) {
@@ -111,7 +110,7 @@ export default class LoadsChildren {
         model: SolidContainer,
         documentUrl: string,
         documents: ObjectsMap<SolidDocument>,
-        onMalformedDocument?: (url: string) => unknown,
+        onDocumentError?: (error: unknown) => unknown,
         onDocumentRead?: (document: SolidDocument) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const document = documents.get(documentUrl);
@@ -128,7 +127,7 @@ export default class LoadsChildren {
             };
         }
 
-        return this.loadDocumentChildrenFromRemote(model, documentUrl, onMalformedDocument, onDocumentRead);
+        return this.loadDocumentChildrenFromRemote(model, documentUrl, onDocumentError, onDocumentRead);
     }
 
     protected async loadDocumentChildrenFromLocal(
@@ -159,7 +158,7 @@ export default class LoadsChildren {
     protected async loadDocumentChildrenFromRemote(
         model: SolidContainer,
         documentUrl: string,
-        onMalformedDocument?: (url: string) => unknown,
+        onDocumentError?: (error: unknown) => unknown,
         onDocumentRead?: (document: SolidDocument) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const children: Record<string, SolidModel[]> = {};
@@ -184,16 +183,13 @@ export default class LoadsChildren {
                     return null;
                 }
 
-                if (isInstanceOf(error, MalformedSolidDocumentError)) {
-                    // eslint-disable-next-line no-console
-                    console.warn(error.message);
-
-                    await onMalformedDocument?.(documentUrl);
-
-                    return null;
+                if (!onDocumentError) {
+                    throw error;
                 }
 
-                throw error;
+                onDocumentError(error);
+
+                return null;
             }
         });
 
@@ -212,11 +208,19 @@ export default class LoadsChildren {
                 continue;
             }
 
-            const documentChildren = await relationInstance.relatedClass.createManyFromEngineDocuments({
-                [documentUrl]: document,
-            });
+            try {
+                const documentChildren = await relationInstance.relatedClass.createManyFromEngineDocuments({
+                    [documentUrl]: document,
+                });
 
-            children[relation] = documentChildren;
+                children[relation] = documentChildren;
+            } catch (error) {
+                if (!onDocumentError) {
+                    throw error;
+                }
+
+                onDocumentError(error);
+            }
         }
 
         return { children, tombstones };

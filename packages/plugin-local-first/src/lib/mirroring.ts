@@ -5,7 +5,6 @@ import {
     requireUrlParentDirectory,
     required,
     tap,
-    toString,
     urlResolveDirectory,
     urlRoute,
 } from '@noeldemartin/utils';
@@ -112,19 +111,17 @@ export async function updateRemoteModel(localModel: SolidModel): Promise<void> {
     }
 }
 
-export function clearLocalModelUpdates(models?: SolidModel[], malformedDocuments?: Set<string>): void {
-    const syncedModelUrls = models?.map((model) => toString(model.getDeletedPrimaryKey() ?? model.getPrimaryKey()));
+export function clearLocalModelUpdates(syncedModelUrls: Set<string>, documentsWithErrors?: Set<string>): void {
     const localModelUpdates = {} as Record<string, number>;
+    const syncedModelUrlsArray = Array.from(syncedModelUrls);
 
     for (const [url, count] of Object.entries(Cloud.localModelUpdates)) {
         const documentUrl = urlRoute(url);
         const wasSynced =
-            !syncedModelUrls ||
-            syncedModelUrls.some(
-                (modelUrl) => url === modelUrl || (modelUrl.endsWith('/') && url.startsWith(modelUrl)),
-            );
+            syncedModelUrls.has(url) ||
+            syncedModelUrlsArray.some((modelUrl) => modelUrl.endsWith('/') && url.startsWith(modelUrl));
 
-        if (wasSynced && !malformedDocuments?.has(documentUrl)) {
+        if (wasSynced && !documentsWithErrors?.has(documentUrl)) {
             continue;
         }
 
@@ -177,14 +174,14 @@ export function cloneRemoteModel(remoteModel: SolidModel): SolidModel {
 export async function completeRemoteModels(
     localModels: SolidModel[],
     remoteModels: SolidModel[],
-    malformedDocuments: Set<string>,
+    documentsWithErrors: Set<string>,
 ): Promise<SolidModel[]> {
     const RemoteTombstone = getRemoteClass(Tombstone);
     const remoteModelUrls = remoteModels.map((remoteModel) => remoteModel.url);
     const missingModelDocumentUrls = localModels
         .filter((localModel) => !remoteModelUrls.includes(localModel.url))
         .map((localModel) => localModel.requireDocumentUrl())
-        .filter((documentUrl) => !malformedDocuments.has(documentUrl));
+        .filter((documentUrl) => !documentsWithErrors.has(documentUrl));
     const tombstones = await RemoteTombstone.all({ $in: missingModelDocumentUrls });
 
     return remoteModels.concat(tombstones);

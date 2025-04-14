@@ -41,8 +41,7 @@
         "idb": "^8.0.2"
     },
     "devDependencies": {
-        "@aerogel/plugin-soukai": "*",
-        "soukai": "^0.6.0"
+        "@aerogel/plugin-soukai": "*"
     },
     "eslintConfig": {
         "extends": [

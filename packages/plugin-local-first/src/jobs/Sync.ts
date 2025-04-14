@@ -1,5 +1,15 @@
+import {
+    isInstanceOf,
+    map,
+    mixed,
+    requireUrlParentDirectory,
+    required,
+    round,
+    toString,
+    urlRoute,
+} from '@noeldemartin/utils';
 import { App, Job } from '@aerogel/core';
-import { isInstanceOf, map, mixed, requireUrlParentDirectory, required, round } from '@noeldemartin/utils';
+import { InvalidModelAttributes, requireBootedModel } from 'soukai';
 import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
@@ -55,7 +65,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     protected dirtyRemoteModels?: SolidModel[];
     protected rootLocalModels: SolidModel[];
     protected tombstones: ObjectsMap<Tombstone>;
-    protected malformedDocuments: Set<string>;
+    protected documentsWithErrors: Set<string>;
+    protected syncedModelUrls: Set<string>;
     protected documentsModifiedAt: Record<string, Date>;
     protected override localModels: ObjectsMap<SolidModel>;
 
@@ -66,7 +77,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         this.rootLocalModels = [];
         this.localModels = map([], 'url');
         this.tombstones = map([], 'resourceUrl');
-        this.malformedDocuments = new Set();
+        this.documentsWithErrors = new Set();
+        this.syncedModelUrls = new Set();
         this.documentsModifiedAt = {};
     }
 
@@ -163,7 +175,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             await DocumentsCache.remember(documentUrl, modifiedAt);
         }
 
-        clearLocalModelUpdates(this.models, this.malformedDocuments);
+        clearLocalModelUpdates(this.syncedModelUrls, this.documentsWithErrors);
 
         await this.updateProgress((status) => (status.children[1].completed = true));
     }
@@ -214,7 +226,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         pullStatus.children = registrations.map(() => ({ completed: false }));
 
         for (let index = 0; index < registrations.length; index++) {
-            await this.ignoringMalformedDocumentErrors(async () => {
+            await this.ignoringDocumentErrors(async () => {
                 const registration = required(registrations[index])[0];
                 const registeredModel = required(registrations[index])[1];
                 const remoteClass = getRemoteClass(registeredModel.modelClass);
@@ -250,7 +262,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             });
         }
 
-        return completeRemoteModels(this.rootLocalModels, remoteModels, this.malformedDocuments);
+        return completeRemoteModels(this.rootLocalModels, remoteModels, this.documentsWithErrors);
     }
 
     private async fetchRemoteModelsForLocal(models: SolidModel[]): Promise<SolidModel[]> {
@@ -258,7 +270,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         const statusChildren = (this.status.children[0].children = models.map(() => ({ completed: false })));
 
         for (let index = 0; index < models.length; index++) {
-            await this.ignoringMalformedDocumentErrors(async () => {
+            await this.ignoringDocumentErrors(async () => {
                 const localModel = models[index] as SolidModel;
                 const childStatus = statusChildren[index] as JobStatus;
                 const remoteModel = await getRemoteClass(localModel.static()).find(localModel.url);
@@ -277,7 +289,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             });
         }
 
-        return completeRemoteModels(models, remoteModels, this.malformedDocuments);
+        return completeRemoteModels(models, remoteModels, this.documentsWithErrors);
     }
 
     private async updateTypeRegistrations(remoteModel: SolidModel): Promise<void> {
@@ -309,18 +321,18 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
         const children = await this.loadContainedModels(model, {
             status: childStatus,
-            onLoaded: async () => {
-                this.assertNotCancelled();
-
-                await this.updateProgress();
-            },
-            onMalformedDocument: (url) => this.malformedDocuments.add(url),
+            onDocumentError: (error) => this.handleDocumentError(error),
             onDocumentRead: (document) => {
                 if (document.url.endsWith('/') || !document.updatedAt || document.url in this.documentsModifiedAt) {
                     return;
                 }
 
                 this.documentsModifiedAt[document.url] = document.updatedAt;
+            },
+            onDocumentsLoaded: async () => {
+                this.assertNotCancelled();
+
+                await this.updateProgress();
             },
         });
 
@@ -382,11 +394,13 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             return;
         }
 
-        if (this.malformedDocuments.has(model.requireDocumentUrl())) {
+        if (this.documentsWithErrors.has(model.requireDocumentUrl())) {
             return;
         }
 
         await model.save();
+
+        this.syncedModelUrls.add(model.url);
 
         if (!isContainer(model)) {
             if (isRemoteModel(model)) {
@@ -581,21 +595,37 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
     }
 
-    private async ignoringMalformedDocumentErrors(operation: Function): Promise<void> {
+    private async ignoringDocumentErrors(operation: Function): Promise<void> {
         try {
             await operation();
         } catch (error) {
-            if (isInstanceOf(error, MalformedSolidDocumentError)) {
-                // eslint-disable-next-line no-console
-                console.warn(error.message);
-
-                error.documentUrl && this.malformedDocuments.add(error.documentUrl);
-
-                return;
-            }
-
-            throw error;
+            this.handleDocumentError(error);
         }
+    }
+
+    private handleDocumentError(error: unknown): void {
+        if (isInstanceOf(error, MalformedSolidDocumentError)) {
+            // eslint-disable-next-line no-console
+            console.warn(error.message);
+
+            error.documentUrl && this.documentsWithErrors.add(error.documentUrl);
+
+            return;
+        }
+
+        if (isInstanceOf(error, InvalidModelAttributes)) {
+            // eslint-disable-next-line no-console
+            console.warn(error.message);
+
+            const primaryKey = error.attributes[requireBootedModel(error.modelName).primaryKey];
+            const documentUrl = primaryKey && urlRoute(toString(primaryKey));
+
+            documentUrl && this.documentsWithErrors.add(documentUrl);
+
+            return;
+        }
+
+        throw error;
     }
 
 }
