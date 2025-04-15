@@ -415,7 +415,9 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
         await model.save();
 
-        this.syncedModelUrls.add(model.url);
+        if (isRemoteModel(model)) {
+            this.syncedModelUrls.add(model.url);
+        }
 
         if (!isContainer(model)) {
             if (isRemoteModel(model)) {
