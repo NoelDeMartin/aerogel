@@ -2,7 +2,7 @@
     <Modal
         ref="$modalRef"
         title-hidden
-        :dismissable="false"
+        close-class="hidden"
         :title="$td('account.title', 'Account')"
     >
         <div class="relative flex items-center rounded-md bg-gray-100 p-4 pr-12">

@@ -14,7 +14,7 @@
             }"
         />
         <HeadlessModalContent v-bind="contentProps" :class="renderedWrapperClass">
-            <div v-if="!persistent && dismissable" class="absolute top-0 right-0 hidden pt-3.5 pr-2.5 sm:block">
+            <div v-if="!persistent" :class="renderedCloseClass">
                 <button
                     type="button"
                     class="clickable z-10 rounded-full p-2.5 text-gray-400 hover:text-gray-500"
@@ -71,7 +71,7 @@ type HeadlessModalInstance = ComponentPublicInstance & ModalExpose<T>;
 
 const {
     class: contentClass = '',
-    dismissable = true,
+    closeClass = '',
     wrapperClass = '',
     title,
     titleHidden,
@@ -80,7 +80,7 @@ const {
     ...props
 } = defineProps<
     ModalProps & {
-        dismissable?: boolean;
+        closeClass?: HTMLAttributes['class'];
         wrapperClass?: HTMLAttributes['class'];
         class?: HTMLAttributes['class'];
     }
@@ -98,6 +98,7 @@ const context = injectReactiveOrFail<UIModalContext>('modal');
 const inForeground = computed(() => !context.modal.closing && context.childIndex === UI.openModals.length);
 const contentProps = computed(() => (description ? {} : { 'aria-describedby': undefined }));
 const renderedContentClass = computed(() => classes({ 'mt-2': title && !titleHidden }, contentClass));
+const renderedCloseClass = computed(() => classes('absolute top-0 right-0 hidden pt-3.5 pr-2.5 sm:block', closeClass));
 const renderedWrapperClass = computed(() =>
     classes(
         'isolate fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2',

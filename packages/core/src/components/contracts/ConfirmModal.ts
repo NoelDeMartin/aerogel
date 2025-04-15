@@ -39,8 +39,10 @@ export function useConfirmModal(props: ConfirmModalProps) {
         ),
     );
 
+    const renderedTitle = computed(() => props.title ?? translateWithDefault('ui.confirm', 'Confirm'));
+    const titleHidden = computed(() => !props.title);
     const renderedAcceptText = computed(() => props.acceptText ?? translateWithDefault('ui.accept', 'Ok'));
     const renderedCancelText = computed(() => props.cancelText ?? translateWithDefault('ui.cancel', 'Cancel'));
 
-    return { form, renderedAcceptText, renderedCancelText };
+    return { form, renderedTitle, titleHidden, renderedAcceptText, renderedCancelText };
 }

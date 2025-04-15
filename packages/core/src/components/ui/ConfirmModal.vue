@@ -1,6 +1,11 @@
 <template>
     <!-- @vue-generic {import('@aerogel/core/ui/UI').ModalExposeResult<ConfirmModalExpose>} -->
-    <Modal v-slot="{ close }" :title persistent>
+    <Modal
+        v-slot="{ close }"
+        :title="renderedTitle"
+        :title-hidden="titleHidden"
+        persistent
+    >
         <Form :form @submit="close([true, form.data()])">
             <Markdown :text="message" :actions />
 
@@ -39,7 +44,7 @@ import { useConfirmModal } from '@aerogel/core/components/contracts/ConfirmModal
 import type { ConfirmModalExpose, ConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
 
 const { cancelVariant = 'secondary', ...props } = defineProps<ConfirmModalProps>();
-const { form, renderedAcceptText, renderedCancelText } = useConfirmModal(props);
+const { form, renderedTitle, titleHidden, renderedAcceptText, renderedCancelText } = useConfirmModal(props);
 
 defineExpose<ConfirmModalExpose>();
 </script>
