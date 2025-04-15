@@ -17,7 +17,7 @@ const { class: baseClasses, size, variant, disabled, ...props } = defineProps<Bu
 const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size' | 'variant' | 'disabled'>>>(
     { baseClasses, variant, size, disabled },
     {
-        baseClasses: 'flex items-center justify-center gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+        baseClasses: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         variants: {
             variant: {
                 default: 'bg-primary-600 text-white focus-visible:outline-primary-600',
@@ -25,7 +25,7 @@ const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size'
                 danger: 'bg-red-600 text-white focus-visible:outline-red-600',
                 ghost: 'bg-transparent',
                 outline: 'bg-transparent text-primary-600 ring-primary-600',
-                link: 'text-primary-600',
+                link: 'text-links',
             },
             size: {
                 small: 'text-xs',
@@ -41,7 +41,7 @@ const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size'
         compoundVariants: [
             {
                 variant: ['default', 'secondary', 'danger', 'ghost', 'outline'],
-                class: 'font-medium',
+                class: 'flex items-center justify-center gap-1 font-medium',
             },
             {
                 variant: ['default', 'danger'],

@@ -6,8 +6,6 @@
 @source './';
 
 @theme {
-    --color-background: oklch(1 0 0);
-
     --color-primary: oklch(0.205 0 0);
     --color-primary-50: color-mix(in oklab, var(--color-primary-600) 5%, transparent);
     --color-primary-100: color-mix(in oklab, var(--color-primary-600) 15%, transparent);
@@ -20,6 +18,9 @@
     --color-primary-800: color-mix(in oklab, var(--color-primary-600) 80%, black);
     --color-primary-900: color-mix(in oklab, var(--color-primary-600) 70%, black);
     --color-primary-950: color-mix(in oklab, var(--color-primary-600) 50%, black);
+
+    --color-background: oklch(1 0 0);
+    --color-links: var(--color-primary);
 }
 
 .clickable {

@@ -5,7 +5,9 @@ import { Renderer, marked } from 'marked';
 function makeRenderer(): Renderer {
     return tap(new Renderer(), (renderer) => {
         renderer.link = function(link) {
-            return Renderer.prototype.link.apply(this, [link]).replace('<a', '<a target="_blank"');
+            return Renderer.prototype.link
+                .apply(this, [link])
+                .replace('<a', '<a class="text-links no-underline font-normal hover:underline" target="_blank"');
         };
     });
 }

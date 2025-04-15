@@ -1,13 +1,13 @@
 <template>
     <footer class="bg-gray-200 p-2">
         <div class="m-auto flex max-w-(--breakpoint-lg) flex-row items-center justify-center gap-2">
-            <AppFooterLink href="https://aerogel.js.org">
+            <Link class="text-sm text-gray-700" href="https://aerogel.js.org">
                 {{ $t('footer.about') }}
-            </AppFooterLink>
+            </Link>
             <span class="text-gray-600">|</span>
-            <AppFooterLink href="https://github.com/NoelDeMartin/aerogel/tree/main/playground">
+            <Link class="text-sm text-gray-700" href="https://github.com/NoelDeMartin/aerogel/tree/main/playground">
                 {{ $t('footer.source') }}
-            </AppFooterLink>
+            </Link>
         </div>
     </footer>
 </template>
