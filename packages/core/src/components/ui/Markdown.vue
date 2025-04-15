@@ -67,3 +67,19 @@ async function onClick(event: Event) {
     }
 }
 </script>
+
+<style scoped>
+/* @apply .text-links .font-normal .no-underline .hover:underline; */
+* :deep(a) {
+    --tw-font-weight: var(--font-weight-normal);
+    text-decoration-line: none;
+    color: var(--color-links);
+    font-weight: var(--font-weight-normal);
+}
+
+@media (hover: hover) {
+    * :deep(a:hover) {
+        text-decoration-line: underline;
+    }
+}
+</style>
