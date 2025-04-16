@@ -87,6 +87,10 @@ export async function trackModelsCollection(modelClass: SolidModelConstructor, c
         [modelClass.modelName]: (Cloud.modelCollections[modelClass.modelName] ?? []).concat(collection),
     });
 
+    if (!Cloud.modelCollections[modelClass.modelName]?.includes(modelClass.collection)) {
+        modelClass.collection = collection;
+    }
+
     await trackSoukaiModelsCollection(modelClass, collection);
 }
 

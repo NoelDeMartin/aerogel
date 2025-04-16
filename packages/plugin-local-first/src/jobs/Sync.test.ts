@@ -28,10 +28,8 @@ describe('Sync', () => {
     it('Syncs containers', async () => {
         // Arrange - Mint urls
         const parentContainerUrl = SolidMock.requireUser().storageUrls[0];
-        // fakeContainerUrl({ baseUrl: parentContainerUrl });
-        const remoteContainerUrl = parentContainerUrl + 'remote/';
-        // fakeContainerUrl({ baseUrl: parentContainerUrl });
-        const localContainerUrl = parentContainerUrl + 'local/';
+        const remoteContainerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const localContainerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
 
         // Arrange - Prepare models
         await MoviesContainer.at(parentContainerUrl).create({
@@ -92,6 +90,8 @@ describe('Sync', () => {
         expect(containers).toHaveLength(2);
         expect(arrayFind(containers, 'name', 'Local Movies')).toBeInstanceOf(MoviesContainer);
         expect(arrayFind(containers, 'name', 'Remote Movies')).toBeInstanceOf(MoviesContainer);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     it('Syncs container documents', async () => {
@@ -148,6 +148,8 @@ describe('Sync', () => {
         expect(movies).toHaveLength(2);
         expect(arrayFind(movies, 'name', 'The Tale of Princess Kaguya')).toBeInstanceOf(Movie);
         expect(arrayFind(movies, 'name', 'Spirited Away')).toBeInstanceOf(Movie);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     it('Syncs documents', async () => {
@@ -195,6 +197,8 @@ describe('Sync', () => {
         expect(movies).toHaveLength(2);
         expect(arrayFind(movies, 'name', 'The Tale of Princess Kaguya')).toBeInstanceOf(Movie);
         expect(arrayFind(movies, 'name', 'Spirited Away')).toBeInstanceOf(Movie);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     it('Syncs individual container updates', async () => {
@@ -311,6 +315,8 @@ describe('Sync', () => {
                     crdt:value "Great Movies" .
             } .
         `);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     it('Syncs individual container documents', async () => {
@@ -347,6 +353,8 @@ describe('Sync', () => {
 
         expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
         expect(FakeServer.getRequests()).toHaveLength(4);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     it('Creates containers with documents', async () => {
@@ -401,6 +409,8 @@ describe('Sync', () => {
         expect(FakeServer.getRequests(`${containerUrl}.meta`)).toHaveLength(1);
         expect(FakeServer.getRequests(documentUrl)).toHaveLength(2);
         expect(FakeServer.getRequests()).toHaveLength(10);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     it('Skips pulling fresh documents', async () => {
@@ -821,6 +831,8 @@ describe('Sync', () => {
                     crdt:deletedAt  "[[.*]]"^^xsd:dateTime .
             } .
         `);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     testRegisterVariants('Deletes tombstone models', async (registerModels, variant) => {
@@ -916,6 +928,8 @@ describe('Sync', () => {
             expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
             expect(FakeServer.getRequests()).toHaveLength(5);
         }
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     testRegisterVariants('Deletes updated tombstone models', async (registerModels, variant) => {
@@ -1000,6 +1014,8 @@ describe('Sync', () => {
             expect(FakeServer.getRequests(documentUrl)).toHaveLength(5);
             expect(FakeServer.getRequests()).toHaveLength(6);
         }
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     testRegisterVariants('Tracks model updates', async (registerModels) => {

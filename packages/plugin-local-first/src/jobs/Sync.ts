@@ -475,6 +475,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
             const localModel = getLocalModel(remoteModel, this.localModels);
 
+            if (!localModel.exists()) {
+                this.syncedModelUrls.add(localModel.url);
+            }
+
             await this.loadChildren(localModel);
             await SolidModel.synchronize(localModel, remoteModel);
             await this.reconcileInconsistencies(localModel, remoteModel);

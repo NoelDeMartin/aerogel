@@ -23,25 +23,27 @@ export class SolidTasksService extends Service {
     }
 
     private async findOrCreateTasksContainer(session: AuthSession): Promise<SolidContainer> {
-        // In a real application, you would confirm the name and url of the container with the user before
-        // proceeding. In this playground we're going on ahead to simplify the UI.
-        const name = 'Tasks';
-        const url = urlResolveDirectory(session.user.storageUrls[0], stringToSlug(name));
         const typeIndex = await Solid.findOrCreatePrivateTypeIndex();
-        const containers = await SolidContainer.withEngine(session.authenticator.engine).fromTypeIndex(
+        const [container] = await SolidContainer.withEngine(session.authenticator.engine).fromTypeIndex(
             typeIndex.url,
             SolidTask,
         );
 
-        return (
-            containers.find((container) => container.url === url) ??
-            (await Solid.createPrivateContainer({
-                url,
-                name,
-                registerFor: SolidTask,
-                reuseExisting: true,
-            }))
-        );
+        if (container) {
+            return container;
+        }
+
+        // In a real application, you would confirm the name and url of the container with the user before
+        // proceeding. In this playground we're going on ahead to simplify the UI.
+        const name = 'Tasks';
+        const url = urlResolveDirectory(session.user.storageUrls[0], stringToSlug(name));
+
+        return Solid.createPrivateContainer({
+            url,
+            name,
+            registerFor: SolidTask,
+            reuseExisting: true,
+        });
     }
 
 }

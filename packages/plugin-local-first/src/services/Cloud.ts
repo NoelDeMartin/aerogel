@@ -228,11 +228,9 @@ export class CloudService extends Service {
         }
 
         this.whenReady(() => {
-            if (!isContainerClass(modelClass)) {
-                return;
-            }
+            const [existingCollection] = this.modelCollections[modelClass.modelName] ?? [];
 
-            modelClass.collection = getRemoteContainersCollection(options.path);
+            modelClass.collection = existingCollection ?? getRemoteContainersCollection(options.path);
         });
 
         await trackModels(modelClass, {
