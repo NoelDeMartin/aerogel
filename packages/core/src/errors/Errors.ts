@@ -22,16 +22,23 @@ export class ErrorsService extends Service {
         this.enabled = false;
     }
 
-    public async inspect(error: ErrorSource | ErrorReport[]): Promise<void> {
-        const reports = Array.isArray(error) ? (error as ErrorReport[]) : [await this.createErrorReport(error)];
-
-        if (reports.length === 0) {
+    public async inspect(error: ErrorSource | ErrorReport, reports?: ErrorReport[]): Promise<void>;
+    public async inspect(reports: ErrorReport[]): Promise<void>;
+    public async inspect(errorOrReports: ErrorSource | ErrorReport[], _reports?: ErrorReport[]): Promise<void> {
+        if (Array.isArray(errorOrReports) && errorOrReports.length === 0) {
             UI.alert(translateWithDefault('errors.inspectEmpty', 'Nothing to inspect!'));
 
             return;
         }
 
-        UI.modal(UI.requireComponent('error-report-modal'), { reports });
+        const report = Array.isArray(errorOrReports)
+            ? (errorOrReports[0] as ErrorReport)
+            : this.isErrorReport(errorOrReports)
+                ? errorOrReports
+                : await this.createErrorReport(errorOrReports);
+        const reports = Array.isArray(errorOrReports) ? (errorOrReports as ErrorReport[]) : (_reports ?? [report]);
+
+        UI.modal(UI.requireComponent('error-report-modal'), { report, reports });
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
@@ -75,7 +82,7 @@ export class ErrorsService extends Service {
                     {
                         label: translateWithDefault('errors.viewDetails', 'View details'),
                         dismiss: true,
-                        click: () => UI.modal(UI.requireComponent('error-report-modal'), { reports: [report] }),
+                        click: () => UI.modal(UI.requireComponent('error-report-modal'), { report, reports: [report] }),
                     },
                 ],
             },
@@ -115,6 +122,10 @@ export class ErrorsService extends Service {
         if (isObject(error) && error.cause) {
             this.logError(error.cause);
         }
+    }
+
+    private isErrorReport(error: unknown): error is ErrorReport {
+        return isObject(error) && 'title' in error;
     }
 
     private async createErrorReport(error: ErrorSource): Promise<ErrorReport> {

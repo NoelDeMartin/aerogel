@@ -3,7 +3,8 @@
         :title="$td('errors.report', 'Errors report')"
         title-hidden
         close-hidden
-        wrapper-class="p-0 sm:w-auto sm:min-w-lg sm:max-w-[80vw]"
+        class="p-0"
+        wrapper-class="sm:w-auto sm:min-w-lg sm:max-w-[80vw]"
     >
         <div class="px-4 pt-5 pb-4">
             <h2 class="flex justify-between gap-4">
@@ -11,7 +12,7 @@
                     <IconExclamationSolid class="size-5 text-red-600" />
                     <ErrorReportModalTitle
                         class="text-lg leading-6 font-semibold text-gray-900"
-                        :report="report"
+                        :report="activeReport"
                         :current-report="activeReportIndex + 1"
                         :total-reports="reports.length"
                     />
@@ -38,11 +39,11 @@
                         </Button>
                     </span>
                 </div>
-                <ErrorReportModalButtons :report class="gap-0.5" />
+                <ErrorReportModalButtons :report="activeReport" class="gap-0.5" />
             </h2>
-            <Markdown v-if="report.description" :text="report.description" class="text-gray-600" />
+            <Markdown v-if="activeReport.description" :text="activeReport.description" class="text-gray-600" />
         </div>
-        <div class="-mt-2 max-h-[80vh] overflow-auto bg-red-800/10">
+        <div class="-mt-2 max-h-[75vh] overflow-auto bg-red-800/10">
             <pre class="p-4 text-xs text-red-800" v-text="details" />
         </div>
     </Modal>
@@ -66,7 +67,7 @@ import type {
 
 const props = defineProps<ErrorReportModalProps>();
 
-const { activeReportIndex, details, nextReportText, previousReportText, report } = useErrorReportModal(props);
+const { activeReportIndex, details, nextReportText, previousReportText, activeReport } = useErrorReportModal(props);
 
 defineExpose<ErrorReportModalExpose>();
 </script>

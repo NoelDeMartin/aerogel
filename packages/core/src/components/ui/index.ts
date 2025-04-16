@@ -7,6 +7,8 @@ export { default as DropdownMenu } from './DropdownMenu.vue';
 export { default as DropdownMenuOption } from './DropdownMenuOption.vue';
 export { default as DropdownMenuOptions } from './DropdownMenuOptions.vue';
 export { default as EditableContent } from './EditableContent.vue';
+export { default as ErrorLogs } from './ErrorLogs.vue';
+export { default as ErrorLogsModal } from './ErrorLogsModal.vue';
 export { default as ErrorMessage } from './ErrorMessage.vue';
 export { default as ErrorReportModal } from './ErrorReportModal.vue';
 export { default as ErrorReportModalButtons } from './ErrorReportModalButtons.vue';

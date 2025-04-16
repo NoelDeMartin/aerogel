@@ -27,7 +27,7 @@
 
             <HeadlessModalTitle
                 v-if="title"
-                class="text-base font-semibold text-gray-900"
+                class="px-4 pt-5 pb-2 text-base font-semibold text-gray-900"
                 :class="{ 'sr-only': titleHidden }"
             >
                 <Markdown :text="title" inline />
@@ -97,11 +97,12 @@ const $modal = currentRef as Ref<Nullable<HeadlessModalInstance>>;
 const context = injectReactiveOrFail<UIModalContext>('modal');
 const inForeground = computed(() => !context.modal.closing && context.childIndex === UI.openModals.length);
 const contentProps = computed(() => (description ? {} : { 'aria-describedby': undefined }));
-const renderedContentClass = computed(() => classes({ 'mt-2': title && !titleHidden }, contentClass));
+const renderedContentClass = computed(() =>
+    classes('max-h-[90vh] overflow-auto px-4 pb-4', { 'pt-4': !title || titleHidden }, contentClass));
 const renderedWrapperClass = computed(() =>
     classes(
         'isolate fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2',
-        'overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl sm:max-w-lg',
+        'overflow-hidden rounded-lg bg-white text-left shadow-xl sm:max-w-lg',
         'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
         'transition-[scale,opacity] will-change-[scale,opacity] duration-300',
         {

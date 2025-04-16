@@ -1,6 +1,10 @@
 <template>
     <PageTitle source="src/pages/Errors.vue">
         {{ $t('errors.title') }}
+
+        <template #end>
+            <ErrorLogs />
+        </template>
     </PageTitle>
     <div class="flex w-full flex-wrap items-center justify-center gap-3">
         <Button @click="throwError()">
@@ -10,9 +14,6 @@
             @click="$errors.report({ name: $t('errors.throwWithoutTraceName'), message: $t('errors.throwMessage') })"
         >
             {{ $t('errors.throwWithoutTrace') }}
-        </Button>
-        <Button @click="$errors.inspect($errors.logs.map(({ report }) => report))">
-            {{ $t('errors.all', { count: $errors.logs.length }) }}
         </Button>
         <Button @click="$app.reload({ startupCrash: 'true' })">
             {{ $t('errors.startupCrash') }}

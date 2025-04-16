@@ -141,5 +141,4 @@ errors:
     startupCrash: Test Startup Crash
     previousReport: Show previous report
     nextReport: Show next report
-    all: See all ({count})
     required: This is required
