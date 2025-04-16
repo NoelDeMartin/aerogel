@@ -3,6 +3,15 @@ import { tap } from '@noeldemartin/utils';
 
 const resizeObservers: WeakMap<HTMLElement, ResizeObserver> = new WeakMap();
 
+export type MeasureDirectiveValue =
+    | MeasureDirectiveListener
+    | {
+          css?: boolean;
+          watch?: boolean;
+      };
+
+export type MeasureDirectiveModifiers = 'css' | 'watch';
+
 export interface ElementSize {
     width: number;
     height: number;
@@ -10,11 +19,8 @@ export interface ElementSize {
 
 export type MeasureDirectiveListener = (size: ElementSize) => unknown;
 
-export default defineDirective({
-    mounted(element: HTMLElement, { value }) {
-        // TODO replace with argument when typed properly
-        const modifiers = { css: true, watch: true };
-
+export default defineDirective<MeasureDirectiveValue, MeasureDirectiveModifiers>({
+    mounted(element: HTMLElement, { value, modifiers }) {
         const listener = typeof value === 'function' ? (value as MeasureDirectiveListener) : null;
         const update = () => {
             const sizes = element.getBoundingClientRect();

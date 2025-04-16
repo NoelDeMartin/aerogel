@@ -26,7 +26,7 @@
         >
             {{ $td('cloud.logIn.learnMore', 'What is Solid?') }}
         </Link>
-        <SolidLogin class="mt-4" />
+        <SolidLogin no-loading class="mt-4" />
     </Modal>
 </template>
 

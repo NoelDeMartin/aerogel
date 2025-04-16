@@ -5,8 +5,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue';
-import { computedVariantClasses } from '@aerogel/core/utils/classes';
+import { variantClasses } from '@aerogel/core/utils/classes';
 import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
 import type { Variants } from '@aerogel/core/utils/classes';
 
@@ -14,7 +16,7 @@ const { class: baseClasses, size, variant, disabled, ...props } = defineProps<Bu
 
 /* eslint-disable vue/max-len */
 // prettier-ignore
-const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size' | 'variant' | 'disabled'>>>(
+const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps, 'size' | 'variant' | 'disabled'>>>(
     { baseClasses, variant, size, disabled },
     {
         baseClasses: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -28,9 +30,9 @@ const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size'
                 link: 'text-links',
             },
             size: {
-                small: 'text-xs',
-                default: 'text-sm',
-                large: 'text-base',
+                small: 'text-xs min-h-6',
+                default: 'text-sm min-h-8',
+                large: 'text-base min-h-10',
                 icon: 'rounded-full p-2.5',
             },
             disabled: {
@@ -93,6 +95,6 @@ const renderedClasses = computedVariantClasses<Variants<Pick<ButtonProps, 'size'
             disabled: false,
         },
     },
-);
+));
 /* eslint-enable vue/max-len */
 </script>
