@@ -14,7 +14,7 @@
                 class="group gap-0"
                 @click="usingManualUrl = true"
             >
-                <i-ic-baseline-log-in class="size-4" />
+                <IconLogin class="size-4" />
                 <span
                     v-measure.css="() => (measured = true)"
                     class="overflow-hidden pl-1 whitespace-nowrap"
@@ -45,6 +45,8 @@
 </template>
 
 <script setup lang="ts">
+import IconLogin from '~icons/ic/baseline-log-in';
+
 import { App, Button, Form, Input, UI, requiredStringInput, translateWithDefault, useForm } from '@aerogel/core';
 import { computed, ref } from 'vue';
 
