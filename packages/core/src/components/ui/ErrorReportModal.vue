@@ -2,8 +2,8 @@
     <Modal
         :title="$td('errors.report', 'Errors report')"
         title-hidden
+        close-hidden
         wrapper-class="p-0 sm:w-auto sm:min-w-lg sm:max-w-[80vw]"
-        close-class="hidden"
     >
         <div class="px-4 pt-5 pb-4">
             <h2 class="flex justify-between gap-4">
