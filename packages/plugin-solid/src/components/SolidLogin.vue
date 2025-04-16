@@ -12,6 +12,7 @@
                 v-if="!usingManualUrl"
                 variant="secondary"
                 class="group gap-0"
+                :title="$td('solid.logIn.manualUrl', 'Enter url')"
                 @click="usingManualUrl = true"
             >
                 <IconLogin class="size-4" />
