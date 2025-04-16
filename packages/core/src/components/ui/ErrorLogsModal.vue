@@ -1,5 +1,5 @@
 <template>
-    <Modal :title="$td('errors.logs', 'Error logs')">
+    <Modal :title="$td('errors.report', 'Errors ({count})', { count: $errors.logs.length })">
         <ol>
             <li
                 v-for="(log, index) of $errors.logs"

@@ -1,6 +1,6 @@
 <template>
     <Modal
-        :title="$td('errors.report', 'Errors report')"
+        :title="$td('errors.report', 'Error report')"
         title-hidden
         close-hidden
         class="p-0"
