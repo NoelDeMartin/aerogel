@@ -30,7 +30,7 @@
                 <IconRefresh class="mt-0.5 size-6 shrink-0 animate-spin self-start text-green-500" />
                 <div class="flex w-full flex-col">
                     <Markdown lang-key="cloud.info.syncing" lang-default="Synchronizing..." />
-                    <ProgressBar v-if="$cloud.syncJob" :job="$cloud.syncJob" bar-class="bg-green-500" />
+                    <ProgressBar v-if="$cloud.syncJob" :job="$cloud.syncJob" filled-class="bg-green-500" />
                 </div>
             </div>
             <div v-else-if="$solid.loginOngoing" class="mt-4 flex items-center gap-2">

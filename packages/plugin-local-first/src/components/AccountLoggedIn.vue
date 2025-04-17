@@ -39,6 +39,14 @@ interface AccountStatus {
 }
 
 const accountStatus = computed((): AccountStatus => {
+    if (Cloud.syncing || Solid.loginOngoing) {
+        return {
+            loading: true,
+            classes: 'bg-green-500 sr-only',
+            message: getAccountStatusMessage() ?? '',
+        };
+    }
+
     if (Solid.error || Cloud.syncError) {
         return {
             classes: 'bg-red-500',
@@ -56,11 +64,8 @@ const accountStatus = computed((): AccountStatus => {
         };
     }
 
-    const loading = Cloud.syncing || Solid.loginOngoing;
-
     return {
-        loading,
-        classes: loading ? 'bg-green-500 sr-only' : 'bg-green-500',
+        classes: 'bg-green-500',
         message: getAccountStatusMessage() ?? '',
     };
 });
