@@ -6,15 +6,17 @@ const typeIndexes: WeakMap<SolidUserProfile, SolidTypeIndex | null> = new WeakMa
 
 export default class LoadsTypeIndex {
 
-    protected async loadTypeIndex(options: { create: true }): Promise<SolidTypeIndex>;
-    protected async loadTypeIndex(options?: { create: false }): Promise<SolidTypeIndex | null>;
-    protected async loadTypeIndex(options: { create?: boolean } = {}): Promise<SolidTypeIndex | null> {
+    protected async loadTypeIndex(options?: { create?: false; fresh?: boolean }): Promise<SolidTypeIndex | null>;
+    protected async loadTypeIndex(options?: { create?: true; fresh?: boolean }): Promise<SolidTypeIndex>;
+    protected async loadTypeIndex(options: { create?: boolean; fresh?: boolean } = {}): Promise<SolidTypeIndex | null> {
         const user = Solid.requireUser();
+
+        if (options.fresh || !typeIndexes.has(user)) {
+            typeIndexes.set(user, await Solid.findPrivateTypeIndex({ fresh: options.fresh }));
+        }
 
         if (options.create && !typeIndexes.get(user)) {
             typeIndexes.set(user, await Solid.findOrCreatePrivateTypeIndex());
-        } else if (!typeIndexes.has(user)) {
-            typeIndexes.set(user, await Solid.findPrivateTypeIndex());
         }
 
         return typeIndexes.get(user) ?? null;

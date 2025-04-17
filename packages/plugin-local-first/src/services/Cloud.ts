@@ -11,7 +11,7 @@ import {
 } from '@noeldemartin/utils';
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
+import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
@@ -400,6 +400,8 @@ export class CloudService extends Service {
 
         this.status = CloudStatus.Online;
         this.engine = authenticator.engine;
+
+        getRemoteClass(SolidContainer).setEngine(this.engine);
 
         for (const relatedClass of relatedClasses) {
             getRemoteClass(relatedClass).setEngine(this.engine);

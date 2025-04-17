@@ -13,6 +13,7 @@ import {
     objectWithoutEmpty,
     parseBoolean,
     requireUrlParse,
+    resetAsyncMemo,
     setAsyncMemo,
     tap,
     urlRoot,
@@ -277,12 +278,16 @@ export class SolidService extends Service {
         return (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex());
     }
 
-    public async findPrivateTypeIndex(): Promise<SolidTypeIndex | null> {
+    public async findPrivateTypeIndex(options: { fresh?: boolean } = {}): Promise<SolidTypeIndex | null> {
         const { webId, privateTypeIndexUrl } = this.requireUser();
         const engine = this.requireAuthenticator().engine;
 
         if (!privateTypeIndexUrl) {
             return null;
+        }
+
+        if (options.fresh) {
+            resetAsyncMemo(`${webId}-privateTypeIndex`);
         }
 
         return asyncMemo(`${webId}-privateTypeIndex`, () =>
@@ -293,12 +298,16 @@ export class SolidService extends Service {
         return (await this.findPublicTypeIndex()) ?? (await this.createPublicTypeIndex());
     }
 
-    public async findPublicTypeIndex(): Promise<SolidTypeIndex | null> {
+    public async findPublicTypeIndex(options: { fresh?: boolean } = {}): Promise<SolidTypeIndex | null> {
         const { webId, publicTypeIndexUrl } = this.requireUser();
         const engine = this.requireAuthenticator().engine;
 
         if (!publicTypeIndexUrl) {
             return null;
+        }
+
+        if (options.fresh) {
+            resetAsyncMemo(`${webId}-publicTypeIndex`);
         }
 
         return asyncMemo(`${webId}-publicTypeIndex`, () => SolidTypeIndex.withEngine(engine).find(publicTypeIndexUrl));

@@ -457,16 +457,18 @@ describe('Sync', () => {
         // Arrange - Prepare responses
         const now = Date.now();
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
-        const typeIndexTurtle = `
+
+        FakeServer.respond(
+            typeIndexUrl,
+            `
             <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
 
             <#tasks>
                 a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
                 <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Action> ;
                 <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
-        `;
-
-        FakeServer.respondOnce(typeIndexUrl, FakeResponse.success(typeIndexTurtle)); // Initial fetch
+        `,
+        );
         FakeServer.respondOnce(
             containerUrl,
             containerResponse({
@@ -569,14 +571,14 @@ describe('Sync', () => {
         await Cloud.sync();
 
         // Assert
-        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(2);
         expect(FakeServer.getRequests(containerUrl)).toHaveLength(2);
         expect(FakeServer.getRequests(childContainerUrl)).toHaveLength(2);
         expect(FakeServer.getRequests(freshDocumentUrl)).toHaveLength(1);
         expect(FakeServer.getRequests(staleDocumentUrl)).toHaveLength(2);
         expect(FakeServer.getRequests(freshChildDocumentUrl)).toHaveLength(1);
         expect(FakeServer.getRequests(staleChildDocumentUrl)).toHaveLength(2);
-        expect(FakeServer.getRequests()).toHaveLength(11);
+        expect(FakeServer.getRequests()).toHaveLength(12);
     });
 
     it('Ignores missing children', async () => {
@@ -840,7 +842,7 @@ describe('Sync', () => {
 
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0];
-        const containerUrl = parentContainerUrl + 'delete/'; //fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl });
 
         // Arrange - Prepare models
@@ -866,11 +868,16 @@ describe('Sync', () => {
                 FakeResponse.success('<> a <http://www.w3.org/ns/ldp#Container> .'),
             );
             FakeServer.respondOnce(`${containerUrl}.meta`, FakeResponse.success()); // Update meta
-            FakeServer.respondOnce(typeIndexUrl, typeIndexResponse()); // Check before update
-            FakeServer.respondOnce(typeIndexUrl, FakeResponse.success()); // Update
         } else {
             FakeServer.respondOnce(documentUrl, FakeResponse.notFound()); // Tombstone check
         }
+
+        FakeServer.respondOnce(typeIndexUrl, typeIndexResponse()); // Check before update
+        FakeServer.respondOnce(typeIndexUrl, FakeResponse.success()); // Update
+        FakeServer.respondOnce(
+            typeIndexUrl,
+            typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }), // Second sync
+        );
 
         FakeServer.respondOnce(documentUrl, FakeResponse.notFound()); // Existence check
         FakeServer.respondOnce(documentUrl, FakeResponse.success()); // Create
@@ -904,9 +911,6 @@ describe('Sync', () => {
 
         // Assert
         const freshMovie = await Movie.at(containerUrl).find(movie.url);
-        const cloud = Cloud;
-
-        cloud;
 
         expect(freshMovie).toBeNull();
 
@@ -918,15 +922,16 @@ describe('Sync', () => {
             expect(freshContainer.movies).toHaveLength(0);
             expect(freshContainer.resourceUrls).toHaveLength(1);
 
-            expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(3);
+            expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(4);
             expect(FakeServer.getRequests(containerUrl)).toHaveLength(5);
             expect(FakeServer.getRequests(documentUrl)).toHaveLength(3);
             expect(FakeServer.getRequests(`${containerUrl}.meta`)).toHaveLength(1);
-            expect(FakeServer.getRequests()).toHaveLength(12);
+            expect(FakeServer.getRequests()).toHaveLength(13);
         } else {
-            expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
-            expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
-            expect(FakeServer.getRequests()).toHaveLength(5);
+            expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(4);
+            expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
+            expect(FakeServer.getRequests(documentUrl)).toHaveLength(5);
+            expect(FakeServer.getRequests()).toHaveLength(10);
         }
 
         expect(Cloud.localModelUpdates).toEqual({});
@@ -963,11 +968,12 @@ describe('Sync', () => {
                 FakeResponse.success('<> a <http://www.w3.org/ns/ldp#Container> .'),
             );
             FakeServer.respondOnce(`${containerUrl}.meta`, FakeResponse.success()); // Update meta
-            FakeServer.respondOnce(typeIndexUrl, typeIndexResponse()); // Check before update
-            FakeServer.respondOnce(typeIndexUrl, FakeResponse.success()); // Update
         } else {
             FakeServer.respondOnce(documentUrl, FakeResponse.notFound()); // Tombstone check
         }
+
+        FakeServer.respondOnce(typeIndexUrl, typeIndexResponse()); // Check before update
+        FakeServer.respondOnce(typeIndexUrl, FakeResponse.success()); // Update
 
         FakeServer.respondOnce(documentUrl, FakeResponse.notFound()); // Existence check
         FakeServer.respondOnce(documentUrl, FakeResponse.success()); // Create
@@ -1010,9 +1016,9 @@ describe('Sync', () => {
             expect(FakeServer.getRequests(`${containerUrl}.meta`)).toHaveLength(1);
             expect(FakeServer.getRequests()).toHaveLength(12);
         } else {
-            expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
+            expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(3);
             expect(FakeServer.getRequests(documentUrl)).toHaveLength(5);
-            expect(FakeServer.getRequests()).toHaveLength(6);
+            expect(FakeServer.getRequests()).toHaveLength(8);
         }
 
         expect(Cloud.localModelUpdates).toEqual({});

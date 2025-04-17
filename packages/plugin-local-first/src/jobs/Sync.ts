@@ -12,7 +12,7 @@ import { App, Job } from '@aerogel/core';
 import { InvalidModelAttributes, requireBootedModel } from 'soukai';
 import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
+import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { JobListener, JobStatus } from '@aerogel/core';
 import type { SolidContainsRelation, SolidEngine, SolidTypeIndex } from 'soukai-solid';
@@ -182,7 +182,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
     private async fetchRemoteModels(): Promise<SolidModel[]> {
         const pullStatus = this.status.children[0];
-        const typeIndex = await this.loadTypeIndex();
+        const typeIndex = await this.loadTypeIndex({ fresh: true });
 
         if (!typeIndex) {
             return [];
@@ -308,11 +308,18 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     }
 
     private async updateTypeRegistrations(remoteModel: SolidModel): Promise<void> {
-        if (!isContainer(remoteModel) || !isRegisteredModel(remoteModel)) {
+        if (!isRegisteredModel(remoteModel)) {
             return;
         }
 
-        const registeredChildren = getContainerRegisteredClasses(remoteModel.static());
+        const registeredChildren = isContainer(remoteModel)
+            ? getContainerRegisteredClasses(remoteModel.static())
+            : [remoteModel.static()];
+
+        const RemoteSolidContainer = getRemoteClass(SolidContainer);
+        const container = isContainer(remoteModel)
+            ? remoteModel
+            : new RemoteSolidContainer({ url: remoteModel.requireContainerUrl() });
 
         if (registeredChildren.length === 0) {
             return;
@@ -324,7 +331,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             return;
         }
 
-        await remoteModel.register(typeIndex, registeredChildren);
+        await container.register(typeIndex, registeredChildren);
     }
 
     private async loadChildren(model: SolidModel, childStatus?: JobStatus): Promise<void> {
