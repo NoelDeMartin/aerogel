@@ -5,7 +5,23 @@
         :side="dropdownMenu.side"
     >
         <slot>
-            <DropdownMenuOption v-for="(option, key) in dropdownMenu.options" :key @select="option.click">
+            <DropdownMenuOption
+                v-for="(option, key) in dropdownMenu.options"
+                :key
+                :as="option.route || option.href ? HeadlessButton : undefined"
+                :class="option.class"
+                v-bind="
+                    option.route || option.href
+                        ? {
+                            href: option.href,
+                            route: option.route,
+                            routeParams: option.routeParams,
+                            routeQuery: option.routeQuery,
+                        }
+                        : {}
+                "
+                @select="option.click?.()"
+            >
                 {{ option.label }}
             </DropdownMenuOption>
         </slot>
@@ -19,6 +35,7 @@ import { injectReactiveOrFail } from '@aerogel/core/utils';
 import type { DropdownMenuExpose } from '@aerogel/core/components/contracts/DropdownMenu';
 
 import DropdownMenuOption from './DropdownMenuOption.vue';
+import HeadlessButton from '../headless/HeadlessButton.vue';
 
 const dropdownMenu = injectReactiveOrFail<DropdownMenuExpose>(
     'dropdown-menu',

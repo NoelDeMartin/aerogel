@@ -4,7 +4,12 @@ import type { Falsifiable } from '@aerogel/core/utils/types';
 
 export type DropdownMenuOptionData = {
     label: string;
-    click: () => unknown;
+    href?: string;
+    route?: string;
+    routeParams?: object;
+    routeQuery?: object;
+    click?: () => unknown;
+    class?: string;
 };
 
 export interface DropdownMenuProps {
