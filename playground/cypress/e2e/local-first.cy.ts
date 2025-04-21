@@ -18,10 +18,10 @@ describe('Local First', () => {
         cy.press('Connect account');
         cy.ariaInput('Login url').type(`${urlClean(serverUrl(), { protocol: false })}{enter}`);
         cy.solidLogin();
+        cy.waitSync();
         cy.ariaLabel('Open account').click();
         cy.see('Alice Cooper');
         cy.get(':focus').type('{esc}');
-        cy.waitSync();
 
         // Creates local tasks
         cy.ariaInput('Task name').type('Hello World!{enter}');
