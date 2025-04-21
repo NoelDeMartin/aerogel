@@ -1,6 +1,6 @@
 import Aerogel from 'virtual:aerogel';
 
-import { UI, bootServices } from '@aerogel/core';
+import { UI, bootServices, setMarkdownRouter } from '@aerogel/core';
 import { RouterLink, createRouter, createWebHistory } from 'vue-router';
 import type { Plugin } from '@aerogel/core';
 import type { RouteRecordRaw } from 'vue-router';
@@ -33,6 +33,11 @@ export default function routing(options: Options): Plugin {
             UI.registerComponent('router-link', RouterLink);
             Router.use(router, options);
             app.use(router);
+
+            setMarkdownRouter({
+                resolve: (route) => router.resolve({ name: route }).href,
+                visit: async (route) => void (await router.push({ name: route })),
+            });
 
             await bootServices(app, services);
         },

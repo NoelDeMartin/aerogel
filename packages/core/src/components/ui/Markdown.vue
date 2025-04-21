@@ -7,7 +7,7 @@ import { computed, h, useAttrs } from 'vue';
 import { isInstanceOf } from '@noeldemartin/utils';
 import type { VNode } from 'vue';
 
-import { renderMarkdown } from '@aerogel/core/utils/markdown';
+import { getMarkdownRouter, renderMarkdown } from '@aerogel/core/utils/markdown';
 import { translate, translateWithDefault } from '@aerogel/core/lang';
 import { renderVNode } from '@aerogel/core/utils/vue';
 
@@ -62,6 +62,18 @@ async function onClick(event: Event) {
 
     if (isInstanceOf(target, HTMLElement) && target.dataset.markdownAction) {
         actions?.[target.dataset.markdownAction]?.();
+
+        return;
+    }
+
+    if (isInstanceOf(target, HTMLAnchorElement) && target.dataset.markdownRoute) {
+        const router = getMarkdownRouter();
+
+        if (router) {
+            event.preventDefault();
+
+            router.visit(target.dataset.markdownRoute);
+        }
 
         return;
     }
