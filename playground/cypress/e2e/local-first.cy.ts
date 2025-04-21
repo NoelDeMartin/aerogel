@@ -21,7 +21,7 @@ describe('Local First', () => {
         cy.ariaLabel('Open account').click();
         cy.see('Alice Cooper');
         cy.get(':focus').type('{esc}');
-        cy.dontSee('Synchronization in progress');
+        cy.waitSync();
 
         // Creates local tasks
         cy.ariaInput('Task name').type('Hello World!{enter}');
@@ -32,8 +32,7 @@ describe('Local First', () => {
         cy.get('@updateTask.all').should('have.length', 0);
 
         // Sync tasks
-        cy.see('Synchronization in progress');
-        cy.dontSee('Synchronization in progress');
+        cy.waitSync();
 
         cy.get('@updateTask.all').should('have.length', 2);
         cy.get('@updateTask.1').its('request.body').should('contain', 'Hello World!');
@@ -48,8 +47,7 @@ describe('Local First', () => {
         cy.get('@deleteTask.all').should('have.length', 0);
 
         // Sync tasks
-        cy.see('Synchronization in progress');
-        cy.dontSee('Synchronization in progress');
+        cy.waitSync();
 
         cy.get('@deleteTask.all').should('have.length', 0);
         cy.get('@updateTask.all').should('have.length', 3);
