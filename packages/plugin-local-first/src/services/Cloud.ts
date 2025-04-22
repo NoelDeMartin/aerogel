@@ -230,7 +230,7 @@ export class CloudService extends Service {
         this.whenReady(() => {
             const [existingCollection] = this.modelCollections[modelClass.modelName] ?? [];
 
-            modelClass.collection = existingCollection ?? getRemoteContainersCollection(options.path);
+            modelClass.collection = existingCollection ?? getRemoteContainersCollection(modelClass, options.path);
         });
 
         await trackModels(modelClass, {
@@ -272,7 +272,7 @@ export class CloudService extends Service {
                 continue;
             }
 
-            return getRemoteContainersCollection(registration.path);
+            return getRemoteContainersCollection(registration.modelClass, registration.path);
         }
 
         throw new Error(`Failed resolving remote collection for '${modelClass.modelName}' model`);
@@ -365,7 +365,7 @@ export class CloudService extends Service {
             }
 
             const localCollection = modelClass.collection;
-            const remoteCollection = getRemoteContainersCollection(path);
+            const remoteCollection = getRemoteContainersCollection(modelClass, path);
 
             modelClass.collection = remoteCollection;
 

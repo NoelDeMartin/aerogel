@@ -11,7 +11,7 @@ import {
 import { App } from '@aerogel/core';
 import { getTrackedModels, trackModelsCollection as trackSoukaiModelsCollection } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
-import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone } from 'soukai-solid';
+import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
@@ -233,12 +233,16 @@ export function getRemoteClass<T extends SolidModelConstructor>(localClass: T): 
     return (remoteClasses.get(localClass) as T) ?? makeRemoteClass(localClass);
 }
 
-export function getRemoteContainersCollection(path?: string): string {
+export function getRemoteContainersCollection(modelClass: SolidModelConstructor, path?: string): string {
+    const containerRelation = isContainerClass(modelClass) && getContainerRelations(modelClass)[0];
+    const containedClass = containerRelation
+        ? modelClass.instance().requireRelation<SolidContainsRelation>(containerRelation).relatedClass
+        : modelClass;
     const rootStorage = Solid.requireUser().storageUrls[0];
 
-    return path
-        ? urlResolveDirectory((path.startsWith('/') ? rootStorage.slice(0, -1) : rootStorage) + path)
-        : rootStorage;
+    path ??= `/${containedClass.modelName.toLowerCase()}s/`;
+
+    return urlResolveDirectory((path.startsWith('/') ? rootStorage.slice(0, -1) : rootStorage) + path);
 }
 
 export function getRemoteModel(localModel: SolidModel, remoteModels: ObjectsMap<SolidModel>): SolidModel {
