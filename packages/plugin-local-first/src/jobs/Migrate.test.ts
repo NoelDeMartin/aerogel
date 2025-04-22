@@ -168,7 +168,7 @@ describe('Migrate', () => {
 
 async function setupMigration(count: number = 1) {
     // Arrange - Mint urls
-    const parentContainerUrl = Solid.requireUser().storageUrls[0];
+    const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'tasks/';
     const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
     const documentUrls = range(count).map(() => fakeDocumentUrl({ containerUrl })) as [string, ...string[]];
 

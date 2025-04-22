@@ -96,7 +96,7 @@ describe('Sync', () => {
 
     it('Syncs container documents', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const localDocumentUrl = fakeDocumentUrl({ containerUrl });
         const remoteDocumentUrl = fakeDocumentUrl({ containerUrl });
@@ -203,7 +203,7 @@ describe('Sync', () => {
 
     it('Syncs individual container updates', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const movieDocumentUrl = fakeDocumentUrl({ containerUrl });
 
@@ -359,7 +359,7 @@ describe('Sync', () => {
 
     it('Creates containers with documents', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl });
 
@@ -415,7 +415,7 @@ describe('Sync', () => {
 
     it('Skips pulling fresh documents', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'tasks/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const childContainerUrl = fakeContainerUrl({ baseUrl: containerUrl });
         const freshDocumentUrl = fakeDocumentUrl({ containerUrl });
@@ -583,7 +583,7 @@ describe('Sync', () => {
 
     it('Ignores missing children', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'tasks/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const existingChildDocumentUrl = fakeContainerUrl({ baseUrl: containerUrl });
         const notFoundChildDocumentUrl = fakeDocumentUrl({ containerUrl });
@@ -641,7 +641,7 @@ describe('Sync', () => {
 
     it('Ignores malformed documents', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const firstDocumentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
         const secondDocumentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
@@ -704,7 +704,7 @@ describe('Sync', () => {
 
     it('Ignores malformed documents in individual syncs', async () => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl: containerUrl });
 
@@ -777,7 +777,7 @@ describe('Sync', () => {
 
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl });
 
@@ -841,7 +841,7 @@ describe('Sync', () => {
         const usingContainers = variant === 'container registration';
 
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl });
 
@@ -941,7 +941,7 @@ describe('Sync', () => {
         const usingContainers = variant === 'container registration';
 
         // Arrange - Mint urls
-        const parentContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const documentUrl = fakeDocumentUrl({ containerUrl });
 

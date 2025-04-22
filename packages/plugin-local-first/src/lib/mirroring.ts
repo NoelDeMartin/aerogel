@@ -234,13 +234,24 @@ export function getRemoteClass<T extends SolidModelConstructor>(localClass: T): 
 }
 
 export function getRemoteContainersCollection(modelClass: SolidModelConstructor, path?: string): string {
-    const containerRelation = isContainerClass(modelClass) && getContainerRelations(modelClass)[0];
-    const containedClass = containerRelation
-        ? modelClass.instance().requireRelation<SolidContainsRelation>(containerRelation).relatedClass
-        : modelClass;
     const rootStorage = Solid.requireUser().storageUrls[0];
+    const containedClass =
+        isContainerClass(modelClass) &&
+        getContainerRelations(modelClass)
+            .map((relation) => {
+                const relatedClass = modelClass
+                    .instance()
+                    .requireRelation<SolidContainsRelation>(relation).relatedClass;
 
-    path ??= `/${containedClass.modelName.toLowerCase()}s/`;
+                if (isContainerClass(relatedClass)) {
+                    return null;
+                }
+
+                return relatedClass;
+            })
+            .filter(Boolean)[0];
+
+    path ??= `/${(containedClass || modelClass).modelName.toLowerCase()}s/`;
 
     return urlResolveDirectory((path.startsWith('/') ? rootStorage.slice(0, -1) : rootStorage) + path);
 }
