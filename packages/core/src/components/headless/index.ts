@@ -16,4 +16,5 @@ export { default as HeadlessSelectOption } from './HeadlessSelectOption.vue';
 export { default as HeadlessSelectOptions } from './HeadlessSelectOptions.vue';
 export { default as HeadlessSelectTrigger } from './HeadlessSelectTrigger.vue';
 export { default as HeadlessSelectValue } from './HeadlessSelectValue.vue';
+export { default as HeadlessSwitch } from './HeadlessSwitch.vue';
 export { default as HeadlessToast } from './HeadlessToast.vue';

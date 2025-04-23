@@ -64,8 +64,8 @@ watchEffect(() => {
         return;
     }
 
-    if (type === 'date') {
-        $input.value.valueAsDate = value.value as Date;
+    if (type === 'date' && value.value instanceof Date) {
+        $input.value.valueAsDate = value.value;
 
         return;
     }

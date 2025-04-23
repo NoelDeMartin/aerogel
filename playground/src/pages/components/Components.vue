@@ -76,6 +76,9 @@
             <div class="mt-4">
                 <Checkbox :label="$t('components.inputs_checkbox')" />
             </div>
+            <div class="mt-4">
+                <Switch v-model="switchValue" :label="$t('components.inputs_switch')" />
+            </div>
         </section>
 
         <section>
@@ -216,6 +219,8 @@ import { ref } from 'vue';
 
 import CustomModal from './components/CustomModal.vue';
 import NestedModal from './components/NestedModal.vue';
+
+const switchValue = ref(false);
 
 async function showLoadingWithProgress() {
     const progress = ref(0);

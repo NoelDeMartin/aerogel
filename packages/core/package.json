@@ -33,6 +33,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "dompurify": "^3.2.4",
+        "eruda": "^3.4.1",
         "marked": "^15.0.7",
         "pinia": "^2.1.6",
         "reka-ui": "^2.2.0",

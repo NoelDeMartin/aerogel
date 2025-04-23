@@ -7,7 +7,7 @@
         :render-option="renderLocale"
     >
         <div class="grow">
-            <SelectLabel>
+            <SelectLabel class="text-base font-semibold">
                 {{ $td('settings.locale', 'Language') }}
             </SelectLabel>
             <Markdown

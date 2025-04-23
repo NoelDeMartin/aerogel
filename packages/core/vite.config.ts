@@ -19,6 +19,7 @@ export default defineConfig({
                 'class-variance-authority',
                 'clsx',
                 'dompurify',
+                'eruda',
                 'marked',
                 'pinia',
                 'reka-ui',
