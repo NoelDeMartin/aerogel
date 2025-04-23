@@ -27,14 +27,22 @@
 
             <HeadlessModalTitle
                 v-if="title"
-                class="px-4 pt-5 pb-2 text-base font-semibold text-gray-900"
-                :class="{ 'sr-only': titleHidden }"
+                class="px-4 pt-5 text-base font-semibold text-gray-900"
+                :class="{
+                    'sr-only': titleHidden,
+                    'pb-0': description && !descriptionHidden,
+                    'pb-2': !description || descriptionHidden,
+                }"
             >
                 <Markdown :text="title" inline />
             </HeadlessModalTitle>
 
-            <HeadlessModalDescription v-if="description" :class="{ 'sr-only': descriptionHidden }">
-                <Markdown :text="description" class="mt-1 text-sm leading-6 text-gray-500" />
+            <HeadlessModalDescription
+                v-if="description"
+                class="px-4 pt-1 pb-2"
+                :class="{ 'sr-only': descriptionHidden }"
+            >
+                <Markdown :text="description" class="text-sm leading-6 text-gray-500" />
             </HeadlessModalDescription>
 
             <div :class="renderedContentClass">

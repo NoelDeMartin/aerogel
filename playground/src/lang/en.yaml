@@ -69,7 +69,8 @@ components:
     modals_nestedTurtle: One turtle
     modals_nestedButton: When does this end?
     modals_custom: Custom content
-    modals_customContent: You can also create your own modals, like this one!
+    modals_customTitle: Custom modal
+    modals_customDescription: You can also create your own modals, like this one!
     modals_customClose: Nice!
     toasts: Toasts
     toasts_message: Hey, it works!

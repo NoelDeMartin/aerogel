@@ -1,13 +1,12 @@
 <template>
     <Modal
         v-slot="{ close }"
-        title="Custom modal"
-        title-hidden
+        :title="$t('components.modals_customTitle')"
+        :description="$t('components.modals_customDescription')"
         persistent
         class="flex flex-col items-center gap-4"
     >
-        <i-mdi-check-circle class="size-16 text-indigo-600" />
-        <Markdown lang-key="components.modals_customContent" class="text-center" />
+        <i-twemoji-squinting-face-with-tongue class="size-30" />
         <Button @click="close()">
             {{ $t('components.modals_customClose') }}
         </Button>
