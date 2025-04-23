@@ -88,6 +88,21 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
                 disabled: false,
                 class: 'hover:underline',
             },
+            {
+                variant: 'link',
+                size: 'small',
+                class: 'leading-6',
+            },
+            {
+                variant: 'link',
+                size: 'default',
+                class: 'leading-8',
+            },
+            {
+                variant: 'link',
+                size: 'large',
+                class: 'leading-10',
+            },
         ],
         defaultVariants: {
             variant: 'default',
