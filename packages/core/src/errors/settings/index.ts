@@ -1,10 +1,10 @@
 import { defineSettings } from '@aerogel/core/services';
 
-import Language from './Language.vue';
+import Debug from './Debug.vue';
 
 export default defineSettings([
     {
-        priority: 100,
-        component: Language,
+        priority: 10,
+        component: Debug,
     },
 ]);

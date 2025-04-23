@@ -4,8 +4,8 @@ import { definePlugin } from '@aerogel/core/plugins';
 
 import Lang from './Lang';
 import settings from './settings';
-import type { LangProvider } from './Lang';
 import { translate, translateWithDefault } from './utils';
+import type { LangProvider } from './Lang';
 
 export { Lang, translate, translateWithDefault };
 export type { LangProvider };

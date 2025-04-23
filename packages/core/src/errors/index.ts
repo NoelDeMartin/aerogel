@@ -1,9 +1,11 @@
-import type { App } from 'vue';
+import type { App as AppInstance } from 'vue';
 
+import App from '@aerogel/core/services/App';
 import { bootServices } from '@aerogel/core/services';
 import { definePlugin } from '@aerogel/core/plugins';
 
 import Errors from './Errors';
+import settings from './settings';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
 
 export * from './utils';
@@ -19,7 +21,7 @@ const frameworkHandler: ErrorHandler = (error) => {
     return true;
 };
 
-function setUpErrorHandler(app: App, baseHandler: ErrorHandler = () => false): void {
+function setUpErrorHandler(app: AppInstance, baseHandler: ErrorHandler = () => false): void {
     const errorHandler: ErrorHandler = (error) => baseHandler(error) || frameworkHandler(error);
 
     app.config.errorHandler = errorHandler;
@@ -33,6 +35,8 @@ export type ErrorsServices = typeof services;
 export default definePlugin({
     async install(app, options) {
         setUpErrorHandler(app, options.handleError);
+
+        settings.forEach((setting) => App.addSetting(setting));
 
         await bootServices(app, services);
     },

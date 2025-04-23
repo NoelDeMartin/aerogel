@@ -1,4 +1,4 @@
-import type { App as VueApp } from 'vue';
+import type { App as AppInstance } from 'vue';
 
 import { definePlugin } from '@aerogel/core/plugins';
 import { isDevelopment, isTesting } from '@noeldemartin/utils';
@@ -30,7 +30,7 @@ export type DefaultServices = typeof defaultServices;
 
 export interface Services extends DefaultServices {}
 
-export async function bootServices(app: VueApp, services: Record<string, Service>): Promise<void> {
+export async function bootServices(app: AppInstance, services: Record<string, Service>): Promise<void> {
     await Promise.all(
         Object.entries(services).map(async ([name, service]) => {
             await service
