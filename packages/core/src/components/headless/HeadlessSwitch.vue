@@ -16,7 +16,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends boolean = boolean">
 import { SwitchRoot, SwitchThumb } from 'reka-ui';
 import { computed, inject, readonly, watchEffect } from 'vue';
 import { uuid } from '@noeldemartin/utils';
@@ -35,7 +35,7 @@ const {
     modelValue,
     class: rootClass,
 } = defineProps<
-    InputProps<boolean> & {
+    InputProps<T> & {
         class?: HTMLAttributes['class'];
         labelClass?: HTMLAttributes['class'];
         inputClass?: HTMLAttributes['class'];
