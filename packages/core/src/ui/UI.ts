@@ -249,7 +249,7 @@ export class UIService extends Service {
 
         delay && (await Promise.race([after({ ms: delay }).then(() => (delayed = true)), operationPromise]));
 
-        if (!delayed) {
+        if (delay && !delayed) {
             return operationPromise;
         }
 

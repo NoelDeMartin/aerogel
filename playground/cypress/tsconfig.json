@@ -6,6 +6,6 @@
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "lib": ["DOM"],
-        "types": ["node", "cypress"]
+        "types": ["node", "cypress", "@aerogel/cypress"]
     }
 }
