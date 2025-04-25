@@ -1,5 +1,5 @@
 import { after, facade, fail, isDevelopment, required, uuid } from '@noeldemartin/utils';
-import { markRaw, nextTick } from 'vue';
+import { markRaw, nextTick, unref } from 'vue';
 import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
 import type { Component } from 'vue';
 import type { ClosureArgs } from '@noeldemartin/utils';
@@ -64,6 +64,7 @@ export type LoadingOptions = AcceptRefs<{
     title?: string;
     message?: string;
     progress?: number;
+    delay?: number;
 }>;
 
 export interface ConfirmOptionsWithCheckboxes<T extends ConfirmModalCheckboxes = ConfirmModalCheckboxes>
@@ -218,7 +219,11 @@ export class UIService extends Service {
         operation?: Promise<T> | (() => T),
     ): Promise<T> {
         const processOperation = (o: Promise<T> | (() => T)) => (typeof o === 'function' ? Promise.resolve(o()) : o);
-        const processArgs = (): { operationPromise: Promise<T>; props?: AcceptRefs<LoadingModalProps> } => {
+        const processArgs = (): {
+            operationPromise: Promise<T>;
+            props?: AcceptRefs<LoadingModalProps>;
+            delay?: number;
+        } => {
             if (typeof operationOrMessageOrOptions === 'string') {
                 return {
                     props: { message: operationOrMessageOrOptions },
@@ -230,13 +235,24 @@ export class UIService extends Service {
                 return { operationPromise: processOperation(operationOrMessageOrOptions) };
             }
 
+            const { delay, ...props } = operationOrMessageOrOptions;
+
             return {
-                props: operationOrMessageOrOptions,
+                props,
+                delay: unref(delay),
                 operationPromise: processOperation(operation as Promise<T> | (() => T)),
             };
         };
 
-        const { operationPromise, props } = processArgs();
+        let delayed = false;
+        const { operationPromise, props, delay } = processArgs();
+
+        delay && (await Promise.race([after({ ms: delay }).then(() => (delayed = true)), operationPromise]));
+
+        if (!delayed) {
+            return operationPromise;
+        }
+
         const modal = await this.modal(this.requireComponent('loading-modal'), props);
 
         try {
