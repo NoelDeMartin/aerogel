@@ -28,7 +28,7 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 '@noeldemartin/utils',
-                '@simonsmith/cypress-image-snapshot/command',
+                '@simonsmith/cypress-image-snapshot/command.js',
                 '@simonsmith/cypress-image-snapshot/plugin',
                 'cypress-solid',
                 'cypress-solid/config',
