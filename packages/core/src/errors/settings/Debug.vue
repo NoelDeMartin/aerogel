@@ -1,26 +1,19 @@
 <template>
-    <div class="mt-4 flex flex-row">
-        <div class="flex-grow">
-            <h3 id="debug-setting" class="text-base font-semibold">
-                {{ $td('settings.debug', 'Debugging') }}
-            </h3>
-            <Markdown
-                lang-key="settings.debugDescription"
-                lang-default="Enable debugging with [Eruda](https://eruda.liriliri.io/)."
-                class="mt-1 text-sm text-gray-500"
-            />
-        </div>
-
+    <Setting
+        title-id="debug-setting"
+        :title="$td('settings.debug', 'Debugging')"
+        :description="$td('settings.debugDescription', 'Enable debugging with [Eruda](https://eruda.liriliri.io/).')"
+    >
         <Switch v-model="enabled" aria-labelledby="debug-setting" />
-    </div>
+    </Setting>
 </template>
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
 import type Eruda from 'eruda';
 
+import Setting from '@aerogel/core/components/ui/Setting.vue';
 import Switch from '@aerogel/core/components/ui/Switch.vue';
-import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 
 let eruda: typeof Eruda | null = null;
 const enabled = ref(false);

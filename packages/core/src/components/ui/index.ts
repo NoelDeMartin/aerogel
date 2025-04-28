@@ -27,6 +27,7 @@ export { default as SelectLabel } from './SelectLabel.vue';
 export { default as SelectOption } from './SelectOption.vue';
 export { default as SelectOptions } from './SelectOptions.vue';
 export { default as SelectTrigger } from './SelectTrigger.vue';
+export { default as Setting } from './Setting.vue';
 export { default as SettingsModal } from './SettingsModal.vue';
 export { default as StartupCrash } from './StartupCrash.vue';
 export { default as Switch } from './Switch.vue';
