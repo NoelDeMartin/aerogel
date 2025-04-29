@@ -16,6 +16,7 @@ import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
 import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
+import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
 import { getContainerRelations, getRelatedAppModels } from '@aerogel/plugin-local-first/lib/inference';
 
@@ -109,6 +110,8 @@ export async function updateRemoteModel(localModel: SolidModel): Promise<void> {
                 [localModel.url]: modelUpdates + 1,
             },
     });
+
+    await DocumentsCache.forget(localModel.requireDocumentUrl());
 
     if (Cloud.autoPush && Cloud.ready && !Cloud.syncing) {
         SyncQueue.push(localModel);
