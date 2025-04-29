@@ -420,9 +420,11 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             return;
         }
 
+        const wasDirty = model.isDirty();
+
         await model.save();
 
-        if (isRemoteModel(model)) {
+        if (wasDirty || isRemoteModel(model)) {
             this.syncedModelUrls.add(model.url);
         }
 
