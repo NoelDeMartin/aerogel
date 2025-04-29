@@ -590,6 +590,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
             localRelation.addRelated(localModel);
             localModels.add(localModel);
+            this.syncedModelUrls.add(localModel.url);
         }
 
         for (const localModel of localModels.items()) {

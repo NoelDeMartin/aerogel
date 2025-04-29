@@ -152,6 +152,111 @@ describe('Sync', () => {
         expect(Cloud.localModelUpdates).toEqual({});
     });
 
+    it('Pushes container documents', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const localDocumentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({
+            url: containerUrl,
+            name: 'Remote Movies',
+        });
+
+        await container.relatedMovies.create({ url: `${localDocumentUrl}#it`, name: 'The Tale of Princess Kaguya' });
+
+        // Arrange - Prepare responses
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+
+        FakeServer.respond(typeIndexUrl, typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }));
+        FakeServer.respond(
+            containerUrl,
+            containerResponse({
+                name: 'Remote Movies',
+                documentUrls: [],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+            }),
+        );
+        FakeServer.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Check before create
+        FakeServer.respondOnce(localDocumentUrl, FakeResponse.created()); // Create
+
+        // Arrange - Prepare service
+        await Cloud.launch();
+        await Cloud.register(MoviesContainer);
+        await Events.emit('application-ready');
+
+        // Act
+        const updates: number[] = [];
+
+        await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
+
+        // Assert
+        expect(updates).toEqual([0, 0.9, 1]);
+        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(localDocumentUrl)).toHaveLength(2);
+        expect(FakeServer.getRequests()).toHaveLength(4);
+
+        const movies = await Movie.from(containerUrl).all();
+        expect(movies).toHaveLength(1);
+        expect(arrayFind(movies, 'name', 'The Tale of Princess Kaguya')).toBeInstanceOf(Movie);
+
+        expect(Cloud.localModelUpdates).toEqual({});
+    });
+
+    it('Pulls container documents', async () => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const remoteDocumentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({
+            url: containerUrl,
+            name: 'Remote Movies',
+        });
+
+        // Arrange - Prepare responses
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+
+        FakeServer.respond(typeIndexUrl, typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }));
+        FakeServer.respond(
+            containerUrl,
+            containerResponse({
+                name: 'Remote Movies',
+                documentUrls: [remoteDocumentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+            }),
+        );
+        FakeServer.respond(remoteDocumentUrl, movieResponse('Spirited Away'));
+
+        // Arrange - Prepare service
+        await Cloud.launch();
+        await Cloud.register(MoviesContainer);
+        await Events.emit('application-ready');
+
+        // Act
+        const updates: number[] = [];
+
+        await Cloud.sync({ onUpdated: (progress) => updates.push(progress) });
+
+        // Assert
+        expect(updates).toEqual([0, 0.9, 1]);
+        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(remoteDocumentUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests()).toHaveLength(3);
+
+        const movies = await Movie.from(containerUrl).all();
+        expect(movies).toHaveLength(1);
+        expect(arrayFind(movies, 'name', 'Spirited Away')).toBeInstanceOf(Movie);
+
+        expect(Cloud.localModelUpdates).toEqual({});
+    });
+
     it('Syncs documents', async () => {
         // Arrange - Mint urls
         const containerUrl = Solid.requireUser().storageUrls[0];
