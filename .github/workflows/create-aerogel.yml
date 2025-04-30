@@ -54,23 +54,6 @@ jobs:
                   ./packages/cli/bin/gel create app --local --copy
                   cd app
                   npm install
-            - name: Configure Solid
-              working-directory: app
-              run: |
-                  # Disable eslint in parent folder
-                  sed -i '64d' ../package.json
-                  sed -i '64d' ../package.json
-                  sed -i '64d' ../package.json
-                  sed -i '64d' ../package.json
-                  sed -i '64d' ../package.json
-
-                  # Install plugin
-                  npx gel install solid
-
-                  # Configure snapshots
-                  sed -i "7i\        cy.matchImageSnapshot();" ./cypress/e2e/app.cy.ts
-                  mkdir cypress/snapshots/app.cy.ts -p
-                  cp ../.github/workflows/fixtures/create-aerogel-snapshot.png "cypress/snapshots/app.cy.ts/App -- Shows get started link.snap.png"
             - run: npm run build
               working-directory: app
             - run: npm run lint
@@ -78,11 +61,7 @@ jobs:
             - run: npm run test:ci
               working-directory: app
             - name: Cypress
-
-              # TODO enable snapshots tests
-              # run: npm run cy:test-snapshots:ci
               run: npm run cy:test
-
               working-directory: app
             - name: Upload Cypress screenshots
               uses: actions/upload-artifact@v4
@@ -90,9 +69,3 @@ jobs:
               with:
                   name: cypress_screenshots
                   path: app/cypress/screenshots
-            - name: Upload Cypress snapshots
-              uses: actions/upload-artifact@v4
-              if: ${{ failure() }}
-              with:
-                  name: cypress_snapshots
-                  path: app/cypress/snapshots
