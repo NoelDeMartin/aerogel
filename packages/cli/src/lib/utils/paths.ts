@@ -6,6 +6,10 @@ import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 
 export function basePath(path: string = ''): string {
+    if (process.env.AEROGEL_BASE_PATH) {
+        return resolve(process.env.AEROGEL_BASE_PATH, path);
+    }
+
     if (
         File.contains(
             fileURLToPath(new URL(/* @vite-ignore */ '../../../package.json', import.meta.url)),

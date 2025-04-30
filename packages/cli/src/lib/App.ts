@@ -36,6 +36,8 @@ export default class App {
             `Aerogel({ name: '${this.name}' })`,
         );
 
+        File.replace(resolve(path, 'src/lang/en.yaml'), 'title: \'App\'', `title: '${this.name}'`);
+
         for (const [name, version] of Object.entries(dependencies)) {
             File.replace(resolve(path, 'package.json'), new RegExp(`"${name}": ".*?"`, 'g'), `"${name}": "${version}"`);
         }

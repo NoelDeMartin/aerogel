@@ -1,7 +1,7 @@
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Plugin from '@aerogel/cli/plugins/Plugin';
-import Shell from '@aerogel/cli/lib/Shell';
+import { addNpmDependency } from '@aerogel/cli/utils/package';
 import type { Editor } from '@aerogel/cli/lib/Editor';
 
 export default class Solid extends Plugin {
@@ -16,11 +16,12 @@ export default class Solid extends Plugin {
         await super.updateFiles(editor);
     }
 
-    protected override async installNpmDependencies(): Promise<void> {
-        await Shell.run('npm install soukai-solid@next --save-exact');
-        await Shell.run('npm install @noeldemartin/solid-utils@next --save-exact');
-        await Shell.run('npm install @solid/community-server@7.1.6 --save-dev -E');
-        await super.installNpmDependencies();
+    protected override addNpmDependencies(): void {
+        addNpmDependency('soukai-solid', 'next');
+        addNpmDependency('@noeldemartin/solid-utils', 'next');
+        addNpmDependency('@solid/community-server', '7.1.6', true);
+
+        super.addNpmDependencies();
     }
 
     protected async updateNpmScripts(editor: Editor): Promise<void> {

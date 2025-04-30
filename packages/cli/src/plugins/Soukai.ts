@@ -1,5 +1,5 @@
 import Plugin from '@aerogel/cli/plugins/Plugin';
-import Shell from '@aerogel/cli/lib/Shell';
+import { addNpmDependency } from '@aerogel/cli/utils/package';
 
 export default class Soukai extends Plugin {
 
@@ -7,9 +7,10 @@ export default class Soukai extends Plugin {
         super('soukai');
     }
 
-    protected override async installNpmDependencies(): Promise<void> {
-        await Shell.run('npm install soukai@next --save-exact');
-        await super.installNpmDependencies();
+    protected override addNpmDependencies(): void {
+        addNpmDependency('soukai', 'next');
+
+        super.addNpmDependencies();
     }
 
     protected override getBootstrapConfig(): string {

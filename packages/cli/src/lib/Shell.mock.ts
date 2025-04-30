@@ -15,6 +15,10 @@ export class ShellServiceMock extends ShellService {
         expect(this.history, `expected '${command}' command to have been executed`).toContain(command);
     }
 
+    public expectNotRan(command: string): void {
+        expect(this.history, `expected '${command}' command to not have been executed`).not.toContain(command);
+    }
+
 }
 
 export default facade(ShellServiceMock);

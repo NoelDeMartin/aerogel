@@ -6,6 +6,7 @@ import Log from '@aerogel/cli/lib/Log';
 import Shell from '@aerogel/cli/lib/Shell';
 import File from '@aerogel/cli/lib/File';
 import { app, isLinkedLocalApp, isLocalApp } from '@aerogel/cli/lib/utils/app';
+import { addNpmDependency } from '@aerogel/cli/utils/package';
 import { editFiles, findDescendant, when } from '@aerogel/cli/lib/utils/edit';
 import { packNotFound, packagePackPath, packagePath } from '@aerogel/cli/lib/utils/paths';
 import type { Editor } from '@aerogel/cli/lib/Editor';
@@ -18,14 +19,20 @@ export default abstract class Plugin {
         this.name = name;
     }
 
-    public async install(): Promise<void> {
+    public async install(options: { skipInstall?: boolean } = {}): Promise<void> {
         this.assertNotInstalled();
 
         await this.beforeInstall();
-        await this.installDependencies();
+        await this.addDependencies();
+
+        if (!options.skipInstall) {
+            await this.installDependencies();
+        }
 
         if (editFiles()) {
             const editor = app().edit();
+
+            editor.addSourceFile('package.json');
 
             await this.updateFiles(editor);
             await editor.format();
@@ -50,23 +57,32 @@ export default abstract class Plugin {
         // Placeholder for overrides, don't place any functionality here.
     }
 
+    protected async addDependencies(): Promise<void> {
+        Log.info('Adding plugin dependencies');
+        this.addNpmDependencies();
+    }
+
     protected async installDependencies(): Promise<void> {
         await Log.animate('Installing plugin dependencies', async () => {
-            await this.installNpmDependencies();
+            await Shell.run('pnpm install --no-save');
         });
     }
 
     protected async updateFiles(editor: Editor): Promise<void> {
-        if (!this.isForDevelopment()) {
-            await this.updateBootstrapConfig(editor);
+        if (this.isForDevelopment()) {
+            return;
         }
+
+        await this.updateBootstrapConfig(editor);
     }
 
-    protected async installNpmDependencies(): Promise<void> {
-        const flags = this.isForDevelopment() ? '--save-dev' : '';
-
+    protected addNpmDependencies(): void {
         if (isLinkedLocalApp()) {
-            await Shell.run(`npm install file:${packagePath(this.getLocalPackageName())} ${flags}`);
+            addNpmDependency(
+                this.getNpmPackageName(),
+                `file:${packagePath(this.getLocalPackageName())}`,
+                this.isForDevelopment(),
+            );
 
             return;
         }
@@ -74,12 +90,12 @@ export default abstract class Plugin {
         if (isLocalApp()) {
             const packPath = packagePackPath(this.getLocalPackageName()) ?? packNotFound(this.getLocalPackageName());
 
-            await Shell.run(`npm install file:${packPath} ${flags}`);
+            addNpmDependency(this.getNpmPackageName(), `file:${packPath}`, this.isForDevelopment());
 
             return;
         }
 
-        await Shell.run(`npm install ${this.getNpmPackageName()}@next --save-exact ${flags}`);
+        addNpmDependency(this.getNpmPackageName(), 'next', this.isForDevelopment());
     }
 
     protected async updateBootstrapConfig(editor: Editor): Promise<void> {

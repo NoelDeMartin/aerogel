@@ -54,7 +54,7 @@ export class CreateCommand extends Command {
             That's it! You can start working on **${name}** doing the following:
 
                 cd ${path}
-                npm install
+                pnpm install
                 npm run dev
 
             Have fun!
