@@ -1,6 +1,7 @@
 @import '@aerogel/core/index.css';
 @import '@aerogel/plugin-solid/index.css';
 @import '@aerogel/plugin-local-first/index.css';
+@import '@aerogel/plugin-routing/index.css';
 @import '../fonts/ubuntu.css' layer(base);
 
 :root {

@@ -21,6 +21,13 @@ const localFirstComponents = Object.keys(
     }),
 ).map((filename) => filename.split('/').pop()?.replace('.vue', '') ?? '');
 
+const routingComponents = Object.keys(
+    import.meta.glob('../../../plugin-routing/src/components/**/*.vue', {
+        eager: true,
+        query: '?ignore',
+    }),
+).map((filename) => filename.split('/').pop()?.replace('.vue', '') ?? '');
+
 export default function AerogelResolver(): ComponentResolver {
     return {
         type: 'component',
@@ -35,6 +42,10 @@ export default function AerogelResolver(): ComponentResolver {
 
             if (localFirstComponents.includes(name)) {
                 return { name, as: name, from: '@aerogel/plugin-local-first' };
+            }
+
+            if (routingComponents.includes(name)) {
+                return { name, as: name, from: '@aerogel/plugin-routing' };
             }
         },
     };

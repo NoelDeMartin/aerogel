@@ -4,8 +4,9 @@ import { useRoute } from 'vue-router';
 import type { Component, ConcreteComponent } from 'vue';
 import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
 
-import Router from '../services/Router';
-import type { RouteBindings } from '../services/Router';
+import NotFound from '@aerogel/plugin-routing/pages/NotFound.vue';
+import Router from '@aerogel/plugin-routing/services/Router';
+import type { RouteBindings } from '@aerogel/plugin-routing/services/Router';
 
 export type AerogelRoute = RouteRecordRaw & {
     title?: string | ((params: Record<string, unknown>) => string | undefined | null);
@@ -105,5 +106,17 @@ export function defineRouteBindings(bindings: RouteBindings): RouteBindings {
 }
 
 export function defineRoutes(routes: AerogelRoute[]): RouteRecordRaw[] {
-    return routes.map(defineRoute);
+    const aerogelRoutes = routes.map(defineRoute);
+
+    if (!aerogelRoutes.some((route) => route.name === 'not-found' || route.name === '404')) {
+        aerogelRoutes.push(
+            defineRoute({
+                name: 'not-found',
+                path: '/:path(.*)*',
+                component: NotFound,
+            }),
+        );
+    }
+
+    return aerogelRoutes;
 }
