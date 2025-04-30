@@ -92,7 +92,10 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         },
         load: (id) => virtualHandlers[id]?.(),
         resolveId: (id) => (id in virtualHandlers ? id : undefined),
-        transformIndexHtml: (html, context) => renderHTML(html, context.filename, app),
+        transformIndexHtml: {
+            order: 'pre',
+            handler: (html, context) => renderHTML(html, context.filename, app),
+        },
     };
 
     return arrayFilter([

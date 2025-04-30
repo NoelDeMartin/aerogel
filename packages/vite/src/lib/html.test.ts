@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { formatCodeBlock } from '@noeldemartin/utils';
 
 import type { AppInfo } from '@aerogel/vite/lib/options';
@@ -50,9 +50,13 @@ describe('HTML helpers', () => {
 
     it('Evaluates meta helpers', () => {
         // Arrange
+        vi.mock('image-size', async () => ({
+            default: vi.fn(() => ({ width: 42, height: 23 })),
+        }));
+
         const html = `
             {{ favicons({ maskIconColor: '#123456' }) }}
-            {{ socialMeta() }}
+            {{ socialMeta({ image: './src/assets/banner.png' }) }}
         `;
         const expected = formatCodeBlock(`
             <link rel="apple-touch-icon" sizes="180x180" href="/site/apple-touch-icon.png" />
@@ -67,6 +71,12 @@ describe('HTML helpers', () => {
             <meta name="theme-color" content="#654321" />
             <meta property="og:title" content="My App" />
             <meta property="og:type" content="website" />
+
+
+
+            <meta property="og:image" content="./src/assets/banner.png" />
+            <meta property="og:image:width" content="42" />
+            <meta property="og:image:height" content="23" />
         `);
 
         // Act

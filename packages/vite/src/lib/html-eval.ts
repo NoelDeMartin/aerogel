@@ -1,4 +1,18 @@
+import imageSize from 'image-size';
+import { readFileSync } from 'node:fs';
+
 import type { AppInfo } from '@aerogel/vite/lib/options';
+
+function imageMeta(path: string): string {
+    const image = readFileSync(path);
+    const size = imageSize(image);
+
+    return `
+        <meta property="og:image" content="${path}" />
+        <meta property="og:image:width" content="${size.width}" />
+        <meta property="og:image:height" content="${size.height}" />
+    `;
+}
 
 export interface HTMLEvalScope {
     app: AppInfo;
@@ -32,15 +46,6 @@ export function socialMeta(this: HTMLEvalScope, options: { image?: string } = {}
             <meta property="og:description" content="${this.app.description}" />
             <meta name="description" content="${this.app.description}" />
         `;
-    const imageMeta =
-        options.image &&
-        `
-            <meta property="og:image" content="${options.image}" />
-
-            <!-- TODO calculate real image dimensions (these are hard-coded) -->
-            <meta property="og:image:width" content="600" />
-            <meta property="og:image:height" content="250" />
-        `;
 
     return `
         <meta name="apple-mobile-web-app-title" content="${this.app.name}" />
@@ -51,7 +56,7 @@ export function socialMeta(this: HTMLEvalScope, options: { image?: string } = {}
         <meta property="og:type" content="website" />
         ${urlMeta ?? ''}
         ${descriptionMeta ?? ''}
-        ${imageMeta ?? ''}
+        ${options.image ? imageMeta(options.image) : ''}
     `;
 }
 
