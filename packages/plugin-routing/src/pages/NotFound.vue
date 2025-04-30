@@ -11,5 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import { Link } from '@aerogel/core';
+
 import Page from '@aerogel/plugin-routing/components/Page.vue';
 </script>
