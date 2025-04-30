@@ -56,8 +56,15 @@ jobs:
                   npm install
             - run: npm run build
               working-directory: app
-            - run: npm run lint
+            - name: Lint
               working-directory: app
+              run: |
+                  sed -i '64d' ../package.json
+                  sed -i '64d' ../package.json
+                  sed -i '64d' ../package.json
+                  sed -i '64d' ../package.json
+                  sed -i '64d' ../package.json
+                  npm run lint
             - run: npm run test:ci
               working-directory: app
             - name: Cypress
