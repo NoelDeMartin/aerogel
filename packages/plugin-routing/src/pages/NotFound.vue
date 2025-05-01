@@ -1,5 +1,5 @@
 <template>
-    <Page class="justify-center">
+    <Page class="items-center justify-center">
         <h2 class="text-2xl font-bold">
             {{ $td('not-found.title', '404: Not Found') }}
         </h2>
