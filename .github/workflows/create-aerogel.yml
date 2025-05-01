@@ -7,9 +7,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 10
+                  run_install: false
             - uses: actions/setup-node@v4
               with:
                   node-version-file: '.nvmrc'
+                  cache: 'pnpm'
             - run: npm ci
             - name: Build packages
               run: |
@@ -53,7 +58,7 @@ jobs:
                   git config --global user.name "John Doe"
                   ./packages/cli/bin/gel create app --local --copy
                   cd app
-                  npm install
+                  pnpm install
             - run: npm run build
               working-directory: app
             - name: Lint
