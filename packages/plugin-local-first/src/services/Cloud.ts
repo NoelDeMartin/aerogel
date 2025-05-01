@@ -11,9 +11,10 @@ import {
 } from '@noeldemartin/utils';
 import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
+import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass, isSolidModel } from 'soukai-solid';
 import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
+import { getBootedModels } from 'soukai';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
 import type { JobListener } from '@aerogel/core';
@@ -301,6 +302,7 @@ export class CloudService extends Service {
         });
 
         await this.bustDocumentsCache();
+        await this.registerModels();
     }
 
     protected getDirtyLocalModels(): SolidModel[] {
@@ -449,6 +451,18 @@ export class CloudService extends Service {
         await DocumentsCache.clear();
     }
 
+    private async registerModels(): Promise<void> {
+        const models = getBootedModels();
+
+        for (const model of models.values()) {
+            if (!isSolidModel(model) || !model.cloud) {
+                continue;
+            }
+
+            await this.register(model, typeof model.cloud === 'boolean' ? {} : model.cloud);
+        }
+    }
+
 }
 
 export default facade(CloudService);
@@ -463,5 +477,12 @@ declare module '@aerogel/core' {
         'cloud:migration-completed': SolidModel[];
         'cloud:sync-started': SolidModel[] | undefined;
         'cloud:sync-completed': SolidModel[] | undefined;
+    }
+}
+
+declare module 'soukai-solid' {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    namespace SolidModel {
+        export const cloud: boolean | RegisterOptions | undefined;
     }
 }
