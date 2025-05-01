@@ -6,6 +6,7 @@ import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
 
 import NotFound from '@aerogel/plugin-routing/pages/NotFound.vue';
 import Router from '@aerogel/plugin-routing/services/Router';
+import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
 import type { RouteBindings } from '@aerogel/plugin-routing/services/Router';
 
 export type AerogelRoute = RouteRecordRaw & {
@@ -29,7 +30,10 @@ function setupPageComponent(pageComponent: ConcreteComponent, routeConfig: Aerog
 
     watchEffect(() => updateRouteTitle(routeTitle.value));
 
-    return () => h(pageComponent, pageParams.value);
+    return () =>
+        Object.values(pageParams.value ?? {}).some((value) => value instanceof BindingNotFound)
+            ? h(NotFound)
+            : h(pageComponent, pageParams.value);
 }
 
 function defineRouteComponent(pageComponent: ConcreteComponent, route: AerogelRoute): Component {
