@@ -12,5 +12,5 @@ import type { HTMLAttributes } from 'vue';
 const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class'] }>();
 
 const renderedRootClasses = computed(() =>
-    classes('mx-auto flex w-full max-w-screen-content grow flex-col px-4 py-8 md:px-0', rootClasses));
+    classes('mx-auto flex w-full max-w-screen-content grow flex-col px-edge py-8', rootClasses));
 </script>

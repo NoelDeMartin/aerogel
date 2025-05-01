@@ -23,6 +23,7 @@
     --color-links: var(--color-primary);
 
     --breakpoint-content: var(--breakpoint-md);
+    --spacing-edge: 1rem;
 }
 
 .clickable {
