@@ -215,7 +215,9 @@ export function getLocalModel(remoteModel: SolidModel, localModels: ObjectsMap<S
 }
 
 export function getLocalModels(): SolidModel[] {
-    return [...Cloud.registeredModels].map(({ modelClass }) => getTrackedModels(modelClass)).flat();
+    return [...Cloud.registeredModels]
+        .map(({ modelClass }) => getTrackedModels(modelClass, { includeSoftDeleted: true }))
+        .flat();
 }
 
 export function getSchemaMigrations(): Map<SolidModelConstructor, SolidModelConstructor | SolidSchemaDefinition> {

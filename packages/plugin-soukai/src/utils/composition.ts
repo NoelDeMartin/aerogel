@@ -1,18 +1,19 @@
 import { isArray, isObject, tap } from '@noeldemartin/utils';
 import { Events, onCleanMounted } from '@aerogel/core';
-import { computed, customRef, getCurrentScope, onScopeDispose, onUnmounted, reactive, ref, watchEffect } from 'vue';
+import {
+    computed,
+    customRef,
+    getCurrentScope,
+    onScopeDispose,
+    onUnmounted,
+    reactive,
+    shallowRef,
+    watchEffect,
+} from 'vue';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
 import type { ComputedRef, Ref } from 'vue';
 
-import { _getTrackedModelsData } from './internal';
-
-function isSoftDeleted(model: Model): boolean {
-    if (!('isSoftDeleted' in model)) {
-        return false;
-    }
-
-    return (model as { isSoftDeleted(): boolean }).isSoftDeleted();
-}
+import { _getTrackedModelsData, isSoftDeleted } from './internal';
 
 function mapModels<T extends Model>(
     models: unknown,
@@ -156,16 +157,25 @@ export function computedModels<T>(modelClass: typeof Model, compute: () => T): C
     return reactiveComputedModels(modelClass, compute);
 }
 
-export function useModelCollection<T extends Model>(modelClass: ModelConstructor<T>): Ref<T[]> {
-    const models = ref([]) as Ref<T[]>;
+export function useModelCollection<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options: { includeSoftDeleted?: boolean } = {},
+): Ref<T[]> {
+    const models = shallowRef([]) as Ref<T[]>;
     const modelData = _getTrackedModelsData<T>(modelClass);
 
-    watchEffect(() => models.value.splice(0, models.value.length, ...modelData.modelsArray.value));
+    watchEffect(() => (models.value = modelData.modelsArray.value));
     onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));
 
     modelData.refresh();
 
-    return models;
+    return computed(() => {
+        if (options.includeSoftDeleted) {
+            return models.value;
+        }
+
+        return models.value.filter((model) => !isSoftDeleted(model));
+    });
 }
 
 export function useModelEvent<TModel extends Model, TEvent extends keyof ModelEvents>(

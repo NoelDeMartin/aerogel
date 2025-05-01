@@ -231,6 +231,8 @@ export class CloudService extends Service {
         this.whenReady(() => {
             const [existingCollection] = this.modelCollections[modelClass.modelName] ?? [];
 
+            modelClass.useSoftDeletes(true);
+
             modelClass.collection = existingCollection ?? getRemoteContainersCollection(modelClass, options.path);
         });
 
@@ -310,7 +312,7 @@ export class CloudService extends Service {
         const dirtyLocalModels = [];
 
         for (const { modelClass } of this.registeredModels) {
-            for (const model of getTrackedModels(modelClass)) {
+            for (const model of getTrackedModels(modelClass, { includeSoftDeleted: true })) {
                 dirtyLocalModels.push(...this.getModelsIn(urls, model));
             }
         }

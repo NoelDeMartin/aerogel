@@ -47,6 +47,14 @@ function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstruc
     return data;
 }
 
+export function isSoftDeleted(model: Model): boolean {
+    if (!('isSoftDeleted' in model)) {
+        return false;
+    }
+
+    return (model as { isSoftDeleted(): boolean }).isSoftDeleted();
+}
+
 export function _getTrackedModels(): WeakMap<ModelConstructor, TrackedModelData> {
     return trackedModels;
 }

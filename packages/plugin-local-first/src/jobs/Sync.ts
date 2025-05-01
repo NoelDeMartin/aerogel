@@ -160,7 +160,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                 remoteModel.enableHistory();
                 remoteModel.enableTombstone();
 
-                await remoteModel.delete();
+                await remoteModel.forceDelete();
                 await this.updateProgress(() => (childStatus.completed = true));
 
                 return;
@@ -402,7 +402,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             }
         }
 
-        await child.delete();
+        await child.forceDelete();
     }
 
     private async saveModelAndChildren(model: SolidModel, status?: JobStatus): Promise<void> {
@@ -411,7 +411,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         if (isRemoteModel(model) && model.isSoftDeleted()) {
             model.enableHistory();
             model.enableTombstone();
-            await model.delete();
+
+            await model.forceDelete();
 
             return;
         }
@@ -474,7 +475,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                 const localModel = this.localModels.get(remoteModel.resourceUrl);
 
                 if (localModel) {
-                    await localModel.delete();
+                    await localModel.forceDelete();
 
                     deletedModels.add(localModel);
                 }

@@ -1,9 +1,7 @@
-import LocalTasks from './LocalTasks';
 import SolidTasks from './SolidTasks';
 import Startup from './Startup';
 
 export const services = {
-    $localTasks: LocalTasks,
     $solidTasks: SolidTasks,
     $startup: Startup,
 };
