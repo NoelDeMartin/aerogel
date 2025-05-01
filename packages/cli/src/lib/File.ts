@@ -4,7 +4,7 @@ import {
     mkdirSync,
     readFileSync,
     readdirSync,
-    rmdirSync,
+    rmSync,
     unlinkSync,
     writeFileSync,
 } from 'node:fs';
@@ -24,7 +24,7 @@ export class FileService {
 
     public delete(path: string): void {
         if (this.isDirectory(path)) {
-            rmdirSync(path, { recursive: true });
+            rmSync(path, { recursive: true });
 
             return;
         }
