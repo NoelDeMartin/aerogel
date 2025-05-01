@@ -24,7 +24,7 @@ jobs:
                   for package in ${{ github.event.inputs.packages }}; do
                     echo "Publishing $package..."
                     cd "packages/$package"
-                    npx noeldemartin-publish-next
+                    npx noeldemartin-publish-package
                     cd ../..
                   done
               env:
