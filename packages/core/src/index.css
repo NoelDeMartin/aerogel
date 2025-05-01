@@ -21,6 +21,8 @@
 
     --color-background: oklch(1 0 0);
     --color-links: var(--color-primary);
+
+    --breakpoint-content: var(--breakpoint-md);
 }
 
 .clickable {
