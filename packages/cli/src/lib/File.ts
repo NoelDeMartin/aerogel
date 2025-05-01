@@ -1,4 +1,13 @@
-import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import {
+    existsSync,
+    lstatSync,
+    mkdirSync,
+    readFileSync,
+    readdirSync,
+    rmdirSync,
+    unlinkSync,
+    writeFileSync,
+} from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 import { facade } from '@noeldemartin/utils';
@@ -11,6 +20,16 @@ export class FileService {
 
     public exists(path: string): boolean {
         return existsSync(path);
+    }
+
+    public delete(path: string): void {
+        if (this.isDirectory(path)) {
+            rmdirSync(path, { recursive: true });
+
+            return;
+        }
+
+        unlinkSync(path);
     }
 
     public isSymlink(path: string): boolean {

@@ -25,7 +25,11 @@ export default class App {
         }
 
         // Clone repository
-        await simpleGit().clone('https://github.com/NoelDeMartin/aerogel-template.git', path);
+        await simpleGit().clone('https://github.com/NoelDeMartin/aerogel-template.git', path, {
+            '--depth': 1,
+        });
+
+        File.delete(resolve(path, '.git'));
 
         // Apply replacements
         const dependencies = this.getDependencies();

@@ -8,6 +8,12 @@ export class FileMockService extends FileService {
 
     private virtualFilesystem: Record<string, string | { directory: true }> = {};
 
+    public override delete(path: string): void {
+        if (path in this.virtualFilesystem) {
+            delete this.virtualFilesystem[path];
+        }
+    }
+
     public override exists(path: string): boolean {
         return super.exists(path) || path in this.virtualFilesystem;
     }
