@@ -31,4 +31,5 @@ export { default as Setting } from './Setting.vue';
 export { default as SettingsModal } from './SettingsModal.vue';
 export { default as StartupCrash } from './StartupCrash.vue';
 export { default as Switch } from './Switch.vue';
+export { default as TextArea } from './TextArea.vue';
 export { default as Toast } from './Toast.vue';

@@ -54,6 +54,12 @@
                 <Input :label="$t('components.inputs_text')" :placeholder="$t('components.inputs_textPlaceholder')" />
             </div>
             <div class="mt-4">
+                <TextArea
+                    :label="$t('components.inputs_textarea')"
+                    :placeholder="$t('components.inputs_textareaPlaceholder')"
+                />
+            </div>
+            <div class="mt-4">
                 <Input
                     type="number"
                     :label="$t('components.inputs_number')"

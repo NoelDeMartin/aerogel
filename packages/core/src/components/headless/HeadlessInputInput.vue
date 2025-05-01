@@ -3,8 +3,8 @@
         :id="input.id"
         ref="$inputRef"
         :name
-        :type
         :checked
+        :type="renderedType"
         :required="input.required ?? undefined"
         :aria-invalid="input.errors ? 'true' : 'false'"
         :aria-describedby="
@@ -15,18 +15,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef, watchEffect } from 'vue';
+import { computed, inject, useTemplateRef, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
+import type FormController from '@aerogel/core/forms/FormController';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type { InputExpose } from '@aerogel/core/components/contracts/Input';
 
-const { type = 'text' } = defineProps<{ type?: string }>();
+const { type } = defineProps<{ type?: string }>();
 const $input = useTemplateRef('$inputRef');
 const input = injectReactiveOrFail<InputExpose>('input', '<HeadlessInputInput> must be a child of a <HeadlessInput>');
+const form = inject<FormController | null>('form', null);
 const name = computed(() => input.name ?? undefined);
 const value = computed(() => input.value);
+const renderedType = computed(() => {
+    if (type) {
+        return type;
+    }
+
+    const fieldType = (name.value && form?.getFieldType(name.value)) ?? '';
+
+    return ['text', 'email', 'number', 'tel', 'url'].includes(fieldType) ? fieldType : 'text';
+});
 const checked = computed(() => {
     if (type !== 'checkbox') {
         return;

@@ -36,6 +36,8 @@ components:
     inputs: Inputs
     inputs_text: Text
     inputs_textPlaceholder: Type here...
+    inputs_textarea: Textarea
+    inputs_textareaPlaceholder: Type here...
     inputs_number: Number
     inputs_numberPlaceholder: Set a number
     inputs_date: Date
