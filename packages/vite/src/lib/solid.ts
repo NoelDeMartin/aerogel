@@ -1,3 +1,4 @@
+import { md5 } from '@noeldemartin/utils';
 import type { Connect } from 'vite';
 import type { PluginContext } from 'rollup';
 
@@ -59,13 +60,18 @@ export function generateSolidAssets(context: PluginContext, app: AppInfo, option
         return;
     }
 
+    const clientIdJSON = JSON.stringify(clientID);
+
     context.emitFile({
         type: 'asset',
         fileName: 'clientid.jsonld',
-        source: JSON.stringify(clientID),
+        source: clientIdJSON,
     });
 
-    app.additionalManifestEntries.push('/clientid.jsonld');
+    app.additionalManifestEntries.push({
+        url: 'clientid.jsonld',
+        revision: md5(clientIdJSON),
+    });
 }
 
 export function generateSolidVirtualModule(app: AppInfo, options: Options): string {

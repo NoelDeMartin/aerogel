@@ -1,3 +1,4 @@
+import type { ManifestEntry } from 'workbox-build';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
 
 export interface Options {
@@ -17,7 +18,7 @@ export interface AppInfo {
     basePath: string;
     themeColor: string;
     sourceHash: string;
-    additionalManifestEntries: string[];
+    additionalManifestEntries: ManifestEntry[];
     description?: string;
     baseUrl?: string;
     sourceUrl?: string;
