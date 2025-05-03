@@ -1,6 +1,7 @@
 import * as a11yCommands from './a11y';
 import * as appCommands from './app';
 import * as errorsCommands from './errors';
+import * as formsCommands from './forms';
 import * as localFirstCommands from './local-first';
 import * as soukaiCommands from './soukai';
 import * as overrides from './overrides';
@@ -12,6 +13,7 @@ export const aerogelCommands = {
     ...a11yCommands,
     ...appCommands,
     ...errorsCommands,
+    ...formsCommands,
     ...localFirstCommands,
     ...soukaiCommands,
 };
