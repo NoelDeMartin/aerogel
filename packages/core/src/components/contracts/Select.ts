@@ -18,7 +18,7 @@ export interface HasSelectOptionLabel {
 
 export interface SelectProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputProps<T> {
     as?: AsTag | Component;
-    readonly options?: T[];
+    options?: readonly T[];
     placeholder?: string;
     renderOption?: (option: T) => string;
     compareOptions?: (a: T, b: T) => boolean;
@@ -31,7 +31,7 @@ export interface SelectProps<T extends Nullable<FormFieldValue> = Nullable<FormF
 export interface SelectEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputEmits<T> {}
 
 export interface SelectExpose<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputExpose<T> {
-    options: ComputedRef<Nullable<SelectOptionData[]>>;
+    options: ComputedRef<Nullable<readonly SelectOptionData[]>>;
     selectedOption: ComputedRef<Nullable<SelectOptionData>>;
     placeholder: ComputedRef<string>;
     labelClass?: HTMLAttributes['class'];
