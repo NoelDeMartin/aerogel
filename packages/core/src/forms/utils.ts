@@ -17,7 +17,7 @@ export function dateInput(defaultValue?: Date, options: { rules?: string } = {})
 }
 
 export function enumInput<const T extends string>(
-    values: T[],
+    values: readonly T[],
     defaultValue?: T,
     options: { rules?: string } = {},
 ): FormFieldDefinition<'enum', string, T> {
@@ -45,8 +45,8 @@ export function requiredDateInput(defaultValue?: Date): FormFieldDefinition<'dat
     };
 }
 
-export function requiredEnumInput<T extends string>(
-    values: T[],
+export function requiredEnumInput<const T extends string>(
+    values: readonly T[],
     defaultValue?: T,
 ): FormFieldDefinition<'enum', 'required', T> {
     return {

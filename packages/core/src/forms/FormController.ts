@@ -15,7 +15,7 @@ export interface FormFieldDefinition<
     trim?: boolean;
     default?: GetFormFieldValue<TType>;
     rules?: TRules;
-    values?: TValueType[];
+    values?: readonly TValueType[];
     [__valueType]?: TValueType;
 }
 
