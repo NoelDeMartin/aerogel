@@ -167,8 +167,6 @@ export function useModelCollection<T extends Model>(
     watchEffect(() => (models.value = modelData.modelsArray.value));
     onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));
 
-    modelData.refresh();
-
     return computed(() => {
         if (options.includeSoftDeleted) {
             return models.value;
