@@ -15,11 +15,11 @@ export type DropdownMenuOptionData = {
 export interface DropdownMenuProps {
     align?: DropdownMenuContentProps['align'];
     side?: DropdownMenuContentProps['side'];
-    options?: Falsifiable<DropdownMenuOptionData>[];
+    readonly options?: Falsifiable<DropdownMenuOptionData>[];
 }
 
 export interface DropdownMenuExpose {
     align?: DropdownMenuContentProps['align'];
     side?: DropdownMenuContentProps['side'];
-    options?: DropdownMenuOptionData[];
+    readonly options?: DropdownMenuOptionData[];
 }

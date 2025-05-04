@@ -18,7 +18,7 @@ export interface HasSelectOptionLabel {
 
 export interface SelectProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputProps<T> {
     as?: AsTag | Component;
-    options?: T[];
+    readonly options?: T[];
     placeholder?: string;
     renderOption?: (option: T) => string;
     compareOptions?: (a: T, b: T) => boolean;
