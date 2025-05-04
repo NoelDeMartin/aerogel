@@ -16,6 +16,19 @@ export function dateInput(defaultValue?: Date, options: { rules?: string } = {})
     };
 }
 
+export function enumInput<const T extends string>(
+    values: T[],
+    defaultValue?: T,
+    options: { rules?: string } = {},
+): FormFieldDefinition<'enum', string, T> {
+    return {
+        default: defaultValue,
+        type: 'enum',
+        rules: options.rules,
+        values,
+    };
+}
+
 export function requiredBooleanInput(defaultValue?: boolean): FormFieldDefinition<'boolean', 'required'> {
     return {
         default: defaultValue,
@@ -29,6 +42,18 @@ export function requiredDateInput(defaultValue?: Date): FormFieldDefinition<'dat
         default: defaultValue,
         type: 'date',
         rules: 'required',
+    };
+}
+
+export function requiredEnumInput<T extends string>(
+    values: T[],
+    defaultValue?: T,
+): FormFieldDefinition<'enum', 'required', T> {
+    return {
+        default: defaultValue,
+        type: 'enum',
+        rules: 'required',
+        values,
     };
 }
 

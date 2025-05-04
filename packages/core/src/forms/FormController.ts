@@ -2,31 +2,32 @@ import { computed, nextTick, reactive, readonly, ref } from 'vue';
 import { MagicObject, arrayRemove, fail, toString } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 
-import { validate } from './validation';
+import { validate, validateType } from './validation';
 
-export const __objectType: unique symbol = Symbol();
+export const __valueType: unique symbol = Symbol();
 
 export interface FormFieldDefinition<
     TType extends FormFieldType = FormFieldType,
     TRules extends string = string,
-    TObjectType = object,
+    TValueType = unknown,
 > {
     type: TType;
     trim?: boolean;
     default?: GetFormFieldValue<TType>;
     rules?: TRules;
-    [__objectType]?: TObjectType;
+    values?: TValueType[];
+    [__valueType]?: TValueType;
 }
 
-export type FormFieldType = 'string' | 'number' | 'boolean' | 'object' | 'date';
+export type FormFieldType = 'string' | 'enum' | 'number' | 'boolean' | 'object' | 'date';
 export type FormFieldValue = GetFormFieldValue<FormFieldType>;
 export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
 
 export type FormData<T> = {
-    -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules, infer TObjectType>
+    -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules, infer TValueType>
         ? TRules extends 'required'
-            ? GetFormFieldValue<TType, TObjectType>
-            : GetFormFieldValue<TType, TObjectType> | null
+            ? GetFormFieldValue<TType, TValueType>
+            : GetFormFieldValue<TType, TValueType> | null
         : never;
 };
 
@@ -34,19 +35,21 @@ export type FormErrors<T> = {
     [k in keyof T]: string[] | null;
 };
 
-export type GetFormFieldValue<TType, TObjectType = object> = TType extends 'string'
+export type GetFormFieldValue<TType, TValueType = unknown> = TType extends 'string'
     ? string
     : TType extends 'number'
       ? number
       : TType extends 'boolean'
         ? boolean
-        : TType extends 'object'
-          ? TObjectType extends object
-              ? TObjectType
-              : object
-          : TType extends 'date'
-            ? Date
-            : never;
+        : TType extends 'enum'
+          ? TValueType
+          : TType extends 'object'
+            ? TValueType extends object
+                ? TValueType
+                : object
+            : TType extends 'date'
+              ? Date
+              : never;
 
 const validForms: WeakMap<FormController, ComputedRef<boolean>> = new WeakMap();
 
@@ -195,6 +198,8 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         const errors = [];
         const value = this._data[name];
         const rules = definition.rules?.split('|') ?? [];
+
+        errors.push(...validateType(value, definition));
 
         for (const rule of rules) {
             if (rule !== 'required' && (value === null || value === undefined)) {

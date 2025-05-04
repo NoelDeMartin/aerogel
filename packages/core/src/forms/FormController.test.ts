@@ -4,6 +4,7 @@ import type { Equals } from '@noeldemartin/utils';
 import type { Expect } from '@noeldemartin/testing';
 
 import {
+    enumInput,
     numberInput,
     objectInput,
     requiredObjectInput,
@@ -97,6 +98,7 @@ describe('FormController', () => {
             two: requiredStringInput(),
             three: objectInput(),
             four: requiredObjectInput<{ foo: string; bar?: number }>(),
+            five: enumInput(['foo', 'bar']),
         });
 
         tt<
@@ -104,6 +106,7 @@ describe('FormController', () => {
             | Expect<Equals<typeof form.two, string>>
             | Expect<Equals<typeof form.three, object | null>>
             | Expect<Equals<typeof form.four, { foo: string; bar?: number }>>
+            | Expect<Equals<typeof form.five, 'foo' | 'bar' | null>>
         >();
     });
 
