@@ -1,4 +1,5 @@
 import { computed, ref, shallowRef, unref, watch } from 'vue';
+import { computedModel } from '@aerogel/plugin-soukai';
 import { App, Events, computedAsync } from '@aerogel/core';
 import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
 import type { ComputedRef, Ref, WatchStopHandle } from 'vue';
@@ -149,7 +150,9 @@ export class RouterService extends Service {
 
         await App.ready;
 
-        return computedAsync(() => Promise.resolve(binding(value, params)));
+        const computedBinding = computedAsync(() => Promise.resolve(binding(value, params)));
+
+        return computedModel(() => computedBinding.value);
     }
 
 }

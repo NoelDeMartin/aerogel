@@ -1,5 +1,3 @@
-import { isArray, isObject, tap } from '@noeldemartin/utils';
-import { Events, onCleanMounted } from '@aerogel/core';
 import {
     computed,
     customRef,
@@ -10,7 +8,10 @@ import {
     shallowRef,
     watchEffect,
 } from 'vue';
-import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
+import { Events, onCleanMounted } from '@aerogel/core';
+import { isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
+import { Model } from 'soukai';
+import type { ModelConstructor, ModelEvents, ModelListener } from 'soukai';
 import type { ComputedRef, Ref } from 'vue';
 
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
@@ -112,11 +113,11 @@ function reactiveComputedModels<T>(modelClass: typeof Model, compute: () => T): 
 
 export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 
-export function computedModel<T extends Model | null | undefined>(compute: () => T): Readonly<Ref<T>> {
+export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
         const listeners: Array<() => void> = [];
-        const onModelUpdated = (model: Model) => model.id === value?.id && trigger();
+        const onModelUpdated = (model: Model) => value instanceof Model && model.id === value.id && trigger();
         const stopListeners = () => {
             listeners.forEach((stop) => stop());
             listeners.splice(0, listeners.length);
@@ -126,14 +127,14 @@ export function computedModel<T extends Model | null | undefined>(compute: () =>
         watchEffect(() => {
             const newValue = compute();
 
-            if (newValue?.static() !== value?.static()) {
+            if (value instanceof Model && (!isInstanceOf(newValue, Model) || newValue.static() !== value.static())) {
                 stopListeners();
             }
 
             value = newValue;
             trigger();
 
-            if (value && !listeners.length) {
+            if (value instanceof Model && !listeners.length) {
                 listeners.push(Events.on('cloud:migration-completed', trigger));
                 listeners.push(Events.on('cloud:migration-cancelled', trigger));
                 listeners.push(value.static().on('modified', onModelUpdated));

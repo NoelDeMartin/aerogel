@@ -24,6 +24,7 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
+        "@aerogel/plugin-soukai": "*",
         "@aerogel/vite": "*",
         "vue-router": "^4.5.0"
     },
@@ -32,6 +33,7 @@
     },
     "devDependencies": {
         "@aerogel/core": "*",
+        "@aerogel/plugin-soukai": "*",
         "@aerogel/plugin-solid": "0.0.1-next.4acd5ba45cff8f2ad835a2f7ed8132dcb161865e"
     },
     "eslintConfig": {
