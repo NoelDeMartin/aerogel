@@ -1136,6 +1136,8 @@ describe('Sync', () => {
 
         await registerModels();
 
+        Cloud.ready = true;
+
         // Act
         await movie.update({ releaseDate: new Date('2023-07-14') });
         await container.relatedMovies.create({ name: 'The Tale of Princess Kaguya' });

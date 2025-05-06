@@ -237,9 +237,10 @@ export class CloudService extends Service {
         });
 
         await trackModels(modelClass, {
-            created: (model) => createRemoteModel(model),
-            updated: (model) => updateRemoteModel(model),
-            deleted: (model) => clearLocalModelUpdates(new Set([model.url ?? model.getDeletedPrimaryKey()])),
+            created: (model) => this.ready && createRemoteModel(model),
+            updated: (model) => this.ready && updateRemoteModel(model),
+            deleted: (model) =>
+                this.ready && clearLocalModelUpdates(new Set([model.url ?? model.getDeletedPrimaryKey()])),
         });
 
         if (isContainerClass(modelClass)) {
@@ -248,10 +249,13 @@ export class CloudService extends Service {
                     .instance()
                     .requireRelation<SolidContainsRelation>(relation).relatedClass;
 
-                relatedClass.on('created', (model) => createRemoteModel(model));
-                relatedClass.on('updated', (model) => updateRemoteModel(model));
-                relatedClass.on('deleted', (model) =>
-                    clearLocalModelUpdates(new Set([model.url ?? model.getDeletedPrimaryKey()])));
+                relatedClass.on('created', (model) => this.ready && createRemoteModel(model));
+                relatedClass.on('updated', (model) => this.ready && updateRemoteModel(model));
+                relatedClass.on(
+                    'deleted',
+                    (model) =>
+                        this.ready && clearLocalModelUpdates(new Set([model.url ?? model.getDeletedPrimaryKey()])),
+                );
             });
         }
 
