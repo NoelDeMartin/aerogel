@@ -18,8 +18,10 @@ import {
 } from '@aerogel/plugin-local-first/testing/cloud';
 import Movie from '@aerogel/plugin-local-first/testing/stubs/Movie';
 import MoviesContainer from '@aerogel/plugin-local-first/testing/stubs/MoviesContainer';
+import Post from '@aerogel/plugin-local-first/testing/stubs/Post';
 import SolidMock from '@aerogel/plugin-local-first/testing/mocks/Solid.mock';
 import Workspace from '@aerogel/plugin-local-first/testing/stubs/Workspace';
+import Person from '@aerogel/plugin-local-first/testing/stubs/Person';
 
 describe('Sync', () => {
 
@@ -878,6 +880,53 @@ describe('Sync', () => {
         expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
         expect(FakeServer.getRequests(parentDocumentUrl)).toHaveLength(1);
         expect(FakeServer.getRequests()).toHaveLength(4);
+    });
+
+    it('Works with circular relationships', async () => {
+        // Arrange
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+        const containerUrl = fakeContainerUrl();
+        const documentUrl = fakeDocumentUrl({ containerUrl });
+        const typeIndexTurtle = `
+            <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
+
+            <#posts>
+                a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
+                <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Article> ;
+                <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
+        `;
+
+        FakeServer.respondOnce(typeIndexUrl, FakeResponse.success(typeIndexTurtle));
+        FakeServer.respondOnce(containerUrl, containerResponse({ documentUrls: [documentUrl] }));
+        FakeServer.respondOnce(
+            documentUrl,
+            `
+                <#it>
+                    a <https://schema.org/Article> ;
+                    <https://schema.org/name> "Title" ;
+                    <https://schema.org/author> <#author> .
+
+                <#author>
+                    a <https://schema.org/Person> ;
+                    <https://schema.org/name> "Author" .
+            `,
+        );
+
+        Cloud.ready = true;
+
+        await Cloud.launch();
+        await Cloud.register(Post);
+        await Events.emit('application-ready');
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        const [post] = await Post.all();
+
+        expect(post).toBeInstanceOf(Post);
+        expect(post?.author).toBeInstanceOf(Person);
+        expect(post?.author?.posts?.[0]).toBe(post);
     });
 
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {

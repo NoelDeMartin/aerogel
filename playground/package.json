@@ -26,7 +26,7 @@
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.16",
         "soukai": "0.6.0-next.78fe295e49cf5a7261fd6ad53dbe3978e97f1000",
-        "soukai-solid": "0.6.0-next.9035250dee924d3183207e1b18cbffbd8b5094f0",
+        "soukai-solid": "0.6.0-next.6333860333e821537a865b072590bffe685c49dc",
         "tailwindcss": "^4.1.4"
     },
     "devDependencies": {

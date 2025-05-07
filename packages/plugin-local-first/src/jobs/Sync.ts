@@ -557,7 +557,11 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                 continue;
             }
 
-            await this.reconcileInconsistencies(localRelatedModel, remoteRelatedModels.require(localRelatedModel.url));
+            await this.reconcileInconsistencies(
+                localRelatedModel,
+                remoteRelatedModels.require(localRelatedModel.url),
+                processedModels,
+            );
         }
 
         if (localModel.isDirty()) {
