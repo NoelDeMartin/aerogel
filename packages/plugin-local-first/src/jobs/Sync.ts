@@ -8,7 +8,7 @@ import {
     toString,
     urlRoute,
 } from '@noeldemartin/utils';
-import { App, Job } from '@aerogel/core';
+import { App, Errors, Job } from '@aerogel/core';
 import { InvalidModelAttributes, requireBootedModel } from 'soukai';
 import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
@@ -68,6 +68,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     protected documentsWithErrors: Set<string>;
     protected syncedModelUrls: Set<string>;
     protected documentsModifiedAt: Record<string, Date>;
+    protected screenLock: Promise<void | { release(): Promise<void> }> | null = null;
     protected override localModels: ObjectsMap<SolidModel>;
 
     constructor(models?: SolidModel[]) {
@@ -99,14 +100,43 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         });
 
         try {
+            this.lockScreen();
             this.rootLocalModels = this.models ?? getLocalModels();
 
             await this.indexLocalModels(this.rootLocalModels);
             await this.pullChanges();
             await this.pushChanges();
         } finally {
+            this.releaseScreen();
             clearListener();
         }
+    }
+
+    protected lockScreen(): void {
+        const typedNavigator = navigator as {
+            wakeLock?: { request(type?: 'screen'): Promise<{ release(): Promise<void> }> };
+        };
+
+        if (!typedNavigator.wakeLock) {
+            return;
+        }
+
+        try {
+            this.screenLock = typedNavigator.wakeLock.request('screen').catch((error) => {
+                Errors.reportDevelopmentError(error, 'Could not request screen wake lock');
+            });
+        } catch (error) {
+            Errors.reportDevelopmentError(error, 'Could not request screen wake lock');
+        }
+    }
+
+    protected releaseScreen(): void {
+        if (!this.screenLock) {
+            return;
+        }
+
+        this.screenLock.then((lock) => lock?.release());
+        this.screenLock = null;
     }
 
     protected override getInitialStatus(): SyncJobStatus {

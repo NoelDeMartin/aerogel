@@ -91,6 +91,19 @@ export class ErrorsService extends Service {
         this.setState({ logs: [log].concat(this.logs) });
     }
 
+    public reportDevelopmentError(error: ErrorSource, message?: string): void {
+        if (!isDevelopment()) {
+            return;
+        }
+
+        if (message) {
+            // eslint-disable-next-line no-console
+            console.warn(message);
+        }
+
+        this.logError(error);
+    }
+
     public see(report: ErrorReport): void {
         this.setState({
             logs: this.logs.map((log) => {
