@@ -595,7 +595,6 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
 
         if (localModel.isDirty()) {
-            await localModel.save();
             await SolidModel.synchronize(localModel, remoteModel);
         }
     }

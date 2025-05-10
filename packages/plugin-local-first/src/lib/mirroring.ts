@@ -14,7 +14,7 @@ import { Solid } from '@aerogel/plugin-solid';
 import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
-import type { SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
+import type { Operation, SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
 import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
@@ -195,9 +195,13 @@ export async function completeRemoteModels(
 }
 
 export function ignoreModelUpdates(localModel: SolidModel): boolean {
-    const updatedAt = localModel.metadata.updatedAt?.getTime();
+    const documentModels = localModel.getDocumentModels();
+    const documentOperations = documentModels.flatMap(
+        (model) => model.operations?.map((operation) => [model, operation] as [SolidModel, Operation]) ?? [],
+    );
+    const updatedAt = Math.max(...documentModels.map((model) => model.metadata?.updatedAt?.getTime() ?? 0));
 
-    return !localModel.operations.some((operation) => {
+    return !documentOperations.some(([model, operation]) => {
         if (operation.date.getTime() !== updatedAt) {
             return false;
         }
@@ -206,7 +210,7 @@ export function ignoreModelUpdates(localModel: SolidModel): boolean {
             return true;
         }
 
-        return !localModel.ignoreRdfPropertyHistory(operation.property, true);
+        return !model.ignoreRdfPropertyHistory(operation.property, true);
     });
 }
 

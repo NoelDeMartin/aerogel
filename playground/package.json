@@ -21,12 +21,12 @@
         "@aerogel/plugin-routing": "*",
         "@aerogel/plugin-solid": "*",
         "@aerogel/plugin-soukai": "*",
-        "@noeldemartin/solid-utils": "^0.6.0",
+        "@noeldemartin/solid-utils": "0.6.0-next.c7addc0a638eedd08392f2f42039946a876fe146",
         "@noeldemartin/utils": "0.7.0-next.31cf84b4b57092d146528f27579439783aca71bb",
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.16",
-        "soukai": "0.6.0-next.78fe295e49cf5a7261fd6ad53dbe3978e97f1000",
-        "soukai-solid": "0.6.0-next.6333860333e821537a865b072590bffe685c49dc",
+        "soukai": "0.6.0-next.22f03ac133bc71f2a6389d1c5c3b9176fa42d0df",
+        "soukai-solid": "0.6.0-next.6b5c324ef592550cddfed7bb84f5653e5e8afbd6",
         "tailwindcss": "^4.1.4"
     },
     "devDependencies": {
