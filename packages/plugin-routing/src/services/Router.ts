@@ -1,7 +1,7 @@
 import { computed, ref, shallowRef, unref, watch } from 'vue';
 import { computedModel } from '@aerogel/plugin-soukai';
 import { App, Events, computedAsync } from '@aerogel/core';
-import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
+import { Storage, facade, objectOnly, objectWithout, once } from '@noeldemartin/utils';
 import type { ComputedRef, Ref, WatchStopHandle } from 'vue';
 import type { RouteLocationNormalizedLoaded, RouteLocationRaw, RouteParamValue, RouteParams, Router } from 'vue-router';
 
@@ -78,7 +78,7 @@ export class RouterService extends Service {
         const stopWatchers: WatchStopHandle[] = [];
 
         for (const [paramName, paramValue] of Object.entries(params)) {
-            const resolvedValue = await this.resolveBinding(paramName, paramValue, resolvedParams);
+            const resolvedValue = await this.resolveBinding(path, paramName, paramValue);
             const stopWatcher = watch(resolvedValue, (newValue) => {
                 this.routesParams.value = {
                     ...this.routesParams.value,
@@ -144,9 +144,9 @@ export class RouterService extends Service {
     }
 
     protected async resolveBinding(
+        path: string,
         name: string,
         value: RouteParamValue | RouteParamValue[],
-        params: Record<string, unknown>,
     ): Promise<Ref<unknown>> {
         const binding = this.bindings[name];
 
@@ -156,7 +156,11 @@ export class RouterService extends Service {
 
         await App.ready;
 
-        const computedBinding = computedAsync(() => Promise.resolve(binding(value, params)));
+        const computedBinding = computedAsync(() => {
+            const otherParams = objectWithout(this.routesParams.value[path] ?? {}, name);
+
+            return Promise.resolve(binding(value, otherParams));
+        });
 
         return computedModel(() => computedBinding.value);
     }
