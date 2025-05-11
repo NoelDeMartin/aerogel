@@ -1,9 +1,11 @@
 import { computed, ref, shallowRef, unref, watch } from 'vue';
 import { computedModel } from '@aerogel/plugin-soukai';
 import { App, Events, computedAsync } from '@aerogel/core';
-import { Storage, facade, objectOnly, objectWithout, once } from '@noeldemartin/utils';
+import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
 import type { ComputedRef, Ref, WatchStopHandle } from 'vue';
 import type { RouteLocationNormalizedLoaded, RouteLocationRaw, RouteParamValue, RouteParams, Router } from 'vue-router';
+
+import { computedRouteParams } from '@aerogel/plugin-routing/utils/internal';
 
 import Service from './Router.state';
 
@@ -156,11 +158,8 @@ export class RouterService extends Service {
 
         await App.ready;
 
-        const computedBinding = computedAsync(() => {
-            const otherParams = objectWithout(this.routesParams.value[path] ?? {}, name);
-
-            return Promise.resolve(binding(value, otherParams));
-        });
+        const otherParams = computedRouteParams(path, name);
+        const computedBinding = computedAsync(() => Promise.resolve(binding(value, otherParams.value)));
 
         return computedModel(() => computedBinding.value);
     }
