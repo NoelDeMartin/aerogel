@@ -32,15 +32,18 @@ export class RouterService extends Service {
         this.routesStopWatchers = {};
         this.routesParams = shallowRef({});
         this.currentRoute = computed(() => {
-            if (!this.router.value) {
+            const router = this.router.value;
+            const routesParams = this.routesParams.value;
+
+            if (!router) {
                 return null;
             }
 
-            const route = unref(this.router.value.currentRoute);
+            const route = unref(router.currentRoute);
 
             return {
                 ...route,
-                params: this.routesParams.value?.[route.path],
+                params: routesParams?.[route.path],
                 rawParams: route.params,
             };
         });
@@ -96,7 +99,10 @@ export class RouterService extends Service {
 
         const routesParams = {
             ...this.routesParams.value,
-            [path]: resolvedParams,
+            [path]: {
+                ...resolvedParams,
+                ...(this.routesParams.value[path] ?? {}),
+            },
         };
 
         for (const routePath in routesParams) {
