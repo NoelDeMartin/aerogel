@@ -1,8 +1,8 @@
 import { deleteDB } from 'idb';
 
-export function resetStorage(): Cypress.Chainable<null> {
-    return Cypress.Promise.cast(async () => {
-        const databases = await indexedDB.databases();
+export function resetStorage(): void {
+    cy.window().then(async (window) => {
+        const databases = await window.indexedDB.databases();
 
         for (const database of databases) {
             if (!database.name) {
@@ -11,5 +11,5 @@ export function resetStorage(): Cypress.Chainable<null> {
 
             await deleteDB(database.name);
         }
-    }) as unknown as Cypress.Chainable<null>;
+    });
 }
