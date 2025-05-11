@@ -5,7 +5,7 @@
             lang-default="Log in to your [Solid account](https://solidproject.org) to keep data safe across devices."
         />
         <Link
-            class="mt-2 text-sm opacity-50 hover:opacity-75 focus-visible:opacity-75"
+            class="text-sm"
             @click="
                 $ui.alert(
                     $td('cloud.logIn.learnMore', 'What is Solid?'),
