@@ -22,8 +22,15 @@ export function model(name: string): Cypress.Chainable<ModelConstructor> {
     return cy.testingRuntime().then((runtime) => runtime.model(name));
 }
 
-export function indexedDBDocument(id: string): Cypress.Chainable<JsonLD | null> {
-    return Cypress.Promise.cast(
-        getIndexedDBObject<JsonLD>('soukai', requireUrlParentDirectory(id), id),
-    ) as unknown as Cypress.Chainable<JsonLD | null>;
+export function soukaiIndexedDBDocument(id: string): Cypress.Chainable<JsonLD | null> {
+    return cy.window().then(async (window) => {
+        const databases = await window.indexedDB.databases();
+        const database = databases.find((db) => db.name?.startsWith('soukai') && !db.name?.endsWith('meta'));
+
+        if (!database?.name) {
+            return null;
+        }
+
+        return getIndexedDBObject<JsonLD>(database.name, requireUrlParentDirectory(id), id);
+    });
 }
