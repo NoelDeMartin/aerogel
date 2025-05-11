@@ -4,7 +4,6 @@ import { urlClean } from '@noeldemartin/utils';
 describe('Local First', () => {
 
     beforeEach(() => {
-        cy.soukaiReset();
         cy.solidReset();
         cy.visit('/local-first');
     });

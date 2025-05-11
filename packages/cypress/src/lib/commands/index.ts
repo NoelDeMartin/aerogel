@@ -4,6 +4,7 @@ import * as errorsCommands from './errors';
 import * as formsCommands from './forms';
 import * as localFirstCommands from './local-first';
 import * as soukaiCommands from './soukai';
+import * as storageCommands from './storage';
 import * as overrides from './overrides';
 import { defineCommands } from './lib';
 
@@ -16,6 +17,7 @@ export const aerogelCommands = {
     ...formsCommands,
     ...localFirstCommands,
     ...soukaiCommands,
+    ...storageCommands,
 };
 
 export type AerogelCommands = typeof aerogelCommands;

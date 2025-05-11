@@ -1,6 +1,7 @@
 declare module 'virtual:aerogel' {
     export interface VirtualAerogel {
         name: string;
+        namespace?: string;
         version: string;
         basePath: string;
         sourceHash: string;

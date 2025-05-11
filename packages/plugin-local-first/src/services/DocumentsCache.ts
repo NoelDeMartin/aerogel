@@ -1,9 +1,9 @@
-import { Events, Service } from '@aerogel/core';
+import { Events, Service, appNamespace } from '@aerogel/core';
 import { IndexedDBMap, facade } from '@noeldemartin/utils';
 
 export class DocumentsCacheService extends Service {
 
-    private cache = new IndexedDBMap<{ modifiedAt: number }>('documents-cache');
+    private cache = new IndexedDBMap<{ modifiedAt: number }>(`${appNamespace()}-documents-cache`);
 
     public async isFresh(documentUrl: string, modifiedAt: Date | number): Promise<boolean> {
         const meta = await this.cache.get(documentUrl);

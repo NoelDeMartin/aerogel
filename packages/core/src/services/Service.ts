@@ -12,6 +12,7 @@ import type { Constructor, Nullable } from '@noeldemartin/utils';
 import type { Store } from 'pinia';
 
 import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
+import { appNamespace } from '@aerogel/core/utils/app';
 import { defineServiceStore } from '@aerogel/core/services/store';
 import type { Unref } from '@aerogel/core/utils/vue';
 
@@ -164,7 +165,7 @@ export default class Service<
     }
 
     public hasPersistedState(): boolean {
-        return Storage.has(this._name);
+        return Storage.has(this.storageKey);
     }
 
     public hasState<P extends keyof State>(property: P): boolean {
@@ -231,6 +232,10 @@ export default class Service<
         this.setState({ [property]: value } as Partial<State>);
     }
 
+    protected get storageKey(): string {
+        return `${appNamespace()}:${this._name}`;
+    }
+
     protected onStateUpdated(update: Partial<State>, old: Partial<State>): void {
         const persisted = objectOnly(update, this.static('persist'));
 
@@ -250,13 +255,13 @@ export default class Service<
     }
 
     protected onPersistentStateUpdated(persisted: Partial<State>): void {
-        const storage = Storage.get<ServiceStorage>(this._name);
+        const storage = Storage.get<ServiceStorage>(this.storageKey);
 
         if (!storage) {
             return;
         }
 
-        Storage.set(this._name, {
+        Storage.set(this.storageKey, {
             ...storage,
             ...this.serializePersistedState(objectDeepClone(persisted) as Partial<State>),
         });
@@ -303,14 +308,14 @@ export default class Service<
             return;
         }
 
-        if (Storage.has(this._name)) {
-            const persisted = Storage.require<ServiceStorage>(this._name);
+        if (Storage.has(this.storageKey)) {
+            const persisted = Storage.require<ServiceStorage>(this.storageKey);
             this.setState(this.deserializePersistedState(persisted));
 
             return;
         }
 
-        Storage.set(this._name, objectOnly(this.getState(), this.static('persist')));
+        Storage.set(this.storageKey, objectOnly(this.getState(), this.static('persist')));
     }
 
     protected requireStore(): Store<string, State, ComputedState, {}> {

@@ -1,6 +1,5 @@
 import { requireUrlParentDirectory } from '@noeldemartin/utils';
 import { openDB } from 'idb';
-import { IndexedDBEngine } from 'soukai';
 import type { JsonLD } from '@noeldemartin/solid-utils';
 import type { ModelConstructor, ModelsRegistry } from 'soukai';
 
@@ -21,10 +20,6 @@ export function model<T extends keyof ModelsRegistry>(name: T): Cypress.Chainabl
 export function model<T extends ModelConstructor = ModelConstructor>(name: string): Cypress.Chainable<T>;
 export function model(name: string): Cypress.Chainable<ModelConstructor> {
     return cy.testingRuntime().then((runtime) => runtime.model(name));
-}
-
-export function soukaiReset(): void {
-    new IndexedDBEngine().purgeDatabase();
 }
 
 export function indexedDBDocument(id: string): Cypress.Chainable<JsonLD | null> {

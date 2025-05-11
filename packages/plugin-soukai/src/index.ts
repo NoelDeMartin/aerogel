@@ -1,6 +1,6 @@
 import { IndexedDBEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
 
-import { Events } from '@aerogel/core';
+import { Events, appNamespace } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
 
 import { testingRuntime } from './testing';
@@ -23,7 +23,7 @@ export interface Options {
 export default function soukai(options: Options): Plugin {
     return {
         install() {
-            const engine = new IndexedDBEngine();
+            const engine = new IndexedDBEngine(appNamespace());
 
             setupTestingRuntime();
             setEngine(engine);

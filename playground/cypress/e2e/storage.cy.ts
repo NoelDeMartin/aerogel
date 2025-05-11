@@ -1,9 +1,6 @@
 describe('Storage', () => {
 
-    beforeEach(() => {
-        cy.soukaiReset();
-        cy.visit('/storage');
-    });
+    beforeEach(() => cy.visit('/storage'));
 
     it('Creates tasks', () => {
         cy.ariaInput('Task name').type('Hello World!{enter}');

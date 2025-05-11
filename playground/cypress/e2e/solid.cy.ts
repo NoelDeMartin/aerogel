@@ -4,7 +4,6 @@ import { urlClean } from '@noeldemartin/utils';
 describe('Solid', () => {
 
     beforeEach(() => {
-        cy.soukaiReset();
         cy.solidReset();
         cy.visit('/solid');
     });

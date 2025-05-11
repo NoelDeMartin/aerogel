@@ -1,3 +1,4 @@
+export * from './app';
 export * from './classes';
 export * from './composition/events';
 export * from './composition/forms';
