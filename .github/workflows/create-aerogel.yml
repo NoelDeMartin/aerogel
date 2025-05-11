@@ -53,7 +53,8 @@ jobs:
                   git config --global user.name "John Doe"
                   ./packages/cli/bin/gel create app --local --copy
                   cd app
-                  npm install
+                  npm install -g pnpm@latest-10
+                  pnpm install
             - run: npm run build
               working-directory: app
             - name: Lint
