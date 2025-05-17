@@ -5,7 +5,7 @@ import { getContainerRelations } from '@aerogel/plugin-local-first/lib/inference
 
 export default class TracksLocalModels {
 
-    declare protected localModels?: ObjectsMap<SolidModel>;
+    declare protected localModels: ObjectsMap<SolidModel>;
 
     protected async indexLocalModels(models: SolidModel[]): Promise<void> {
         for (const localModel of models) {
@@ -14,7 +14,7 @@ export default class TracksLocalModels {
     }
 
     protected async addLocalModel(localModel: SolidModel): Promise<void> {
-        if (!this.localModels || this.localModels.hasKey(localModel.url)) {
+        if (this.localModels.hasKey(localModel.url)) {
             return;
         }
 
@@ -25,7 +25,7 @@ export default class TracksLocalModels {
         }
 
         for (const relatedModel of localModel.getRelatedModels()) {
-            await this.addLocalModel(relatedModel);
+            this.localModels.add(relatedModel);
         }
     }
 

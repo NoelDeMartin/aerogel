@@ -36,6 +36,12 @@ export default class Migrate extends mixed(BaseJob, [LoadsChildren, LoadsTypeInd
         });
     }
 
+    constructor() {
+        super();
+
+        this.localModels = map([], 'url');
+    }
+
     protected _models?: SolidModel[];
 
     public get models(): SolidModel[] | undefined {
@@ -45,7 +51,8 @@ export default class Migrate extends mixed(BaseJob, [LoadsChildren, LoadsTypeInd
     public set models(models: SolidModel[] | undefined) {
         if (!models) {
             delete this._models;
-            delete this.localModels;
+
+            this.localModels = map([], 'url');
 
             return;
         }
