@@ -155,7 +155,7 @@ export class SolidService extends Service {
             return this.attemptLogin(loginUrl, options);
         }
 
-        return UI.loading(translateWithDefault('solid.loggingIn', 'Logging in...'), () => {
+        return UI.loading(translateWithDefault('solid.loginOngoing', 'Logging in...'), () => {
             return this.attemptLogin(loginUrl, options);
         });
     }
@@ -420,8 +420,9 @@ export class SolidService extends Service {
                     loginUrl,
                     authenticator: authenticatorName,
                     error: translateWithDefault(
-                        'auth.stuckConnecting',
-                        `We didn't hear back from the identity provider at \`${loginDomain}\`, maybe try reconnecting?`,
+                        'solid.stuckConnecting',
+                        'We didn\'t hear back from the identity provider at `{domain}`, maybe try reconnecting?',
+                        { domain: loginDomain },
                     ),
                 }),
             });

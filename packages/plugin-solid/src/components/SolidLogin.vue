@@ -1,56 +1,61 @@
 <template>
     <Form :form :class="renderedClasses" @submit="submit">
-        <Input
-            v-if="showInput"
-            name="url"
-            :aria-label="$td('solid.logIn.label', 'Login url')"
-            :placeholder="$td('solid.logIn.placeholder', 'https://me.solidcommunity.net')"
-            class="w-full md:w-96"
-        />
-        <Select
-            v-if="form.authenticator"
-            name="authenticator"
-            class="w-96 max-w-full"
-            label-class="sr-only"
-            options-class="w-96 max-w-[calc(100vw-4rem)]"
-            :label="$td('solid.logIn.switchAuthenticatorLabel', 'Authentication method')"
-            :options="authenticatorOptions"
-            :render-option="renderAuthenticator"
-        />
-        <div v-if="showDevLogin && !usingManualUrl" class="flex w-full justify-center gap-2 md:w-auto">
+        <div
+            class="flex flex-col items-center gap-2"
+            :class="{ 'md:flex-row': layout === 'horizontal' && !form.authenticator }"
+        >
+            <Input
+                v-if="showInput"
+                name="url"
+                :aria-label="$td('solid.logIn.label', 'Login url')"
+                :placeholder="$td('solid.logIn.placeholder', 'https://me.solidcommunity.net')"
+                class="w-full md:w-96"
+            />
+            <Select
+                v-if="form.authenticator"
+                name="authenticator"
+                class="w-96 max-w-full"
+                label-class="sr-only"
+                options-class="w-96 max-w-[calc(100vw-4rem)]"
+                :label="$td('solid.logIn.switchAuthenticatorLabel', 'Authentication method')"
+                :options="authenticatorOptions"
+                :render-option="renderAuthenticator"
+            />
+            <div v-if="showDevLogin && !usingManualUrl" class="flex w-full justify-center gap-2 md:w-auto">
+                <Button
+                    variant="secondary"
+                    class="group gap-0"
+                    :title="$td('solid.logIn.manualUrl', 'Enter url')"
+                    @click="usingManualUrl = true"
+                >
+                    <IconLogin class="size-4" />
+                    <span
+                        v-measure.css="() => (measured = true)"
+                        class="overflow-hidden pl-1 whitespace-nowrap"
+                        :class="{
+                            'opacity-0': !measured,
+                            'w-0 transition-[width] md:group-hover:w-(--width)': measured,
+                        }"
+                    >{{ $td('solid.logIn.manualUrl', 'Enter url') }}</span>
+                </Button>
+                <Button
+                    :disabled="noLoading && $solid.loginOngoing"
+                    submit
+                    class="whitespace-nowrap"
+                    @click="form.url = 'dev'"
+                >
+                    {{ $td('solid.logIn.dev', 'Log in to dev server') }}
+                </Button>
+            </div>
             <Button
-                variant="secondary"
-                class="group gap-0"
-                :title="$td('solid.logIn.manualUrl', 'Enter url')"
-                @click="usingManualUrl = true"
-            >
-                <IconLogin class="size-4" />
-                <span
-                    v-measure.css="() => (measured = true)"
-                    class="overflow-hidden pl-1 whitespace-nowrap"
-                    :class="{
-                        'opacity-0': !measured,
-                        'w-0 transition-[width] md:group-hover:w-(--width)': measured,
-                    }"
-                >{{ $td('solid.logIn.manualUrl', 'Enter url') }}</span>
-            </Button>
-            <Button
+                v-else
                 :disabled="noLoading && $solid.loginOngoing"
                 submit
-                class="whitespace-nowrap"
-                @click="form.url = 'dev'"
+                :class="renderedButtonClasses"
             >
-                {{ $td('solid.logIn.dev', 'Log in to dev server') }}
+                {{ $td('solid.logIn.submit', 'Log in') }}
             </Button>
         </div>
-        <Button
-            v-else
-            :disabled="noLoading && $solid.loginOngoing"
-            submit
-            :class="renderedButtonClasses"
-        >
-            {{ $td('solid.logIn.submit', 'Log in') }}
-        </Button>
         <Link
             v-if="allowLegacyAuthenticator && showInput && !form.authenticator"
             class="text-sm font-normal text-gray-700"
@@ -113,14 +118,9 @@ const showInput = computed(() => !showDevLogin.value || usingManualUrl.value);
 const showDevLogin = computed(
     () => App.development && (!form.url || form.url === 'dev' || form.url.trim().length === 0),
 );
-const renderedClasses = computed(() =>
-    classes(
-        'flex flex-col items-center gap-2 w-full md:w-auto',
-        { 'md:flex-row': layout === 'horizontal' },
-        rootClasses,
-    ));
+const renderedClasses = computed(() => classes('flex flex-col items-center gap-2 w-full md:w-auto', rootClasses));
 const renderedButtonClasses = computed(() =>
-    classes('w-full whitespace-nowrap', { 'md:w-auto': layout === 'horizontal' }, buttonClass));
+    classes('w-full whitespace-nowrap', { 'md:w-auto': layout === 'horizontal' && !form.authenticator }, buttonClass));
 
 function renderAuthenticator(option: keyof typeof AUTHENTICATOR_LABELS) {
     return translateWithDefault(
