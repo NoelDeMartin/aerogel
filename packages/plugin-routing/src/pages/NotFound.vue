@@ -1,11 +1,11 @@
 <template>
     <Page class="items-center justify-center">
         <h2 class="text-2xl font-bold">
-            {{ $td('not-found.title', '404: Not Found') }}
+            {{ $td('notFound.title', '404: Not Found') }}
         </h2>
 
         <Link route="home">
-            {{ $td('not-found.home', 'Go home') }}
+            {{ $td('notFound.home', 'Go home') }}
         </Link>
     </Page>
 </template>
