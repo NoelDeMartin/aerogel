@@ -1,7 +1,7 @@
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidModel } from 'soukai-solid';
 
-import { getContainerRelations } from '@aerogel/plugin-local-first/lib/inference';
+import { getContainerRelations, getRelatedAppModels } from '@aerogel/plugin-local-first/lib/inference';
 
 export default class TracksLocalModels {
 
@@ -24,7 +24,7 @@ export default class TracksLocalModels {
             await localModel.loadRelationIfUnloaded(relation);
         }
 
-        for (const relatedModel of localModel.getRelatedModels()) {
+        for (const relatedModel of getRelatedAppModels(localModel)) {
             this.localModels.add(relatedModel);
         }
     }
