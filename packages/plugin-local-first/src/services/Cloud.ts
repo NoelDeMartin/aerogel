@@ -418,6 +418,7 @@ export class CloudService extends Service {
 
     protected logout(): void {
         this.setState({
+            autoPush: true,
             localModelUpdates: {},
             migrationDismissed: false,
             migrationJob: null,
@@ -426,10 +427,13 @@ export class CloudService extends Service {
             pollingEnabled: true,
             pollingMinutes: 10,
             ready: false,
+            schemaMigrations: new Map(),
             setupDismissed: false,
             setupOngoing: false,
             startupSync: true,
             status: CloudStatus.Disconnected,
+            syncError: null,
+            syncJob: null,
         });
     }
 
