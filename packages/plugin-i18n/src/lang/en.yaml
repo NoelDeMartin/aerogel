@@ -31,7 +31,7 @@ settings:
     title: Settings
     locale: Language
     localeDescription: Choose the application's language.
-    localeDefault: "{locale} (default)"
+    localeDefault: '{locale} (default)'
     dangerZone: Danger zone
     purge: Purge data
     purgeConfirmTitle: Delete everything?
@@ -42,12 +42,12 @@ settings:
 
 startupCrash:
     title: Something went wrong!
-    message: Something failed trying to start the application.\n\nHere's some things you can do:
+    message: "Something failed trying to start the application.\n\nHere's some things you can do:"
     reload: Try again
     inspect: View error details
 
 notFound:
-    title: "404: Not Found"
+    title: '404: Not Found'
     home: Go home
 
 account:
@@ -75,13 +75,13 @@ cloud:
         title: Connect account
         learnMore: What is Solid?
         learnMoreMessage: |
-          Solid is a decentralized storage protocol built on top of web standards. If you want to use this app across devices,
-          you can use Solid to keep changes in sync. Even if you use it in a single device, this will also keep your data secure in case your device is lost.
+            Solid is a decentralized storage protocol built on top of web standards. If you want to use this app across devices,
+            you can use Solid to keep changes in sync. Even if you use it in a single device, this will also keep your data secure in case your device is lost.
 
-          In any case, Focus works 100% offline and you can connect your Solid POD later on. If you\'ve never heard of Solid and you\'re just trying things out,
-          you can keep using it without an account.
+            In any case, Focus works 100% offline and you can connect your Solid POD later on. If you\'ve never heard of Solid and you\'re just trying things out,
+            you can keep using it without an account.
 
-          [Learn more](https://solidproject.org)
+            [Learn more](https://solidproject.org)
         info: Log in to your [Solid account](https://solidproject.org) to keep data safe across devices.
         submit: Log in
     info:
@@ -96,10 +96,10 @@ cloud:
         online: Online
         disconnected: Disconnected
     advanced:
-      reconnect: Reconnect on startup
-      startupSync: Synchronize on startup
-      polling: Synchronize every {minutes} minutes
-      pollingMinutes: Synchronization interval (in minutes)
+        reconnect: Reconnect on startup
+        startupSync: Synchronize on startup
+        polling: Synchronize every {minutes} minutes
+        pollingMinutes: Synchronization interval (in minutes)
 
 solid:
     loginOngoing: Logging in...
@@ -115,7 +115,7 @@ solid:
     disconnectConfirmTitle: Disconnect account?
     disconnectConfirmMessage: "You'll need to introduce your credentials again to connect to your Solid POD."
     logoutOngoing: Logging out...
-    logoutConfirmTitle: Log out from this device
+    logoutConfirmTitle: Log out from this device?
     logoutConfirmMessage: "Logging out will remove all the data from this device, but you'll still have it in your Solid POD."
     logoutConfirmMessageWithLocalChanges: "There are some changes that haven't been synchronized and will be lost, but the rest of the data will remain in your Solid POD."
     logoutConfirmAccept: Log out
