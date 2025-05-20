@@ -25,7 +25,7 @@ export default class TracksLocalModels {
         }
 
         for (const relatedModel of getRelatedAppModels(localModel)) {
-            this.localModels.add(relatedModel);
+            await this.addLocalModel(relatedModel);
         }
     }
 
