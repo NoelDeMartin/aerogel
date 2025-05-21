@@ -22,6 +22,7 @@ import Post from '@aerogel/plugin-local-first/testing/stubs/Post';
 import SolidMock from '@aerogel/plugin-local-first/testing/mocks/Solid.mock';
 import Workspace from '@aerogel/plugin-local-first/testing/stubs/Workspace';
 import Person from '@aerogel/plugin-local-first/testing/stubs/Person';
+import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 
 describe('Sync', () => {
 
@@ -842,6 +843,67 @@ describe('Sync', () => {
         // Assert
         expect(FakeServer.getRequests()).toHaveLength(1);
         expect(Cloud.localModelUpdates).toEqual({ [movie.url]: 1 });
+    });
+
+    it('Syncs nested fresh containers', async () => {
+        // Arrange - Mint urls
+        const rootContainerUrl = Solid.requireUser().storageUrls[0];
+        const parentContainerUrl = fakeContainerUrl({ baseUrl: rootContainerUrl });
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const documentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare models
+        const parentContainer = await Workspace.at(rootContainerUrl).create({
+            url: parentContainerUrl,
+            name: 'Tasks',
+        });
+        const container = await parentContainer.relatedLists.create({
+            url: containerUrl,
+            name: 'More Tasks',
+        });
+        const task = await container.relatedTasks.create({ url: `${documentUrl}#it`, name: 'Sync' });
+
+        // Arrange - Prepare responses
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+        const now = Date.now();
+
+        FakeServer.respond(typeIndexUrl, typeIndexResponse({ [parentContainerUrl]: '<https://schema.org/Action>' }));
+        FakeServer.respond(parentContainerUrl, containerResponse({ name: 'Tasks', documentUrls: [containerUrl] }));
+        FakeServer.respond(
+            containerUrl,
+            containerResponse({
+                name: 'More Tasks',
+                documentUrls: [documentUrl],
+                append: `
+                <${documentUrl}>
+                    a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                    <http://purl.org/dc/terms/modified>
+                        "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+            `,
+            }),
+        );
+        FakeServer.respond(documentUrl, await task.toTurtle());
+        FakeServer.respond(`${parentContainerUrl}.meta`);
+        FakeServer.respond(`${containerUrl}.meta`);
+
+        // Arrange - Prepare service
+        await DocumentsCache.remember(documentUrl, now);
+        await Cloud.launch();
+        await Cloud.register(Workspace);
+        await Events.emit('application-ready');
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(parentContainerUrl)).toHaveLength(2);
+        expect(FakeServer.getRequests(containerUrl)).toHaveLength(2);
+        expect(FakeServer.getRequests(`${parentContainerUrl}.meta`)).toHaveLength(1);
+        expect(FakeServer.getRequests(`${containerUrl}.meta`)).toHaveLength(1);
+        expect(FakeServer.getRequests()).toHaveLength(7);
+
+        expect(Cloud.localModelUpdates).toEqual({});
     });
 
     it('Ignores nested container registrations', async () => {
