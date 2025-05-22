@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 
-import { translateWithDefault } from '@aerogel/core/lang';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
 import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
 
 export interface AlertModalProps {

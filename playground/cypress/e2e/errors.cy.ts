@@ -43,13 +43,36 @@ describe('Error Handling', () => {
 
     it('Handles startup crashes', () => {
         cy.see('Test Startup Crash');
-        cy.visit('?startupCrash=true'); // TODO call cy.press('Test Startup Crash'); instead
+        cy.press('Test Startup Crash');
         cy.see('Something failed trying to start the application');
 
         cy.matchImageSnapshot();
 
         cy.press('View error details');
         cy.see('This is an error caused during application startup');
+    });
+
+    it('Purges devices', () => {
+        cy.model('LocalTask').then(async (LocalTask) => {
+            await LocalTask.create({ name: 'For my next trick, I\'ll make you disappear' });
+        });
+
+        cy.model('LocalTask')
+            .then((LocalTask) => LocalTask.all())
+            .should('have.length', 1);
+
+        cy.see('Test Startup Crash');
+        cy.press('Test Startup Crash');
+        cy.press('Purge device');
+        cy.contains('[role="dialog"]', 'Delete everything').within(() => {
+            cy.press('Purge device');
+        });
+
+        cy.see('Welcome to Aerogel!');
+
+        cy.model('LocalTask')
+            .then((LocalTask) => LocalTask.all())
+            .should('have.length', 0);
     });
 
 });
