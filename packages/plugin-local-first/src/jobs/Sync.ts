@@ -381,7 +381,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
                 this.documentsModifiedAt[document.url] = document.updatedAt;
             },
-            onDocumentsLoaded: async () => {
+            onDocumentLoaded: async () => {
                 this.assertNotCancelled();
 
                 await this.updateProgress();

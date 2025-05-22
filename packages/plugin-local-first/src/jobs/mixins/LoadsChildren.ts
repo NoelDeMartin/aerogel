@@ -24,7 +24,7 @@ export default class LoadsChildren {
         options: {
             ignoreTombstones?: boolean;
             status?: ResourceJobStatus;
-            onDocumentsLoaded?: (urls: string[]) => unknown;
+            onDocumentLoaded?: () => unknown;
             onDocumentError?: (error: unknown) => unknown;
             onDocumentRead?: (document: SolidDocument) => unknown;
         } = {},
@@ -75,18 +75,16 @@ export default class LoadsChildren {
 
                         relationChildren.push(...documentModels);
                     }
+
+                    if (documentUrl.endsWith('/')) {
+                        return;
+                    }
+
+                    required(statusChildrenMap.get(documentUrl)).completed = true;
+
+                    await options.onDocumentLoaded?.();
                 }),
             );
-
-            for (const documentUrl of documentUrls) {
-                if (documentUrl.endsWith('/')) {
-                    continue;
-                }
-
-                required(statusChildrenMap.get(documentUrl)).completed = true;
-            }
-
-            await options.onDocumentsLoaded?.(documentUrls);
         }
 
         for (const [relation, relationModels] of Object.entries(children)) {
