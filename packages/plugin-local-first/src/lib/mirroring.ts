@@ -199,10 +199,9 @@ export function ignoreModelUpdates(localModel: SolidModel): boolean {
     const documentOperations = documentModels.flatMap(
         (model) => model.operations?.map((operation) => [model, operation] as [SolidModel, Operation]) ?? [],
     );
-    const updatedAt = Math.max(...documentModels.map((model) => model.metadata?.updatedAt?.getTime() ?? 0));
 
     return !documentOperations.some(([model, operation]) => {
-        if (operation.date.getTime() !== updatedAt) {
+        if (operation.date.getTime() !== model.metadata?.updatedAt?.getTime()) {
             return false;
         }
 
