@@ -46,9 +46,10 @@ export interface RegisterOptions {
 }
 
 export interface SyncOptions extends JobListener {
-    refreshUserProfile?: boolean;
     model?: SolidModel;
     models?: SolidModel[];
+    refreshUserProfile?: boolean;
+    syncDirty?: boolean;
 }
 
 export class CloudService extends Service {
@@ -119,8 +120,8 @@ export class CloudService extends Service {
         }
 
         await this.asyncLock.run(async () => {
+            let models = options.model ? [options.model] : options.models;
             const start = Date.now();
-            const models = options.model ? [options.model] : options.models;
 
             this.syncError = null;
             this.status = CloudStatus.Syncing;
@@ -134,15 +135,25 @@ export class CloudService extends Service {
                     await Solid.refreshUserProfile();
                 }
 
-                this.syncJob = new Sync(models);
+                const syncDirty = options.syncDirty ?? true;
+                let syncs = 0;
 
-                this.syncJob.listeners.add(options);
+                do {
+                    this.syncJob = new Sync(models);
 
-                await dispatch(this.syncJob);
+                    this.syncJob.listeners.add(options);
 
-                if (this.syncJob.cancelled) {
-                    return;
-                }
+                    await dispatch(this.syncJob);
+
+                    if (this.syncJob.cancelled) {
+                        return;
+                    }
+
+                    syncs++;
+                    models = this.getDirtyLocalModels().filter(
+                        (model) => !this.syncJob?.documentsWithErrors.has(model.requireDocumentUrl()),
+                    );
+                } while (syncDirty && models.length > 0 && syncs < 3);
 
                 if (!isTesting('unit')) {
                     await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });

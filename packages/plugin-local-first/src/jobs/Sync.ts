@@ -61,11 +61,11 @@ function isRootStatus(status?: JobStatus): status is SyncJobStatus {
 
 export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex, TracksLocalModels]) {
 
+    public readonly documentsWithErrors: Set<string>;
     protected models?: SolidModel[];
     protected dirtyRemoteModels?: SolidModel[];
     protected rootLocalModels: SolidModel[];
     protected tombstones: ObjectsMap<Tombstone>;
-    protected documentsWithErrors: Set<string>;
     protected syncedModelUrls: Set<string>;
     protected documentsModifiedAt: Record<string, Date>;
     protected screenLock: Promise<void | { release(): Promise<void> }> | null = null;
@@ -74,11 +74,11 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     constructor(models?: SolidModel[]) {
         super();
 
+        this.documentsWithErrors = new Set();
         this.models = models;
         this.rootLocalModels = [];
         this.localModels = map([], 'url');
         this.tombstones = map([], 'resourceUrl');
-        this.documentsWithErrors = new Set();
         this.syncedModelUrls = new Set();
         this.documentsModifiedAt = {};
     }
