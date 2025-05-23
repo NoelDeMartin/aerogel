@@ -1,7 +1,7 @@
 <template>
     <Form :form :class="renderedClasses" @submit="submit">
         <div
-            class="flex flex-col items-center gap-2"
+            class="flex w-full flex-col items-center gap-2"
             :class="{ 'md:flex-row': layout === 'horizontal' && !form.authenticator }"
         >
             <Input
@@ -9,19 +9,19 @@
                 name="url"
                 :aria-label="$td('solid.logIn.label', 'Login url')"
                 :placeholder="$td('solid.logIn.placeholder', 'https://me.solidcommunity.net')"
-                class="w-full md:w-96"
+                class="w-full md:min-w-96"
             />
             <Select
                 v-if="form.authenticator"
                 name="authenticator"
-                class="w-96 max-w-full"
+                class="w-full max-w-full md:min-w-96"
                 label-class="sr-only"
-                options-class="w-96 max-w-[calc(100vw-4rem)]"
+                options-class="md:w-96 w-full max-w-[calc(100vw-4rem)]"
                 :label="$td('solid.logIn.switchAuthenticatorLabel', 'Authentication method')"
                 :options="authenticatorOptions"
                 :render-option="renderAuthenticator"
             />
-            <div v-if="showDevLogin && !usingManualUrl" class="flex w-full justify-center gap-2 md:w-auto">
+            <div v-if="showDevLogin && !usingManualUrl" class="flex w-full justify-center gap-2">
                 <Button
                     variant="secondary"
                     class="group gap-0"
