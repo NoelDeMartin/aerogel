@@ -44,7 +44,7 @@ describe('Error Handling', () => {
     it('Handles startup crashes', () => {
         cy.see('Test Startup Crash');
         cy.press('Test Startup Crash');
-        cy.see('Something failed trying to start the application');
+        cy.see('There was a problem starting the application');
 
         cy.matchImageSnapshot();
 
