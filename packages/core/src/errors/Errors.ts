@@ -1,4 +1,6 @@
 import { JSError, facade, isDevelopment, isObject, isTesting, objectWithoutEmpty, toString } from '@noeldemartin/utils';
+import { watchEffect } from 'vue';
+import type Eruda from 'eruda';
 
 import App from '@aerogel/core/services/App';
 import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
@@ -13,6 +15,7 @@ export class ErrorsService extends Service {
 
     public forceReporting: boolean = false;
     private enabled: boolean = true;
+    private eruda: typeof Eruda | null = null;
 
     public enable(): void {
         this.enabled = true;
@@ -119,12 +122,17 @@ export class ErrorsService extends Service {
         });
     }
 
-    public seeAll(): void {
-        this.setState({
-            logs: this.logs.map((log) => ({
-                ...log,
-                seen: true,
-            })),
+    protected override async boot(): Promise<void> {
+        watchEffect(async () => {
+            if (!this.debug) {
+                this.eruda?.destroy();
+
+                return;
+            }
+
+            this.eruda ??= (await import('eruda')).default;
+
+            this.eruda.init();
         });
     }
 

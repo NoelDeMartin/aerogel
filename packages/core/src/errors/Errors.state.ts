@@ -22,6 +22,7 @@ export default defineServiceState({
     initialState: {
         logs: [] as ErrorReportLog[],
         startupErrors: [] as ErrorReport[],
+        debug: false,
     },
     computed: {
         hasErrors: ({ logs }) => logs.length > 0,

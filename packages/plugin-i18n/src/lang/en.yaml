@@ -41,8 +41,8 @@ settings:
     debugDescription: Enable debugging with [Eruda](https://eruda.liriliri.io/).
 
 startupCrash:
-    title: Something went wrong!
-    message: "Something failed trying to start the application.\n\nHere's some things you can do:"
+    title: Oops, something went wrong!
+    message: "There was a problem starting the application, but here's some things you can do:"
     reload: Try again
     inspect: View error details
     purge: Purge device
@@ -53,6 +53,7 @@ startupCrash:
 
         Do you still want to proceed?
     purgeConfirmAccept: Purge device
+    debug: Toggle debugging
 
 notFound:
     title: '404: Not Found'

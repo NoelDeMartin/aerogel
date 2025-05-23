@@ -1,27 +1,37 @@
 <template>
     <div class="grid grow place-items-center">
-        <div class="flex flex-col items-center space-y-6 p-8">
-            <h1 class="mt-2 text-center text-4xl font-medium text-red-600">
-                {{ $td('startupCrash.title', 'Something went wrong!') }}
+        <div class="flex flex-col items-center p-8">
+            <i-majesticons-exclamation class="size-20 text-red-600" />
+            <h1 class="mt-0 mb-0 text-center text-4xl font-medium text-red-600">
+                {{ $td('startupCrash.title', 'Oops, something went wrong!') }}
             </h1>
             <Markdown
                 :text="
                     $td(
                         'startupCrash.message',
-                        'Something failed trying to start the application.\n\nHere\'s some things you can do:'
+                        'There was a problem starting the application, but here\'s some things you can do:'
                     )
                 "
                 class="mt-4 text-center"
             />
-            <div class="mt-4 flex flex-col space-y-4">
+            <div
+                class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 [&_button]:justify-start sm:[&_button]:size-32 sm:[&_button]:flex-col sm:[&_button]:justify-center [&_svg]:size-6 sm:[&_svg]:size-8"
+            >
                 <Button variant="danger" @click="$app.reload()">
+                    <IconRefresh />
                     {{ $td('startupCrash.reload', 'Try again') }}
                 </Button>
                 <Button variant="danger" @click="$errors.inspect($errors.startupErrors)">
+                    <IconBug />
                     {{ $td('startupCrash.inspect', 'View error details') }}
                 </Button>
                 <Button variant="danger" @click="purgeDevice()">
+                    <IconDelete />
                     {{ $td('startupCrash.purge', 'Purge device') }}
+                </Button>
+                <Button variant="danger" @click="$errors.debug = !$errors.debug">
+                    <IconFrameInspect />
+                    {{ $td('startupCrash.debug', 'Toggle debugging') }}
                 </Button>
             </div>
         </div>
@@ -29,6 +39,11 @@
 </template>
 
 <script setup lang="ts">
+import IconBug from '~icons/material-symbols/bug-report';
+import IconDelete from '~icons/material-symbols/delete-forever-rounded';
+import IconFrameInspect from '~icons/material-symbols/frame-inspect';
+import IconRefresh from '~icons/material-symbols/refresh-rounded';
+
 import App from '@aerogel/core/services/App';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
