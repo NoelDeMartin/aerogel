@@ -54,8 +54,8 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 return;
             }
 
-            loadPackageInfo(app, resolve(buildOptions.input[0], './package.json'));
-            loadLocales(app, resolve(buildOptions.input[0], './src/lang/locales.json'));
+            loadPackageInfo(app, resolve(buildOptions.input[0], '../package.json'));
+            loadLocales(app, resolve(buildOptions.input[0], '../src/lang/locales.json'));
         },
         configureServer(server) {
             server.httpServer?.once('listening', async () => {
