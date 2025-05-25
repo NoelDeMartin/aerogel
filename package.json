@@ -57,6 +57,10 @@
         "vue-router": "^4.5.0",
         "vue-tsc": "^2.2.8"
     },
+    "overrides": {
+        "@noeldemartin/solid-utils": "^0.6.1",
+        "@noeldemartin/utils": "^0.7.1"
+    },
     "eslintConfig": {
         "extends": [
             "@noeldemartin/eslint-config-typescript"
