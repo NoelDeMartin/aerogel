@@ -30,8 +30,8 @@
     },
     "dependencies": {
         "@inrupt/solid-client-authn-browser": "^2.3.0",
-        "@noeldemartin/solid-utils": "0.6.0-next.c7addc0a638eedd08392f2f42039946a876fe146",
-        "@noeldemartin/utils": "0.7.0-next.31cf84b4b57092d146528f27579439783aca71bb",
+        "@noeldemartin/solid-utils": "^0.6.1",
+        "@noeldemartin/utils": "^0.7.1",
         "solid-auth-client": "2.4.1"
     },
     "devDependencies": {

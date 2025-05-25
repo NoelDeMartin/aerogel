@@ -29,7 +29,7 @@
         "vue": "^3.5.0"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.0-next.31cf84b4b57092d146528f27579439783aca71bb",
+        "@noeldemartin/utils": "^0.7.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "dompurify": "^3.2.4",

@@ -35,9 +35,9 @@
         "cypress": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.0-next.31cf84b4b57092d146528f27579439783aca71bb",
+        "@noeldemartin/utils": "^0.7.1",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
-        "cypress-solid": "0.2.0-next.35b76704b9336568b176d820c08fd48d198ada0a",
+        "cypress-solid": "^0.2.0",
         "idb": "^8.0.2"
     },
     "devDependencies": {

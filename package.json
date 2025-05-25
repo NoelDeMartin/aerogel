@@ -34,17 +34,17 @@
         "@noeldemartin/eslint-config-typescript": "0.1.1-next.8da46d7532acbe6ee4126f410141b7f281ec349a",
         "@noeldemartin/eslint-config-vue": "0.1.1-next.8da46d7532acbe6ee4126f410141b7f281ec349a",
         "@noeldemartin/scripts": "0.3.0-next.73e253ff6238acee8a0199922401c4be310129bd",
-        "@noeldemartin/solid-utils": "0.6.0-next.c7addc0a638eedd08392f2f42039946a876fe146",
+        "@noeldemartin/solid-utils": "^0.6.1",
         "@noeldemartin/testing": "0.0.0-next.3aa03a51f580a9508bbc982c55eda4fd2b302f35",
-        "@noeldemartin/utils": "0.7.0-next.31cf84b4b57092d146528f27579439783aca71bb",
+        "@noeldemartin/utils": "^0.7.1",
         "@total-typescript/ts-reset": "^0.4.2",
         "@tsconfig/node22": "^22.0.1",
         "@types/mustache": "^4.2.2",
         "@vue/tsconfig": "^0.7.0",
         "cypress": "14.2.0",
         "prettier-plugin-tailwindcss": "^0.6.11",
-        "soukai": "0.6.0-next.d17322c827aaac5ccf08863c5673b9d8d485ec96",
-        "soukai-solid": "0.6.0-next.d17322c827aaac5ccf08863c5673b9d8d485ec96",
+        "soukai": "^0.6.1",
+        "soukai-solid": "^0.6.1",
         "typescript": "^5.8.2",
         "unplugin-icons": "^22.1.0",
         "unplugin-vue-components": "^28.4.1",
@@ -56,10 +56,6 @@
         "vue-i18n": "^11.1.2",
         "vue-router": "^4.5.0",
         "vue-tsc": "^2.2.8"
-    },
-    "overrides": {
-        "@noeldemartin/solid-utils": "0.6.0-next.c7addc0a638eedd08392f2f42039946a876fe146",
-        "@noeldemartin/utils": "0.7.0-next.31cf84b4b57092d146528f27579439783aca71bb"
     },
     "eslintConfig": {
         "extends": [
