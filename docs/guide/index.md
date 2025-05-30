@@ -5,7 +5,7 @@ Still a work in progress!
 But if you want, you can play with it:
 
 ```sh
-npm create aerogel@next my-project
+npm create aerogel my-project
 ```
 
 ## Sneak Peek
