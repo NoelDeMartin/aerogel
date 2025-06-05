@@ -55,7 +55,7 @@ export class CreateCommand extends Command {
 
                 cd ${path}
                 pnpm install
-                npm run dev
+                pnpm dev
 
             Have fun!
         `);

@@ -1,6 +1,7 @@
-import { <% soukaiImports %> } from 'soukai';
+import { FieldType } from 'soukai';
+import { defineSolidModelSchema } from 'soukai-solid';
 
-export default defineModelSchema({
+export default defineSolidModelSchema({
     fields: {
 <% &model.fieldsDefinition %>
     },

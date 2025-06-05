@@ -45,7 +45,6 @@ export class GenerateModelCommand extends Command {
                     name: this.name,
                     fieldsDefinition: this.getFieldsDefinition(),
                 },
-                soukaiImports: this.options.fields ? 'FieldType, defineModelSchema' : 'defineModelSchema',
             });
 
             return files.map((file) => `- ${file}`).join('\n');
