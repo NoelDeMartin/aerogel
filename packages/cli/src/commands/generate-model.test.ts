@@ -28,7 +28,7 @@ describe('Generate Model command', () => {
         FileMock.expectCreated('src/models/FooBar.ts').toContain('import Model from \'./FooBar.schema\'');
         FileMock.expectCreated('src/models/FooBar.schema.ts').toContain(
             formatCodeBlock(`
-                defineModelSchema({
+                defineSolidModelSchema({
                     fields: {
                         name: {
                             type: FieldType.String,
