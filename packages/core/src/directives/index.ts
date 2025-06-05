@@ -3,9 +3,11 @@ import type { Directive } from 'vue';
 import { definePlugin } from '@aerogel/core/plugins';
 
 import measure from './measure';
+import safeHtml from './safe-html';
 
 const builtInDirectives: Record<string, Directive> = {
-    measure: measure,
+    'measure': measure,
+    'safe-html': safeHtml,
 };
 
 export * from './measure';
