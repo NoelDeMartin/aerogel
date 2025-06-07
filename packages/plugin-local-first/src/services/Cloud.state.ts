@@ -9,6 +9,7 @@ import type Sync from '@aerogel/plugin-local-first/jobs/Sync';
 
 export const CloudStatus = {
     Disconnected: 'disconnected',
+    Offline: 'offline',
     Online: 'online',
     Syncing: 'syncing',
     Migrating: 'migrating',
@@ -65,6 +66,7 @@ export default defineServiceState({
     computed: {
         disconnected: ({ status }) => status === CloudStatus.Disconnected,
         online: ({ status }) => status === CloudStatus.Online,
+        offline: ({ status }) => status === CloudStatus.Offline,
         syncing: ({ status }) => status === CloudStatus.Syncing,
         migrating: ({ status }) => status === CloudStatus.Migrating,
         localChanges({ localModelUpdates }) {

@@ -65,7 +65,7 @@ const accountStatus = computed((): AccountStatus => {
     }
 
     return {
-        classes: 'bg-green-500',
+        classes: Cloud.status === CloudStatus.Online ? 'bg-green-500' : 'bg-gray-500',
         message: getAccountStatusMessage() ?? '',
     };
 });
@@ -78,6 +78,8 @@ function getAccountStatusMessage(): string | undefined {
             return translateWithDefault('cloud.status.migrating', 'Migration in progress');
         case CloudStatus.Online:
             return translateWithDefault('cloud.status.online', 'Online');
+        case CloudStatus.Offline:
+            return translateWithDefault('cloud.status.offline', 'Offline');
         case CloudStatus.Disconnected:
             return translateWithDefault('cloud.status.disconnected', 'Disconnected');
     }

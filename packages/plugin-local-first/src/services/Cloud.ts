@@ -318,6 +318,7 @@ export class CloudService extends Service {
             this.pollingInterval = setInterval(() => this.sync(), this.pollingMinutes * 60 * 1000);
         });
 
+        this.watchNetworkStatus();
         await this.bustDocumentsCache();
         await this.registerModels();
     }
@@ -445,6 +446,24 @@ export class CloudService extends Service {
             status: CloudStatus.Disconnected,
             syncError: null,
             syncJob: null,
+        });
+    }
+
+    private watchNetworkStatus(): void {
+        window.addEventListener('online', () => {
+            if (this.status !== CloudStatus.Offline) {
+                return;
+            }
+
+            this.status = CloudStatus.Online;
+        });
+
+        window.addEventListener('offline', () => {
+            if (this.status !== CloudStatus.Online) {
+                return;
+            }
+
+            this.status = CloudStatus.Offline;
         });
     }
 

@@ -62,9 +62,22 @@
                     :lang-params="$cloud.localChanges"
                 />
             </div>
-            <div v-else-if="$cloud.online" class="mt-4 flex items-center gap-2">
-                <IconCheckmarkOutline class="mt-0.5 size-6 shrink-0 self-start text-green-500" />
-                <Markdown lang-key="cloud.info.changes" lang-default="Everything is up to date." :lang-params="0" />
+            <div v-else-if="$cloud.online || $cloud.offline" class="mt-4 flex items-center gap-2">
+                <IconCheckmarkOutline
+                    class="mt-0.5 size-6 shrink-0 self-start"
+                    :class="{ 'text-green-500': $cloud.online, 'text-gray-700': $cloud.offline }"
+                />
+                <Markdown
+                    v-if="$cloud.online"
+                    lang-key="cloud.info.changes"
+                    lang-default="Everything is up to date."
+                    :lang-params="0"
+                />
+                <Markdown
+                    v-else
+                    lang-key="cloud.info.offline"
+                    lang-default="Everything is up to date, but you're currently offline."
+                />
             </div>
             <div v-else class="mt-4 flex items-center gap-2">
                 <IconWarning class="mt-0.5 size-6 shrink-0 self-start text-yellow-500" />
@@ -128,7 +141,11 @@
                 <IconRefresh class="size-5" />
                 <span>{{ $td('cloud.reconnect', 'Reconnect') }}</span>
             </Button>
-            <Button v-else-if="$cloud.ready" @click="$cloud.sync({ refreshUserProfile: true })">
+            <Button
+                v-else-if="$cloud.ready"
+                :disabled="$cloud.offline"
+                @click="$cloud.sync({ refreshUserProfile: true })"
+            >
                 <IconRefresh class="size-5" />
                 <span>{{ $td('cloud.sync', 'Synchronize') }}</span>
             </Button>
