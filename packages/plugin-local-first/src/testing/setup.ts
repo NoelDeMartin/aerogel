@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto';
 
 import { installVitestSolidMatchers } from '@noeldemartin/solid-utils/vitest';
 import { FakeLocalStorage, FakeServer, mock, setupFacadeMocks } from '@noeldemartin/testing';
-import { resetAsyncMemo } from '@noeldemartin/utils';
+import { noop, resetAsyncMemo } from '@noeldemartin/utils';
 import { beforeEach, vi } from 'vitest';
 
 setupFacadeMocks();
@@ -23,6 +23,8 @@ beforeEach(async () => {
     resetPiniaStore();
     resetTrackedModels();
 });
+
+vi.stubGlobal('addEventListener', noop);
 
 vi.mock('@aerogel/core', async () => {
     const original = (await vi.importActual('@aerogel/core')) as object;

@@ -450,7 +450,7 @@ export class CloudService extends Service {
     }
 
     private watchNetworkStatus(): void {
-        window.addEventListener('online', () => {
+        globalThis.addEventListener('online', () => {
             if (this.status !== CloudStatus.Offline) {
                 return;
             }
@@ -458,7 +458,7 @@ export class CloudService extends Service {
             this.status = CloudStatus.Online;
         });
 
-        window.addEventListener('offline', () => {
+        globalThis.addEventListener('offline', () => {
             if (this.status !== CloudStatus.Online) {
                 return;
             }
