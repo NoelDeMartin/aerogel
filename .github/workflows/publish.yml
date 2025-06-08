@@ -26,7 +26,13 @@ jobs:
             - run: npm run build
             - name: Publish packages
               run: |
-                  for package in ${{ github.event.inputs.packages }}; do
+                  if [ "${{ github.event.inputs.packages }}" = "*" ]; then
+                    packages=$(ls packages)
+                  else
+                    packages="${{ github.event.inputs.packages }}"
+                  fi
+
+                  for package in $packages; do
                     echo "Publishing $package..."
                     cd "packages/$package"
                     if [ "${{ github.event.inputs.latest }}" = "true" ]; then
