@@ -1,6 +1,6 @@
 {
     "name": "create-aerogel",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "module",
     "bin": {
         "create-aerogel": "index.js"
@@ -12,6 +12,6 @@
     "author": "Noel De Martin",
     "repository": "github:NoelDeMartin/aerogel",
     "dependencies": {
-        "@aerogel/cli": "^0.1.0"
+        "@aerogel/cli": "^0.1.1"
     }
 }
