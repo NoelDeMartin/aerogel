@@ -149,7 +149,10 @@
                 <IconRefresh class="size-5" />
                 <span>{{ $td('cloud.sync', 'Synchronize') }}</span>
             </Button>
-            <Button v-else @click="(($cloud.setupDismissed = false), $modal?.close())">
+            <Button
+                v-else
+                @click="(($cloud.setupDismissed = false), $modal?.close(), $cloud.manualSetup || $cloud.setup())"
+            >
                 <IconCloudUpload class="size-5" />
                 <span>{{ $td('cloud.setup.submit', 'Back up now') }}</span>
             </Button>
