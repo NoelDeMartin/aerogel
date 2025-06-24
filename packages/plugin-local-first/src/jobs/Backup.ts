@@ -75,7 +75,7 @@ export default class Backup extends Job {
             }
         }
 
-        await engine.deleteCollections(Array.from(droppedCollections));
+        await engine.dropCollections(Array.from(droppedCollections));
     }
 
     protected replaceDocumentUrls(document: EngineDocument): EngineDocument {
