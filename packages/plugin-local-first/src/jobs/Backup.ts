@@ -2,6 +2,7 @@ import { Job } from '@aerogel/core';
 import { requireEngine } from 'soukai';
 import { requireUrlParentDirectory } from '@noeldemartin/utils';
 import { ignoreModelsCollection, trackModelsCollection } from '@aerogel/plugin-soukai';
+import { Solid } from '@aerogel/plugin-solid';
 import type { EngineDocument, IndexedDBEngine } from 'soukai';
 import type { SolidModelConstructor } from 'soukai-solid';
 
@@ -35,6 +36,7 @@ export default class Backup extends Job {
     protected async run(): Promise<void> {
         const engine = requireEngine<IndexedDBEngine>();
         const collections = await engine.getCollections();
+        const droppedCollections = new Set<string>();
 
         for (const collection of collections) {
             const documents = await engine.readMany(collection);
@@ -52,9 +54,28 @@ export default class Backup extends Job {
         }
 
         for (const { modelClass, local, remote } of this.collectionMigrations) {
+            const solidCollections = Object.assign({}, Solid.collections);
+            const filteredCollections = (Solid.collections[modelClass.modelName] ?? []).filter(
+                (collection) => !local.startsWith(collection),
+            );
+
             ignoreModelsCollection(modelClass, local);
             trackModelsCollection(modelClass, remote, { refresh: false });
+
+            Solid.collections = solidCollections;
+
+            collections
+                .filter((collection) => local.startsWith(collection))
+                .forEach((collection) => droppedCollections.add(collection));
+
+            if (filteredCollections.length > 0) {
+                solidCollections[modelClass.modelName] = filteredCollections;
+            } else {
+                delete solidCollections[modelClass.modelName];
+            }
         }
+
+        await engine.deleteCollections(Array.from(droppedCollections));
     }
 
     protected replaceDocumentUrls(document: EngineDocument): EngineDocument {

@@ -22,6 +22,8 @@ export interface ModelRegistration {
 
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
+export const DEFAULT_STATE = { manualSetup: true };
+
 export default defineServiceState({
     name: 'cloud',
     persist: [
@@ -44,6 +46,7 @@ export default defineServiceState({
         pollingEnabled: true,
         pollingMinutes: 10,
         ready: false,
+        manualSetup: DEFAULT_STATE.manualSetup,
         registeredModels: [] as ModelRegistration[],
         schemaMigrations: new Map<SolidModelConstructor, SolidModelConstructor | SolidSchemaDefinition>(),
         setupDismissed: false,
