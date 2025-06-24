@@ -82,6 +82,14 @@ export class CloudService extends Service {
         }
     }
 
+    public getEngine(): Engine | null {
+        return this.engine;
+    }
+
+    public requireEngine(): Engine {
+        return this.engine ?? fail('Could not get required Engine');
+    }
+
     public dismissSetup(): void {
         this.setupDismissed = true;
     }
@@ -354,10 +362,6 @@ export class CloudService extends Service {
         return models;
     }
 
-    protected requireEngine(): Engine {
-        return this.engine ?? fail('Could not get required Engine');
-    }
-
     protected async setReady(ready: boolean): Promise<void> {
         if (this.ready || !ready) {
             return;
@@ -376,10 +380,6 @@ export class CloudService extends Service {
         const job = new Backup();
 
         for (const { modelClass, path } of this.registeredModels) {
-            if (!isContainerClass(modelClass)) {
-                continue;
-            }
-
             for (const [local, remote] of Object.entries(modelUrlMappings.get(modelClass) ?? {})) {
                 job.migrateUrl(modelClass, local, remote);
             }

@@ -11,10 +11,16 @@ import {
 import { App } from '@aerogel/core';
 import { getTrackedModels, trackModelsCollection as trackSoukaiModelsCollection } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
-import { PropertyOperation, SolidContainer, SolidContainsRelation, Tombstone, isContainerClass } from 'soukai-solid';
+import { PropertyOperation, SolidContainer, Tombstone, isContainerClass } from 'soukai-solid';
+import type {
+    Operation,
+    SolidContainsRelation,
+    SolidModel,
+    SolidModelConstructor,
+    SolidSchemaDefinition,
+} from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
-import type { Operation, SolidModel, SolidModelConstructor, SolidSchemaDefinition } from 'soukai-solid';
 
 import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
@@ -78,6 +84,17 @@ export async function createRemoteModel(localModel: SolidModel): Promise<void> {
     }
 }
 
+export function createRemoteContainer(remoteModel: SolidModel, localModels: ObjectsMap<SolidModel>): SolidContainer {
+    const RemoteContainer = getRemoteClass(SolidContainer);
+    const path = Cloud.registeredModels.find(
+        ({ modelClass: registeredModelClass }) => registeredModelClass === remoteModel.static(),
+    )?.path;
+
+    return new RemoteContainer({
+        url: getRemoteContainersCollection(getLocalModel(remoteModel, localModels).static(), path),
+    });
+}
+
 export async function trackModelsCollection(modelClass: SolidModelConstructor, collection: string): Promise<void> {
     if (Cloud.modelCollections[modelClass.modelName]?.includes(collection)) {
         return;
@@ -139,17 +156,7 @@ export function clearLocalModelUpdates(syncedModelUrls: Set<string>, documentsWi
 }
 
 export function cloneLocalModel(localModel: SolidModel, options: CloneOptions = {}): SolidModel {
-    const localModelClasses = new Set<typeof SolidModel>();
-
-    localModelClasses.add(localModel.static());
-
-    if (localModel instanceof SolidContainer) {
-        for (const relation of getContainerRelations(localModel.static())) {
-            localModelClasses.add(localModel.requireRelation<SolidContainsRelation>(relation).relatedClass);
-        }
-    }
-
-    const constructors = [...localModelClasses.values()].map(
+    const constructors = Array.from(new Set(getRelatedAppModels(localModel).map((model) => model.static()))).map(
         (localClass) => [localClass, getRemoteClass(localClass)] as [typeof SolidModel, typeof SolidModel],
     );
 
@@ -316,10 +323,6 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
             super.initializeRelations();
 
             for (const relation of Object.values(this._relations)) {
-                if (!(relation instanceof SolidContainsRelation)) {
-                    continue;
-                }
-
                 relation.relatedClass = getRemoteClass(relation.relatedClass);
             }
         }
@@ -330,9 +333,6 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
     
     } as unknown as T;
 
-    remoteClasses.set(LocalClass, RemoteClass);
-    localClasses.set(RemoteClass, LocalClass);
-
     LocalClass.on('schema-updated', async (schema) => {
         await RemoteClass.updateSchema({
             ...schema,
@@ -341,7 +341,12 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
         });
     });
 
+    localClass.ensureBooted();
     bootModels({ [`Remote${localClass.modelName}`]: RemoteClass });
+    Cloud.getEngine() && RemoteClass.setEngine(Cloud.requireEngine());
+
+    remoteClasses.set(LocalClass, RemoteClass);
+    localClasses.set(RemoteClass, LocalClass);
 
     return RemoteClass;
 }

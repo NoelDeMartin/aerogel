@@ -1,12 +1,12 @@
 import { arrayChunk, arrayFrom, isInstanceOf, map, required } from '@noeldemartin/utils';
-import { DocumentNotFound } from 'soukai';
+import { DocumentNotFound, type EngineDocument } from 'soukai';
 import { Tombstone } from 'soukai-solid';
 import type { JobStatus } from '@aerogel/core';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidModel } from 'soukai-solid';
 
 import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
-import { cloneLocalModel, isLocalModel } from '@aerogel/plugin-local-first/lib/mirroring';
+import { cloneLocalModel, getLocalClass, isLocalModel, isRemoteModel } from '@aerogel/plugin-local-first/lib/mirroring';
 import { getContainerRelations } from '@aerogel/plugin-local-first/lib/inference';
 import { lazy } from '@aerogel/plugin-local-first/lib/utils';
 
@@ -104,7 +104,73 @@ export default class LoadsChildren {
         return childrenArray;
     }
 
-    protected async loadDocumentChildren(
+    protected async loadContainedDocuments(
+        model: SolidContainer,
+        options: {
+            status?: ResourceJobStatus;
+            onDocumentLoaded?: () => unknown;
+            onDocumentError?: (error: unknown) => unknown;
+            onDocumentRead?: (document: SolidDocument) => unknown;
+        } = {},
+    ): Promise<Record<string, EngineDocument>> {
+        if (!isRemoteModel(model)) {
+            throw Error('Cannot get contained models from local model');
+        }
+
+        const engineDocuments: Record<string, EngineDocument> = {};
+        const documentModels = map(model.documents, 'url');
+        const localEngine = getLocalClass(model.static()).requireEngine();
+        const remoteEngine = model.requireEngine();
+
+        for (let index = 0; index < model.resourceUrls.length; index++) {
+            const documentUrl = model.resourceUrls[index];
+
+            if (!documentUrl || documentUrl.endsWith('/')) {
+                continue;
+            }
+
+            const documentModel = documentModels.get(documentUrl);
+
+            if (
+                documentModel &&
+                documentModel.updatedAt &&
+                (await DocumentsCache.isFresh(documentModel.url, documentModel.updatedAt)) &&
+                this.localModels?.hasKey(model.url)
+            ) {
+                try {
+                    engineDocuments[documentUrl] = await localEngine.readOne(model.url, documentUrl);
+
+                    options.onDocumentRead?.(documentModel);
+                } catch (error) {
+                    if (isInstanceOf(error, DocumentNotFound)) {
+                        continue;
+                    }
+
+                    if (!options.onDocumentError) {
+                        throw error;
+                    }
+
+                    options.onDocumentError(error);
+
+                    continue;
+                }
+            } else {
+                engineDocuments[documentUrl] = await remoteEngine.readOne(model.url, documentUrl);
+            }
+
+            const childStatus = options.status?.children?.[index];
+
+            if (childStatus) {
+                childStatus.completed = true;
+            }
+
+            await options.onDocumentLoaded?.();
+        }
+
+        return engineDocuments;
+    }
+
+    private async loadDocumentChildren(
         model: SolidContainer,
         documentUrl: string,
         documents: ObjectsMap<SolidDocument>,
@@ -128,7 +194,7 @@ export default class LoadsChildren {
         return this.loadDocumentChildrenFromRemote(model, documentUrl, onDocumentError, onDocumentRead);
     }
 
-    protected async loadDocumentChildrenFromLocal(
+    private async loadDocumentChildrenFromLocal(
         model: SolidModel,
         document: SolidDocument,
     ): Promise<Record<string, SolidModel[]>> {
@@ -153,7 +219,7 @@ export default class LoadsChildren {
         return children;
     }
 
-    protected async loadDocumentChildrenFromRemote(
+    private async loadDocumentChildrenFromRemote(
         model: SolidContainer,
         documentUrl: string,
         onDocumentError?: (error: unknown) => unknown,

@@ -1,4 +1,5 @@
 import {
+    arrayWithout,
     isInstanceOf,
     map,
     mixed,
@@ -15,13 +16,14 @@ import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { JobListener, JobStatus } from '@aerogel/core';
-import type { SolidContainsRelation, SolidEngine, SolidTypeIndex } from 'soukai-solid';
+import type { SolidContainsRelation, SolidEngine, SolidModelConstructor, SolidTypeIndex } from 'soukai-solid';
 
 import {
     clearLocalModelUpdates,
     cloneLocalModel,
     cloneRemoteModel,
     completeRemoteModels,
+    createRemoteContainer,
     getLocalModel,
     getLocalModels,
     getRemoteClass,
@@ -35,6 +37,7 @@ import {
     getContainerRelations,
     getRelatedAppModels,
     isDirtyOrHasDirtyChildren,
+    loadAppRelations,
 } from '@aerogel/plugin-local-first/lib/inference';
 import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 
@@ -103,9 +106,14 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             this.lockScreen();
             this.rootLocalModels = this.models ?? getLocalModels();
 
+            engine.setConfig({ cachesDocuments: true });
+
             await this.indexLocalModels(this.rootLocalModels);
             await this.pullChanges();
             await this.pushChanges();
+
+            engine.clearCache();
+            engine.setConfig({ cachesDocuments: false });
         } finally {
             this.releaseScreen();
             clearListener();
@@ -196,7 +204,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                 return;
             }
 
-            await this.saveModelAndChildren(remoteModel, childStatus);
+            await this.saveModelAndRelated(remoteModel, childStatus);
             await this.updateTypeRegistrations(remoteModel);
             await this.updateProgress(() => (childStatus.completed = true));
         }
@@ -225,6 +233,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
         for (let index = 0; index < registrations.length; index++) {
             await this.ignoringDocumentErrors(async () => {
+                const status = required(pullStatus.children?.[index]);
                 const { registration, registeredModel } = required(registrations[index]);
                 const remoteClass = getRemoteClass(registeredModel.modelClass);
 
@@ -241,25 +250,93 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                     const container = await remoteClass.find(registration.instanceContainer);
 
                     if (container) {
-                        await this.loadChildren(container, required(pullStatus.children?.[index]));
+                        await this.loadChildren(container, status);
 
                         remoteModels.push(container);
                     }
 
-                    await this.updateProgress(() => (required(pullStatus.children?.[index]).completed = true));
+                    await this.updateProgress(() => (status.completed = true));
 
                     return;
                 }
 
-                await trackModelsCollection(registeredModel.modelClass, registration.instanceContainer);
+                const containerModels = await this.fetchRemoteModelsFromContainer(
+                    status,
+                    registeredModel.modelClass,
+                    remoteClass,
+                    registration.instanceContainer,
+                );
 
-                remoteModels.push(...(await remoteClass.from(registration.instanceContainer).all()));
+                remoteModels.push(...containerModels);
 
-                await this.updateProgress(() => (required(pullStatus.children?.[index]).completed = true));
+                await this.updateProgress(() => (status.completed = true));
             });
         }
 
+        for (const remoteModel of remoteModels) {
+            await loadAppRelations(remoteModel, (error) => this.handleDocumentError(error));
+        }
+
         return completeRemoteModels(this.rootLocalModels, remoteModels, this.documentsWithErrors);
+    }
+
+    private async fetchRemoteModelsFromContainer(
+        status: ResourceJobStatus,
+        localClass: SolidModelConstructor,
+        remoteClass: SolidModelConstructor,
+        containerUrl: string,
+    ): Promise<SolidModel[]> {
+        const container = await getRemoteClass(SolidContainer).find(containerUrl);
+
+        if (!container) {
+            return [];
+        }
+
+        status.children = container.resourceUrls.map(() => ({ completed: false }));
+
+        const documents = await this.loadContainedDocuments(container, {
+            status,
+            onDocumentError: (error) => this.handleDocumentError(error),
+            onDocumentRead: (document) => {
+                if (document.url.endsWith('/') || !document.updatedAt || document.url in this.documentsModifiedAt) {
+                    return;
+                }
+
+                this.documentsModifiedAt[document.url] = document.updatedAt;
+            },
+            onDocumentLoaded: async () => {
+                this.assertNotCancelled();
+
+                await this.updateProgress();
+            },
+        });
+
+        const remoteModels = await remoteClass.createManyFromEngineDocuments(documents);
+
+        if (remoteModels.length > 0) {
+            await trackModelsCollection(localClass, containerUrl);
+        }
+
+        for (let index = 0; index < container.resourceUrls.length; index++) {
+            const resourceUrl = container.resourceUrls[index];
+
+            if (!resourceUrl?.endsWith('/')) {
+                break;
+            }
+
+            const childModels = await this.fetchRemoteModelsFromContainer(
+                required(status.children?.[index]),
+                localClass,
+                remoteClass,
+                resourceUrl,
+            );
+
+            remoteModels.push(...childModels);
+
+            await this.updateProgress(() => (status.completed = true));
+        }
+
+        return remoteModels;
     }
 
     private async fetchRemoteModelsForLocal(models: SolidModel[]): Promise<SolidModel[]> {
@@ -342,14 +419,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             return;
         }
 
+        const container = isContainer(remoteModel) ? remoteModel : createRemoteContainer(remoteModel, this.localModels);
         const registeredChildren = isContainer(remoteModel)
             ? getContainerRegisteredClasses(remoteModel.static())
             : [remoteModel.static()];
-
-        const RemoteSolidContainer = getRemoteClass(SolidContainer);
-        const container = isContainer(remoteModel)
-            ? remoteModel
-            : new RemoteSolidContainer({ url: remoteModel.requireContainerUrl() });
 
         if (registeredChildren.length === 0) {
             return;
@@ -357,7 +430,12 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
         const typeIndex = await this.loadTypeIndex({ create: true });
 
-        if (typeIndex.registrations.some((registration) => registration.instanceContainer === remoteModel.url)) {
+        if (
+            typeIndex.registrations.some(
+                (registration) =>
+                    registration.instanceContainer && remoteModel.url.startsWith(registration.instanceContainer),
+            )
+        ) {
             return;
         }
 
@@ -435,8 +513,19 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         await child.forceDelete();
     }
 
-    private async saveModelAndChildren(model: SolidModel, status?: JobStatus): Promise<void> {
+    private async saveModelAndRelated(
+        model: SolidModel,
+        status?: JobStatus,
+        processedModels?: Set<SolidModel>,
+    ): Promise<void> {
         this.assertNotCancelled();
+        processedModels ??= new Set();
+
+        if (processedModels.has(model)) {
+            return;
+        }
+
+        processedModels.add(model);
 
         if (isRemoteModel(model) && model.isSoftDeleted()) {
             model.enableHistory();
@@ -447,7 +536,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             return;
         }
 
-        if (this.documentsWithErrors.has(model.requireDocumentUrl())) {
+        if (model.getDocumentUrl() && this.documentsWithErrors.has(model.requireDocumentUrl())) {
             return;
         }
 
@@ -459,25 +548,18 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             this.syncedModelUrls.add(model.url);
         }
 
-        if (!isContainer(model)) {
-            if (isRemoteModel(model)) {
-                const documentUrl = model.requireDocumentUrl();
-                const modifiedAt = this.documentsModifiedAt[documentUrl];
+        if (isRemoteModel(model)) {
+            const documentUrl = model.requireDocumentUrl();
+            const modifiedAt = this.documentsModifiedAt[documentUrl];
 
-                if (modifiedAt) {
-                    await DocumentsCache.remember(documentUrl, modifiedAt);
+            if (modifiedAt) {
+                await DocumentsCache.remember(documentUrl, modifiedAt);
 
-                    delete this.documentsModifiedAt[documentUrl];
-                }
+                delete this.documentsModifiedAt[documentUrl];
             }
-
-            return;
         }
 
-        const children = getContainerRelations(model.static())
-            .map((relation) => model.getRelationModels(relation) ?? [])
-            .flat();
-
+        const children = arrayWithout(getRelatedAppModels(model), model);
         const childrenStatuses = status ? children.map(() => ({ completed: false })) : [];
 
         if (status) {
@@ -488,7 +570,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             const child = children[index] as SolidModel;
             const childStatus = childrenStatuses[index];
 
-            await this.saveModelAndChildren(child, childStatus);
+            await this.saveModelAndRelated(child, childStatus, processedModels);
 
             if (childStatus) {
                 await this.updateProgress(() => (childStatus.completed = true));
@@ -522,7 +604,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             await this.loadChildren(localModel);
             await SolidModel.synchronize(localModel, remoteModel);
             await this.reconcileInconsistencies(localModel, remoteModel);
-            await this.saveModelAndChildren(localModel);
+            await this.saveModelAndRelated(localModel);
             await this.addLocalModel(localModel);
 
             this.rootLocalModels.push(localModel);
@@ -633,7 +715,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             const remoteModel = remoteModels.require(localModel.url);
 
             await SolidModel.synchronize(localModel, remoteModel);
-            await this.saveModelAndChildren(localModel);
+            await this.saveModelAndRelated(localModel);
         }
     }
 

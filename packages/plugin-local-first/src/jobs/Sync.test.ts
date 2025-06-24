@@ -436,9 +436,7 @@ describe('Sync', () => {
         const container = await MoviesContainer.create({ url: containerUrl });
 
         // Arrange - Prepare responses
-
         FakeServer.respondOnce(documentUrl, FakeResponse.notFound()); // Pull
-        FakeServer.respondOnce(documentUrl, FakeResponse.notFound()); // Tombstone check
         FakeServer.respondOnce(documentUrl, FakeResponse.notFound()); // Check before create
         FakeServer.respondOnce(documentUrl, FakeResponse.created()); // Create
 
@@ -459,8 +457,8 @@ describe('Sync', () => {
         // Assert
         expect(updates).toEqual([0, 0.9, 1]);
 
-        expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
-        expect(FakeServer.getRequests()).toHaveLength(4);
+        expect(FakeServer.getRequests(documentUrl)).toHaveLength(3);
+        expect(FakeServer.getRequests()).toHaveLength(3);
 
         expect(Cloud.localModelUpdates).toEqual({});
     });
@@ -789,10 +787,10 @@ describe('Sync', () => {
                 updatedAt: container.updatedAt,
             }),
         ); // Container
-        FakeServer.respondOnce(firstDocumentUrl, FakeResponse.success('invalid turtle'));
-        FakeServer.respondOnce(secondDocumentUrl, FakeResponse.success('invalid turtle'));
-        FakeServer.respondOnce(thirdDocumentUrl, FakeResponse.success('invalid turtle'));
-        FakeServer.respondOnce(fourthDocumentUrl, FakeResponse.success('invalid turtle'));
+        FakeServer.respond(firstDocumentUrl, FakeResponse.success('invalid turtle'));
+        FakeServer.respond(secondDocumentUrl, FakeResponse.success('invalid turtle'));
+        FakeServer.respond(thirdDocumentUrl, FakeResponse.success('invalid turtle'));
+        FakeServer.respond(fourthDocumentUrl, FakeResponse.success('invalid turtle'));
 
         // Arrange - Prepare service
         Cloud.ready = true;
@@ -806,7 +804,7 @@ describe('Sync', () => {
         await Cloud.sync();
 
         // Assert
-        expect(FakeServer.getRequests()).toHaveLength(6);
+        expect(FakeServer.getRequests()).toHaveLength(10);
         expect(Cloud.localModelUpdates).toEqual({ [movie.url]: 1 });
     });
 
@@ -1018,7 +1016,6 @@ describe('Sync', () => {
             }),
         );
         FakeServer.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Pull
-        FakeServer.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Model GET before delete
         FakeServer.respondOnce(documentUrl, FakeResponse.success(movieTurtle)); // Client GET before update
         FakeServer.respondOnce(documentUrl, FakeResponse.success()); // Client Tombstone PATCH
 
@@ -1034,8 +1031,8 @@ describe('Sync', () => {
         // Assert
         expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
         expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
-        expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
-        expect(FakeServer.getRequests()).toHaveLength(6);
+        expect(FakeServer.getRequests(documentUrl)).toHaveLength(3);
+        expect(FakeServer.getRequests()).toHaveLength(5);
 
         expect(FakeServer.getRequest('PATCH', documentUrl)?.body).toEqualSparql(`
             DELETE DATA { ${movieTurtle} } ;
@@ -1146,8 +1143,8 @@ describe('Sync', () => {
         } else {
             expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(4);
             expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
-            expect(FakeServer.getRequests(documentUrl)).toHaveLength(5);
-            expect(FakeServer.getRequests()).toHaveLength(10);
+            expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
+            expect(FakeServer.getRequests()).toHaveLength(9);
         }
 
         expect(Cloud.localModelUpdates).toEqual({});
@@ -1228,13 +1225,13 @@ describe('Sync', () => {
 
             expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(3);
             expect(FakeServer.getRequests(containerUrl)).toHaveLength(4);
-            expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
+            expect(FakeServer.getRequests(documentUrl)).toHaveLength(3);
             expect(FakeServer.getRequests(`${containerUrl}.meta`)).toHaveLength(1);
-            expect(FakeServer.getRequests()).toHaveLength(12);
+            expect(FakeServer.getRequests()).toHaveLength(11);
         } else {
             expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(3);
-            expect(FakeServer.getRequests(documentUrl)).toHaveLength(5);
-            expect(FakeServer.getRequests()).toHaveLength(8);
+            expect(FakeServer.getRequests(documentUrl)).toHaveLength(4);
+            expect(FakeServer.getRequests()).toHaveLength(7);
         }
 
         expect(Cloud.localModelUpdates).toEqual({});

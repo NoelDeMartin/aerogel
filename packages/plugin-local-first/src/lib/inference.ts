@@ -122,3 +122,31 @@ export function isDirtyOrHasDirtyChildren(model: SolidModel): boolean {
 
     return getContainerRelations(model.static()).some(relationHasDirtyModels);
 }
+
+export async function loadAppRelations(model: SolidModel, onError: (error: unknown) => void): Promise<void> {
+    const builtInRelations = ['authorizations', 'metadata', 'operations', 'tombstone'];
+
+    let updated;
+
+    do {
+        updated = false;
+
+        const relatedModels = getRelatedAppModels(model);
+
+        for (const relatedModel of relatedModels) {
+            for (const relation of relatedModel.static('relations')) {
+                if (builtInRelations.includes(relation) || relatedModel.isRelationLoaded(relation)) {
+                    continue;
+                }
+
+                try {
+                    await relatedModel.loadRelation(relation);
+
+                    updated = true;
+                } catch (error) {
+                    onError(error);
+                }
+            }
+        }
+    } while (updated);
+}
