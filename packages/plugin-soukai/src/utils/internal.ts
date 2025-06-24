@@ -43,6 +43,7 @@ function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstruc
     Events.on('cloud:migration-completed', () => data.refresh());
     Events.on('cloud:migration-cancelled', () => data.refresh());
     Events.on('cloud:backup-completed', () => data.refresh());
+    Events.emit('soukai:track-models', modelClass);
 
     return data;
 }
@@ -65,4 +66,10 @@ export function _setTrackedModels(value: WeakMap<ModelConstructor, TrackedModelD
 
 export function _getTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): TrackedModelData<T> {
     return (trackedModels.get(modelClass) as TrackedModelData<T>) ?? initializedTrackedModelsData<T>(modelClass);
+}
+
+declare module '@aerogel/core' {
+    export interface EventsPayload {
+        'soukai:track-models': ModelConstructor;
+    }
 }

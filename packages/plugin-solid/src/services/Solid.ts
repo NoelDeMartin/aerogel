@@ -20,8 +20,8 @@ import {
 } from '@noeldemartin/utils';
 import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { setEngine } from 'soukai';
-import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex } from 'soukai-solid';
+import { getBootedModels, setEngine } from 'soukai';
+import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex, isSolidModel } from 'soukai-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { NullablePartial } from '@noeldemartin/utils';
@@ -30,6 +30,7 @@ import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
 import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
 import { getAuthenticator } from '@aerogel/plugin-solid/auth';
+import { isTrackingModel, trackModelsCollection } from '@aerogel/plugin-soukai';
 import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
 import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
@@ -361,6 +362,7 @@ export class SolidService extends Service {
 
         await this.restorePreviousSession();
         await this.startupReconnect();
+        await this.trackSolidModels();
     }
 
     protected async createPrivateTypeIndex(): Promise<SolidTypeIndex> {
@@ -541,6 +543,55 @@ export class SolidService extends Service {
             },
             staleProfiles: arrayWithout(this.staleProfiles, profile.webId),
         });
+    }
+
+    private async trackSolidModels(): Promise<void> {
+        Events.on('purge-storage', () => (this.collections = {}));
+        Events.on('soukai:track-models', async (modelClass) => {
+            if (!isSolidModel(modelClass)) {
+                return;
+            }
+
+            modelClass.on('created', async (model) => {
+                const containerUrl = model.getContainerUrl();
+
+                if (
+                    !containerUrl ||
+                    model.static().collection === containerUrl ||
+                    this.collections[model.static().modelName]?.includes(containerUrl)
+                ) {
+                    return;
+                }
+
+                const modelCollections = this.collections[model.static().modelName] ?? [];
+
+                modelCollections.push(containerUrl);
+
+                this.collections = {
+                    ...this.collections,
+                    [model.static().modelName]: modelCollections,
+                };
+
+                await trackModelsCollection(modelClass, containerUrl);
+            });
+
+            await Promise.all(
+                this.collections[modelClass.modelName]?.map((containerUrl) =>
+                    trackModelsCollection(modelClass, containerUrl)) ?? [],
+            );
+        });
+
+        for (const [modelName, containerUrls] of Object.entries(this.collections)) {
+            const modelClass = getBootedModels().get(modelName);
+
+            if (!modelClass || !isTrackingModel(modelClass)) {
+                continue;
+            }
+
+            for (const containerUrl of containerUrls) {
+                await trackModelsCollection(modelClass, containerUrl);
+            }
+        }
     }
 
 }

@@ -46,15 +46,18 @@ export default function solid(options: Options = {}): Plugin {
                 }
                 return error.description ? `${error.message} (${error.description})` : error.message;
             });
+
             if (typeof options.autoReconnect === 'boolean') {
                 DEFAULT_STATE.autoReconnect = options.autoReconnect;
                 Solid.hasPersistedState() || (Solid.autoReconnect = options.autoReconnect);
             }
+
             if (options.onUserProfileLoaded) {
                 Events.on('solid:user-profile-loaded', ([user, store]) => {
                     options.onUserProfileLoaded?.(user, store);
                 });
             }
+
             await bootServices(app, services);
         },
     };

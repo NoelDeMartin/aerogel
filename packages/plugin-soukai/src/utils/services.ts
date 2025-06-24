@@ -34,6 +34,10 @@ export function getTrackedModels<T extends Model>(
     return models.filter((model) => !isSoftDeleted(model));
 }
 
+export function isTrackingModel(modelClass: ModelConstructor): boolean {
+    return _getTrackedModels().has(modelClass);
+}
+
 export function resetTrackedModels(): void {
     _setTrackedModels(new WeakMap());
 }

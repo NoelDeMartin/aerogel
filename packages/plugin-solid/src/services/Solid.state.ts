@@ -9,7 +9,7 @@ export const DEFAULT_STATE = { autoReconnect: true };
 
 export default defineServiceState({
     name: 'solid',
-    persist: ['autoReconnect', 'dismissed', 'previousSession', 'profiles', 'staleProfiles'],
+    persist: ['autoReconnect', 'dismissed', 'previousSession', 'profiles', 'staleProfiles', 'collections'],
     initialState: {
         autoReconnect: DEFAULT_STATE.autoReconnect,
         dismissed: false,
@@ -27,6 +27,7 @@ export default defineServiceState({
         session: null as AuthSession | null,
         loginStale: false,
         staleProfiles: [] as string[],
+        collections: {} as Record<string, string[]>,
     },
     serialize(state) {
         if (state.previousSession?.error instanceof Error) {
