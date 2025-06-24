@@ -343,7 +343,7 @@ export function makeRemoteClass<T extends SolidModelConstructor>(localClass: T):
 
     localClass.ensureBooted();
     bootModels({ [`Remote${localClass.modelName}`]: RemoteClass });
-    Cloud.getEngine() && RemoteClass.setEngine(Cloud.requireEngine());
+    App.service('$cloud') && Cloud.getEngine() && RemoteClass.setEngine(Cloud.requireEngine());
 
     remoteClasses.set(LocalClass, RemoteClass);
     localClasses.set(RemoteClass, LocalClass);
