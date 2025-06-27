@@ -172,10 +172,8 @@ export function cloneRemoteModel(remoteModel: SolidModel): SolidModel {
 
     remoteModelClasses.add(remoteModel.static());
 
-    if (remoteModel instanceof SolidContainer) {
-        for (const relation of getContainerRelations(remoteModel.static())) {
-            remoteModelClasses.add(remoteModel.requireRelation<SolidContainsRelation>(relation).relatedClass);
-        }
+    for (const relation of remoteModel.static().relations) {
+        remoteModelClasses.add(remoteModel.requireRelation<SolidContainsRelation>(relation).relatedClass);
     }
 
     const constructors = [...remoteModelClasses.values()].map(
