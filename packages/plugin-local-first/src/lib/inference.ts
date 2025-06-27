@@ -5,6 +5,7 @@ import {
     SolidContainer,
     SolidContainsRelation,
     SolidDocument,
+    SolidIsContainedByRelation,
     SolidModel,
     isContainerClass,
     isSolidDocumentRelation,
@@ -135,7 +136,11 @@ export async function loadAppRelations(model: SolidModel, onError: (error: unkno
 
         for (const relatedModel of relatedModels) {
             for (const relation of relatedModel.static('relations')) {
-                if (builtInRelations.includes(relation) || relatedModel.isRelationLoaded(relation)) {
+                if (
+                    builtInRelations.includes(relation) ||
+                    relatedModel.isRelationLoaded(relation) ||
+                    relatedModel.getRelation(relation) instanceof SolidIsContainedByRelation
+                ) {
                     continue;
                 }
 
