@@ -39,7 +39,6 @@ import {
     isDirtyOrHasDirtyChildren,
     loadAppRelations,
 } from '@aerogel/plugin-local-first/lib/inference';
-import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 
 import LoadsChildren from './mixins/LoadsChildren';
 import LoadsTypeIndex from './mixins/LoadsTypeIndex';
@@ -106,14 +105,14 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             this.lockScreen();
             this.rootLocalModels = this.models ?? getLocalModels();
 
-            engine.setConfig({ cachesDocuments: true });
+            engine.setConfig({ cachesDocuments: true, persistentCache: Cloud.getDocumentsCache() });
 
             await this.indexLocalModels(this.rootLocalModels);
             await this.pullChanges();
             await this.pushChanges();
 
             engine.clearCache();
-            engine.setConfig({ cachesDocuments: false });
+            engine.setConfig({ cachesDocuments: false, persistentCache: undefined });
         } finally {
             this.releaseScreen();
             clearListener();
@@ -209,8 +208,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             await this.updateProgress(() => (childStatus.completed = true));
         }
 
+        const documentsCache = Cloud.getDocumentsCache();
+
         for (const [documentUrl, modifiedAt] of Object.entries(this.documentsModifiedAt)) {
-            await DocumentsCache.remember(documentUrl, modifiedAt);
+            await documentsCache.remember(requireUrlParentDirectory(documentUrl), documentUrl, modifiedAt);
         }
 
         clearLocalModelUpdates(this.syncedModelUrls, this.documentsWithErrors);
@@ -553,7 +554,11 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             const modifiedAt = this.documentsModifiedAt[documentUrl];
 
             if (modifiedAt) {
-                await DocumentsCache.remember(documentUrl, modifiedAt);
+                await Cloud.getDocumentsCache().remember(
+                    requireUrlParentDirectory(documentUrl),
+                    documentUrl,
+                    modifiedAt,
+                );
 
                 delete this.documentsModifiedAt[documentUrl];
             }
@@ -725,7 +730,11 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             const modifiedAt = this.documentsModifiedAt[documentUrl];
 
             if (modifiedAt) {
-                await DocumentsCache.remember(documentUrl, modifiedAt);
+                await Cloud.getDocumentsCache().remember(
+                    requireUrlParentDirectory(documentUrl),
+                    documentUrl,
+                    modifiedAt,
+                );
 
                 delete this.documentsModifiedAt[documentUrl];
             }

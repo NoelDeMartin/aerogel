@@ -2,7 +2,6 @@ import { App, bootServices } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
 
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
-import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 import { DEFAULT_STATE } from '@aerogel/plugin-local-first/services/Cloud.state';
 
 import settings from './components/settings';
@@ -30,10 +29,7 @@ export default function localFirst(options: Options = {}): Plugin {
                 Cloud.manualSetup = options.manualSetup;
             }
 
-            await bootServices(app, {
-                ...services,
-                $_documentsCache: DocumentsCache,
-            });
+            await bootServices(app, services);
         },
     };
 }

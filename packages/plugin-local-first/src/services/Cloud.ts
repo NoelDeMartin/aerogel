@@ -9,12 +9,20 @@ import {
     isTesting,
     parseBoolean,
 } from '@noeldemartin/utils';
-import { Errors, Events, dispatch, translateWithDefault } from '@aerogel/core';
+import { Errors, Events, appNamespace, dispatch, translateWithDefault } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass, isSolidModel } from 'soukai-solid';
+import {
+    DocumentsCache,
+    SolidContainer,
+    SolidModel,
+    Tombstone,
+    isContainer,
+    isContainerClass,
+    isSolidModel,
+} from 'soukai-solid';
 import { getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-soukai';
 import { watchEffect } from 'vue';
-import { getBootedModels } from 'soukai';
+import { getBootedModels, requireEngine } from 'soukai';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine } from 'soukai';
 import type { JobListener } from '@aerogel/core';
@@ -29,7 +37,6 @@ import {
     updateRemoteModel,
 } from '@aerogel/plugin-local-first/lib/mirroring';
 import Backup from '@aerogel/plugin-local-first/jobs/Backup';
-import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 import Migrate from '@aerogel/plugin-local-first/jobs/Migrate';
 import Sync from '@aerogel/plugin-local-first/jobs/Sync';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
@@ -57,6 +64,7 @@ export class CloudService extends Service {
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
     protected pollingInterval: NodeJS.Timeout | null = null;
+    protected documentsCache: DocumentsCache | null = null;
 
     public async whenReady<T>(callback: () => T): Promise<T> {
         if (this.ready) {
@@ -304,6 +312,14 @@ export class CloudService extends Service {
         throw new Error(`Failed resolving remote collection for '${modelClass.modelName}' model`);
     }
 
+    public getDocumentsCache(): DocumentsCache {
+        if (!this.documentsCache) {
+            this.documentsCache = new DocumentsCache(appNamespace(), requireEngine());
+        }
+
+        return this.documentsCache;
+    }
+
     protected override async boot(): Promise<void> {
         await Solid.booted;
 
@@ -428,7 +444,7 @@ export class CloudService extends Service {
         }
     }
 
-    protected logout(): void {
+    protected async logout(): Promise<void> {
         this.setState({
             autoPush: true,
             localModelUpdates: {},
@@ -447,6 +463,8 @@ export class CloudService extends Service {
             syncError: null,
             syncJob: null,
         });
+
+        await this.getDocumentsCache().clear();
     }
 
     private watchNetworkStatus(): void {
@@ -487,8 +505,7 @@ export class CloudService extends Service {
             return;
         }
 
-        await DocumentsCache.booted;
-        await DocumentsCache.clear();
+        await this.getDocumentsCache().clear();
     }
 
     private async registerModels(): Promise<void> {

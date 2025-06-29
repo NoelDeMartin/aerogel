@@ -22,7 +22,6 @@ import Post from '@aerogel/plugin-local-first/testing/stubs/Post';
 import SolidMock from '@aerogel/plugin-local-first/testing/mocks/Solid.mock';
 import Workspace from '@aerogel/plugin-local-first/testing/stubs/Workspace';
 import Person from '@aerogel/plugin-local-first/testing/stubs/Person';
-import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 
 describe('Sync', () => {
 
@@ -567,13 +566,13 @@ describe('Sync', () => {
         FakeServer.respond(
             typeIndexUrl,
             `
-            <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
+                <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
 
-            <#tasks>
-                a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
-                <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Action> ;
-                <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
-        `,
+                <#tasks>
+                    a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
+                    <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Action> ;
+                    <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
+            `,
         );
         FakeServer.respondOnce(
             containerUrl,
@@ -885,7 +884,7 @@ describe('Sync', () => {
         FakeServer.respond(`${containerUrl}.meta`);
 
         // Arrange - Prepare service
-        await DocumentsCache.remember(documentUrl, now);
+        await Cloud.getDocumentsCache().remember(containerUrl, documentUrl, now);
         await Cloud.launch();
         await Cloud.register(Workspace);
         await Events.emit('application-ready');

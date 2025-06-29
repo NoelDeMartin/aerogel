@@ -4,6 +4,8 @@ import { installVitestSolidMatchers } from '@noeldemartin/solid-utils/vitest';
 import { FakeLocalStorage, FakeServer, mock, setupFacadeMocks } from '@noeldemartin/testing';
 import { noop, resetAsyncMemo } from '@noeldemartin/utils';
 import { beforeEach, vi } from 'vitest';
+import { defineDocumentsCacheMock } from '@aerogel/plugin-local-first/testing/mocks/documents-cache';
+import type { DocumentsCache } from 'soukai-solid';
 
 setupFacadeMocks();
 installVitestSolidMatchers();
@@ -32,4 +34,16 @@ vi.mock('@aerogel/core', async () => {
     FakeLocalStorage.patchGlobal();
 
     return original;
+});
+
+vi.mock('soukai-solid', async () => {
+    const original = (await vi.importActual('soukai-solid')) as { DocumentsCache: typeof DocumentsCache };
+
+    return {
+        ...original,
+
+        // This is necessary because otherwise tests fail when trying to resolve idb instance,
+        // maybe it's caused by a bug between idb and fake-indexeddb.
+        DocumentsCache: defineDocumentsCacheMock(original.DocumentsCache),
+    };
 });

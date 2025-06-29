@@ -22,7 +22,6 @@ import type {
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { Attributes } from 'soukai';
 
-import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
 import { getContainerRelations, getRelatedAppModels } from '@aerogel/plugin-local-first/lib/inference';
 
@@ -128,7 +127,10 @@ export async function updateRemoteModel(localModel: SolidModel): Promise<void> {
             },
     });
 
-    await DocumentsCache.forget(localModel.requireDocumentUrl());
+    await Cloud.getDocumentsCache().forget(
+        requireUrlParentDirectory(localModel.requireDocumentUrl()),
+        localModel.requireDocumentUrl(),
+    );
 
     if (Cloud.autoPush && Cloud.ready && !Cloud.syncing) {
         SyncQueue.push(localModel);

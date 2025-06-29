@@ -1,12 +1,11 @@
-import { arrayChunk, arrayFrom, isInstanceOf, map, required } from '@noeldemartin/utils';
+import { arrayChunk, arrayFrom, isInstanceOf, map, requireUrlParentDirectory, required } from '@noeldemartin/utils';
 import { DocumentNotFound, type EngineDocument } from 'soukai';
 import { Tombstone } from 'soukai-solid';
 import type { JobStatus } from '@aerogel/core';
 import type { ObjectsMap } from '@noeldemartin/utils';
 import type { SolidContainer, SolidContainsRelation, SolidDocument, SolidModel } from 'soukai-solid';
 
-import DocumentsCache from '@aerogel/plugin-local-first/services/DocumentsCache';
-import { cloneLocalModel, getLocalClass, isLocalModel, isRemoteModel } from '@aerogel/plugin-local-first/lib/mirroring';
+import { isLocalModel, isRemoteModel } from '@aerogel/plugin-local-first/lib/mirroring';
 import { getContainerRelations } from '@aerogel/plugin-local-first/lib/inference';
 import { lazy } from '@aerogel/plugin-local-first/lib/utils';
 
@@ -118,8 +117,6 @@ export default class LoadsChildren {
         }
 
         const engineDocuments: Record<string, EngineDocument> = {};
-        const documentModels = map(model.documents, 'url');
-        const localEngine = getLocalClass(model.static()).requireEngine();
         const remoteEngine = model.requireEngine();
 
         for (let index = 0; index < model.resourceUrls.length; index++) {
@@ -129,34 +126,7 @@ export default class LoadsChildren {
                 continue;
             }
 
-            const documentModel = documentModels.get(documentUrl);
-
-            if (
-                documentModel &&
-                documentModel.updatedAt &&
-                (await DocumentsCache.isFresh(documentModel.url, documentModel.updatedAt)) &&
-                this.localModels?.hasKey(model.url)
-            ) {
-                try {
-                    engineDocuments[documentUrl] = await localEngine.readOne(model.url, documentUrl);
-
-                    options.onDocumentRead?.(documentModel);
-                } catch (error) {
-                    if (isInstanceOf(error, DocumentNotFound)) {
-                        continue;
-                    }
-
-                    if (!options.onDocumentError) {
-                        throw error;
-                    }
-
-                    options.onDocumentError(error);
-
-                    continue;
-                }
-            } else {
-                engineDocuments[documentUrl] = await remoteEngine.readOne(model.url, documentUrl);
-            }
+            engineDocuments[documentUrl] = await remoteEngine.readOne(model.url, documentUrl);
 
             const childStatus = options.status?.children?.[index];
 
@@ -177,46 +147,7 @@ export default class LoadsChildren {
         onDocumentError?: (error: unknown) => unknown,
         onDocumentRead?: (document: SolidDocument) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
-        const document = documents.get(documentUrl);
-
-        if (
-            document &&
-            document.updatedAt &&
-            (await DocumentsCache.isFresh(document.url, document.updatedAt)) &&
-            this.localModels?.hasKey(model.url)
-        ) {
-            return {
-                children: await this.loadDocumentChildrenFromLocal(model, document),
-                tombstones: [],
-            };
-        }
-
         return this.loadDocumentChildrenFromRemote(model, documentUrl, onDocumentError, onDocumentRead);
-    }
-
-    private async loadDocumentChildrenFromLocal(
-        model: SolidModel,
-        document: SolidDocument,
-    ): Promise<Record<string, SolidModel[]>> {
-        const children: Record<string, SolidModel[]> = {};
-
-        for (const relation of getContainerRelations(model.static())) {
-            const relationInstance = model.requireRelation<SolidContainsRelation>(relation);
-
-            if (relationInstance.loaded) {
-                children[relation] = relationInstance.getLoadedModels();
-
-                continue;
-            }
-
-            const relatedLocalModels = this.localModels?.get(model.url)?.getRelationModels(relation) ?? [];
-
-            children[relation] = relatedLocalModels
-                .filter((relatedLocalModel) => relatedLocalModel.getDocumentUrl() === document.url)
-                .map((relatedLocalModel) => cloneLocalModel(relatedLocalModel, { clean: true }));
-        }
-
-        return children;
     }
 
     private async loadDocumentChildrenFromRemote(
@@ -230,7 +161,9 @@ export default class LoadsChildren {
         const readDocument = lazy(async () => {
             try {
                 const documentModel = model.documents.find((document) => document.url === documentUrl);
-                const document = await model.requireEngine().readOne(model.static('collection'), documentUrl);
+                const document = await model
+                    .requireEngine()
+                    .readOne(requireUrlParentDirectory(documentUrl), documentUrl);
                 const documentTombstones = await Tombstone.createManyFromEngineDocuments({
                     [documentUrl]: document,
                 });
