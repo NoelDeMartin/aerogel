@@ -22,7 +22,7 @@ export interface ModelRegistration {
 
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
-export const DEFAULT_STATE = { manualSetup: true };
+export const DEFAULT_STATE = { manualSetup: false };
 
 export default defineServiceState({
     name: 'cloud',
