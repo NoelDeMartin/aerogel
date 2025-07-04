@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="form?.submit()">
+    <form @submit.prevent="form ? form.submit() : $emit('submit')">
         <slot />
     </form>
 </template>
