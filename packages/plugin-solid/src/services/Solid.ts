@@ -572,12 +572,14 @@ export class SolidService extends Service {
                     [model.static().modelName]: modelCollections,
                 };
 
-                await trackModelsCollection(modelClass, containerUrl);
+                await trackModelsCollection(modelClass, containerUrl, { refresh: false });
             });
 
             await Promise.all(
-                this.collections[modelClass.modelName]?.map((containerUrl) =>
-                    trackModelsCollection(modelClass, containerUrl)) ?? [],
+                this.collections[modelClass.modelName]?.map(
+                    (containerUrl) => trackModelsCollection(modelClass, containerUrl),
+                    { refresh: false },
+                ) ?? [],
             );
         });
 

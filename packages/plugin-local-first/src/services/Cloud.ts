@@ -421,6 +421,12 @@ export class CloudService extends Service {
     }
 
     protected async onApplicationMounted(): Promise<void> {
+        if (!this.ready && !this.manualSetup) {
+            await this.backup();
+
+            return;
+        }
+
         if (!this.syncOnStartup()) {
             return;
         }

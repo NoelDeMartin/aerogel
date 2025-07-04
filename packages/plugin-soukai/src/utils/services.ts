@@ -83,6 +83,7 @@ export async function trackModels<TModel extends Model, TKey extends string>(
 ): Promise<void> {
     const { service, property: stateKey, transform: optionsTransform, ...eventListeners } = options ?? {};
     const transform = optionsTransform ?? ((models) => models);
+    const wasTracked = _getTrackedModels().has(modelClass);
     const modelData = _getTrackedModelsData<TModel>(modelClass);
 
     for (const [event, listener] of Object.entries(eventListeners)) {
@@ -93,5 +94,5 @@ export async function trackModels<TModel extends Model, TKey extends string>(
         watchEffect(() => service.setState(stateKey, transform(modelData.modelsArray.value)));
     }
 
-    await modelData.refresh();
+    wasTracked || (await modelData.refresh());
 }
