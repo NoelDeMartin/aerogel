@@ -421,7 +421,7 @@ export class CloudService extends Service {
     }
 
     protected async onApplicationMounted(): Promise<void> {
-        if (!this.ready && !this.manualSetup) {
+        if (Solid.isLoggedIn() && !this.ready && !this.manualSetup) {
             await this.backup();
 
             return;
