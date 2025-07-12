@@ -24,6 +24,7 @@ import {
     cloneRemoteModel,
     completeRemoteModels,
     createRemoteContainer,
+    getCloneConstructors,
     getLocalModel,
     getLocalModels,
     getRemoteClass,
@@ -322,7 +323,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             const resourceUrl = container.resourceUrls[index];
 
             if (!resourceUrl?.endsWith('/')) {
-                break;
+                continue;
             }
 
             const childModels = await this.fetchRemoteModelsFromContainer(
@@ -362,6 +363,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
                 await this.updateProgress(() => (childStatus.completed = true));
             });
+        }
+
+        for (const remoteModel of remoteModels) {
+            await loadAppRelations(remoteModel, (error) => this.handleDocumentError(error));
         }
 
         return completeRemoteModels(models, remoteModels, this.documentsWithErrors);
@@ -607,12 +612,17 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             }
 
             await this.loadChildren(localModel);
-            await SolidModel.synchronize(localModel, remoteModel);
+            await SolidModel.synchronize(localModel, remoteModel, {
+                constructors: getCloneConstructors(localModel),
+            });
             await this.reconcileInconsistencies(localModel, remoteModel);
             await this.saveModelAndRelated(localModel);
             await this.addLocalModel(localModel);
 
-            this.rootLocalModels.push(localModel);
+            if (!this.rootLocalModels.includes(localModel)) {
+                this.rootLocalModels.push(localModel);
+            }
+
             synchronizedModelUrls.add(localModel.url);
         }
 
@@ -625,7 +635,9 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
             const remoteModel = getRemoteModel(localModel, remoteModels);
 
-            await SolidModel.synchronize(localModel, remoteModel);
+            await SolidModel.synchronize(localModel, remoteModel, {
+                constructors: getCloneConstructors(localModel),
+            });
 
             remoteModels.add(remoteModel);
         }
@@ -682,7 +694,9 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
 
         if (localModel.isDirty()) {
-            await SolidModel.synchronize(localModel, remoteModel);
+            await SolidModel.synchronize(localModel, remoteModel, {
+                constructors: getCloneConstructors(localModel),
+            });
         }
     }
 
@@ -719,7 +733,9 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         for (const localModel of localModels.items()) {
             const remoteModel = remoteModels.require(localModel.url);
 
-            await SolidModel.synchronize(localModel, remoteModel);
+            await SolidModel.synchronize(localModel, remoteModel, {
+                constructors: getCloneConstructors(localModel),
+            });
             await this.saveModelAndRelated(localModel);
         }
     }

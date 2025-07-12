@@ -557,7 +557,7 @@ export class SolidService extends Service {
 
                 if (
                     !containerUrl ||
-                    model.static().collection === containerUrl ||
+                    model.getDefaultCollection() === containerUrl ||
                     this.collections[model.static().modelName]?.includes(containerUrl)
                 ) {
                     return;

@@ -124,7 +124,7 @@ export function isDirtyOrHasDirtyChildren(model: SolidModel): boolean {
     return getContainerRelations(model.static()).some(relationHasDirtyModels);
 }
 
-export async function loadAppRelations(model: SolidModel, onError: (error: unknown) => void): Promise<void> {
+export async function loadAppRelations(model: SolidModel, onError?: (error: unknown) => void): Promise<void> {
     const builtInRelations = ['authorizations', 'metadata', 'operations', 'tombstone'];
 
     let updated;
@@ -149,6 +149,10 @@ export async function loadAppRelations(model: SolidModel, onError: (error: unkno
 
                     updated = true;
                 } catch (error) {
+                    if (!onError) {
+                        throw error;
+                    }
+
                     onError(error);
                 }
             }

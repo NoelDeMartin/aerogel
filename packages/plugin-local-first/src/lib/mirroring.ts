@@ -32,6 +32,21 @@ interface CloneOptions {
 const Cloud = required(() => App.service('$cloud'));
 const remoteClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
 const localClasses: WeakMap<SolidModelConstructor, SolidModelConstructor> = new WeakMap();
+const cloneConstructors: WeakMap<SolidModelConstructor, [typeof SolidModel, typeof SolidModel][]> = new WeakMap();
+
+function getRelationClasses(modelClass: typeof SolidModel, visited?: Set<typeof SolidModel>): Set<typeof SolidModel> {
+    visited ??= new Set();
+
+    if (!visited.has(modelClass)) {
+        visited.add(modelClass);
+
+        for (const relation of modelClass.relations) {
+            getRelationClasses(modelClass.instance().requireRelation(relation).relatedClass, visited);
+        }
+    }
+
+    return visited;
+}
 
 function cleanRemoteModelClone(remoteModel: SolidModel): void {
     const relatedModels = remoteModel.getRelatedModels().concat([remoteModel]);
@@ -170,19 +185,7 @@ export function cloneLocalModel(localModel: SolidModel, options: CloneOptions = 
 }
 
 export function cloneRemoteModel(remoteModel: SolidModel): SolidModel {
-    const remoteModelClasses = new Set<typeof SolidModel>();
-
-    remoteModelClasses.add(remoteModel.static());
-
-    for (const relation of remoteModel.static().relations) {
-        remoteModelClasses.add(remoteModel.requireRelation<SolidContainsRelation>(relation).relatedClass);
-    }
-
-    const constructors = [...remoteModelClasses.values()].map(
-        (remoteClass) => [remoteClass, getLocalClass(remoteClass)] as [typeof SolidModel, typeof SolidModel],
-    );
-
-    return remoteModel.clone({ constructors });
+    return remoteModel.clone({ constructors: getCloneConstructors(remoteModel) });
 }
 
 export async function completeRemoteModels(
@@ -218,6 +221,29 @@ export function ignoreModelUpdates(localModel: SolidModel): boolean {
 
         return !model.ignoreRdfPropertyHistory(operation.property, true);
     });
+}
+
+export function getCloneConstructors(model: SolidModel): [typeof SolidModel, typeof SolidModel][] {
+    const modelClass = model.static();
+
+    if (!cloneConstructors.has(modelClass)) {
+        const constructors = Array.from(getRelationClasses(modelClass))
+            .map((otherClass) =>
+                isRemoteModelClass(otherClass)
+                    ? [otherClass, getLocalClass(otherClass)]
+                    : [otherClass, getRemoteClass(otherClass)])
+            .map(([a, b]) => [
+                [a, b] as [typeof SolidModel, typeof SolidModel],
+                [b, a] as [typeof SolidModel, typeof SolidModel],
+            ])
+            .flat();
+
+        for (const constructor of constructors) {
+            cloneConstructors.set(constructor[0], constructors);
+        }
+    }
+
+    return required(cloneConstructors.get(modelClass));
 }
 
 export function getLocalModel(remoteModel: SolidModel, localModels: ObjectsMap<SolidModel>): SolidModel {
@@ -288,7 +314,11 @@ export function isRegisteredModel(model: SolidModel): boolean {
 }
 
 export function isRemoteModel(model: SolidModel): boolean {
-    return localClasses.has(model.static());
+    return isRemoteModelClass(model.static());
+}
+
+export function isRemoteModelClass(modelClass: typeof SolidModel): boolean {
+    return localClasses.has(modelClass);
 }
 
 export function isLocalModel(model: SolidModel): boolean {

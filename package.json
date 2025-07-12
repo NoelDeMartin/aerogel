@@ -44,7 +44,7 @@
         "cypress": "14.2.0",
         "prettier-plugin-tailwindcss": "^0.6.11",
         "soukai": "0.6.2-next.a17215cbdfc56e05d2b13153fe21e3a750e828b3",
-        "soukai-solid": "0.6.2-next.e0f0cf186270b8daac2db34ebe24e953186fff52",
+        "soukai-solid": "0.6.2-next.5cbdb2b13076052e6336774bc3a353e93ac2809c",
         "typescript": "^5.8.2",
         "unplugin-icons": "^22.1.0",
         "unplugin-vue-components": "^28.4.1",
