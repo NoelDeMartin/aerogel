@@ -400,7 +400,7 @@ export class CloudService extends Service {
                 job.migrateUrl(modelClass, local, remote);
             }
 
-            const localCollection = modelClass.collection;
+            const localCollection = modelClass.instance().getDefaultCollection();
             const remoteCollection = getRemoteContainersCollection(modelClass, path);
 
             modelClass.collection = remoteCollection;

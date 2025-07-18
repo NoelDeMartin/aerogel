@@ -1,4 +1,4 @@
-import { map, required } from '@noeldemartin/utils';
+import { required } from '@noeldemartin/utils';
 import { watchEffect } from 'vue';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
 import type { Service } from '@aerogel/core';
@@ -73,7 +73,7 @@ export async function trackModelsCollection(
         const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
 
         collectionModels.forEach((model) => models.push(model));
-        modelData.modelsMap.value = map(models, 'id');
+        modelData.modelsSet.reset(models);
     }
 }
 

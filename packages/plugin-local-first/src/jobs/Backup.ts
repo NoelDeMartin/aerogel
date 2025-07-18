@@ -41,16 +41,21 @@ export default class Backup extends Job {
         for (const collection of collections) {
             const documents = await engine.readMany(collection);
 
-            for (const [id, document] of Object.entries(documents)) {
-                const url = this.replaceUrl(id);
+            for (const [localUrl, document] of Object.entries(documents)) {
+                const remoteUrl = this.replaceUrl(localUrl);
 
-                await engine.create(requireUrlParentDirectory(url), this.replaceDocumentUrls(document), url);
-                await engine.delete(collection, id);
+                await engine.create(
+                    requireUrlParentDirectory(remoteUrl),
+                    this.replaceDocumentUrls(document),
+                    remoteUrl,
+                );
+
+                await engine.delete(collection, localUrl);
             }
         }
 
         for (const { modelClass, remote } of this.urlMigrations) {
-            trackModelsCollection(modelClass, requireUrlParentDirectory(remote), { refresh: false });
+            trackModelsCollection(modelClass, requireUrlParentDirectory(remote));
         }
 
         for (const { modelClass, local, remote } of this.collectionMigrations) {
@@ -60,7 +65,16 @@ export default class Backup extends Job {
             );
 
             ignoreModelsCollection(modelClass, local);
-            trackModelsCollection(modelClass, remote, { refresh: false });
+            trackModelsCollection(modelClass, remote);
+
+            for (const localCollection of Solid.collections[modelClass.modelName] ?? []) {
+                const remoteCollection = this.replaceUrl(localCollection);
+
+                if (remoteCollection !== localCollection) {
+                    ignoreModelsCollection(modelClass, localCollection);
+                    trackModelsCollection(modelClass, remoteCollection);
+                }
+            }
 
             Solid.collections = solidCollections;
 

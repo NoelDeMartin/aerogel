@@ -1,12 +1,11 @@
-import { computed, shallowRef, toRaw, triggerRef } from 'vue';
-import { Events } from '@aerogel/core';
-import { map } from '@noeldemartin/utils';
-import type { ComputedRef, Ref } from 'vue';
+import { computed, toRaw } from 'vue';
+import { Events, reactiveSet } from '@aerogel/core';
+import type { ReactiveSet } from '@aerogel/core';
+import type { ComputedRef } from 'vue';
 import type { Model, ModelConstructor } from 'soukai';
-import type { ObjectsMap } from '@noeldemartin/utils';
 
 interface TrackedModelData<T extends object = Model> {
-    modelsMap: Ref<ObjectsMap<T>>;
+    modelsSet: ReactiveSet<T>;
     modelsArray: ComputedRef<T[]>;
     collectionsSet: Set<string>;
     refresh(): Promise<void>;
@@ -15,15 +14,15 @@ interface TrackedModelData<T extends object = Model> {
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
 
 function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): TrackedModelData<T> {
-    const modelsMap = shallowRef(map([] as T[], 'id'));
-    const modelsArray = computed(() => modelsMap.value.getItems());
+    const modelsSet = reactiveSet<T>();
+    const modelsArray = computed(() => modelsSet.values());
     const collectionsSet = new Set<string>([modelClass.collection]);
     const data = {
-        modelsMap,
+        modelsSet,
         modelsArray,
         collectionsSet,
         async refresh() {
-            const models = map([] as T[], 'id');
+            const models = new Set<T>();
 
             for (const collection of collectionsSet) {
                 const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
@@ -31,15 +30,15 @@ function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstruc
                 collectionModels.forEach((model) => models.add(model));
             }
 
-            modelsMap.value = models;
+            modelsSet.reset(models);
         },
     };
 
     trackedModels.set(modelClass, data);
-    modelClass.on('created', (model) => (modelsMap.value.add(toRaw(model)), triggerRef(modelsMap)));
-    modelClass.on('deleted', (model) => (modelsMap.value.delete(toRaw(model)), triggerRef(modelsMap)));
-    modelClass.on('updated', (model) => (modelsMap.value.add(toRaw(model)), triggerRef(modelsMap)));
-    Events.on('purge-storage', () => (modelsMap.value = map([] as T[], 'id')));
+    modelClass.on('created', (model) => modelsSet.add(toRaw(model)));
+    modelClass.on('deleted', (model) => modelsSet.delete(toRaw(model)));
+    modelClass.on('updated', (model) => modelsSet.add(toRaw(model)));
+    Events.on('purge-storage', () => modelsSet.clear());
     Events.on('cloud:migration-completed', () => data.refresh());
     Events.on('cloud:migration-cancelled', () => data.refresh());
     Events.on('cloud:backup-completed', () => data.refresh());
