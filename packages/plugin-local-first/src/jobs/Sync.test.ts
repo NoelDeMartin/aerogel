@@ -88,7 +88,7 @@ describe('Sync', () => {
         expect(findRegistration(remoteContainerUrl)).toBeInstanceOf(SolidTypeRegistration);
         expect(findRegistration(localContainerUrl)).toBeInstanceOf(SolidTypeRegistration);
 
-        const containers = await MoviesContainer.all();
+        const containers = await MoviesContainer.from(parentContainerUrl).all();
         expect(containers).toHaveLength(2);
         expect(arrayFind(containers, 'name', 'Local Movies')).toBeInstanceOf(MoviesContainer);
         expect(arrayFind(containers, 'name', 'Remote Movies')).toBeInstanceOf(MoviesContainer);
@@ -300,7 +300,7 @@ describe('Sync', () => {
         expect(FakeServer.getRequests(remoteDocumentUrl)).toHaveLength(1);
         expect(FakeServer.getRequests()).toHaveLength(6);
 
-        const movies = await Movie.all();
+        const movies = await Movie.from(containerUrl).all();
         expect(movies).toHaveLength(2);
         expect(arrayFind(movies, 'name', 'The Tale of Princess Kaguya')).toBeInstanceOf(Movie);
         expect(arrayFind(movies, 'name', 'Spirited Away')).toBeInstanceOf(Movie);
@@ -981,7 +981,7 @@ describe('Sync', () => {
         await Cloud.sync();
 
         // Assert
-        const [post] = await Post.all();
+        const [post] = await Post.from(containerUrl).all();
 
         expect(post).toBeInstanceOf(Post);
         expect(post?.author).toBeInstanceOf(Person);

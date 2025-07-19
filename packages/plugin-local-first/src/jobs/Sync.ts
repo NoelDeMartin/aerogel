@@ -243,6 +243,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                     return;
                 }
 
+                Cloud.rootModelCollections[registeredModel.modelClass.modelName] ??= registration.instanceContainer;
+
                 if (isContainerClass(remoteClass)) {
                     await trackModelsCollection(
                         registeredModel.modelClass,

@@ -1,6 +1,6 @@
 export function waitSync(): void {
     cy.see('Synchronization in progress');
-    cy.dontSee('Synchronization in progress');
+    cy.dontSee('Synchronization in progress', { timeout: 10000 });
 
     // Wait to make sure there weren't any errors. Otherwise, if this is the last
     // command in a test, the error could be caught after the test has succeeded.

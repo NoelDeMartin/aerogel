@@ -255,12 +255,15 @@ export class CloudService extends Service {
             getRelatedClasses(modelClass).forEach((relatedClass) => getRemoteClass(relatedClass).setEngine(engine));
         }
 
-        this.whenReady(() => {
-            const [existingCollection] = this.modelCollections[modelClass.modelName] ?? [];
+        this.whenReady(async () => {
+            const rootCollection = this.rootModelCollections[modelClass.modelName];
 
             modelClass.useSoftDeletes(true);
 
-            modelClass.collection = existingCollection ?? getRemoteContainersCollection(modelClass, options.path);
+            await modelClass.exclusive(
+                async () =>
+                    (modelClass.collection = rootCollection ?? getRemoteContainersCollection(modelClass, options.path)),
+            );
         });
 
         await trackModels(modelClass, {
@@ -403,7 +406,7 @@ export class CloudService extends Service {
             const localCollection = modelClass.instance().getDefaultCollection();
             const remoteCollection = getRemoteContainersCollection(modelClass, path);
 
-            modelClass.collection = remoteCollection;
+            await modelClass.exclusive(async () => (modelClass.collection = remoteCollection));
 
             job.migrateCollection(modelClass, localCollection, remoteCollection);
         }
@@ -458,6 +461,7 @@ export class CloudService extends Service {
             migrationJob: null,
             migrationPostponed: false,
             modelCollections: {},
+            rootModelCollections: {},
             pollingEnabled: true,
             pollingMinutes: 10,
             ready: false,
