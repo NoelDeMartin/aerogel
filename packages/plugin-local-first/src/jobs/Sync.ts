@@ -187,6 +187,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     }
 
     private async pushChanges(): Promise<void> {
+        const localDocuments = new Set(this.localModels.getItems().map((model) => model.getDocumentUrl()));
         const remoteModels = this.dirtyRemoteModels ?? [];
         const childrenStatus = (this.status.children[1].children = remoteModels.map(() => ({ completed: false })));
 
@@ -212,6 +213,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         const documentsCache = Cloud.getDocumentsCache();
 
         for (const [documentUrl, modifiedAt] of Object.entries(this.documentsModifiedAt)) {
+            if (!localDocuments.has(documentUrl)) {
+                continue;
+            }
+
             await documentsCache.remember(requireUrlParentDirectory(documentUrl), documentUrl, modifiedAt);
         }
 

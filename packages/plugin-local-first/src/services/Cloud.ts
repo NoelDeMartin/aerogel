@@ -330,6 +330,7 @@ export class CloudService extends Service {
 
         Events.on('auth:login', ({ authenticator }) => this.login(authenticator));
         Events.on('auth:logout', () => this.logout());
+        Events.on('purge-storage', () => this.getDocumentsCache().clear());
         Events.once('application-ready', () => this.onApplicationReady());
         Events.once('application-mounted', () => this.onApplicationMounted());
 
