@@ -31,7 +31,7 @@ import Service from './UI.state';
 import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
 import type { UIToast } from './UI.state';
 
-export type UIComponent<Props = {}, Exposed = {}, Emits = {}> = Constructor<{ $emit: Emits } & Exposed> &
+export type UIComponent<Props = {}, Exposed = {}, Emits = {}> = Constructor<{ $emit?: Emits } & Exposed> &
     Component<Props, {}, {}, ComputedOptions, MethodOptions, {}, {}>;
 
 export interface UIComponents {

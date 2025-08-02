@@ -1,10 +1,5 @@
 <template>
-    <Modal
-        ref="$modalRef"
-        title-hidden
-        close-hidden
-        :title="$td('account.title', 'Account')"
-    >
+    <Modal title-hidden close-hidden :title="$td('account.title', 'Account')">
         <div class="relative flex items-center rounded-md bg-gray-100 p-4 pr-12">
             <SolidAvatar class="mr-2 size-16 shrink-0" />
             <div class="flex flex-col overflow-hidden">
@@ -149,10 +144,7 @@
                 <IconRefresh class="size-5" />
                 <span>{{ $td('cloud.sync', 'Synchronize') }}</span>
             </Button>
-            <Button
-                v-else
-                @click="(($cloud.setupDismissed = false), $modal?.close(), $cloud.manualSetup || $cloud.setup())"
-            >
+            <Button v-else @click="(($cloud.setupDismissed = false), close(), $cloud.manualSetup || $cloud.setup())">
                 <IconCloudUpload class="size-5" />
                 <span>{{ $td('cloud.setup.submit', 'Back up now') }}</span>
             </Button>
@@ -185,13 +177,14 @@ import {
     SettingsModal,
     translateWithDefault,
     useEvent,
+    useModal,
 } from '@aerogel/core';
-import { computed, ref, useTemplateRef } from 'vue';
+import { computed, ref } from 'vue';
 import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
 
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 
-const $modal = useTemplateRef('$modalRef');
+const { close } = useModal();
 const cancellingSync = ref(false);
 const pollingText = translateWithDefault('cloud.advanced.polling', 'Synchronize every {minutes} minutes', {
     minutes: '%%separator%%',
@@ -222,5 +215,5 @@ async function cancelSync() {
     cancellingSync.value = false;
 }
 
-useEvent('auth:logout', () => $modal.value?.close());
+useEvent('auth:logout', close);
 </script>
