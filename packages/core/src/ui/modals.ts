@@ -1,5 +1,5 @@
 import { after } from '@noeldemartin/utils';
-import { useModal as useModalBase } from '@noeldemartin/vue-modals';
+import { injectModal, useModal as useModalBase } from '@noeldemartin/vue-modals';
 
 export {
     createModal,
@@ -14,9 +14,14 @@ export {
     type ModalController,
 } from '@noeldemartin/vue-modals';
 
+const instances = new WeakSet();
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useModal<T = never>() {
-    const { close, remove, ...modal } = useModalBase<T>({ removeOnClose: false });
+    const instance = injectModal<T>();
+    const { close, remove, ...modal } = useModalBase<T>(instances.has(instance) ? {} : { removeOnClose: false });
+
+    instances.add(instance);
 
     return {
         ...modal,

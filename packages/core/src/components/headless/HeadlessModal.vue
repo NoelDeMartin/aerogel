@@ -1,5 +1,5 @@
 <template>
-    <DialogRoot :ref="forwardRef" open @update:open="persistent || close()">
+    <DialogRoot :ref="forwardRef" open @update:open="persistent || $event || close()">
         <DialogPortal>
             <slot :close />
         </DialogPortal>
