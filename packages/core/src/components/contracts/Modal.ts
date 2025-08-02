@@ -11,11 +11,14 @@ export interface ModalProps {
     descriptionHidden?: boolean;
 }
 
-export interface ModalSlots<Result = void> {
+export interface ModalSlots<Result = never> {
     default(props: { close(result?: Result): Promise<void> }): unknown;
 }
 
-export interface ModalExpose<Result = void> {
-    close(result?: Result): Promise<void>;
+export interface ModalExpose {
     $content: ModalContentInstance;
+}
+
+export interface ModalEmits<Result = never> {
+    (event: 'close', payload: Result): void;
 }

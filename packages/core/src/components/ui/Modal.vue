@@ -7,10 +7,11 @@
         :persistent
     >
         <HeadlessModalOverlay
-            class="fixed inset-0 animate-[fade-in_var(--tw-duration)_ease-in-out] transition-opacity duration-300 will-change-[opacity]"
+            class="fixed inset-0 transition-opacity duration-300 will-change-[opacity]"
             :class="{
-                'bg-black/30': context.childIndex === 1,
-                'opacity-0': context.childIndex === 1 && context.modal.closing,
+                'animate-[fade-in_var(--tw-duration)_ease-in-out]': !hasRenderedModals,
+                'bg-black/30': firstVisibleModal?.id === id || (!firstVisibleModal && modals[0]?.id === id),
+                'opacity-0': !firstVisibleModal,
             }"
         />
         <HeadlessModalContent v-bind="contentProps" :class="renderedWrapperClass">
@@ -52,14 +53,15 @@
     </HeadlessModal>
 </template>
 
-<script setup lang="ts" generic="T = void">
+<script lang="ts">
 import IconClose from '~icons/zondicons/close';
 
-import { after } from '@noeldemartin/utils';
-import { computed } from 'vue';
 import { useForwardExpose } from 'reka-ui';
+import { computed, onMounted } from 'vue';
+import { injectModal, modals, useModal } from '@noeldemartin/vue-modals';
+import type { ModalController } from '@noeldemartin/vue-modals';
 import type { ComponentPublicInstance, HTMLAttributes, Ref } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
+import { type Nullable, after } from '@noeldemartin/utils';
 
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import HeadlessModal from '@aerogel/core/components/headless/HeadlessModal.vue';
@@ -67,15 +69,16 @@ import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModa
 import HeadlessModalDescription from '@aerogel/core/components/headless/HeadlessModalDescription.vue';
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
-import UI from '@aerogel/core/ui/UI';
 import { classes } from '@aerogel/core/utils/classes';
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import { useEvent } from '@aerogel/core/utils/composition/events';
+import { reactiveSet } from '@aerogel/core/utils';
 import type { AcceptRefs } from '@aerogel/core/utils/vue';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
-import type { UIModalContext } from '@aerogel/core/ui/UI';
 
-type HeadlessModalInstance = ComponentPublicInstance & ModalExpose<T>;
+const renderedModals = reactiveSet<ModalController>();
+</script>
+
+<script setup lang="ts" generic="T = void">
+type HeadlessModalInstance = ComponentPublicInstance & ModalExpose;
 
 const {
     class: contentClass = '',
@@ -95,15 +98,19 @@ const {
 >();
 
 defineSlots<ModalSlots<T>>();
-defineExpose<AcceptRefs<ModalExpose<T>>>({
-    close: async (result) => $modal.value?.close(result),
+defineExpose<AcceptRefs<ModalExpose>>({
     $content: computed(() => $modal.value?.$content),
 });
 
 const { forwardRef, currentRef } = useForwardExpose<HeadlessModalInstance>();
+const { id, visible } = useModal();
 const $modal = currentRef as Ref<Nullable<HeadlessModalInstance>>;
-const context = injectReactiveOrFail<UIModalContext>('modal');
-const inForeground = computed(() => !context.modal.closing && context.childIndex === UI.openModals.length);
+const modal = injectModal();
+const inForeground = computed(
+    () => visible.value && modals.value.toReversed().find((modal) => modal.visible.value)?.id === id.value,
+);
+const firstVisibleModal = computed(() => modals.value.find((modal) => modal.visible.value));
+const hasRenderedModals = computed(() => modals.value.some((modal) => renderedModals.has(modal)));
 const contentProps = computed(() => (description ? {} : { 'aria-describedby': undefined }));
 const renderedContentClass = computed(() =>
     classes('max-h-[90vh] overflow-auto px-4 pb-4', { 'pt-4': !title || titleHidden }, contentClass));
@@ -111,7 +118,8 @@ const renderedWrapperClass = computed(() =>
     classes(
         'isolate fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2',
         'overflow-hidden rounded-lg bg-white text-left shadow-xl sm:max-w-lg',
-        'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
+        renderedModals.has(modal.value) ||
+            'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
         'transition-[scale,opacity] will-change-[scale,opacity] duration-300',
         {
             'scale-50 opacity-0': !inForeground.value,
@@ -120,12 +128,5 @@ const renderedWrapperClass = computed(() =>
         wrapperClass,
     ));
 
-useEvent('modal-will-close', async ({ modal: { id } }) => {
-    if (id !== context.modal.id) {
-        return;
-    }
-
-    // Wait for transitions to finish
-    await after({ ms: 300 });
-});
+onMounted(() => after(500).then(() => renderedModals.add(modal.value)));
 </script>

@@ -1,13 +1,19 @@
-import { after, facade, fail, isDevelopment, required, uuid } from '@noeldemartin/utils';
-import { markRaw, nextTick, unref } from 'vue';
-import type { ComponentExposed, ComponentProps } from 'vue-component-type-helpers';
-import type { Component } from 'vue';
-import type { ClosureArgs } from '@noeldemartin/utils';
+import { after, facade, fail, isDevelopment, uuid } from '@noeldemartin/utils';
+import { markRaw, unref } from 'vue';
+import { closeModal, createModal, modals, showModal } from '@noeldemartin/vue-modals';
+import type { Constructor } from '@noeldemartin/utils';
+import type { Component, ComputedOptions, MethodOptions } from 'vue';
+import type { GetModalProps, GetModalResponse } from '@noeldemartin/vue-modals';
 
-import App from '@aerogel/core/services/App';
 import Events from '@aerogel/core/services/Events';
+import type { AcceptRefs } from '@aerogel/core/utils';
+import type { AlertModalExpose, AlertModalProps } from '@aerogel/core/components/contracts/AlertModal';
+import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
+import type { LoadingModalExpose, LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
+import type { ToastAction, ToastExpose, ToastProps, ToastVariant } from '@aerogel/core/components/contracts/Toast';
 import type {
     ConfirmModalCheckboxes,
+    ConfirmModalEmits,
     ConfirmModalExpose,
     ConfirmModalProps,
 } from '@aerogel/core/components/contracts/ConfirmModal';
@@ -15,40 +21,28 @@ import type {
     ErrorReportModalExpose,
     ErrorReportModalProps,
 } from '@aerogel/core/components/contracts/ErrorReportModal';
-import type { AcceptRefs } from '@aerogel/core/utils';
-import type { AlertModalExpose, AlertModalProps } from '@aerogel/core/components/contracts/AlertModal';
-import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
-import type { LoadingModalExpose, LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
-import type { PromptModalExpose, PromptModalProps } from '@aerogel/core/components/contracts/PromptModal';
-import type { ToastAction, ToastExpose, ToastProps, ToastVariant } from '@aerogel/core/components/contracts/Toast';
+import type {
+    PromptModalEmits,
+    PromptModalExpose,
+    PromptModalProps,
+} from '@aerogel/core/components/contracts/PromptModal';
 
 import Service from './UI.state';
 import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
-import type { UIModal, UIToast } from './UI.state';
+import type { UIToast } from './UI.state';
 
-interface ModalCallbacks<T = unknown> {
-    willClose(result: T | undefined): void;
-    hasClosed(result: T | undefined): void;
-}
-
-export type ModalResult<T> = ModalExposeResult<ComponentExposed<T>>;
-export type ModalExposeResult<T> = T extends { close(result?: infer Result): Promise<void> } ? Result : unknown;
-export type UIComponent<Props = {}, Exposed = {}> = { new (...args: ClosureArgs): Exposed & { $props: Props } };
+export type UIComponent<Props = {}, Exposed = {}, Emits = {}> = Constructor<{ $emit: Emits } & Exposed> &
+    Component<Props, {}, {}, ComputedOptions, MethodOptions, {}, {}>;
 
 export interface UIComponents {
     'alert-modal': UIComponent<AlertModalProps, AlertModalExpose>;
-    'confirm-modal': UIComponent<ConfirmModalProps, ConfirmModalExpose>;
+    'confirm-modal': UIComponent<ConfirmModalProps, ConfirmModalExpose, ConfirmModalEmits>;
     'error-report-modal': UIComponent<ErrorReportModalProps, ErrorReportModalExpose>;
     'loading-modal': UIComponent<LoadingModalProps, LoadingModalExpose>;
-    'prompt-modal': UIComponent<PromptModalProps, PromptModalExpose>;
+    'prompt-modal': UIComponent<PromptModalProps, PromptModalExpose, PromptModalEmits>;
     'router-link': UIComponent;
     'startup-crash': UIComponent;
     toast: UIComponent<ToastProps, ToastExpose>;
-}
-
-export interface UIModalContext {
-    modal: UIModal;
-    childIndex?: number;
 }
 
 export type ConfirmOptions = AcceptRefs<{
@@ -91,7 +85,6 @@ export interface ToastOptions {
 
 export class UIService extends Service {
 
-    private modalCallbacks: Record<string, Partial<ModalCallbacks>> = {};
     private components: Partial<UIComponents> = {};
 
     public registerComponent<T extends keyof UIComponents>(name: T, component: UIComponents[T]): void {
@@ -153,11 +146,11 @@ export class UIService extends Service {
         };
 
         const properties = getProperties();
-        const result = await this.modalForm(this.requireComponent('confirm-modal'), properties);
-        const confirmed = typeof result === 'object' ? result[0] : (result ?? false);
+        const { response } = await this.modal(this.requireComponent('confirm-modal'), properties);
+        const confirmed = typeof response === 'object' ? response[0] : (response ?? false);
         const checkboxes =
-            typeof result === 'object'
-                ? result[1]
+            typeof response === 'object'
+                ? response[1]
                 : Object.entries(properties.checkboxes ?? {}).reduce(
                     (values, [checkbox, { default: defaultValue }]) => ({
                         [checkbox]: defaultValue ?? false,
@@ -205,8 +198,8 @@ export class UIService extends Service {
             } as PromptModalProps;
         };
 
-        const rawResult = await this.modalForm(this.requireComponent('prompt-modal'), getProperties());
-        const result = trim && typeof rawResult === 'string' ? rawResult?.trim() : rawResult;
+        const { response } = await this.modal(this.requireComponent('prompt-modal'), getProperties());
+        const result = trim && typeof response === 'string' ? response?.trim() : response;
 
         return result ?? null;
     }
@@ -253,7 +246,9 @@ export class UIService extends Service {
             return operationPromise;
         }
 
-        const modal = await this.modal(this.requireComponent('loading-modal'), props);
+        const modal = createModal(this.requireComponent('loading-modal'), props);
+
+        showModal(modal);
 
         try {
             const result = await operationPromise;
@@ -262,7 +257,7 @@ export class UIService extends Service {
 
             return result;
         } finally {
-            await this.closeModal(modal.id);
+            await closeModal(modal.id, { removeAfter: 1000 });
         }
     }
 
@@ -278,96 +273,26 @@ export class UIService extends Service {
     }
 
     public modal<T extends Component>(
-        ...args: {} extends ComponentProps<T>
-            ? [component: T, props?: AcceptRefs<ComponentProps<T>>]
-            : [component: T, props: AcceptRefs<ComponentProps<T>>]
-    ): Promise<UIModal<ModalResult<T>>>;
+        component: T & object extends GetModalProps<T> ? T : never,
+        props?: GetModalProps<T>
+    ): Promise<GetModalResponse<T>>;
 
-    public async modal<T extends Component>(component: T, props?: ComponentProps<T>): Promise<UIModal<ModalResult<T>>> {
-        const id = uuid();
-        const callbacks: Partial<ModalCallbacks<ModalResult<T>>> = {};
-        const modal: UIModal<ModalResult<T>> = {
-            id,
-            closing: false,
-            properties: props ?? {},
-            component: markRaw(component),
-            beforeClose: new Promise((resolve) => (callbacks.willClose = resolve)),
-            afterClose: new Promise((resolve) => (callbacks.hasClosed = resolve)),
-        };
-        const modals = this.modals.concat(modal);
+    public modal<T extends Component>(
+        component: T & object extends GetModalProps<T> ? never : T,
+        props: GetModalProps<T>
+    ): Promise<GetModalResponse<T>>;
 
-        this.modalCallbacks[modal.id] = callbacks;
-
-        this.setState({ modals });
-
-        await nextTick();
-
-        return modal;
-    }
-
-    public modalForm<T extends Component>(
-        ...args: {} extends ComponentProps<T>
-            ? [component: T, props?: AcceptRefs<ComponentProps<T>>]
-            : [component: T, props: AcceptRefs<ComponentProps<T>>]
-    ): Promise<ModalResult<T> | undefined>;
-
-    public async modalForm<T extends Component>(
-        component: T,
-        props?: ComponentProps<T>,
-    ): Promise<ModalResult<T> | undefined> {
-        const modal = await this.modal<T>(component, props as ComponentProps<T>);
-        const result = await modal.beforeClose;
-
-        return result;
-    }
-
-    public async closeModal(id: string, result?: unknown): Promise<void> {
-        if (!App.isMounted()) {
-            await this.removeModal(id, result);
-
-            return;
-        }
-
-        await Events.emit('close-modal', { id, result });
+    public modal<T extends Component>(component: T, componentProps?: GetModalProps<T>): Promise<GetModalResponse<T>> {
+        return showModal(component, componentProps ?? {});
     }
 
     public async closeAllModals(): Promise<void> {
-        while (this.modals.length > 0) {
-            await this.closeModal(required(this.modals[this.modals.length - 1]).id);
-        }
+        await Promise.all(modals.value.map(({ id }) => closeModal(id, { removeAfter: 1000 })));
     }
 
     protected override async boot(): Promise<void> {
-        this.watchModalEvents();
         this.watchMountedEvent();
         this.watchViewportBreakpoints();
-    }
-
-    private async removeModal(id: string, result?: unknown): Promise<void> {
-        this.setState(
-            'modals',
-            this.modals.filter((m) => m.id !== id),
-        );
-
-        this.modalCallbacks[id]?.hasClosed?.(result);
-
-        delete this.modalCallbacks[id];
-    }
-
-    private watchModalEvents(): void {
-        Events.on('modal-will-close', ({ modal: { id }, result }) => {
-            const modal = this.modals.find((_modal) => id === _modal.id);
-
-            if (modal) {
-                modal.closing = true;
-            }
-
-            this.modalCallbacks[id]?.willClose?.(result);
-        });
-
-        Events.on('modal-has-closed', async ({ modal: { id }, result }) => {
-            await this.removeModal(id, result);
-        });
     }
 
     private watchMountedEvent(): void {
@@ -405,11 +330,3 @@ export class UIService extends Service {
 }
 
 export default facade(UIService);
-
-declare module '@aerogel/core/services/Events' {
-    export interface EventsPayload {
-        'close-modal': { id: string; result?: unknown };
-        'modal-will-close': { modal: UIModal; result?: unknown };
-        'modal-has-closed': { modal: UIModal; result?: unknown };
-    }
-}

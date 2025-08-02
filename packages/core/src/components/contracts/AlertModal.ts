@@ -8,7 +8,7 @@ export interface AlertModalProps {
     message: string;
 }
 
-export interface AlertModalExpose extends ModalExpose<void> {}
+export interface AlertModalExpose extends ModalExpose {}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useAlertModal(props: AlertModalProps) {

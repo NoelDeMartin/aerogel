@@ -4,10 +4,11 @@ import { translateWithDefault } from '@aerogel/core/lang';
 import { useForm } from '@aerogel/core/utils/composition/forms';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 import type { FormFieldDefinition } from '@aerogel/core/forms/FormController';
-import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
 import type { Nullable } from '@noeldemartin/utils';
+import type { ModalEmits, ModalExpose } from '@aerogel/core/components/contracts/Modal';
 
 export type ConfirmModalCheckboxes = Record<string, { label: string; default?: boolean; required?: boolean }>;
+export type ConfirmModalResult = boolean | [boolean, Record<string, Nullable<boolean>>];
 
 export interface ConfirmModalProps {
     title?: string;
@@ -21,7 +22,9 @@ export interface ConfirmModalProps {
     required?: boolean;
 }
 
-export interface ConfirmModalExpose extends ModalExpose<boolean | [boolean, Record<string, Nullable<boolean>>]> {}
+export interface ConfirmModalExpose extends ModalExpose {}
+
+export interface ConfirmModalEmits extends ModalEmits<ConfirmModalResult> {}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useConfirmModal(props: ConfirmModalProps) {

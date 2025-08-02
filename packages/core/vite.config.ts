@@ -16,6 +16,7 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 '@noeldemartin/utils',
+                '@noeldemartin/vue-modals',
                 'class-variance-authority',
                 'clsx',
                 'dompurify',

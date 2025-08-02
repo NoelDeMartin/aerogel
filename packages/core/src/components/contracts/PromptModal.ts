@@ -4,7 +4,9 @@ import { useForm } from '@aerogel/core/utils/composition/forms';
 import { requiredStringInput } from '@aerogel/core/forms/utils';
 import { translateWithDefault } from '@aerogel/core/lang';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
-import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
+import type { ModalEmits, ModalExpose } from '@aerogel/core/components/contracts/Modal';
+
+export type PromptModalResult = string;
 
 export interface PromptModalProps {
     title?: string;
@@ -18,7 +20,9 @@ export interface PromptModalProps {
     cancelVariant?: ButtonVariant;
 }
 
-export interface PromptModalExpose extends ModalExpose<string> {}
+export interface PromptModalExpose extends ModalExpose {}
+
+export interface PromptModalEmits extends ModalEmits<PromptModalResult> {}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function usePromptModal(props: PromptModalProps) {

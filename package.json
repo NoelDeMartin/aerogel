@@ -36,7 +36,7 @@
         "@noeldemartin/scripts": "0.3.0-next.73e253ff6238acee8a0199922401c4be310129bd",
         "@noeldemartin/solid-utils": "^0.6.1",
         "@noeldemartin/testing": "0.0.0-next.3aa03a51f580a9508bbc982c55eda4fd2b302f35",
-        "@noeldemartin/utils": "^0.7.1",
+        "@noeldemartin/utils": "0.7.1-next.5f7bc66cad4aaa2dce4a2314e99d562ff3ab993b",
         "@total-typescript/ts-reset": "^0.4.2",
         "@tsconfig/node22": "^22.0.1",
         "@types/mustache": "^4.2.2",
@@ -59,7 +59,7 @@
     },
     "overrides": {
         "@noeldemartin/solid-utils": "^0.6.1",
-        "@noeldemartin/utils": "^0.7.1"
+        "@noeldemartin/utils": "0.7.1-next.5f7bc66cad4aaa2dce4a2314e99d562ff3ab993b"
     },
     "eslintConfig": {
         "extends": [

@@ -1,5 +1,5 @@
 <template>
-    <!-- @vue-generic {import('@aerogel/core/ui/UI').ModalExposeResult<ConfirmModalExpose>} -->
+    <!-- @vue-generic {import('@aerogel/core/components/contracts/ConfirmModal').ConfirmModalResult} -->
     <Modal
         v-slot="{ close }"
         :title="renderedTitle"
@@ -41,10 +41,15 @@ import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { useConfirmModal } from '@aerogel/core/components/contracts/ConfirmModal';
-import type { ConfirmModalExpose, ConfirmModalProps } from '@aerogel/core/components/contracts/ConfirmModal';
+import type {
+    ConfirmModalEmits,
+    ConfirmModalExpose,
+    ConfirmModalProps,
+} from '@aerogel/core/components/contracts/ConfirmModal';
 
 const { cancelVariant = 'secondary', ...props } = defineProps<ConfirmModalProps>();
 const { form, renderedTitle, titleHidden, renderedAcceptText, renderedCancelText } = useConfirmModal(props);
 
+defineEmits<ConfirmModalEmits>();
 defineExpose<ConfirmModalExpose>();
 </script>
