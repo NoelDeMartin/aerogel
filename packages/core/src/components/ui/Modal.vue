@@ -58,8 +58,6 @@ import IconClose from '~icons/zondicons/close';
 
 import { useForwardExpose } from 'reka-ui';
 import { computed, onMounted } from 'vue';
-import { injectModal, modals, useModal } from '@noeldemartin/vue-modals';
-import type { ModalController } from '@noeldemartin/vue-modals';
 import type { ComponentPublicInstance, HTMLAttributes, Ref } from 'vue';
 import { type Nullable, after } from '@noeldemartin/utils';
 
@@ -71,6 +69,8 @@ import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModa
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
 import { classes } from '@aerogel/core/utils/classes';
 import { reactiveSet } from '@aerogel/core/utils';
+import { injectModal, modals, useModal } from '@aerogel/core/ui/modals';
+import type { ModalController } from '@aerogel/core/ui/modals';
 import type { AcceptRefs } from '@aerogel/core/utils/vue';
 import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 

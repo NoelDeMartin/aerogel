@@ -1,11 +1,11 @@
 import { after, facade, fail, isDevelopment, uuid } from '@noeldemartin/utils';
 import { markRaw, unref } from 'vue';
-import { closeModal, createModal, modals, showModal } from '@noeldemartin/vue-modals';
 import type { Constructor } from '@noeldemartin/utils';
 import type { Component, ComputedOptions, MethodOptions } from 'vue';
-import type { GetModalProps, GetModalResponse } from '@noeldemartin/vue-modals';
 
 import Events from '@aerogel/core/services/Events';
+import { closeModal, createModal, modals, showModal } from '@aerogel/core/ui/modals';
+import type { GetModalProps, GetModalResponse } from '@aerogel/core/ui/modals';
 import type { AcceptRefs } from '@aerogel/core/utils';
 import type { AlertModalExpose, AlertModalProps } from '@aerogel/core/components/contracts/AlertModal';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';

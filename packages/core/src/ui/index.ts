@@ -14,20 +14,10 @@ import type { Component } from 'vue';
 
 const services = { $ui: UI };
 
+export * from './modals';
 export * from './UI';
 export * from './utils';
 export { default as UI } from './UI';
-export {
-    useModal,
-    createModal,
-    showModal,
-    closeModal,
-    modals,
-    ModalComponent,
-    ModalsPortal,
-    type GetModalProps,
-    type GetModalResponse,
-} from '@noeldemartin/vue-modals';
 
 export type UIServices = typeof services;
 
