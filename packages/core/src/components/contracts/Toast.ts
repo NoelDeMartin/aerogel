@@ -1,4 +1,4 @@
-export type ToastVariant = 'secondary' | 'danger';
+export type ToastVariant = 'secondary' | 'warning' | 'danger';
 
 export interface ToastAction {
     label: string;

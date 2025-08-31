@@ -34,6 +34,7 @@ const renderedClasses = computed(() =>
                 variant: {
                     secondary: 'bg-gray-900 text-white ring-black',
                     danger: 'bg-red-50 text-red-900 ring-red-100',
+                    warning: 'bg-yellow-50 text-yellow-900 ring-yellow-100',
                 },
             },
             defaultVariants: {
