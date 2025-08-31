@@ -39,7 +39,7 @@ const renderedType = computed(() => {
     return ['text', 'email', 'number', 'tel', 'url'].includes(fieldType) ? fieldType : 'text';
 });
 const checked = computed(() => {
-    if (type !== 'checkbox') {
+    if (renderedType.value !== 'checkbox') {
         return;
     }
 
@@ -59,11 +59,13 @@ function getValue(): FormFieldValue | null {
         return null;
     }
 
-    switch (type) {
+    switch (renderedType.value) {
         case 'checkbox':
             return $input.value.checked;
         case 'date':
             return $input.value.valueAsDate;
+        case 'number':
+            return $input.value.valueAsNumber;
         default:
             return $input.value.value;
     }
@@ -75,7 +77,7 @@ watchEffect(() => {
         return;
     }
 
-    if (type === 'date' && value.value instanceof Date) {
+    if (renderedType.value === 'date' && value.value instanceof Date) {
         $input.value.valueAsDate = value.value;
 
         return;
