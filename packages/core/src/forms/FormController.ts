@@ -112,6 +112,10 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         return this._fields[field]?.rules?.split('|') ?? [];
     }
 
+    public setFieldErrors<T extends keyof Fields>(field: T, errors: string[] | null): void {
+        this._errors[field] = errors;
+    }
+
     public getFieldType<T extends keyof Fields>(field: T): FormFieldType | null {
         return this._fields[field]?.type ?? null;
     }
