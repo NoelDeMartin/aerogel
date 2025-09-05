@@ -7,5 +7,6 @@ export * from './composition/persistent';
 export * from './composition/reactiveSet';
 export * from './composition/state';
 export * from './markdown';
+export * from './time';
 export * from './types';
 export * from './vue';
