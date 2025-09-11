@@ -69,11 +69,9 @@ export async function trackModelsCollection(
     modelData.collectionsSet.add(collection);
 
     if (refresh) {
-        const models = modelData.modelsArray.value;
         const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
 
-        collectionModels.forEach((model) => models.push(model));
-        modelData.modelsSet.reset(models);
+        modelData.modelsSet.reset(collectionModels);
     }
 }
 
