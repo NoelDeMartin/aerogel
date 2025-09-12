@@ -546,7 +546,7 @@ export class SolidService extends Service {
     }
 
     private async trackSolidModels(): Promise<void> {
-        Events.on('purge-storage', () => (this.collections = {}));
+        Events.on('purge-storage', () => (this.collections = {})); // TODO restore services to getInitialState() instead
         Events.on('soukai:track-models', async (modelClass) => {
             if (!isSolidModel(modelClass)) {
                 return;

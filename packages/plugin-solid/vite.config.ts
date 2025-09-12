@@ -21,6 +21,7 @@ export default defineConfig({
                 '@inrupt/solid-client-authn-browser',
                 '@noeldemartin/solid-utils',
                 '@noeldemartin/utils',
+                '@uvdsl/solid-oidc-client-browser',
                 'solid-auth-client',
                 'soukai-solid',
                 'soukai',

@@ -33,6 +33,7 @@
         "@inrupt/solid-client-authn-browser": "^2.3.0",
         "@noeldemartin/solid-utils": "^0.6.1",
         "@noeldemartin/utils": "0.7.1-next.5f7bc66cad4aaa2dce4a2314e99d562ff3ab993b",
+        "@uvdsl/solid-oidc-client-browser": "^0.1.1",
         "solid-auth-client": "2.4.1"
     },
     "devDependencies": {

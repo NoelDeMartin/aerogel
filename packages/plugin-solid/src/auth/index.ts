@@ -1,5 +1,6 @@
 import InruptAuthenticator from './authenticators/InruptAuthenticator';
 import LegacyAuthenticator from './authenticators/LegacyAuthenticator';
+import UVDSLAuthenticator from './authenticators/UVDSLAuthenticator';
 import type Authenticator from './Authenticator';
 
 const _authenticators = {} as Authenticators;
@@ -12,6 +13,7 @@ export { default as Authenticator } from './Authenticator';
 export const authenticators = {
     inrupt: new InruptAuthenticator(),
     legacy: new LegacyAuthenticator(),
+    uvdsl: new UVDSLAuthenticator(),
 };
 
 export function setDefaultAuthenticator(authenticator: Authenticator): void {
