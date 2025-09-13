@@ -19,7 +19,7 @@ export default class LoadsChildren {
     declare protected localModels?: ObjectsMap<SolidModel>;
 
     protected async loadContainedModels(
-        model: SolidContainer,
+        container: SolidContainer,
         options: {
             ignoreTombstones?: boolean;
             status?: ResourceJobStatus;
@@ -28,12 +28,12 @@ export default class LoadsChildren {
             onDocumentRead?: (document: SolidDocument) => unknown;
         } = {},
     ): Promise<SolidModel[]> {
-        if (isLocalModel(model)) {
+        if (isLocalModel(container)) {
             const children = [];
 
-            for (const relation of getContainerRelations(model.static())) {
+            for (const relation of getContainerRelations(container.static())) {
                 const relationModels =
-                    (await model.loadRelationIfUnloaded<SolidModel | SolidModel[] | null>(relation)) ?? [];
+                    (await container.loadRelationIfUnloaded<SolidModel | SolidModel[] | null>(relation)) ?? [];
 
                 children.push(...arrayFrom(relationModels));
             }
@@ -43,8 +43,8 @@ export default class LoadsChildren {
 
         const children: Record<string, SolidModel[]> = {};
         const tombstones: Tombstone[] = [];
-        const documents = map(model.documents, 'url');
-        const documentUrlChunks = arrayChunk(model.resourceUrls, 10);
+        const documents = map(container.documents, 'url');
+        const documentUrlChunks = arrayChunk(container.resourceUrls, 10);
         const statusChildren = documentUrlChunks.flat().map((url) => ({
             documentUrl: url,
             completed: false,
@@ -60,7 +60,7 @@ export default class LoadsChildren {
                 documentUrls.map(async (documentUrl) => {
                     const { children: documentChildren, tombstones: documentTombstones } =
                         await this.loadDocumentChildren(
-                            model,
+                            container,
                             documentUrl,
                             documents,
                             options.onDocumentError,
@@ -87,7 +87,7 @@ export default class LoadsChildren {
         }
 
         for (const [relation, relationModels] of Object.entries(children)) {
-            model.setRelationModels(relation, relationModels);
+            container.setRelationModels(relation, relationModels);
         }
 
         const childrenArray = options.ignoreTombstones
@@ -104,7 +104,7 @@ export default class LoadsChildren {
     }
 
     protected async loadContainedDocuments(
-        model: SolidContainer,
+        container: SolidContainer,
         options: {
             status?: ResourceJobStatus;
             onDocumentLoaded?: () => unknown;
@@ -112,24 +112,24 @@ export default class LoadsChildren {
             onDocumentRead?: (document: SolidDocument) => unknown;
         } = {},
     ): Promise<Record<string, EngineDocument>> {
-        if (!isRemoteModel(model)) {
+        if (!isRemoteModel(container)) {
             throw Error('Cannot get contained models from local model');
         }
 
         const engineDocuments: Record<string, EngineDocument> = {};
-        const remoteEngine = model.requireEngine();
+        const remoteEngine = container.requireEngine();
 
-        for (let index = 0; index < model.resourceUrls.length; index++) {
-            const documentUrl = model.resourceUrls[index];
+        for (let index = 0; index < container.resourceUrls.length; index++) {
+            const documentUrl = container.resourceUrls[index];
 
             if (!documentUrl || documentUrl.endsWith('/')) {
                 continue;
             }
 
-            engineDocuments[documentUrl] = await remoteEngine.readOne(model.url, documentUrl);
+            engineDocuments[documentUrl] = await remoteEngine.readOne(container.url, documentUrl);
 
             const childStatus = options.status?.children?.[index];
-            const document = model.documents.find(({ url }) => url === documentUrl);
+            const document = container.documents.find(({ url }) => url === documentUrl);
 
             if (childStatus) {
                 childStatus.completed = true;
@@ -146,17 +146,17 @@ export default class LoadsChildren {
     }
 
     private async loadDocumentChildren(
-        model: SolidContainer,
+        container: SolidContainer,
         documentUrl: string,
         documents: ObjectsMap<SolidDocument>,
         onDocumentError?: (error: unknown) => unknown,
         onDocumentRead?: (document: SolidDocument) => unknown,
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
-        return this.loadDocumentChildrenFromRemote(model, documentUrl, onDocumentError, onDocumentRead);
+        return this.loadDocumentChildrenFromRemote(container, documentUrl, onDocumentError, onDocumentRead);
     }
 
     private async loadDocumentChildrenFromRemote(
-        model: SolidContainer,
+        container: SolidContainer,
         documentUrl: string,
         onDocumentError?: (error: unknown) => unknown,
         onDocumentRead?: (document: SolidDocument) => unknown,
@@ -165,8 +165,8 @@ export default class LoadsChildren {
         const tombstones: Tombstone[] = [];
         const readDocument = lazy(async () => {
             try {
-                const documentModel = model.documents.find((document) => document.url === documentUrl);
-                const document = await model
+                const documentModel = container.documents.find((document) => document.url === documentUrl);
+                const document = await container
                     .requireEngine()
                     .readOne(requireUrlParentDirectory(documentUrl), documentUrl);
                 const documentTombstones = await Tombstone.createManyFromEngineDocuments({
@@ -195,8 +195,8 @@ export default class LoadsChildren {
             }
         });
 
-        for (const relation of getContainerRelations(model.static())) {
-            const relationInstance = model.requireRelation<SolidContainsRelation>(relation);
+        for (const relation of getContainerRelations(container.static())) {
+            const relationInstance = container.requireRelation<SolidContainsRelation>(relation);
 
             if (relationInstance.loaded) {
                 children[relation] = relationInstance.getLoadedModels();
