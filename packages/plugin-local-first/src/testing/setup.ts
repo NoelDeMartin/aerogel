@@ -42,6 +42,7 @@ vi.mock('soukai-solid', async () => {
     return {
         ...original,
 
+        // FIXME
         // This is necessary because otherwise tests fail when trying to resolve idb instance,
         // maybe it's caused by a bug between idb and fake-indexeddb.
         DocumentsCache: defineDocumentsCacheMock(original.DocumentsCache),

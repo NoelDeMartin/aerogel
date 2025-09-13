@@ -211,13 +211,27 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         }
 
         const documentsCache = Cloud.getDocumentsCache();
+        const tombstoneDocuments = map(this.tombstones.getItems(), (tombstone) => tombstone.requireDocumentUrl());
 
         for (const [documentUrl, modifiedAt] of Object.entries(this.documentsModifiedAt)) {
-            if (!localDocuments.has(documentUrl)) {
+            if (localDocuments.has(documentUrl)) {
+                await documentsCache.remember(requireUrlParentDirectory(documentUrl), documentUrl, modifiedAt);
+
                 continue;
             }
 
-            await documentsCache.remember(requireUrlParentDirectory(documentUrl), documentUrl, modifiedAt);
+            if (tombstoneDocuments.hasKey(documentUrl)) {
+                const tombstone = tombstoneDocuments.require(documentUrl);
+
+                await documentsCache.remember(requireUrlParentDirectory(documentUrl), documentUrl, modifiedAt, {
+                    tombstone: {
+                        url: tombstone.url,
+                        resourceUrl: tombstone.resourceUrl,
+                    },
+                });
+
+                continue;
+            }
         }
 
         clearLocalModelUpdates(this.syncedModelUrls, this.documentsWithErrors);
@@ -321,6 +335,11 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         });
 
         const remoteModels = await remoteClass.createManyFromEngineDocuments(documents);
+        const tombstones = await Tombstone.createManyFromEngineDocuments(documents);
+
+        for (const tombstone of tombstones) {
+            this.tombstones.add(tombstone);
+        }
 
         if (remoteModels.length > 0) {
             await trackModelsCollection(localClass, containerUrl);
