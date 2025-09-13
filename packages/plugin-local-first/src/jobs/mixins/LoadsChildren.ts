@@ -129,9 +129,14 @@ export default class LoadsChildren {
             engineDocuments[documentUrl] = await remoteEngine.readOne(model.url, documentUrl);
 
             const childStatus = options.status?.children?.[index];
+            const document = model.documents.find(({ url }) => url === documentUrl);
 
             if (childStatus) {
                 childStatus.completed = true;
+            }
+
+            if (document) {
+                await options.onDocumentRead?.(document);
             }
 
             await options.onDocumentLoaded?.();

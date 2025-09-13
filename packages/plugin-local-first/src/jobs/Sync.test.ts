@@ -264,6 +264,7 @@ describe('Sync', () => {
         const containerUrl = Solid.requireUser().storageUrls[0];
         const remoteDocumentUrl = fakeDocumentUrl({ containerUrl });
         const localDocumentUrl = fakeDocumentUrl({ containerUrl });
+        const remoteDocumentUpdatedAt = new Date(Date.now() - 1000);
 
         // Arrange - Prepare models
         await Movie.at(containerUrl).create({
@@ -275,7 +276,19 @@ describe('Sync', () => {
         const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
 
         FakeServer.respond(typeIndexUrl, typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }));
-        FakeServer.respond(containerUrl, containerResponse({ name: 'Movies', documentUrls: [remoteDocumentUrl] }));
+        FakeServer.respond(
+            containerUrl,
+            containerResponse({
+                name: 'Movies',
+                documentUrls: [remoteDocumentUrl],
+                append: `
+                    <${remoteDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${remoteDocumentUpdatedAt.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+                `,
+            }),
+        );
         FakeServer.respond(remoteDocumentUrl, movieResponse('Spirited Away'));
         FakeServer.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Tombstone check
         FakeServer.respondOnce(localDocumentUrl, FakeResponse.notFound()); // Check before create
@@ -306,6 +319,10 @@ describe('Sync', () => {
         expect(arrayFind(movies, 'name', 'Spirited Away')).toBeInstanceOf(Movie);
 
         expect(Cloud.localModelUpdates).toEqual({});
+
+        await Cloud.getDocumentsCache().activate(containerUrl, remoteDocumentUrl, remoteDocumentUpdatedAt.getTime());
+
+        expect(Cloud.getDocumentsCache().has(containerUrl, remoteDocumentUrl)).toBe(true);
     });
 
     it('Syncs individual container updates', async () => {
