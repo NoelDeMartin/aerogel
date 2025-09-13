@@ -118,28 +118,36 @@ export default class LoadsChildren {
 
         const engineDocuments: Record<string, EngineDocument> = {};
         const remoteEngine = container.requireEngine();
+        const documentUrlChunks = arrayChunk(container.resourceUrls, 10);
+        const statusChildren = documentUrlChunks.flat().map((url) => ({
+            documentUrl: url,
+            completed: false,
+        }));
+        const statusChildrenMap = map(statusChildren, 'documentUrl');
 
-        for (let index = 0; index < container.resourceUrls.length; index++) {
-            const documentUrl = container.resourceUrls[index];
+        for (const documentUrls of documentUrlChunks) {
+            await Promise.all(
+                documentUrls.map(async (documentUrl) => {
+                    if (!documentUrl || documentUrl.endsWith('/')) {
+                        return;
+                    }
 
-            if (!documentUrl || documentUrl.endsWith('/')) {
-                continue;
-            }
+                    engineDocuments[documentUrl] = await remoteEngine.readOne(container.url, documentUrl);
 
-            engineDocuments[documentUrl] = await remoteEngine.readOne(container.url, documentUrl);
+                    const childStatus = required(statusChildrenMap.get(documentUrl));
+                    const document = container.documents.find(({ url }) => url === documentUrl);
 
-            const childStatus = options.status?.children?.[index];
-            const document = container.documents.find(({ url }) => url === documentUrl);
+                    if (childStatus) {
+                        childStatus.completed = true;
+                    }
 
-            if (childStatus) {
-                childStatus.completed = true;
-            }
+                    if (document) {
+                        await options.onDocumentRead?.(document);
+                    }
 
-            if (document) {
-                await options.onDocumentRead?.(document);
-            }
-
-            await options.onDocumentLoaded?.();
+                    await options.onDocumentLoaded?.();
+                }),
+            );
         }
 
         return engineDocuments;
