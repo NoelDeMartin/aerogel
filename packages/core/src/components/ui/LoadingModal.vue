@@ -1,11 +1,10 @@
 <template>
     <Modal
         persistent
-        class="flex"
         wrapper-class="w-auto"
         :title="renderedTitle"
         :title-hidden
-        :class="{ 'flex-col-reverse': showProgress, 'items-center justify-center gap-2': !showProgress }"
+        :class="{ 'flex-col-reverse': showProgress, 'flex-row items-center justify-center gap-2': !showProgress }"
     >
         <ProgressBar
             v-if="showProgress"

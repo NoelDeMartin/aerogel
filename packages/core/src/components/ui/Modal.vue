@@ -122,7 +122,7 @@ const hasRenderedModals = computed(() => modals.value.some((modal) => renderedMo
 const contentProps = computed(() => (description ? {} : { 'aria-describedby': undefined }));
 const renderedContentClass = computed(() =>
     classes(
-        'overflow-auto px-4 pb-4',
+        'overflow-auto px-4 pb-4 flex flex-col flex-1',
         { 'pt-4': !title || titleHidden, 'max-h-[90vh]': !renderFullscreen.value },
         contentClass,
     ));
