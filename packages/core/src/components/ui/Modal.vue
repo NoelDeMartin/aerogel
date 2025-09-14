@@ -16,7 +16,11 @@
             }"
         />
         <HeadlessModalContent v-bind="contentProps" :class="renderedWrapperClass">
-            <div v-if="!persistent && !closeHidden" class="absolute top-0 right-0 hidden pt-3.5 pr-2.5 sm:block">
+            <div
+                v-if="!persistent && !closeHidden"
+                class="absolute top-0 right-0 pt-3.5 pr-2.5"
+                :class="{ 'hidden sm:block': !renderFullscreen }"
+            >
                 <button
                     type="button"
                     class="clickable z-10 rounded-full p-2.5 text-gray-400 hover:text-gray-500"
