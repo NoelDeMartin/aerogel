@@ -169,6 +169,11 @@
                     {{ $t('components.modals_custom') }}
                 </Button>
             </div>
+            <div class="mt-4 flex gap-2">
+                <Button @click="$ui.modal(FullscreenModal)">
+                    {{ $t('components.modals_fullscreen') }}
+                </Button>
+            </div>
         </section>
 
         <section>
@@ -224,6 +229,7 @@ import { UI, translate, useEvent } from '@aerogel/core';
 import { ref } from 'vue';
 
 import CustomModal from './components/CustomModal.vue';
+import FullscreenModal from './components/FullscreenModal.vue';
 import NestedModal from './components/NestedModal.vue';
 
 const switchValue = ref(false);

@@ -74,6 +74,9 @@ components:
     modals_customTitle: Custom modal
     modals_customDescription: You can also create your own modals, like this one!
     modals_customClose: Nice!
+    modals_fullscreen: Fullscreen
+    modals_fullscreenTitle: Fullscreen Modal
+    modals_fullscreenMessage: Is this fullscreen?
     toasts: Toasts
     toasts_message: Hey, it works!
     toasts_close: Close

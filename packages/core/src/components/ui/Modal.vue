@@ -12,6 +12,7 @@
                 'animate-[fade-in_var(--tw-duration)_ease-in-out]': !hasRenderedModals,
                 'bg-black/30': firstVisibleModal?.id === id || (!firstVisibleModal && modals[0]?.id === id),
                 'opacity-0': !firstVisibleModal,
+                hidden: renderFullscreen,
             }"
         />
         <HeadlessModalContent v-bind="contentProps" :class="renderedWrapperClass">
@@ -67,6 +68,7 @@ import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModa
 import HeadlessModalDescription from '@aerogel/core/components/headless/HeadlessModalDescription.vue';
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
+import UI from '@aerogel/core/ui/UI';
 import { classes } from '@aerogel/core/utils/classes';
 import { reactiveSet } from '@aerogel/core/utils';
 import { injectModal, modals, useModal } from '@aerogel/core/ui/modals';
@@ -88,6 +90,8 @@ const {
     description,
     persistent,
     closeHidden,
+    fullscreen,
+    fullscreenMobile,
     ...props
 } = defineProps<
     ModalProps & {
@@ -113,18 +117,29 @@ const firstVisibleModal = computed(() => modals.value.find((modal) => modal.visi
 const hasRenderedModals = computed(() => modals.value.some((modal) => renderedModals.has(modal)));
 const contentProps = computed(() => (description ? {} : { 'aria-describedby': undefined }));
 const renderedContentClass = computed(() =>
-    classes('max-h-[90vh] overflow-auto px-4 pb-4', { 'pt-4': !title || titleHidden }, contentClass));
+    classes(
+        'overflow-auto px-4 pb-4',
+        { 'pt-4': !title || titleHidden, 'max-h-[90vh]': !renderFullscreen.value },
+        contentClass,
+    ));
+const renderFullscreen = computed(() => fullscreen || (fullscreenMobile && UI.mobile));
 const renderedWrapperClass = computed(() =>
     classes(
-        'isolate fixed top-1/2 left-1/2 z-50 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2',
-        'overflow-hidden rounded-lg bg-white text-left shadow-xl sm:max-w-lg',
-        renderedModals.has(modal.value) ||
-            'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
-        'transition-[scale,opacity] will-change-[scale,opacity] duration-300',
-        {
-            'scale-50 opacity-0': !inForeground.value,
-            'scale-100 opacity-100': inForeground.value,
-        },
+        'isolate fixed z-50 flex flex-col overflow-hidden bg-white text-left duration-300',
+        renderFullscreen.value
+            ? [
+                'inset-0 transition-[transform,translate] will-change-[transform,translate]',
+                renderedModals.has(modal.value) || 'animate-[slide-in_var(--tw-duration)_ease-in-out]',
+                inForeground.value ? 'translate-y-0' : 'translate-y-full',
+            ]
+            : [
+                'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full',
+                'max-w-[calc(100%-2rem)] rounded-lg shadow-xl sm:max-w-lg',
+                'transition-[scale,opacity] will-change-[scale,opacity]',
+                renderedModals.has(modal.value) ||
+                      'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
+                inForeground.value ? 'scale-100 opacity-100' : 'scale-50 opacity-0',
+            ],
         wrapperClass,
     ));
 
