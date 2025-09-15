@@ -12,7 +12,7 @@ const sourceUrl = computedAsync(async () => {
     const cachedResponse = (await Cache.get(src)) ?? (await downloadImage(src));
     const blob = await cachedResponse?.blob();
 
-    return blob && URL.createObjectURL(blob);
+    return (blob && URL.createObjectURL(blob)) || src;
 });
 
 async function downloadImage(url: string) {
