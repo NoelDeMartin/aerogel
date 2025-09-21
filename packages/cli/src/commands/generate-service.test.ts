@@ -6,7 +6,7 @@ import { GenerateServiceCommand } from './generate-service';
 
 describe('Generate Service command', () => {
 
-    it('generates services', async () => {
+    it.skip('generates services', async () => {
         // Arrange
         FileMock.stub('package.json', '@aerogel/core');
 

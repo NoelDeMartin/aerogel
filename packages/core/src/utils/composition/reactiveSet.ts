@@ -8,7 +8,7 @@ export function reactiveSet<T>(initial?: T[] | Set<T>, options: { equals?: (a: T
     let track: () => void;
     const equals = options?.equals;
     const hasEqual = equals
-        ? (item: T) => ref.value.values().some((existingItem) => equals(item, existingItem))
+        ? (item: T) => Array.from(ref.value.values()).some((existingItem) => equals(item, existingItem))
         : () => false;
     const ref = customRef((_track, _trigger) => {
         track = _track;
