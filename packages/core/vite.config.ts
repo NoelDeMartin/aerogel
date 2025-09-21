@@ -21,6 +21,7 @@ export default defineConfig({
                 'clsx',
                 'dompurify',
                 'eruda',
+                'eruda-indexeddb',
                 'marked',
                 'pinia',
                 'reka-ui',

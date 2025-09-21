@@ -1,6 +1,7 @@
 import { JSError, facade, isDevelopment, isObject, isTesting, objectWithoutEmpty, toString } from '@noeldemartin/utils';
 import { watchEffect } from 'vue';
 import type Eruda from 'eruda';
+import type ErudaIndexedDB from 'eruda-indexeddb';
 
 import App from '@aerogel/core/services/App';
 import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
@@ -16,6 +17,7 @@ export class ErrorsService extends Service {
     public forceReporting: boolean = false;
     private enabled: boolean = true;
     private eruda: typeof Eruda | null = null;
+    private erudaPlugins: [typeof ErudaIndexedDB] | null = null;
 
     public enable(): void {
         this.enabled = true;
@@ -131,8 +133,10 @@ export class ErrorsService extends Service {
             }
 
             this.eruda ??= (await import('eruda')).default;
+            this.erudaPlugins ??= [(await import('eruda-indexeddb')).default];
 
             this.eruda.init();
+            this.erudaPlugins.forEach((plugin) => this.eruda?.add(plugin));
         });
     }
 
