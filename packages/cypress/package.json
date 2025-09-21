@@ -35,14 +35,20 @@
         "cypress": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.3",
+        "@noeldemartin/utils": "catalog:",
         "@simonsmith/cypress-image-snapshot": "^8.1.2",
         "cypress-solid": "^0.2.0",
-        "idb": "^8.0.2"
+        "idb": "catalog:"
     },
     "devDependencies": {
-        "@aerogel/plugin-soukai": "*",
-        "prettier-eslint-cli": "^8.0.1"
+        "@aerogel/core": "workspace:*",
+        "@aerogel/plugin-soukai": "workspace:*",
+        "@arethetypeswrong/cli": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "@types/node": "catalog:",
+        "eslint": "catalog:",
+        "prettier-eslint-cli": "^8.0.1",
+        "publint": "catalog:"
     },
     "eslintConfig": {
         "extends": [

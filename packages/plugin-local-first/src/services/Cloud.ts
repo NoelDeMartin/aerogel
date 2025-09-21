@@ -63,7 +63,7 @@ export class CloudService extends Service {
 
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
-    protected pollingInterval: NodeJS.Timeout | null = null;
+    protected pollingInterval: ReturnType<typeof setInterval> | null = null;
     protected documentsCache: DocumentsCache | null = null;
 
     public async whenReady<T>(callback: () => T): Promise<T> {

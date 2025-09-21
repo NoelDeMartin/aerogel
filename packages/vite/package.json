@@ -27,13 +27,21 @@
         "verify": "noeldemartin-verify"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.3",
+        "@noeldemartin/utils": "catalog:",
         "@tailwindcss/vite": "^4.1.4",
         "@vitejs/plugin-vue": "^5.2.3",
         "image-size": "^2.0.2",
         "mustache": "^4.2.0",
+        "rollup": "^4.54.0",
         "unplugin-vue-components": "^28.4.1",
-        "vite-plugin-pwa": "^0.21.2"
+        "vite-plugin-pwa": "^0.21.2",
+        "workbox-build": "^7.4.0"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "eslint": "catalog:",
+        "publint": "catalog:"
     },
     "eslintConfig": {
         "extends": [

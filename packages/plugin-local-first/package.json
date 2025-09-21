@@ -30,17 +30,23 @@
         "soukai-solid": "*"
     },
     "dependencies": {
-        "@noeldemartin/solid-utils": "^0.6.1",
-        "@noeldemartin/utils": "0.7.3",
-        "idb": "^8.0.2"
+        "@noeldemartin/solid-utils": "catalog:",
+        "@noeldemartin/utils": "catalog:",
+        "idb": "catalog:"
     },
     "devDependencies": {
-        "@aerogel/core": "*",
-        "@aerogel/plugin-solid": "*",
-        "@aerogel/plugin-soukai": "*",
+        "@aerogel/core": "workspace:*",
+        "@aerogel/plugin-solid": "workspace:*",
+        "@aerogel/plugin-soukai": "workspace:*",
+        "@aerogel/vite": "workspace:*",
+        "@arethetypeswrong/cli": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "@types/node": "catalog:",
+        "eslint": "catalog:",
         "fake-indexeddb": "^6.0.0",
-        "soukai": "*",
-        "soukai-solid": "*"
+        "publint": "catalog:",
+        "soukai": "catalog:",
+        "soukai-solid": "catalog:"
     },
     "eslintConfig": {
         "extends": [

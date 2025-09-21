@@ -18,7 +18,7 @@
         <HeadlessModalContent v-bind="contentProps" :class="renderedWrapperClass">
             <div
                 v-if="!persistent && !closeHidden"
-                class="absolute top-0 right-0 pt-3.5 pr-2.5"
+                class="absolute right-0 top-0 pr-2.5 pt-3.5"
                 :class="{ 'hidden sm:block': !renderFullscreen }"
             >
                 <button
@@ -45,7 +45,7 @@
 
             <HeadlessModalDescription
                 v-if="description"
-                class="px-4 pt-1 pb-2"
+                class="px-4 pb-2 pt-1"
                 :class="{ 'sr-only': descriptionHidden }"
             >
                 <Markdown :text="description" class="text-sm leading-6 text-gray-500" />
@@ -115,7 +115,12 @@ const { id, visible } = useModal();
 const $modal = currentRef as Ref<Nullable<HeadlessModalInstance>>;
 const modal = injectModal();
 const inForeground = computed(
-    () => visible.value && modals.value.toReversed().find((modal) => modal.visible.value)?.id === id.value,
+    () =>
+        visible.value &&
+        modals.value
+            .slice(0)
+            .reverse()
+            .find((modal) => modal.visible.value)?.id === id.value,
 );
 const firstVisibleModal = computed(() => modals.value.find((modal) => modal.visible.value));
 const hasRenderedModals = computed(() => modals.value.some((modal) => renderedModals.has(modal)));

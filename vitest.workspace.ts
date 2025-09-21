@@ -1,3 +1,6 @@
+// The workspace file is deprecated and will be removed in the next major. Please, use the `test.projects` field in the root config file instead.
+// https://vitest.dev/blog/vitest-3-2.html#workspace-is-deprecated
+
 export default [
     'packages/core',
     'packages/cli',

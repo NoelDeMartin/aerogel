@@ -25,10 +25,15 @@
         "@aerogel/core": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.3"
+        "@noeldemartin/utils": "catalog:"
     },
     "devDependencies": {
-        "@aerogel/core": "*"
+        "@aerogel/core": "workspace:*",
+        "@aerogel/vite": "workspace:*",
+        "@arethetypeswrong/cli": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "eslint": "catalog:",
+        "publint": "catalog:"
     },
     "eslintConfig": {
         "extends": [

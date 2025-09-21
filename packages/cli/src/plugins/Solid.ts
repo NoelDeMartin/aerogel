@@ -37,9 +37,9 @@ export default class Solid extends Plugin {
             'package.json',
             packageJson
                 .replace(
-                    '"cy:dev": "concurrently --kill-others \\"npm run test:serve-app\\" \\"npm run cy:open\\"",',
+                    '"cy:dev": "concurrently --kill-others \\"pnpm test:serve-app\\" \\"pnpm cy:open\\"",',
                     '"cy:dev": "concurrently --kill-others ' +
-                        '\\"npm run test:serve-app\\" \\"npm run test:serve-pod\\" \\"npm run cy:open\\"",',
+                        '\\"pnpm test:serve-app\\" \\"pnpm test:serve-pod\\" \\"pnpm cy:open\\"",',
                 )
                 .replace(
                     '"cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 cy:run",',

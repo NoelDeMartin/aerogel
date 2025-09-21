@@ -29,7 +29,7 @@
         "vue": "^3.5.0"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.3",
+        "@noeldemartin/utils": "catalog:",
         "@noeldemartin/vue-modals": "0.1.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -43,7 +43,11 @@
         "vue-component-type-helpers": "^2.2.8"
     },
     "devDependencies": {
-        "@aerogel/vite": "*"
+        "@aerogel/vite": "workspace:*",
+        "@arethetypeswrong/cli": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "eslint": "catalog:",
+        "publint": "catalog:"
     },
     "eslintConfig": {
         "extends": [

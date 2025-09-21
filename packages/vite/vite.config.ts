@@ -24,6 +24,7 @@ export default defineConfig({
                 'rollup',
                 'unplugin-vue-components',
                 'vite-plugin-pwa',
+                'workbox-build',
             ],
         },
     },
