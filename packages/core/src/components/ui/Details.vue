@@ -7,14 +7,17 @@
             <span>{{ label }}</span>
         </summary>
 
-        <div class="pt-2 pl-4">
+        <div :class="renderedContentClasses">
             <slot />
         </div>
     </details>
 </template>
 
 <script setup lang="ts">
+import { classes } from '@aerogel/core/utils';
+import { type HTMLAttributes, computed } from 'vue';
 import IconCheveronRight from '~icons/zondicons/cheveron-right';
 
-defineProps<{ label: string }>();
+const { label, contentClass } = defineProps<{ label: string; contentClass?: HTMLAttributes['class'] }>();
+const renderedContentClasses = computed(() => classes('pt-2 pl-4', contentClass));
 </script>
