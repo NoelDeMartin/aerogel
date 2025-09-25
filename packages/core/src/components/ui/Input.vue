@@ -13,8 +13,8 @@
                 <IconExclamationSolid class="size-5 text-red-500" />
             </div>
         </div>
-        <HeadlessInputDescription class="mt-2 text-sm text-gray-600" />
-        <HeadlessInputError class="mt-2 text-sm text-red-600" />
+        <HeadlessInputDescription :class="renderedDescriptionClasses" />
+        <HeadlessInputError :class="renderedErrorClasses" />
     </HeadlessInput>
 </template>
 
@@ -35,13 +35,21 @@ import type { InputEmits, InputProps } from '@aerogel/core/components/contracts/
 
 defineOptions({ inheritAttrs: false });
 defineEmits<InputEmits>();
-const { label, inputClass, wrapperClass, ...props } = defineProps<
-    InputProps & { inputClass?: HTMLAttributes['class']; wrapperClass?: HTMLAttributes['class'] }
+
+const { label, inputClass, wrapperClass, descriptionClass, errorClass, ...props } = defineProps<
+    InputProps & {
+        inputClass?: HTMLAttributes['class'];
+        wrapperClass?: HTMLAttributes['class'];
+        descriptionClass?: HTMLAttributes['class'];
+        errorClass?: HTMLAttributes['class'];
+    }
 >();
 const $input = useTemplateRef('$inputRef');
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedWrapperClasses = computed(() =>
     classes('relative rounded-md shadow-2xs', { 'mt-1': label }, wrapperClass));
+const renderedDescriptionClasses = computed(() => classes('mt-2 text-sm text-gray-600', descriptionClass));
+const renderedErrorClasses = computed(() => classes('mt-2 text-sm text-red-600', errorClass));
 const renderedInputClasses = computed(() =>
     classes(
         // eslint-disable-next-line vue/max-len
