@@ -30,6 +30,10 @@ export class AppService extends Service {
         this.settings.push(markRaw(setting));
     }
 
+    public setSettingsFullscreenOnMobile(fullscreenOnMobile: boolean): void {
+        this.settingsFullscreenOnMobile = fullscreenOnMobile;
+    }
+
     public async whenReady<T>(callback: () => T): Promise<T> {
         const result = await this.ready.then(callback);
 

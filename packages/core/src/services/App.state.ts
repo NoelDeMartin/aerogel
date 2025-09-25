@@ -24,6 +24,7 @@ export default defineServiceState({
         version: Aerogel.version,
         sourceUrl: Aerogel.sourceUrl,
         settings: [] as AppSetting[],
+        settingsFullscreenOnMobile: false,
     },
     computed: {
         development: (state) => state.environment === 'development',

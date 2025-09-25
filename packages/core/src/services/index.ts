@@ -56,6 +56,10 @@ export default definePlugin({
         app.use(getPiniaStore());
         options.settings?.forEach((setting) => App.addSetting(setting));
 
+        if (options.settingsFullscreenOnMobile !== undefined) {
+            App.setSettingsFullscreenOnMobile(options.settingsFullscreenOnMobile);
+        }
+
         await bootServices(app, services);
     },
 });
@@ -64,6 +68,7 @@ declare module '@aerogel/core/bootstrap/options' {
     export interface AerogelOptions {
         services?: Record<string, Service>;
         settings?: AppSetting[];
+        settingsFullscreenOnMobile?: boolean;
     }
 }
 

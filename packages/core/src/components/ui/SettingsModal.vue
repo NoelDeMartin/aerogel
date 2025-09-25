@@ -1,5 +1,5 @@
 <template>
-    <Modal :title="$td('settings.title', 'Settings')">
+    <Modal :title="$td('settings.title', 'Settings')" :fullscreen-on-mobile="$app.settingsFullscreenOnMobile">
         <component :is="setting.component" v-for="(setting, key) in settings" :key />
     </Modal>
 </template>

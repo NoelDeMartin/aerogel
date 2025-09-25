@@ -95,7 +95,7 @@ const {
     persistent,
     closeHidden,
     fullscreen,
-    fullscreenMobile,
+    fullscreenOnMobile,
     ...props
 } = defineProps<
     ModalProps & {
@@ -126,7 +126,7 @@ const renderedContentClass = computed(() =>
         { 'pt-4': !title || titleHidden, 'max-h-[90vh]': !renderFullscreen.value },
         contentClass,
     ));
-const renderFullscreen = computed(() => fullscreen || (fullscreenMobile && UI.mobile));
+const renderFullscreen = computed(() => fullscreen || (fullscreenOnMobile && UI.mobile));
 const renderedWrapperClass = computed(() =>
     classes(
         'isolate fixed z-50 flex flex-col overflow-hidden bg-white text-left duration-300',

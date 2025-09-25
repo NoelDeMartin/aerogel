@@ -6,7 +6,7 @@ export type ModalContentInstance = Nullable<InstanceType<typeof DialogContent>>;
 export interface ModalProps {
     persistent?: boolean;
     fullscreen?: boolean;
-    fullscreenMobile?: boolean;
+    fullscreenOnMobile?: boolean;
     title?: string;
     titleHidden?: boolean;
     description?: string;
