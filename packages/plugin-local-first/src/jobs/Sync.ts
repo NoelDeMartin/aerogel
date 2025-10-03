@@ -359,8 +359,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
             remoteModels.push(...childModels);
 
-            await this.updateProgress(() => (status.completed = true));
+            await this.updateProgress();
         }
+
+        await this.updateProgress(() => (status.completed = true));
 
         return remoteModels;
     }

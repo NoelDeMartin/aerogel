@@ -7,6 +7,7 @@ import {
     SolidDocument,
     SolidIsContainedByRelation,
     SolidModel,
+    SolidResource,
     isContainerClass,
     isSolidDocumentRelation,
 } from 'soukai-solid';
@@ -83,6 +84,7 @@ export function getRelatedAppModels(model: SolidModel): SolidModel[] {
             (related) =>
                 !isInstanceOf(related, SolidACLAuthorization) &&
                 !isInstanceOf(related, SolidDocument) &&
+                !isInstanceOf(related, SolidResource) &&
                 !isInstanceOf(related, Metadata) &&
                 !isInstanceOf(related, Operation) &&
                 related.static() !== SolidContainer,

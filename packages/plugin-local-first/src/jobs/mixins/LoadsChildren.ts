@@ -44,8 +44,8 @@ export default class LoadsChildren {
         const children: Record<string, SolidModel[]> = {};
         const tombstones: Tombstone[] = [];
         const documents = map(container.documents, 'url');
-        const documentUrlChunks = arrayChunk(container.resourceUrls, 10);
-        const statusChildren = documentUrlChunks.flat().map((url) => ({
+        const resourceUrlChunks = arrayChunk(container.resourceUrls, 10);
+        const statusChildren = resourceUrlChunks.flat().map((url) => ({
             documentUrl: url,
             completed: false,
         }));
@@ -55,13 +55,24 @@ export default class LoadsChildren {
             options.status.children = statusChildren;
         }
 
-        for (const documentUrls of documentUrlChunks) {
+        for (const resourceUrls of resourceUrlChunks) {
             await Promise.all(
-                documentUrls.map(async (documentUrl) => {
+                resourceUrls.map(async (resourceUrl) => {
+                    if (
+                        container.resources.some(
+                            (resource) =>
+                                resource.url === resourceUrl &&
+                                resource.types.some((type) =>
+                                    type.startsWith('http://www.w3.org/ns/iana/media-types/image/')),
+                        )
+                    ) {
+                        return;
+                    }
+
                     const { children: documentChildren, tombstones: documentTombstones } =
                         await this.loadDocumentChildren(
                             container,
-                            documentUrl,
+                            resourceUrl,
                             documents,
                             options.onDocumentError,
                             options.onDocumentRead,
@@ -75,11 +86,11 @@ export default class LoadsChildren {
                         relationChildren.push(...documentModels);
                     }
 
-                    if (documentUrl.endsWith('/')) {
+                    if (resourceUrl.endsWith('/')) {
                         return;
                     }
 
-                    required(statusChildrenMap.get(documentUrl)).completed = true;
+                    required(statusChildrenMap.get(resourceUrl)).completed = true;
 
                     await options.onDocumentLoaded?.();
                 }),
@@ -118,22 +129,35 @@ export default class LoadsChildren {
 
         const engineDocuments: Record<string, EngineDocument> = {};
         const remoteEngine = container.requireEngine();
-        const documentUrlChunks = arrayChunk(container.resourceUrls, 10);
-        const statusChildren = documentUrlChunks.flat().map((url) => ({
+        const resourceUrlChunks = arrayChunk(container.resourceUrls, 10);
+        const statusChildren = resourceUrlChunks.flat().map((url) => ({
             documentUrl: url,
             completed: false,
         }));
         const statusChildrenMap = map(statusChildren, 'documentUrl');
 
-        for (const documentUrls of documentUrlChunks) {
+        for (const resourceUrls of resourceUrlChunks) {
             await Promise.all(
-                documentUrls.map(async (documentUrl) => {
-                    if (!documentUrl || documentUrl.endsWith('/')) {
+                resourceUrls.map(async (resourceUrl) => {
+                    if (
+                        !resourceUrl ||
+                        resourceUrl.endsWith('/') ||
+                        container.resources.some(
+                            (resource) =>
+                                resource.url === resourceUrl &&
+                                resource.types.some((type) =>
+                                    type.startsWith('http://www.w3.org/ns/iana/media-types/image/')),
+                        )
+                    ) {
+                        required(statusChildrenMap.get(resourceUrl)).completed = true;
+
                         return;
                     }
 
+                    const document = container.documents.find(({ url }) => url === resourceUrl);
+
                     try {
-                        engineDocuments[documentUrl] = await remoteEngine.readOne(container.url, documentUrl);
+                        engineDocuments[resourceUrl] = await remoteEngine.readOne(container.url, resourceUrl);
                     } catch (error) {
                         if (!options.onDocumentError) {
                             throw error;
@@ -142,18 +166,13 @@ export default class LoadsChildren {
                         await options.onDocumentError?.(error);
                     }
 
-                    const childStatus = required(statusChildrenMap.get(documentUrl));
-                    const document = container.documents.find(({ url }) => url === documentUrl);
-
-                    if (childStatus) {
-                        childStatus.completed = true;
-                    }
-
                     if (document) {
                         await options.onDocumentRead?.(document);
                     }
 
                     await options.onDocumentLoaded?.();
+
+                    required(statusChildrenMap.get(resourceUrl)).completed = true;
                 }),
             );
         }
