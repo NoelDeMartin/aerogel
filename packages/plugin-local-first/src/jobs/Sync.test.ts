@@ -761,7 +761,7 @@ describe('Sync', () => {
         expect(workspace.lists).toHaveLength(1);
     });
 
-    it('Ignores malformed documents', async () => {
+    testRegisterVariants('Ignores malformed documents', async (registerModels) => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
@@ -788,7 +788,7 @@ describe('Sync', () => {
         const typeIndexTurtle = `
             <${typeIndexUrl}> a <http://www.w3.org/ns/solid/terms#TypeIndex> .
 
-            <#tasks>
+            <#movies>
                 a <http://www.w3.org/ns/solid/terms#TypeRegistration> ;
                 <http://www.w3.org/ns/solid/terms#forClass> <https://schema.org/Movie> ;
                 <http://www.w3.org/ns/solid/terms#instanceContainer> <${containerUrl}> .
@@ -806,22 +806,24 @@ describe('Sync', () => {
         FakeServer.respond(firstDocumentUrl, FakeResponse.success('invalid turtle'));
         FakeServer.respond(secondDocumentUrl, FakeResponse.success('invalid turtle'));
         FakeServer.respond(thirdDocumentUrl, FakeResponse.success('invalid turtle'));
-        FakeServer.respond(fourthDocumentUrl, FakeResponse.success('invalid turtle'));
+        FakeServer.respond(fourthDocumentUrl, movieResponse('The Substance'));
 
         // Arrange - Prepare service
         Cloud.ready = true;
         Cloud.localModelUpdates = { [movie.url]: 1 };
 
         await Cloud.launch();
-        await Cloud.register(MoviesContainer);
+        await registerModels();
         await Events.emit('application-ready');
 
         // Act
         await Cloud.sync();
 
         // Assert
-        expect(FakeServer.getRequests()).toHaveLength(10);
+        expect(FakeServer.getRequests()).toHaveLength(6);
         expect(Cloud.localModelUpdates).toEqual({ [movie.url]: 1 });
+
+        expect(await Movie.from(containerUrl).all()).toHaveLength(3);
     });
 
     it('Ignores malformed documents in individual syncs', async () => {

@@ -253,47 +253,45 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         pullStatus.children = registrations.map(() => ({ completed: false }));
 
         for (let index = 0; index < registrations.length; index++) {
-            await this.ignoringDocumentErrors(async () => {
-                const status = required(pullStatus.children?.[index]);
-                const { registration, registeredModel } = required(registrations[index]);
-                const remoteClass = getRemoteClass(registeredModel.modelClass);
+            const status = required(pullStatus.children?.[index]);
+            const { registration, registeredModel } = required(registrations[index]);
+            const remoteClass = getRemoteClass(registeredModel.modelClass);
 
-                if (!registration.instanceContainer) {
-                    return;
-                }
+            if (!registration.instanceContainer) {
+                continue;
+            }
 
-                Cloud.rootModelCollections[registeredModel.modelClass.modelName] ??= registration.instanceContainer;
+            Cloud.rootModelCollections[registeredModel.modelClass.modelName] ??= registration.instanceContainer;
 
-                if (isContainerClass(remoteClass)) {
-                    await trackModelsCollection(
-                        registeredModel.modelClass,
-                        requireUrlParentDirectory(registration.instanceContainer),
-                    );
-
-                    const container = await remoteClass.find(registration.instanceContainer);
-
-                    if (container) {
-                        await this.loadChildren(container, status);
-
-                        remoteModels.push(container);
-                    }
-
-                    await this.updateProgress(() => (status.completed = true));
-
-                    return;
-                }
-
-                const containerModels = await this.fetchRemoteModelsFromContainer(
-                    status,
+            if (isContainerClass(remoteClass)) {
+                await trackModelsCollection(
                     registeredModel.modelClass,
-                    remoteClass,
-                    registration.instanceContainer,
+                    requireUrlParentDirectory(registration.instanceContainer),
                 );
 
-                remoteModels.push(...containerModels);
+                const container = await remoteClass.find(registration.instanceContainer);
+
+                if (container) {
+                    await this.loadChildren(container, status);
+
+                    remoteModels.push(container);
+                }
 
                 await this.updateProgress(() => (status.completed = true));
-            });
+
+                continue;
+            }
+
+            const containerModels = await this.fetchRemoteModelsFromContainer(
+                status,
+                registeredModel.modelClass,
+                remoteClass,
+                registration.instanceContainer,
+            );
+
+            remoteModels.push(...containerModels);
+
+            await this.updateProgress(() => (status.completed = true));
         }
 
         for (const remoteModel of remoteModels) {

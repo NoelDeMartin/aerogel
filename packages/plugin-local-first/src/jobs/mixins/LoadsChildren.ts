@@ -132,7 +132,15 @@ export default class LoadsChildren {
                         return;
                     }
 
-                    engineDocuments[documentUrl] = await remoteEngine.readOne(container.url, documentUrl);
+                    try {
+                        engineDocuments[documentUrl] = await remoteEngine.readOne(container.url, documentUrl);
+                    } catch (error) {
+                        if (!options.onDocumentError) {
+                            throw error;
+                        }
+
+                        await options.onDocumentError?.(error);
+                    }
 
                     const childStatus = required(statusChildrenMap.get(documentUrl));
                     const document = container.documents.find(({ url }) => url === documentUrl);
