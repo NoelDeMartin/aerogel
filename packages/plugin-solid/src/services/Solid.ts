@@ -21,7 +21,15 @@ import {
 import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { getBootedModels, setEngine } from 'soukai';
-import { SolidACLAuthorization, SolidContainer, SolidDocument, SolidTypeIndex, isSolidModel } from 'soukai-solid';
+import {
+    SolidACLAuthorization,
+    SolidContainer,
+    SolidDocument,
+    SolidResource,
+    SolidTypeIndex,
+    coreModels,
+    isSolidModel,
+} from 'soukai-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { NullablePartial } from '@noeldemartin/utils';
@@ -509,9 +517,7 @@ export class SolidService extends Service {
 
                 App.plugin('@aerogel/local-first') || setEngine(session.authenticator.engine);
 
-                SolidACLAuthorization.setEngine(session.authenticator.engine);
-                SolidTypeIndex.setEngine(session.authenticator.engine);
-                SolidDocument.setEngine(session.authenticator.engine);
+                coreModels.forEach((model) => model.setEngine(session.authenticator.engine));
 
                 await Events.emit('auth:login', session);
             },

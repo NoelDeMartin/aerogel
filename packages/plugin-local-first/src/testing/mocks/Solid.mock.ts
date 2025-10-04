@@ -1,6 +1,13 @@
 import { FakeServer, fakeContainerUrl, fakeDocumentUrl, mock } from '@noeldemartin/testing';
 import { facade } from '@noeldemartin/utils';
-import { SolidACLAuthorization, SolidDocument, SolidEngine, SolidResource, SolidTypeIndex } from 'soukai-solid';
+import {
+    SolidACLAuthorization,
+    SolidDocument,
+    SolidEngine,
+    SolidResource,
+    SolidTypeIndex,
+    coreModels,
+} from 'soukai-solid';
 import { SolidService } from '@aerogel/plugin-solid';
 import type { AuthSession } from '@aerogel/plugin-solid';
 
@@ -22,10 +29,7 @@ export class SolidMockService extends SolidService {
             }),
         } as unknown as AuthSession);
 
-        SolidACLAuthorization.setEngine(engine);
-        SolidTypeIndex.setEngine(engine);
-        SolidDocument.setEngine(engine);
-        SolidResource.setEngine(engine);
+        coreModels.forEach((model) => model.setEngine(engine));
 
         this.booted.resolve();
     }
