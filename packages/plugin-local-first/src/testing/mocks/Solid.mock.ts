@@ -1,13 +1,6 @@
 import { FakeServer, fakeContainerUrl, fakeDocumentUrl, mock } from '@noeldemartin/testing';
 import { facade } from '@noeldemartin/utils';
-import {
-    SolidACLAuthorization,
-    SolidDocument,
-    SolidEngine,
-    SolidResource,
-    SolidTypeIndex,
-    coreModels,
-} from 'soukai-solid';
+import { SolidEngine, coreModels } from 'soukai-solid';
 import { SolidService } from '@aerogel/plugin-solid';
 import type { AuthSession } from '@aerogel/plugin-solid';
 

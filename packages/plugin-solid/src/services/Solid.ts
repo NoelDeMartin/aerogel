@@ -21,15 +21,7 @@ import {
 import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { getBootedModels, setEngine } from 'soukai';
-import {
-    SolidACLAuthorization,
-    SolidContainer,
-    SolidDocument,
-    SolidResource,
-    SolidTypeIndex,
-    coreModels,
-    isSolidModel,
-} from 'soukai-solid';
+import { SolidContainer, SolidTypeIndex, coreModels, isSolidModel } from 'soukai-solid';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { NullablePartial } from '@noeldemartin/utils';
