@@ -1,5 +1,6 @@
 ui:
     advancedOptions: Advanced options
+    details: Details
     alert: Alert
     accept: Ok
     cancel: Cancel
