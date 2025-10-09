@@ -20,6 +20,7 @@
     --color-primary-950: color-mix(in oklab, var(--color-primary-600) 50%, black);
 
     --color-background: oklch(1 0 0);
+    --color-primary-text: var(--color-gray-900);
     --color-links: var(--color-primary);
 
     --breakpoint-content: var(--breakpoint-md);
