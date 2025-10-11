@@ -26,7 +26,7 @@ const {
 const renderedContentClasses = computed(() => classes('pt-2 pl-4', contentClass));
 const renderedSummaryClasses = computed(() =>
     classes(
-        '-ml-2 flex w-[max-content] items-center rounded-lg py-2 pr-3 pl-1',
+        '-ml-2 flex w-[max-content] items-center rounded-lg py-2 pr-3 pl-1 max-w-full',
         'hover:bg-gray-100 focus-visible:outline focus-visible:outline-gray-700',
         summaryClass,
     ));
