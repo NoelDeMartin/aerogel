@@ -36,7 +36,7 @@ const filledClasses = computed(() =>
     classes('size-full transition-transform duration-500 rounded-r-full ease-linear bg-primary-600', filledClass));
 const overflowClasses = computed(() =>
     classes(
-        'absolute inset-y-0 right-0 size-full rounded-r-full border-l-3 border-gray-200',
+        'absolute inset-y-0 right-0 size-full rounded-r-full',
         'bg-primary-900 transition-[width] duration-500 ease-linear',
         overflowClass,
     ));
