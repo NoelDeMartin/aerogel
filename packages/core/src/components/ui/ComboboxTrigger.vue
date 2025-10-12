@@ -1,17 +1,24 @@
 <template>
     <ComboboxAnchor>
-        <ComboboxInput :id="select.id" :placeholder="select.placeholder" :class="renderedRootClasses" />
+        <ComboboxInput
+            :id="select.id"
+            v-model="input"
+            :placeholder="select.placeholder"
+            :class="renderedRootClasses"
+        />
     </ComboboxAnchor>
 </template>
 
 <script setup lang="ts">
 import { ComboboxAnchor, ComboboxInput } from 'reka-ui';
-
-import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
-import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 import { computed } from 'vue';
+import type { Ref } from 'vue';
+
+import { classes, injectOrFail, injectReactiveOrFail } from '@aerogel/core/utils';
+import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 
 const select = injectReactiveOrFail<SelectExpose>('select', '<ComboboxTrigger> must be a child of a <Combobox>');
+const input = injectOrFail<Ref<string>>('combobox-input');
 const renderedRootClasses = computed(() =>
     classes(
         // eslint-disable-next-line vue/max-len

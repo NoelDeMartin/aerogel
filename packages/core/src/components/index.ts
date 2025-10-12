@@ -5,3 +5,4 @@ export { default as AppToasts } from './AppToasts.vue';
 export * from './contracts';
 export * from './headless';
 export * from './ui';
+export * from './vue';
