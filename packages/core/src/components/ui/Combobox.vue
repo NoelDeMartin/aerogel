@@ -9,7 +9,7 @@
         <ProvideRef v-model="input" name="combobox-input">
             <ComboboxLabel />
             <ComboboxTrigger />
-            <ComboboxOptions />
+            <ComboboxOptions :new-input-value />
         </ProvideRef>
     </ComboboxRoot>
 </template>
@@ -29,9 +29,13 @@ import ComboboxTrigger from './ComboboxTrigger.vue';
 import ComboboxLabel from './ComboboxLabel.vue';
 
 const emit = defineEmits<SelectEmits<T>>();
-const { as = 'div', compareOptions = (a, b) => a === b, ...props } = defineProps<SelectProps<T>>();
-const { expose, acceptableValue, update } = useSelect({ as, compareOptions, ...props }, emit);
-const input = ref(acceptableValue.value ?? '');
+const {
+    as = 'div',
+    compareOptions = (a, b) => a === b,
+    ...props
+} = defineProps<SelectProps<T> & { newInputValue?: (value: string) => T }>();
+const { expose, acceptableValue, update, renderOption } = useSelect({ as, compareOptions, ...props }, emit);
+const input = ref(acceptableValue.value ? renderOption(acceptableValue.value as T) : '');
 
 defineExpose(expose);
 </script>

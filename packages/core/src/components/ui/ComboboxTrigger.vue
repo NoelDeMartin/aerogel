@@ -5,6 +5,8 @@
             v-model="input"
             :placeholder="select.placeholder"
             :class="renderedRootClasses"
+            :display-value="select.renderOption"
+            :name="select.name"
         />
     </ComboboxAnchor>
 </template>

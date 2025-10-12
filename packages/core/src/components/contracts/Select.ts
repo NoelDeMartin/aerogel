@@ -41,6 +41,7 @@ export interface SelectExpose<T extends Nullable<FormFieldValue> = Nullable<Form
     optionsClass?: HTMLAttributes['class'];
     align?: SelectContentProps['align'];
     side?: SelectContentProps['side'];
+    renderOption: (option: T) => string;
 }
 
 export function hasSelectOptionLabel(option: unknown): option is HasSelectOptionLabel {
@@ -50,6 +51,17 @@ export function hasSelectOptionLabel(option: unknown): option is HasSelectOption
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useSelect<T extends Nullable<FormFieldValue>>(props: SelectProps<T>, emit: EmitFn<SelectEmits<T>>) {
     const form = inject<FormController | null>('form', null);
+    const renderOption = (option: T): string => {
+        if (option === undefined) {
+            return '';
+        }
+
+        return props.renderOption
+            ? props.renderOption(option)
+            : hasSelectOptionLabel(option)
+                ? evaluate(option.label as string)
+                : toString(option);
+    };
     const computedValue = computed(() => {
         if (form && props.name) {
             return form.getFieldValue(props.name) as T;
@@ -72,16 +84,13 @@ export function useSelect<T extends Nullable<FormFieldValue>>(props: SelectProps
 
         return props.options.map((option) => ({
             key: uuid(),
-            label: props.renderOption
-                ? props.renderOption(option)
-                : hasSelectOptionLabel(option)
-                    ? evaluate(option.label as string)
-                    : toString(option),
+            label: renderOption(option),
             value: option as AcceptableValue,
         }));
     });
 
     const expose = {
+        renderOption,
         labelClass: props.labelClass,
         optionsClass: props.optionsClass,
         align: props.align,
@@ -119,5 +128,5 @@ export function useSelect<T extends Nullable<FormFieldValue>>(props: SelectProps
 
     provide('select', expose);
 
-    return { expose, update, acceptableValue };
+    return { expose, acceptableValue, update, renderOption };
 }

@@ -23,10 +23,6 @@ const select = injectReactiveOrFail<SelectExpose>('select', '<ComboboxOption> mu
 const renderedLabel = computed(() => {
     const itemOption = select.options?.find((option) => option.value === value);
 
-    if (itemOption) {
-        return itemOption.label;
-    }
-
-    return toString(value);
+    return itemOption ? select.renderOption(itemOption.value) : toString(value);
 });
 </script>
