@@ -80,6 +80,16 @@
                 />
             </div>
             <div class="mt-4">
+                <Combobox
+                    :label="$t('components.inputs_combobox')"
+                    :options="
+                        $t('components.inputs_combobox_options')
+                            .split(',')
+                            .map((o) => o.trim())
+                    "
+                />
+            </div>
+            <div class="mt-4">
                 <Checkbox :label="$t('components.inputs_checkbox')" />
             </div>
             <div class="mt-4">

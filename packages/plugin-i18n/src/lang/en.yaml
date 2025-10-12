@@ -11,6 +11,7 @@ ui:
     loadingInProgress: Loading in progress...
     select: Select an option
     selectEmpty: No options available
+    comboboxEmpty: No options found
 
 errors:
     unknown: Unknown Error

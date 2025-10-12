@@ -45,6 +45,8 @@ components:
     inputs_switch: This is a switch.
     inputs_select: Select
     inputs_select_options: One, Two, Three
+    inputs_combobox: Combobox
+    inputs_combobox_options: One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
     modals: Modals
     modals_alert: Alert
     modals_alertTitle: Hi there!
