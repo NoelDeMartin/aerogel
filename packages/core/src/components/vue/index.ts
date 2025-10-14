@@ -1,1 +1,1 @@
-export { default as ProvideRef } from './ProvideRef.vue';
+export { default as Provide } from './Provide.vue';

@@ -1,5 +1,6 @@
 export * from './AlertModal';
 export * from './Button';
+export * from './Combobox';
 export * from './ConfirmModal';
 export * from './DropdownMenu';
 export * from './ErrorReportModal';

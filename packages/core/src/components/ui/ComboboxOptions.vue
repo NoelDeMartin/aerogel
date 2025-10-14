@@ -16,14 +16,20 @@
                     </div>
                 </ComboboxEmpty>
 
-                <ComboboxGroup>
+                <ComboboxGroup ref="$group">
                     <ComboboxOption
                         v-if="showInputOption"
-                        :value="newInputValue?.(input) ?? (input as AcceptableValue)"
+                        :value="newInputValue?.(combobox.input) ?? (combobox.input as AcceptableValue)"
+                        @select="$emit('select')"
                     >
-                        {{ input }}
+                        {{ combobox.input }}
                     </ComboboxOption>
-                    <ComboboxOption v-for="option in filteredOptions" :key="option.key" :value="option.value" />
+                    <ComboboxOption
+                        v-for="option in filteredOptions"
+                        :key="option.key"
+                        :value="option.value"
+                        @select="$emit('select')"
+                    />
                 </ComboboxGroup>
             </ComboboxViewport>
         </ComboboxContent>
@@ -32,27 +38,34 @@
 
 <script setup lang="ts">
 import { ComboboxContent, ComboboxEmpty, ComboboxGroup, ComboboxPortal, ComboboxViewport, useFilter } from 'reka-ui';
-import { computed } from 'vue';
-import type { Ref } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 import type { AcceptableValue } from 'reka-ui';
 
-import { classes, injectOrFail, injectReactiveOrFail } from '@aerogel/core/utils';
+import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
 import type { FormFieldValue } from '@aerogel/core/forms';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
+import type { ComboboxContext } from '@aerogel/core/components/contracts/Combobox';
 
 import ComboboxOption from './ComboboxOption.vue';
 
-const { contains } = useFilter({ sensitivity: 'base' });
+defineEmits<{ select: [] }>();
+
 const { newInputValue } = defineProps<{ newInputValue?: (value: string) => Nullable<FormFieldValue> }>();
+const { contains } = useFilter({ sensitivity: 'base' });
 const select = injectReactiveOrFail<SelectExpose>('select', '<ComboboxOptions> must be a child of a <Combobox>');
-const input = injectOrFail<Ref<string>>('combobox-input');
-const filteredOptions = computed(() => select.options?.filter((option) => contains(option.label, input.value)) ?? []);
+const combobox = injectReactiveOrFail<ComboboxContext>('combobox');
+const $group = useTemplateRef('$group');
+const filteredOptions = computed(
+    () => select.options?.filter((option) => contains(option.label, combobox.input)) ?? [],
+);
 const showInputOption = computed(
-    () => input.value && !filteredOptions.value.some((option) => option.label === input.value),
+    () => combobox.input && !filteredOptions.value.some((option) => option.label === combobox.input),
 );
 const renderedClasses = classes(
     'max-h-(--reka-combobox-content-available-height) min-w-(--reka-combobox-trigger-width)',
     'z-50 overflow-auto rounded-lg bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden',
 );
+
+watch($group, () => (combobox.$group = $group.value?.$el ?? null));
 </script>
