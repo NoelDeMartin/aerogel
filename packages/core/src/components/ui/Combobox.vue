@@ -18,7 +18,7 @@
 
 <script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
 import { ComboboxRoot } from 'reka-ui';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { AcceptableValue } from 'reka-ui';
 import type { Nullable } from '@noeldemartin/utils';
 
@@ -61,5 +61,6 @@ function update(value: AcceptableValue) {
     baseUpdate(value);
 }
 
+watch(combobox.input, update);
 defineExpose(expose);
 </script>

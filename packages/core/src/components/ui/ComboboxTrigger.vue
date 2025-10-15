@@ -23,7 +23,6 @@ import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 import type { ComboboxContext } from '@aerogel/core/components/contracts/Combobox';
 
 const emit = defineEmits<{ focus: []; change: []; blur: [] }>();
-
 const select = injectReactiveOrFail<SelectExpose>('select', '<ComboboxTrigger> must be a child of a <Combobox>');
 const combobox = injectReactiveOrFail<ComboboxContext>('combobox');
 const renderedRootClasses = computed(() =>
