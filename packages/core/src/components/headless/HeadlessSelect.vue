@@ -16,6 +16,7 @@
 
 <script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
 import { SelectRoot } from 'reka-ui';
+import { computed } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import { useSelect } from '@aerogel/core/components/contracts/Select';
@@ -29,7 +30,10 @@ defineOptions({ inheritAttrs: false });
 
 const emit = defineEmits<SelectEmits<T>>();
 const { as = 'div', compareOptions = (a, b) => a === b, ...props } = defineProps<SelectProps<T>>();
-const { expose, acceptableValue, update } = useSelect({ as, compareOptions, ...props }, emit);
+const { expose, acceptableValue, update } = useSelect(
+    computed(() => ({ as, compareOptions, ...props })),
+    emit,
+);
 
 defineExpose(expose);
 </script>

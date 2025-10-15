@@ -1,7 +1,5 @@
-import type { Ref } from 'vue';
-
 export type ComboboxContext = {
-    input: Ref<string>;
-    preventChange: Ref<boolean>;
-    $group: Ref<HTMLDivElement | null>;
+    input: string;
+    preventChange: boolean;
+    $group: HTMLDivElement | null;
 };

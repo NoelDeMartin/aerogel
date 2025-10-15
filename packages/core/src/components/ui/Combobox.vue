@@ -18,12 +18,13 @@
 
 <script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
 import { ComboboxRoot } from 'reka-ui';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { AcceptableValue } from 'reka-ui';
 import type { Nullable } from '@noeldemartin/utils';
 
 import Provide from '@aerogel/core/components/vue/Provide.vue';
 import { useSelect } from '@aerogel/core/components/contracts/Select';
+import type { AcceptRefs } from '@aerogel/core/utils';
 import type { ComboboxContext } from '@aerogel/core/components/contracts/Combobox';
 import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
 import type { FormFieldValue } from '@aerogel/core/forms';
@@ -38,13 +39,21 @@ const {
     compareOptions = (a, b) => a === b,
     ...props
 } = defineProps<SelectProps<T> & { newInputValue?: (value: string) => T }>();
-const { expose, acceptableValue, update: baseUpdate, renderOption } = useSelect({ as, compareOptions, ...props }, emit);
+const {
+    expose,
+    acceptableValue,
+    update: baseUpdate,
+    renderOption,
+} = useSelect(
+    computed(() => ({ as, compareOptions, ...props })),
+    emit,
+);
 const open = ref(false);
 const combobox = {
     input: ref(acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
     preventChange: ref(false),
     $group: ref(null),
-} satisfies ComboboxContext;
+} satisfies AcceptRefs<ComboboxContext>;
 
 function update(value: AcceptableValue) {
     combobox.input.value = renderOption(value as T);
