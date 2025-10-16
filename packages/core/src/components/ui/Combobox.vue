@@ -37,6 +37,7 @@ const emit = defineEmits<SelectEmits<T>>();
 const {
     as = 'div',
     compareOptions = (a, b) => a === b,
+    newInputValue,
     ...props
 } = defineProps<SelectProps<T> & { newInputValue?: (value: string) => T }>();
 const {
@@ -61,6 +62,6 @@ function update(value: AcceptableValue) {
     baseUpdate(value);
 }
 
-watch(combobox.input, update);
+watch(combobox.input, (value) => update(newInputValue ? (newInputValue(value) as AcceptableValue) : value));
 defineExpose(expose);
 </script>
