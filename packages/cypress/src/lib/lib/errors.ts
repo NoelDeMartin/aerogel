@@ -7,6 +7,16 @@ function isError(error: unknown): error is Error {
 }
 
 export function setupErrorListener(): void {
+    Cypress.on('uncaught:exception', (error) => {
+        // FIXME This should be handled with the application error handling mechanism,
+        // but for some reason it isn't working.
+        if (error.message.includes('ResizeObserver loop completed with undelivered notifications.')) {
+            return false;
+        }
+
+        return true;
+    });
+
     Cypress.on('window:before:load', (window) => {
         window.__aerogelEvents__ = {
             error: ({ error, message }) => {
