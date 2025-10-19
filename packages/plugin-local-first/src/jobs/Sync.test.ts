@@ -1007,6 +1007,60 @@ describe('Sync', () => {
         expect(post?.author?.posts?.[0]).toBe(post);
     });
 
+    testRegisterVariants('Cleans local model updates without changes', async (registerModels) => {
+        // Arrange - Mint urls
+        const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';
+        const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
+        const documentUrl = fakeDocumentUrl({ containerUrl });
+
+        // Arrange - Prepare models
+        const container = await MoviesContainer.at(parentContainerUrl).create({
+            url: containerUrl,
+            name: 'Movies',
+        });
+
+        const movie = await container.relatedMovies.create({ url: `${documentUrl}#it`, name: 'Spirited Away' });
+
+        // Arrange - Prepare responses
+        const now = Date.now();
+        const typeIndexUrl = SolidMock.requireUser().privateTypeIndexUrl ?? '';
+
+        FakeServer.respond(typeIndexUrl, typeIndexResponse({ [containerUrl]: '<https://schema.org/Movie>' }));
+        FakeServer.respond(
+            containerUrl,
+            containerResponse({
+                name: 'Movies',
+                documentUrls: [documentUrl],
+                createdAt: container.createdAt,
+                updatedAt: container.updatedAt,
+                append: `
+                    <${documentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+                `,
+            }),
+        );
+
+        // Arrange - Prepare service
+        Cloud.localModelUpdates = { [movie.url]: 1 };
+
+        await Cloud.getDocumentsCache().remember(containerUrl, documentUrl, now);
+        await Cloud.launch();
+        await registerModels();
+        await Events.emit('application-ready');
+
+        // Act
+        await Cloud.sync();
+
+        // Assert
+        expect(FakeServer.getRequests(typeIndexUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(containerUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests()).toHaveLength(2);
+
+        expect(Cloud.localModelUpdates).toEqual({});
+    });
+
     testRegisterVariants('Leaves tombstones behind', async (registerModels) => {
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'movies/';

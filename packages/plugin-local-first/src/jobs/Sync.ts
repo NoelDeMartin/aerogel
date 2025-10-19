@@ -767,6 +767,8 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     }
 
     private async rememberModelDocuments(model: SolidModel): Promise<void> {
+        this.syncedModelUrls.add(model.url);
+
         if (!isContainer(model)) {
             const documentUrl = model.requireDocumentUrl();
             const modifiedAt = this.documentsModifiedAt[documentUrl];
