@@ -496,6 +496,17 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
                 await this.updateProgress();
             },
+            onDocumentIgnored: async (document) => {
+                if (!document.updatedAt) {
+                    return;
+                }
+
+                await Cloud.getDocumentsCache().remember(
+                    requireUrlParentDirectory(document.url),
+                    document.url,
+                    document.updatedAt,
+                );
+            },
         });
 
         for (let index = 0; index < children.length; index++) {

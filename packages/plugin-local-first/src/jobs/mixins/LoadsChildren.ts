@@ -26,6 +26,7 @@ export default class LoadsChildren {
             onDocumentLoaded?: () => unknown;
             onDocumentError?: (error: unknown) => unknown;
             onDocumentRead?: (document: SolidDocument) => unknown;
+            onDocumentIgnored?: (document: SolidDocument) => unknown;
         } = {},
     ): Promise<SolidModel[]> {
         if (isLocalModel(container)) {
@@ -43,7 +44,6 @@ export default class LoadsChildren {
 
         const children: Record<string, SolidModel[]> = {};
         const tombstones: Tombstone[] = [];
-        const documents = map(container.documents, 'url');
         const resourceUrlChunks = arrayChunk(container.resourceUrls, 10);
         const statusChildren = resourceUrlChunks.flat().map((url) => ({
             documentUrl: url,
@@ -70,13 +70,7 @@ export default class LoadsChildren {
                     }
 
                     const { children: documentChildren, tombstones: documentTombstones } =
-                        await this.loadDocumentChildren(
-                            container,
-                            resourceUrl,
-                            documents,
-                            options.onDocumentError,
-                            options.onDocumentRead,
-                        );
+                        await this.loadDocumentChildren(container, resourceUrl, options);
 
                     tombstones.push(...documentTombstones);
 
@@ -183,18 +177,23 @@ export default class LoadsChildren {
     private async loadDocumentChildren(
         container: SolidContainer,
         documentUrl: string,
-        documents: ObjectsMap<SolidDocument>,
-        onDocumentError?: (error: unknown) => unknown,
-        onDocumentRead?: (document: SolidDocument) => unknown,
+        options: {
+            onDocumentError?: (error: unknown) => unknown;
+            onDocumentRead?: (document: SolidDocument) => unknown;
+            onDocumentIgnored?: (document: SolidDocument) => unknown;
+        } = {},
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
-        return this.loadDocumentChildrenFromRemote(container, documentUrl, onDocumentError, onDocumentRead);
+        return this.loadDocumentChildrenFromRemote(container, documentUrl, options);
     }
 
     private async loadDocumentChildrenFromRemote(
         container: SolidContainer,
         documentUrl: string,
-        onDocumentError?: (error: unknown) => unknown,
-        onDocumentRead?: (document: SolidDocument) => unknown,
+        options: {
+            onDocumentError?: (error: unknown) => unknown;
+            onDocumentRead?: (document: SolidDocument) => unknown;
+            onDocumentIgnored?: (document: SolidDocument) => unknown;
+        } = {},
     ): Promise<{ children: Record<string, SolidModel[]>; tombstones: Tombstone[] }> {
         const children: Record<string, SolidModel[]> = {};
         const tombstones: Tombstone[] = [];
@@ -211,7 +210,7 @@ export default class LoadsChildren {
                 tombstones.push(...documentTombstones);
 
                 if (documentModel) {
-                    onDocumentRead?.(documentModel);
+                    options.onDocumentRead?.(documentModel);
                 }
 
                 return document;
@@ -220,15 +219,17 @@ export default class LoadsChildren {
                     return null;
                 }
 
-                if (!onDocumentError) {
+                if (!options.onDocumentError) {
                     throw error;
                 }
 
-                onDocumentError(error);
+                options.onDocumentError(error);
 
                 return null;
             }
         });
+
+        let found = false;
 
         for (const relation of getContainerRelations(container.static())) {
             const relationInstance = container.requireRelation<SolidContainsRelation>(relation);
@@ -251,13 +252,21 @@ export default class LoadsChildren {
                 });
 
                 children[relation] = documentChildren;
+
+                found ||= documentChildren.length > 0;
             } catch (error) {
-                if (!onDocumentError) {
+                if (!options.onDocumentError) {
                     throw error;
                 }
 
-                onDocumentError(error);
+                options.onDocumentError(error);
             }
+        }
+
+        if (!found && options.onDocumentIgnored) {
+            const documentModel = container.documents.find((document) => document.url === documentUrl);
+
+            documentModel && (await options.onDocumentIgnored(documentModel));
         }
 
         return { children, tombstones };

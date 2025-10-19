@@ -541,6 +541,7 @@ describe('Sync', () => {
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
         const childContainerUrl = fakeContainerUrl({ baseUrl: containerUrl });
         const freshDocumentUrl = fakeDocumentUrl({ containerUrl });
+        const freshNonMatchingDocumentUrl = fakeDocumentUrl({ containerUrl });
         const staleDocumentUrl = fakeDocumentUrl({ containerUrl });
         const freshChildDocumentUrl = fakeDocumentUrl({ containerUrl: childContainerUrl });
         const staleChildDocumentUrl = fakeDocumentUrl({ containerUrl: childContainerUrl });
@@ -595,11 +596,16 @@ describe('Sync', () => {
             containerUrl,
             containerResponse({
                 name: 'Tasks',
-                documentUrls: [freshDocumentUrl, staleDocumentUrl, childContainerUrl],
+                documentUrls: [freshDocumentUrl, freshNonMatchingDocumentUrl, staleDocumentUrl, childContainerUrl],
                 createdAt: workspace.createdAt,
                 updatedAt: workspace.updatedAt,
                 append: `
                     <${freshDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+                    <${freshNonMatchingDocumentUrl}>
                         a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
                         <http://purl.org/dc/terms/modified>
                             "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
@@ -633,6 +639,7 @@ describe('Sync', () => {
         ); // Child container
         FakeServer.respondOnce(freshDocumentUrl, taskResponse('One'));
         FakeServer.respondOnce(staleDocumentUrl, taskResponse('Two'));
+        FakeServer.respondOnce(freshNonMatchingDocumentUrl, movieResponse('Spirited Away'));
         FakeServer.respondOnce(freshChildDocumentUrl, taskResponse('Three'));
         FakeServer.respondOnce(staleChildDocumentUrl, taskResponse('Four'));
 
@@ -640,11 +647,16 @@ describe('Sync', () => {
             containerUrl,
             containerResponse({
                 name: 'Tasks',
-                documentUrls: [freshDocumentUrl, staleDocumentUrl, childContainerUrl],
+                documentUrls: [freshDocumentUrl, freshNonMatchingDocumentUrl, staleDocumentUrl, childContainerUrl],
                 createdAt: workspace.createdAt,
                 updatedAt: workspace.updatedAt,
                 append: `
                     <${freshDocumentUrl}>
+                        a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
+                        <http://purl.org/dc/terms/modified>
+                            "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+                    <${freshNonMatchingDocumentUrl}>
                         a <http://www.w3.org/ns/iana/media-types/text/turtle#Resource> ;
                         <http://purl.org/dc/terms/modified>
                             "${new Date(now).toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
@@ -697,10 +709,11 @@ describe('Sync', () => {
         expect(FakeServer.getRequests(containerUrl)).toHaveLength(2);
         expect(FakeServer.getRequests(childContainerUrl)).toHaveLength(2);
         expect(FakeServer.getRequests(freshDocumentUrl)).toHaveLength(1);
+        expect(FakeServer.getRequests(freshNonMatchingDocumentUrl)).toHaveLength(1);
         expect(FakeServer.getRequests(staleDocumentUrl)).toHaveLength(2);
         expect(FakeServer.getRequests(freshChildDocumentUrl)).toHaveLength(1);
         expect(FakeServer.getRequests(staleChildDocumentUrl)).toHaveLength(2);
-        expect(FakeServer.getRequests()).toHaveLength(12);
+        expect(FakeServer.getRequests()).toHaveLength(13);
     });
 
     it('Ignores missing children', async () => {
