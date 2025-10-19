@@ -10,7 +10,7 @@ import {
     urlRoute,
 } from '@noeldemartin/utils';
 import { App, Errors, Job } from '@aerogel/core';
-import { InvalidModelAttributes, requireBootedModel } from 'soukai';
+import { DocumentNotFound, InvalidModelAttributes, requireBootedModel, requireEngine } from 'soukai';
 import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
@@ -334,9 +334,36 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
         const remoteModels = await remoteClass.createManyFromEngineDocuments(documents);
         const tombstones = await Tombstone.createManyFromEngineDocuments(documents);
+        const documentsCache = Cloud.getDocumentsCache();
+        const foundDocuments = new Set(remoteModels.map((model) => model.requireDocumentUrl()));
 
         for (const tombstone of tombstones) {
             this.tombstones.add(tombstone);
+            foundDocuments.add(tombstone.requireDocumentUrl());
+        }
+
+        for (const document of container.documents) {
+            if (!document.updatedAt) {
+                continue;
+            }
+
+            if (foundDocuments.has(document.url)) {
+                continue;
+            }
+
+            await documentsCache.remember(requireUrlParentDirectory(document.url), document.url, document.updatedAt);
+
+            const engine = requireEngine();
+
+            try {
+                await engine.readOne(requireUrlParentDirectory(document.url), document.url);
+            } catch (error) {
+                if (!isInstanceOf(error, DocumentNotFound)) {
+                    throw error;
+                }
+
+                await engine.create(requireUrlParentDirectory(document.url), {}, document.url);
+            }
         }
 
         if (remoteModels.length > 0) {

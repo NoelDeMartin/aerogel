@@ -71,7 +71,9 @@ export async function trackModelsCollection(
     if (refresh) {
         const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
 
-        modelData.modelsSet.reset(collectionModels);
+        for (const model of collectionModels) {
+            modelData.modelsSet.add(model);
+        }
     }
 }
 

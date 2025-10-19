@@ -67,8 +67,14 @@ export function testRegisterVariants(
     testVariants(
         description,
         {
-            'model registration': () => Cloud.register(Movie),
-            'container registration': () => Cloud.register(MoviesContainer),
+            'model registration': async () => {
+                await Cloud.register(Movie);
+                await Cloud.register(Task);
+            },
+            'container registration': async () => {
+                await Cloud.register(MoviesContainer);
+                await Cloud.register(Workspace);
+            },
         },
         test,
         options,

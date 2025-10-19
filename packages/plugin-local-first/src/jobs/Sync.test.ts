@@ -22,6 +22,7 @@ import Post from '@aerogel/plugin-local-first/testing/stubs/Post';
 import SolidMock from '@aerogel/plugin-local-first/testing/mocks/Solid.mock';
 import Workspace from '@aerogel/plugin-local-first/testing/stubs/Workspace';
 import Person from '@aerogel/plugin-local-first/testing/stubs/Person';
+import Task from '@aerogel/plugin-local-first/testing/stubs/Task';
 
 describe('Sync', () => {
 
@@ -535,7 +536,9 @@ describe('Sync', () => {
         expect(Cloud.localModelUpdates).toEqual({});
     });
 
-    it('Skips pulling fresh documents', async () => {
+    testRegisterVariants('Skips pulling fresh documents', async (registerModels, variant) => {
+        const usingContainers = variant === 'container registration';
+
         // Arrange - Mint urls
         const parentContainerUrl = Solid.requireUser().storageUrls[0] + 'tasks/';
         const containerUrl = fakeContainerUrl({ baseUrl: parentContainerUrl });
@@ -692,10 +695,14 @@ describe('Sync', () => {
         FakeServer.respondOnce(staleChildDocumentUrl, taskResponse('Four'));
 
         // Arrange - Prepare service
+        if (!usingContainers) {
+            Cloud.modelCollections[Task.modelName] = [containerUrl, childContainerUrl];
+        }
+
         Cloud.ready = true;
 
         await Cloud.launch();
-        await Cloud.register(Workspace);
+        await registerModels();
         await Events.emit('application-ready');
 
         // Arrange - Initial sync
