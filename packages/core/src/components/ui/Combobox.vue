@@ -62,6 +62,17 @@ function update(value: AcceptableValue) {
     baseUpdate(value);
 }
 
-watch(combobox.input, (value) => update(newInputValue ? (newInputValue(value) as AcceptableValue) : value));
+watch(combobox.input, (value) => {
+    const newInputOption = newInputValue ? (newInputValue(value) as AcceptableValue) : value;
+    const renderedValue = renderOption(expose.value.value);
+    const renderedNewInputOption = renderOption(expose.value.value as T);
+
+    if (renderedValue === renderedNewInputOption) {
+        return;
+    }
+
+    update(newInputOption);
+});
+
 defineExpose(expose);
 </script>
