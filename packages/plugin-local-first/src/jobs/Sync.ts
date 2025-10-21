@@ -214,12 +214,6 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
         const tombstoneDocuments = map(this.tombstones.getItems(), (tombstone) => tombstone.requireDocumentUrl());
 
         for (const [documentUrl, modifiedAt] of Object.entries(this.documentsModifiedAt)) {
-            if (localDocuments.has(documentUrl)) {
-                await documentsCache.remember(requireUrlParentDirectory(documentUrl), documentUrl, modifiedAt);
-
-                continue;
-            }
-
             if (tombstoneDocuments.hasKey(documentUrl)) {
                 const tombstone = tombstoneDocuments.require(documentUrl);
 
@@ -229,6 +223,12 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                         resourceUrl: tombstone.resourceUrl,
                     },
                 });
+
+                continue;
+            }
+
+            if (localDocuments.has(documentUrl)) {
+                await documentsCache.remember(requireUrlParentDirectory(documentUrl), documentUrl, modifiedAt);
 
                 continue;
             }
