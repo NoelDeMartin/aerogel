@@ -10,6 +10,11 @@ export interface Options {
     baseUrl?: string;
     static404Redirect?: boolean | string;
     solidClientId?: boolean | ClientIDDocument;
+    pwa?: {
+        development?: boolean;
+        includeAssets?: string[];
+        additionalManifestEntries?: ManifestEntry[];
+    };
 }
 
 export interface AppInfo {

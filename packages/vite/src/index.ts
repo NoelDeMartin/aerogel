@@ -30,7 +30,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         basePath: '/',
         baseUrl: options.baseUrl,
         themeColor: options.themeColor ?? '#ffffff',
-        additionalManifestEntries: [],
+        additionalManifestEntries: options.pwa?.additionalManifestEntries ?? [],
     };
     const virtualHandlers: Record<string, () => string> = {
         'virtual:aerogel'() {
@@ -99,11 +99,13 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         !options.lib &&
             VitePWA({
                 registerType: 'autoUpdate',
+                devOptions: { enabled: options.pwa?.development ?? false },
                 includeAssets: [
                     'apple-touch-icon.png',
                     'favicon-32x32.png',
                     'favicon-16x16.png',
                     'safari-pinned-tab.svg',
+                    ...(options.pwa?.includeAssets ?? []),
                 ],
                 manifest: objectWithoutEmpty({
                     name: app.name,
