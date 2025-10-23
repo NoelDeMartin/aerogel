@@ -317,6 +317,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
         const documents = await this.loadContainedDocuments(container, {
             status,
+            updateProgress: (update) => this.updateProgress(update),
             onDocumentError: (error) => this.handleDocumentError(error),
             onDocumentRead: (document) => {
                 if (document.url.endsWith('/') || !document.updatedAt || document.url in this.documentsModifiedAt) {
@@ -510,6 +511,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
 
         const children = await this.loadContainedModels(model, {
             status: childStatus,
+            updateProgress: (update) => this.updateProgress(update),
             onDocumentError: (error) => this.handleDocumentError(error),
             onDocumentRead: (document) => {
                 if (document.url.endsWith('/') || !document.updatedAt || document.url in this.documentsModifiedAt) {

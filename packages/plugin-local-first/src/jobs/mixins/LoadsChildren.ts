@@ -23,6 +23,7 @@ export default class LoadsChildren {
         options: {
             ignoreTombstones?: boolean;
             status?: ResourceJobStatus;
+            updateProgress?: (update?: () => unknown) => Promise<void>;
             onDocumentLoaded?: () => unknown;
             onDocumentError?: (error: unknown) => unknown;
             onDocumentRead?: (document: SolidDocument) => unknown;
@@ -50,6 +51,7 @@ export default class LoadsChildren {
             completed: false,
         }));
         const statusChildrenMap = map(statusChildren, 'documentUrl');
+        const updateProgress = options.updateProgress ?? ((operation) => Promise.resolve(operation?.()));
 
         if (options.status) {
             options.status.children = statusChildren;
@@ -84,7 +86,9 @@ export default class LoadsChildren {
                         return;
                     }
 
-                    required(statusChildrenMap.get(resourceUrl)).completed = true;
+                    await updateProgress(() => {
+                        required(statusChildrenMap.get(resourceUrl)).completed = true;
+                    });
 
                     await options.onDocumentLoaded?.();
                 }),
@@ -99,11 +103,15 @@ export default class LoadsChildren {
             ? Object.values(children).flat()
             : Object.values(children).flat().concat(tombstones);
 
-        if (options.status) {
+        await updateProgress(() => {
+            if (!options.status) {
+                return;
+            }
+
             options.status.children = childrenArray.map((child) => {
                 return required(statusChildrenMap.get(child.requireDocumentUrl()));
             });
-        }
+        });
 
         return childrenArray;
     }
@@ -112,6 +120,7 @@ export default class LoadsChildren {
         container: SolidContainer,
         options: {
             status?: ResourceJobStatus;
+            updateProgress?: (update?: () => unknown) => Promise<void>;
             onDocumentLoaded?: () => unknown;
             onDocumentError?: (error: unknown) => unknown;
             onDocumentRead?: (document: SolidDocument) => unknown;
@@ -129,6 +138,11 @@ export default class LoadsChildren {
             completed: false,
         }));
         const statusChildrenMap = map(statusChildren, 'documentUrl');
+        const updateProgress = options.updateProgress ?? ((operation) => Promise.resolve(operation?.()));
+
+        if (options.status) {
+            options.status.children = statusChildren;
+        }
 
         for (const resourceUrls of resourceUrlChunks) {
             await Promise.all(
@@ -143,7 +157,9 @@ export default class LoadsChildren {
                                     type.startsWith('http://www.w3.org/ns/iana/media-types/image/')),
                         )
                     ) {
-                        required(statusChildrenMap.get(resourceUrl)).completed = true;
+                        await updateProgress(() => {
+                            required(statusChildrenMap.get(resourceUrl)).completed = true;
+                        });
 
                         return;
                     }
@@ -164,9 +180,11 @@ export default class LoadsChildren {
                         await options.onDocumentRead?.(document);
                     }
 
-                    await options.onDocumentLoaded?.();
+                    await updateProgress(() => {
+                        required(statusChildrenMap.get(resourceUrl)).completed = true;
+                    });
 
-                    required(statusChildrenMap.get(resourceUrl)).completed = true;
+                    await options.onDocumentLoaded?.();
                 }),
             );
         }
