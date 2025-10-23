@@ -115,7 +115,7 @@ export default abstract class Job<
             return 1;
         }
 
-        if (!status.children) {
+        if (!status.children || status.children.length === 0) {
             return 0;
         }
 
