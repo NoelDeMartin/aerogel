@@ -1,5 +1,5 @@
 <template>
-    <ComboboxAnchor>
+    <ComboboxAnchor class="relative">
         <ComboboxInput
             :id="select.id"
             v-model="combobox.input"
@@ -11,10 +11,15 @@
             @blur="onBlur()"
             @keydown.esc="$emit('blur')"
         />
+        <div v-if="select?.errors" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+            <IconExclamationSolid class="size-5 text-red-500" />
+        </div>
     </ComboboxAnchor>
 </template>
 
 <script setup lang="ts">
+import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
+
 import { ComboboxAnchor, ComboboxInput } from 'reka-ui';
 import { computed, watch } from 'vue';
 

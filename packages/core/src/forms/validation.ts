@@ -31,8 +31,12 @@ export type FormFieldValidator<T = unknown> = (value: T) => string | string[] | 
 
 export const validators: Record<string, FormFieldValidator> = { ...builtInRules };
 
-export function defineFormValidationRule<T>(rule: string, validator: FormFieldValidator<T>): void {
+export function registerFormValidationRule<T>(rule: string, validator: FormFieldValidator<T>): void {
     validators[rule] = validator as FormFieldValidator;
+}
+
+export function defineFormValidationRules<T extends Record<string, FormFieldValidator>>(rules: T): T {
+    return rules;
 }
 
 export function validateType(value: unknown, definition: FormFieldDefinition): string[] {

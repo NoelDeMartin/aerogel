@@ -11,6 +11,7 @@
         <Provide name="combobox" :value="combobox">
             <ComboboxLabel />
             <ComboboxTrigger @focus="open = true" @change="open = true" @blur="open = false" />
+            <HeadlessSelectError class="mt-2 text-sm text-red-600" />
             <ComboboxOptions :new-input-value @select="open = false" />
         </Provide>
     </ComboboxRoot>
@@ -32,6 +33,7 @@ import type { FormFieldValue } from '@aerogel/core/forms';
 import ComboboxOptions from './ComboboxOptions.vue';
 import ComboboxTrigger from './ComboboxTrigger.vue';
 import ComboboxLabel from './ComboboxLabel.vue';
+import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 
 const emit = defineEmits<SelectEmits<T>>();
 const {

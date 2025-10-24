@@ -30,7 +30,7 @@ describe('FormController', () => {
         const form = useForm({
             name: {
                 type: 'string',
-                rules: 'required',
+                rules: ['required'],
             },
         });
 
@@ -48,7 +48,7 @@ describe('FormController', () => {
         const form = useForm({
             name: {
                 type: 'string',
-                rules: 'required',
+                rules: ['required'],
             },
         });
 
@@ -69,11 +69,11 @@ describe('FormController', () => {
         const form = useForm({
             trimmed: {
                 type: 'string',
-                rules: 'required',
+                rules: ['required'],
             },
             untrimmed: {
                 type: 'string',
-                rules: 'required',
+                rules: ['required'],
                 trim: false,
             },
         });

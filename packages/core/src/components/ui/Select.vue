@@ -3,6 +3,7 @@
         <SelectLabel />
         <slot>
             <SelectTrigger />
+            <HeadlessSelectError class="mt-2 text-sm text-red-600" />
             <SelectOptions />
         </slot>
     </HeadlessSelect>
@@ -19,6 +20,7 @@ import type { FormFieldValue } from '@aerogel/core/forms';
 import SelectLabel from './SelectLabel.vue';
 import SelectOptions from './SelectOptions.vue';
 import SelectTrigger from './SelectTrigger.vue';
+import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 
 defineProps<SelectProps<T>>();
 defineEmits<SelectEmits<T>>();

@@ -14,7 +14,7 @@ export interface FormFieldDefinition<
     type: TType;
     trim?: boolean;
     default?: GetFormFieldValue<TType>;
-    rules?: TRules;
+    rules?: TRules[];
     values?: readonly TValueType[];
     [__valueType]?: TValueType;
 }
@@ -109,7 +109,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
     }
 
     public getFieldRules<T extends keyof Fields>(field: T): string[] {
-        return this._fields[field]?.rules?.split('|') ?? [];
+        return this._fields[field]?.rules ?? [];
     }
 
     public setFieldErrors<T extends keyof Fields>(field: T, errors: string[] | null): void {
@@ -201,7 +201,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
     private getFieldErrors(name: keyof Fields, definition: FormFieldDefinition): string[] | null {
         const errors = [];
         const value = this._data[name];
-        const rules = definition.rules?.split('|') ?? [];
+        const rules = definition.rules ?? [];
 
         errors.push(...validateType(value, definition));
 

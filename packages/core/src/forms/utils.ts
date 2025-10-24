@@ -1,6 +1,9 @@
 import type { FormFieldDefinition } from './FormController';
 
-export function booleanInput(defaultValue?: boolean, options: { rules?: string } = {}): FormFieldDefinition<'boolean'> {
+export function booleanInput(
+    defaultValue?: boolean,
+    options: { rules?: string[] } = {},
+): FormFieldDefinition<'boolean'> {
     return {
         default: defaultValue,
         type: 'boolean',
@@ -8,7 +11,7 @@ export function booleanInput(defaultValue?: boolean, options: { rules?: string }
     };
 }
 
-export function dateInput(defaultValue?: Date, options: { rules?: string } = {}): FormFieldDefinition<'date'> {
+export function dateInput(defaultValue?: Date, options: { rules?: string[] } = {}): FormFieldDefinition<'date'> {
     return {
         default: defaultValue,
         type: 'date',
@@ -19,7 +22,7 @@ export function dateInput(defaultValue?: Date, options: { rules?: string } = {})
 export function enumInput<const T extends string>(
     values: readonly T[],
     defaultValue?: T,
-    options: { rules?: string } = {},
+    options: { rules?: string[] } = {},
 ): FormFieldDefinition<'enum', string, T> {
     return {
         default: defaultValue,
@@ -29,59 +32,75 @@ export function enumInput<const T extends string>(
     };
 }
 
-export function requiredBooleanInput(defaultValue?: boolean): FormFieldDefinition<'boolean', 'required'> {
+export function requiredBooleanInput(
+    defaultValue?: boolean,
+    options: { rules?: string[] } = {},
+): FormFieldDefinition<'boolean', 'required'> {
     return {
         default: defaultValue,
         type: 'boolean',
-        rules: 'required',
+        rules: ['required', ...((options.rules as 'required'[]) ?? [])],
     };
 }
 
-export function requiredDateInput(defaultValue?: Date): FormFieldDefinition<'date', 'required'> {
+export function requiredDateInput(
+    defaultValue?: Date,
+    options: { rules?: string[] } = {},
+): FormFieldDefinition<'date', 'required'> {
     return {
         default: defaultValue,
         type: 'date',
-        rules: 'required',
+        rules: ['required', ...((options.rules as 'required'[]) ?? [])],
     };
 }
 
 export function requiredEnumInput<const T extends string>(
     values: readonly T[],
     defaultValue?: T,
+    options: { rules?: string[] } = {},
 ): FormFieldDefinition<'enum', 'required', T> {
     return {
         default: defaultValue,
         type: 'enum',
-        rules: 'required',
+        rules: ['required', ...((options.rules as 'required'[]) ?? [])],
         values,
     };
 }
 
-export function requiredNumberInput(defaultValue?: number): FormFieldDefinition<'number', 'required'> {
+export function requiredNumberInput(
+    defaultValue?: number,
+    options: { rules?: string[] } = {},
+): FormFieldDefinition<'number', 'required'> {
     return {
         default: defaultValue,
         type: 'number',
-        rules: 'required',
+        rules: ['required', ...((options.rules as 'required'[]) ?? [])],
     };
 }
 
-export function requiredObjectInput<T extends object>(defaultValue?: T): FormFieldDefinition<'object', 'required', T> {
+export function requiredObjectInput<T extends object>(
+    defaultValue?: T,
+    options: { rules?: string[] } = {},
+): FormFieldDefinition<'object', 'required', T> {
     return {
         default: defaultValue,
         type: 'object',
-        rules: 'required',
+        rules: ['required', ...((options.rules as 'required'[]) ?? [])],
     };
 }
 
-export function requiredStringInput(defaultValue?: string): FormFieldDefinition<'string', 'required'> {
+export function requiredStringInput(
+    defaultValue?: string,
+    options: { rules?: string[] } = {},
+): FormFieldDefinition<'string', 'required'> {
     return {
         default: defaultValue,
         type: 'string',
-        rules: 'required',
+        rules: ['required', ...((options.rules as 'required'[]) ?? [])],
     };
 }
 
-export function numberInput(defaultValue?: number, options: { rules?: string } = {}): FormFieldDefinition<'number'> {
+export function numberInput(defaultValue?: number, options: { rules?: string[] } = {}): FormFieldDefinition<'number'> {
     return {
         default: defaultValue,
         type: 'number',
@@ -91,7 +110,7 @@ export function numberInput(defaultValue?: number, options: { rules?: string } =
 
 export function objectInput<T extends object>(
     defaultValue?: T,
-    options: { rules?: string } = {},
+    options: { rules?: string[] } = {},
 ): FormFieldDefinition<'object', string, T> {
     return {
         default: defaultValue,
@@ -100,7 +119,7 @@ export function objectInput<T extends object>(
     };
 }
 
-export function stringInput(defaultValue?: string, options: { rules?: string } = {}): FormFieldDefinition<'string'> {
+export function stringInput(defaultValue?: string, options: { rules?: string[] } = {}): FormFieldDefinition<'string'> {
     return {
         default: defaultValue,
         type: 'string',

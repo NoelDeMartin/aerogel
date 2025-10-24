@@ -5,7 +5,7 @@ import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
-import { defineFormValidationRules } from '@aerogel/plugin-solid/forms/validation';
+import { registerFormValidationRules } from '@aerogel/plugin-solid/forms/validation';
 import {
     authenticators as baseAuthenticators,
     getAuthenticator,
@@ -38,7 +38,7 @@ export default function solid(options: Options = {}): Plugin {
         async install(app) {
             bootSolidModels();
             registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
-            defineFormValidationRules();
+            registerFormValidationRules();
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
             registerErrorHandler((error) => {
                 if (!(error instanceof AuthenticationFailedError)) {
