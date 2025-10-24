@@ -1,12 +1,13 @@
 import type { ManifestEntry } from 'workbox-build';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
+import type { IconResource } from 'vite-plugin-pwa';
 
 export interface Options {
     lib?: boolean;
     name?: string;
     description?: string;
     themeColor?: string;
-    icons?: Record<string, string>;
+    icons?: Record<string, string> | IconResource[];
     baseUrl?: string;
     static404Redirect?: boolean | string;
     solidClientId?: boolean | ClientIDDocument;

@@ -114,12 +114,17 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                     theme_color: options.themeColor,
                     icons:
                         options.icons &&
-                        Object.entries(options.icons).map(([sizes, src]) =>
-                            objectWithoutEmpty({
-                                src,
-                                sizes,
-                                type: guessMediaType(src),
-                            })),
+                        (Array.isArray(options.icons)
+                            ? options.icons.map((icon) => ({
+                                ...icon,
+                                type: icon.type ?? guessMediaType(icon.src) ?? undefined,
+                            }))
+                            : Object.entries(options.icons).map(([sizes, src]) =>
+                                objectWithoutEmpty({
+                                    src,
+                                    sizes,
+                                    type: guessMediaType(src) ?? undefined,
+                                }))),
                 }),
                 workbox: {
                     maximumFileSizeToCacheInBytes: 10000000,

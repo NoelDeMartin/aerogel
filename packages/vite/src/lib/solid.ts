@@ -18,7 +18,11 @@ function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocumen
     }
 
     const baseUrl = app.baseUrl.endsWith('/') ? app.baseUrl : `${app.baseUrl}/`;
-    const logoPublicPath = options.icons && (options.icons['512x512'] ?? Object.values(options.icons).pop());
+    const logoPublicPath =
+        options.icons &&
+        (Array.isArray(options.icons)
+            ? options.icons[0]?.src
+            : (options.icons['512x512'] ?? Object.values(options.icons).pop()));
     const clientID: ClientIDDocument = {
         '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld',
         'client_id': `${baseUrl}clientid.jsonld`,
