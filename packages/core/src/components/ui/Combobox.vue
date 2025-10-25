@@ -52,6 +52,8 @@ const {
     emit,
 );
 const open = ref(false);
+const optionsByLabel = computed(() =>
+    Object.fromEntries(expose.options.value?.map((option) => [option.label, option.value]) ?? []));
 const combobox = {
     input: ref(acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
     preventChange: ref(false),
@@ -64,12 +66,24 @@ function update(value: AcceptableValue) {
     baseUpdate(value);
 }
 
+watch(expose.value, (value) => {
+    const newOptionLabel = renderOption(value as T);
+
+    if (combobox.input.value === newOptionLabel) {
+        return;
+    }
+
+    combobox.preventChange.value = true;
+    combobox.input.value = newOptionLabel;
+});
+
 watch(combobox.input, (value) => {
     const newInputOption = newInputValue ? (newInputValue(value) as AcceptableValue) : value;
-    const renderedValue = renderOption(expose.value.value);
-    const renderedNewInputOption = renderOption(expose.value.value as T);
+    const newInputOptionLabel = renderOption(newInputOption as T);
 
-    if (renderedValue === renderedNewInputOption) {
+    if (newInputOptionLabel in optionsByLabel.value) {
+        update(optionsByLabel.value[newInputOptionLabel] as AcceptableValue);
+
         return;
     }
 
