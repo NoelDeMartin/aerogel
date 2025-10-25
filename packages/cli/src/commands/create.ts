@@ -11,6 +11,7 @@ export interface Options {
     name?: string;
     local?: boolean;
     copy?: boolean;
+    next?: boolean;
 }
 
 export class CreateCommand extends Command {
@@ -23,6 +24,10 @@ export class CreateCommand extends Command {
         local: {
             type: 'boolean',
             description: 'Whether to create an app using local Aerogel packages (used for core development)',
+        },
+        next: {
+            type: 'boolean',
+            description: 'Whether to use the bleeding edge version for dependencies',
         },
         copy: {
             type: 'boolean',
@@ -65,6 +70,7 @@ export class CreateCommand extends Command {
         Log.info(`Creating **${name}**...`);
 
         const app = new App(name, {
+            next: this.options.next,
             local: this.options.local,
             linkedLocal: this.options.local && !this.options.copy,
         });

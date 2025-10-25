@@ -8,6 +8,7 @@ import { Editor } from '@aerogel/cli/lib/Editor';
 import { simpleGit } from 'simple-git';
 
 export interface Options {
+    next?: boolean;
     local?: boolean;
     linkedLocal?: boolean;
 }
@@ -61,36 +62,58 @@ export default class App {
                 {} as T,
             );
 
+        const dependencies: Record<string, string> = {};
+
+        if (this.options.next) {
+            dependencies['@aerogel/cli'] = 'next';
+            dependencies['@aerogel/core'] = 'next';
+            dependencies['@aerogel/cypress'] = 'next';
+            dependencies['@aerogel/plugin-i18n'] = 'next';
+            dependencies['@aerogel/plugin-local-first'] = 'next';
+            dependencies['@aerogel/plugin-routing'] = 'next';
+            dependencies['@aerogel/plugin-solid'] = 'next';
+            dependencies['@aerogel/plugin-soukai'] = 'next';
+            dependencies['@aerogel/vite'] = 'next';
+            dependencies['@noeldemartin/solid-utils'] = 'next';
+            dependencies['@noeldemartin/utils'] = 'next';
+            dependencies['soukai-solid'] = 'next';
+            dependencies['soukai'] = 'next';
+        }
+
         if (this.options.linkedLocal) {
-            return withFilePrefix({
-                '@aerogel/cli': packagePath('cli'),
-                '@aerogel/core': packagePath('core'),
-                '@aerogel/cypress': packagePath('cypress'),
-                '@aerogel/plugin-i18n': packagePath('plugin-i18n'),
-                '@aerogel/plugin-routing': packagePath('plugin-routing'),
-                '@aerogel/plugin-soukai': packagePath('plugin-soukai'),
-                '@aerogel/plugin-solid': packagePath('plugin-solid'),
-                '@aerogel/plugin-local-first': packagePath('plugin-local-first'),
-                '@aerogel/vite': packagePath('vite'),
-            });
+            Object.assign(
+                dependencies,
+                withFilePrefix({
+                    '@aerogel/cli': packagePath('cli'),
+                    '@aerogel/core': packagePath('core'),
+                    '@aerogel/cypress': packagePath('cypress'),
+                    '@aerogel/plugin-i18n': packagePath('plugin-i18n'),
+                    '@aerogel/plugin-routing': packagePath('plugin-routing'),
+                    '@aerogel/plugin-soukai': packagePath('plugin-soukai'),
+                    '@aerogel/plugin-solid': packagePath('plugin-solid'),
+                    '@aerogel/plugin-local-first': packagePath('plugin-local-first'),
+                    '@aerogel/vite': packagePath('vite'),
+                }),
+            );
+        } else if (this.options.local) {
+            Object.assign(
+                dependencies,
+                withFilePrefix({
+                    '@aerogel/cli': packagePackPath('cli') ?? packNotFound('cli'),
+                    '@aerogel/core': packagePackPath('core') ?? packNotFound('core'),
+                    '@aerogel/cypress': packagePackPath('cypress') ?? packNotFound('cypress'),
+                    '@aerogel/plugin-i18n': packagePackPath('plugin-i18n') ?? packNotFound('plugin-i18n'),
+                    '@aerogel/plugin-routing': packagePackPath('plugin-routing') ?? packNotFound('plugin-routing'),
+                    '@aerogel/plugin-soukai': packagePackPath('plugin-soukai') ?? packNotFound('plugin-soukai'),
+                    '@aerogel/plugin-solid': packagePackPath('plugin-solid') ?? packNotFound('plugin-solid'),
+                    '@aerogel/plugin-local-first':
+                        packagePackPath('plugin-local-first') ?? packNotFound('plugin-local-first'),
+                    '@aerogel/vite': packagePackPath('vite') ?? packNotFound('vite'),
+                }),
+            );
         }
 
-        if (this.options.local) {
-            return withFilePrefix({
-                '@aerogel/cli': packagePackPath('cli') ?? packNotFound('cli'),
-                '@aerogel/core': packagePackPath('core') ?? packNotFound('core'),
-                '@aerogel/cypress': packagePackPath('cypress') ?? packNotFound('cypress'),
-                '@aerogel/plugin-i18n': packagePackPath('plugin-i18n') ?? packNotFound('plugin-i18n'),
-                '@aerogel/plugin-routing': packagePackPath('plugin-routing') ?? packNotFound('plugin-routing'),
-                '@aerogel/plugin-soukai': packagePackPath('plugin-soukai') ?? packNotFound('plugin-soukai'),
-                '@aerogel/plugin-solid': packagePackPath('plugin-solid') ?? packNotFound('plugin-solid'),
-                '@aerogel/plugin-local-first':
-                    packagePackPath('plugin-local-first') ?? packNotFound('plugin-local-first'),
-                '@aerogel/vite': packagePackPath('vite') ?? packNotFound('vite'),
-            });
-        }
-
-        return {};
+        return dependencies;
     }
 
 }
