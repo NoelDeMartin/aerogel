@@ -33,12 +33,22 @@ jobs:
                   npm pack
                   cd ../../
 
+                  cd packages/plugin-routing
+                  npm run build
+                  npm pack
+                  cd ../../
+
                   cd packages/plugin-soukai
                   npm run build
                   npm pack
                   cd ../../
 
                   cd packages/plugin-solid
+                  npm run build
+                  npm pack
+                  cd ../../
+
+                  cd packages/plugin-local-first
                   npm run build
                   npm pack
                   cd ../../
