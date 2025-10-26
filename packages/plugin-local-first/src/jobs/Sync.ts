@@ -202,7 +202,9 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                 await remoteModel.forceDelete();
                 await this.updateProgress(() => (childStatus.completed = true));
 
-                return;
+                this.syncedModelUrls.add(remoteModel.url ?? remoteModel.getDeletedPrimaryKey());
+
+                continue;
             }
 
             await this.saveModelAndRelated(remoteModel, childStatus);

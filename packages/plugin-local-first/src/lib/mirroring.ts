@@ -1,13 +1,5 @@
 import { bootModels } from 'soukai';
-import {
-    fail,
-    objectWithout,
-    requireUrlParentDirectory,
-    required,
-    tap,
-    urlResolveDirectory,
-    urlRoute,
-} from '@noeldemartin/utils';
+import { fail, requireUrlParentDirectory, required, tap, urlResolveDirectory, urlRoute } from '@noeldemartin/utils';
 import { App } from '@aerogel/core';
 import { getTrackedModels, trackModelsCollection as trackSoukaiModelsCollection } from '@aerogel/plugin-soukai';
 import { Solid } from '@aerogel/plugin-solid';
@@ -130,12 +122,10 @@ export async function updateRemoteModel(localModel: SolidModel): Promise<void> {
     const modelUpdates = Cloud.localModelUpdates[localModel.url] ?? 0;
 
     Cloud.setState({
-        localModelUpdates: localModel.isSoftDeleted()
-            ? objectWithout(Cloud.localModelUpdates, localModel.url)
-            : {
-                ...Cloud.localModelUpdates,
-                [localModel.url]: modelUpdates + 1,
-            },
+        localModelUpdates: {
+            ...Cloud.localModelUpdates,
+            [localModel.url]: localModel.isSoftDeleted() ? 1 : modelUpdates + 1,
+        },
     });
 
     await Cloud.getDocumentsCache().forget(

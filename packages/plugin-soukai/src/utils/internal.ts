@@ -14,7 +14,7 @@ interface TrackedModelData<T extends object = Model> {
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
 
 function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): TrackedModelData<T> {
-    const modelsSet = reactiveSet<T>();
+    const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.id === b.id });
     const modelsArray = computed(() => modelsSet.values());
     const collectionsSet = new Set<string>([modelClass.collection]);
     const data = {
