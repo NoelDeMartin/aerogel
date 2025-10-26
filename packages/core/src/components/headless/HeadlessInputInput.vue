@@ -19,7 +19,7 @@ import { computed, inject, useTemplateRef, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
-import { LOCAL_TIMEZONE_OFFSET } from '@aerogel/core/utils';
+import { getLocalTimezoneOffset } from '@aerogel/core/utils';
 import type FormController from '@aerogel/core/forms/FormController';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type { InputExpose } from '@aerogel/core/components/contracts/Input';
@@ -66,7 +66,10 @@ function getValue(): FormFieldValue | null {
         case 'date':
         case 'time':
         case 'datetime-local':
-            return new Date(Math.round($input.value.valueAsNumber / 60000) * 60000 + LOCAL_TIMEZONE_OFFSET);
+            return new Date(
+                Math.round($input.value.valueAsNumber / 60000) * 60000 +
+                    getLocalTimezoneOffset($input.value.valueAsDate),
+            );
         case 'number':
             return $input.value.valueAsNumber;
         default:
@@ -83,7 +86,7 @@ watchEffect(() => {
     if (['date', 'time', 'datetime-local'].includes(renderedType.value) && value.value instanceof Date) {
         const roundedValue = Math.round(value.value.getTime() / 60000) * 60000;
 
-        $input.value.valueAsNumber = roundedValue - LOCAL_TIMEZONE_OFFSET;
+        $input.value.valueAsNumber = roundedValue - getLocalTimezoneOffset(value.value);
         input.update(new Date(roundedValue));
 
         return;
