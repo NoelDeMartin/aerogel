@@ -1,8 +1,10 @@
+import { isTesting } from '@noeldemartin/utils';
 import type { App as AppInstance } from 'vue';
 
 import App from '@aerogel/core/services/App';
 import { bootServices } from '@aerogel/core/services';
 import { definePlugin } from '@aerogel/core/plugins';
+import { getErrorMessage } from '@aerogel/core/errors/utils';
 
 import Errors from './Errors';
 import settings from './settings';
@@ -16,6 +18,13 @@ export type { ErrorSource, ErrorReport, ErrorReportLog };
 
 const services = { $errors: Errors };
 const frameworkHandler: ErrorHandler = (error) => {
+    if (
+        isTesting('e2e') &&
+        getErrorMessage(error).includes('ResizeObserver loop completed with undelivered notifications.')
+    ) {
+        return true;
+    }
+
     Errors.report(error);
 
     return true;
