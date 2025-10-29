@@ -68,7 +68,7 @@ function getValue(): FormFieldValue | null {
         case 'datetime-local':
             return new Date(
                 Math.round($input.value.valueAsNumber / 60000) * 60000 +
-                    getLocalTimezoneOffset($input.value.valueAsDate),
+                    getLocalTimezoneOffset($input.value.valueAsDate ?? new Date($input.value.valueAsNumber)),
             );
         case 'number':
             return $input.value.valueAsNumber;
@@ -87,7 +87,10 @@ watchEffect(() => {
         const roundedValue = Math.round(value.value.getTime() / 60000) * 60000;
 
         $input.value.valueAsNumber = roundedValue - getLocalTimezoneOffset(value.value);
-        input.update(new Date(roundedValue));
+
+        if (value.value.getTime() !== roundedValue) {
+            input.update(new Date(roundedValue));
+        }
 
         return;
     }
