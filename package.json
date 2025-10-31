@@ -49,7 +49,8 @@
             "@noeldemartin/solid-utils": "^0.6.1",
             "@noeldemartin/utils": "0.7.1-next.5f7bc66cad4aaa2dce4a2314e99d562ff3ab993b",
             "soukai": "0.6.2-next.f876465de24d377349d14c4ce0def484767cc7a3",
-            "soukai-solid": "0.6.2-next.f876465de24d377349d14c4ce0def484767cc7a3"
+            "soukai-solid": "0.6.2-next.f876465de24d377349d14c4ce0def484767cc7a3",
+            "typescript": "^5.8.2"
         }
     },
     "eslintConfig": {
