@@ -7,55 +7,59 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 9
             - uses: actions/setup-node@v4
               with:
                   node-version-file: '.nvmrc'
-            - run: npm ci
+                  cache: 'pnpm'
+            - run: pnpm install --frozen-lockfile
             - name: Build packages
               run: |
                   cd packages/cli
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/vite
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/core
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/plugin-i18n
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/plugin-routing
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/plugin-soukai
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/plugin-solid
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/plugin-local-first
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
 
                   cd packages/cypress
-                  npm run build
-                  npm pack
+                  pnpm run build
+                  pnpm pack
                   cd ../../
             - name: Create app
               run: |
@@ -65,7 +69,7 @@ jobs:
                   cd app
                   npm install -g pnpm@latest-10
                   pnpm install
-            - run: npm run build
+            - run: pnpm run build
               working-directory: app
             - name: Lint
               working-directory: app
@@ -75,11 +79,11 @@ jobs:
                   sed -i '64d' ../package.json
                   sed -i '64d' ../package.json
                   sed -i '64d' ../package.json
-                  npm run lint
-            - run: npm run test:ci
+                  pnpm run lint
+            - run: pnpm run test:ci
               working-directory: app
             - name: Cypress
-              run: npm run cy:test
+              run: pnpm run cy:test
               working-directory: app
             - name: Upload Cypress screenshots
               uses: actions/upload-artifact@v4

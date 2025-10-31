@@ -4,7 +4,7 @@
     "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
         "build": "vite build",
-        "cy:dev": "concurrently --kill-others \"npm run test:serve-app\" \"npm run test:serve-pod\" \"npm run cy:open\"",
+        "cy:dev": "concurrently --kill-others \"pnpm run test:serve-app\" \"pnpm run test:serve-pod\" \"pnpm run cy:open\"",
         "cy:open": "cypress open --config-file ./cypress/cypress.config.ts --e2e --browser chromium",
         "cy:run": "cypress run --config-file ./cypress/cypress.config.ts",
         "cy:test": "start-server-and-test test:serve-app http-get://localhost:5001 test:serve-pod http-get://localhost:3000 cy:run",
