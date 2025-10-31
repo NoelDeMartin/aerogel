@@ -22,7 +22,6 @@ jobs:
                   path: |
                       ~/.cache/**/*
                       packages/*/dist/**
-                      node_modules/**/*
 
     lint:
         runs-on: ubuntu-latest
@@ -42,7 +41,6 @@ jobs:
                   path: |
                       ~/.cache/**/*
                       packages/*/dist/**
-                      node_modules/**/*
             - run: pnpm run lint
 
     unit-tests:
@@ -63,7 +61,6 @@ jobs:
                   path: |
                       ~/.cache/**/*
                       packages/*/dist/**
-                      node_modules/**/*
             - run: pnpm run test:ci
 
     cypress-tests:
@@ -84,7 +81,6 @@ jobs:
                   path: |
                       ~/.cache/**/*
                       packages/*/dist/**
-                      node_modules/**/*
 
             # TODO enable snapshots tests
             # - run: pnpm run cy:test-snapshots:ci
@@ -121,7 +117,6 @@ jobs:
                   path: |
                       ~/.cache/**/*
                       packages/*/dist/**
-                      node_modules/**/*
             - run: pnpm run verify
 
     publish:
@@ -146,7 +141,6 @@ jobs:
                   path: |
                       ~/.cache/**/*
                       packages/*/dist/**
-                      node_modules/**/*
             - name: Publish updated packages
               run: |
                   for package in $(git diff-tree --no-commit-id --name-only -r HEAD | grep "^packages/" | cut -d/ -f2 | sort -u); do
