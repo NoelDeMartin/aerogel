@@ -28,7 +28,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         sourceHash: getSourceHash(),
         description: options.description,
         basePath: '/',
-        baseUrl: options.baseUrl,
+        baseUrl: process.env.AEROGEL_BASE_URL ?? options.baseUrl,
         themeColor: options.themeColor ?? '#ffffff',
         additionalManifestEntries: options.pwa?.additionalManifestEntries ?? [],
     };
