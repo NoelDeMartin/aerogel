@@ -65,11 +65,19 @@ function getValue(): FormFieldValue | null {
             return $input.value.checked;
         case 'date':
         case 'time':
-        case 'datetime-local':
-            return new Date(
+        case 'datetime-local': {
+            const date = new Date(
                 Math.round($input.value.valueAsNumber / 60000) * 60000 +
                     getLocalTimezoneOffset($input.value.valueAsDate ?? new Date($input.value.valueAsNumber)),
             );
+
+            if (isNaN(date.getTime())) {
+                return null;
+            }
+
+            return date;
+        }
+
         case 'number':
             return $input.value.valueAsNumber;
         default:
