@@ -1,5 +1,5 @@
 import { computed, nextTick, reactive, readonly, ref } from 'vue';
-import { MagicObject, arrayRemove, fail, toString } from '@noeldemartin/utils';
+import { MagicObject, arrayRemove, fail } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 
 import { validate, validateType } from './validation';
@@ -91,17 +91,13 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
     }
 
     public setFieldValue<T extends keyof Fields>(field: T, value: FormData<Fields>[T]): void {
-        const definition =
-            this._fields[field] ?? fail<FormFieldDefinition>(`Trying to set undefined '${toString(field)}' field`);
+        this._data[field] = value;
 
-        this._data[field] =
-            definition.type === 'string' && (definition.trim ?? true)
-                ? (toString(value).trim() as FormData<Fields>[T])
-                : value;
-
-        if (this._submitted.value) {
-            this.validate();
+        if (!this._submitted.value) {
+            return;
         }
+
+        this.validate();
     }
 
     public getFieldValue<T extends keyof Fields>(field: T): GetFormFieldValue<Fields[T]['type']> {
@@ -148,6 +144,16 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
 
     public submit(): boolean {
         this._submitted.value = true;
+
+        for (const [field, value] of Object.entries(this._data)) {
+            const definition = this._fields[field] ?? fail<FormFieldDefinition>();
+
+            if (typeof value !== 'string' || !(definition.trim ?? true)) {
+                continue;
+            }
+
+            this._data[field as keyof Fields] = value.trim() as FormData<Fields>[string];
+        }
 
         const valid = this.validate();
 
