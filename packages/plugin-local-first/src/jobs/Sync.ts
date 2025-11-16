@@ -111,10 +111,10 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
             await this.indexLocalModels(this.rootLocalModels);
             await this.pullChanges();
             await this.pushChanges();
-
+        } finally {
             engine.clearCache();
             engine.setConfig({ cachesDocuments: false, persistentCache: undefined });
-        } finally {
+
             this.releaseScreen();
             clearListener();
         }
@@ -365,6 +365,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
                     throw error;
                 }
 
+                // TODO this is causing some pretty nasty bugs!!
                 await engine.create(requireUrlParentDirectory(document.url), {}, document.url);
             }
         }
