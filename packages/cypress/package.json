@@ -41,7 +41,8 @@
         "idb": "^8.0.2"
     },
     "devDependencies": {
-        "@aerogel/plugin-soukai": "*"
+        "@aerogel/plugin-soukai": "*",
+        "prettier-eslint-cli": "^8.0.1"
     },
     "eslintConfig": {
         "extends": [

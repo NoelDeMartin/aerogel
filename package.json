@@ -42,6 +42,7 @@
         "@types/mustache": "^4.2.2",
         "@vue/tsconfig": "^0.7.0",
         "cypress": "14.2.0",
+        "prettier-eslint-cli": "^8.0.1",
         "prettier-plugin-tailwindcss": "^0.6.11",
         "soukai": "0.6.2-next.ae03946d68c232d6903d05b04f4251f56f3c2500",
         "soukai-solid": "0.6.2-next.f876465de24d377349d14c4ce0def484767cc7a3",
