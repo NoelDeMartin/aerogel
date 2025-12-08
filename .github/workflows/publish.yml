@@ -42,5 +42,3 @@ jobs:
                     fi
                     cd ../..
                   done
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -2,6 +2,9 @@ name: CI
 
 on: [push, pull_request]
 
+permissions:
+    id-token: write
+
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -144,5 +147,3 @@ jobs:
                     npx noeldemartin-publish-package
                     cd ../..
                   done
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
