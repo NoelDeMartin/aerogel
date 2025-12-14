@@ -29,8 +29,8 @@
         "vue": "^3.5.0"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.1-next.5f7bc66cad4aaa2dce4a2314e99d562ff3ab993b",
-        "@noeldemartin/vue-modals": "0.0.0-next.124c6a1c5e8a2cef4ec43d6a01de0fc450f155b1",
+        "@noeldemartin/utils": "0.7.3",
+        "@noeldemartin/vue-modals": "0.1.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "dompurify": "^3.2.4",

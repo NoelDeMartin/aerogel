@@ -26,7 +26,7 @@
         "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.1-next.5f7bc66cad4aaa2dce4a2314e99d562ff3ab993b"
+        "@noeldemartin/utils": "0.7.3"
     },
     "devDependencies": {
         "@aerogel/core": "*",

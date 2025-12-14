@@ -27,7 +27,7 @@
         "verify": "noeldemartin-verify"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.1-next.5f7bc66cad4aaa2dce4a2314e99d562ff3ab993b",
+        "@noeldemartin/utils": "0.7.3",
         "@tailwindcss/vite": "^4.1.4",
         "@vitejs/plugin-vue": "^5.2.3",
         "image-size": "^2.0.2",
