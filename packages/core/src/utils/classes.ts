@@ -4,10 +4,9 @@ import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import type { ClassValue } from 'clsx';
 import type { PropType } from 'vue';
-import type { GetClosureArgs, GetClosureResult } from '@noeldemartin/utils';
 
-export type CVAConfig<T> = NonNullable<GetClosureArgs<typeof cva<T>>[1]>;
-export type CVAProps<T> = NonNullable<GetClosureArgs<GetClosureResult<typeof cva<T>>>[0]>;
+export type CVAConfig<T> = NonNullable<Parameters<typeof cva<T>>[1]>;
+export type CVAProps<T> = NonNullable<Parameters<ReturnType<typeof cva<T>>>[0]>;
 export type Variants<T extends Record<string, string | boolean>> = Required<{
     [K in keyof T]: Exclude<T[K], undefined> extends string
         ? { [key in Exclude<T[K], undefined>]: string | null }

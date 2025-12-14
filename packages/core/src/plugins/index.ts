@@ -1,5 +1,3 @@
-import type { GetClosureArgs } from '@noeldemartin/utils';
-
 import App from '@aerogel/core/services/App';
 
 import type { Plugin } from './Plugin';
@@ -10,7 +8,7 @@ export function definePlugin<T extends Plugin>(plugin: T): T {
     return plugin;
 }
 
-export async function installPlugins(plugins: Plugin[], ...args: GetClosureArgs<Plugin['install']>): Promise<void> {
+export async function installPlugins(plugins: Plugin[], ...args: Parameters<Plugin['install']>): Promise<void> {
     App.setState(
         'plugins',
         plugins.reduce(

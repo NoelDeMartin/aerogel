@@ -1,5 +1,4 @@
 import { isTesting } from '@noeldemartin/utils';
-import type { GetClosureArgs } from '@noeldemartin/utils';
 
 import Events from '@aerogel/core/services/Events';
 import { App } from '@aerogel/core/services';
@@ -18,7 +17,7 @@ export default definePlugin({
         }
 
         globalThis.testingRuntime = {
-            on: ((...args: GetClosureArgs<(typeof Events)['on']>) => Events.on(...args)) as (typeof Events)['on'],
+            on: ((...args: Parameters<(typeof Events)['on']>) => Events.on(...args)) as (typeof Events)['on'],
             service: (name) => App.service(name),
         };
     },

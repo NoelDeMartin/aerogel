@@ -283,7 +283,8 @@ export class UIService extends Service {
     ): Promise<GetModalResponse<T>>;
 
     public modal<T extends Component>(component: T, componentProps?: GetModalProps<T>): Promise<GetModalResponse<T>> {
-        return showModal(component, componentProps ?? {});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return showModal(component as any, componentProps ?? {}) as Promise<GetModalResponse<T>>;
     }
 
     public async closeAllModals(): Promise<void> {

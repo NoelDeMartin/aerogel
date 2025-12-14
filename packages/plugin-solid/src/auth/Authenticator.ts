@@ -1,6 +1,6 @@
 import { PromisedValue, arr, fail } from '@noeldemartin/utils';
 import { SolidEngine } from 'soukai-solid';
-import type { Closure, FluentArray, GetClosureArgs } from '@noeldemartin/utils';
+import type { Closure, FluentArray } from '@noeldemartin/utils';
 import type { Engine } from 'soukai';
 import type { Fetch } from 'soukai-solid';
 import type { SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -12,7 +12,7 @@ type ListenerEvent = keyof AuthenticatorListener;
 type ListenerEventPayload<
     Event extends ListenerEvent,
     Callback = AuthenticatorListener[Event],
-> = Callback extends Closure ? GetClosureArgs<Callback> : never;
+> = Callback extends Closure ? Parameters<Callback> : never;
 
 export interface AuthSession {
     user: SolidUserProfile;
