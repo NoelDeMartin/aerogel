@@ -177,59 +177,61 @@ export class SolidService extends Service {
     public async logout(force: boolean = false): Promise<void> {
         const isCloudReady = !App.plugin('@aerogel/local-first') || !!App.service('$cloud')?.ready;
         const hasLocalChanges = !!App.plugin('@aerogel/local-first') && !!App.service('$cloud')?.dirty;
-        const [confirmLogout, options] = force
-            ? [true, { wipeLocalData: isCloudReady }]
-            : await UI.confirm(
-                isCloudReady
-                    ? translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?')
-                    : translateWithDefault('solid.disconnectConfirmTitle', 'Disconnect account?'),
-                isCloudReady
-                    ? hasLocalChanges
-                        ? translateWithDefault(
-                            'solid.logoutConfirmMessageWithLocalChanges',
-                            'There are some changes that haven\'t been synchronized and will be lost, ' +
-                                    'but the rest of the data will remain in your Solid POD.',
-                        )
-                        : translateWithDefault(
-                            'solid.logoutConfirmMessage',
-                            'Logging out will remove all the data from this device, ' +
-                                    'but you\'ll still have it in your Solid POD.',
-                        )
-                    : translateWithDefault(
-                        'solid.disconnectConfirmMessage',
-                        'You\'ll need to introduce your credentials again to connect to your Solid POD.',
-                    ),
-                {
-                    acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
-                    acceptVariant: 'danger',
-                    cancelText: translateWithDefault(
-                        'solid.logoutConfirmCancel',
-                        translateWithDefault('ui.cancel', 'Cancel'),
-                    ),
-                    checkboxes: isCloudReady
+        const [confirmLogout, options] = !App.plugin('@aerogel/local-first')
+            ? [true, { wipeLocalData: false }]
+            : force
+                ? [true, { wipeLocalData: isCloudReady }]
+                : await UI.confirm(
+                    isCloudReady
+                        ? translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?')
+                        : translateWithDefault('solid.disconnectConfirmTitle', 'Disconnect account?'),
+                    isCloudReady
                         ? hasLocalChanges
-                            ? {
+                            ? translateWithDefault(
+                                'solid.logoutConfirmMessageWithLocalChanges',
+                                'There are some changes that haven\'t been synchronized and will be lost, ' +
+                                      'but the rest of the data will remain in your Solid POD.',
+                            )
+                            : translateWithDefault(
+                                'solid.logoutConfirmMessage',
+                                'Logging out will remove all the data from this device, ' +
+                                      'but you\'ll still have it in your Solid POD.',
+                            )
+                        : translateWithDefault(
+                            'solid.disconnectConfirmMessage',
+                            'You\'ll need to introduce your credentials again to connect to your Solid POD.',
+                        ),
+                    {
+                        acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
+                        acceptVariant: 'danger',
+                        cancelText: translateWithDefault(
+                            'solid.logoutConfirmCancel',
+                            translateWithDefault('ui.cancel', 'Cancel'),
+                        ),
+                        checkboxes: isCloudReady
+                            ? hasLocalChanges
+                                ? {
+                                    wipeLocalData: {
+                                        label: translateWithDefault(
+                                            'solid.logoutConfirmWipeNotice',
+                                            'I understand that changes that haven\'t been synchronized will be lost.',
+                                        ),
+                                        default: false,
+                                        required: true,
+                                    },
+                                }
+                                : undefined
+                            : {
                                 wipeLocalData: {
                                     label: translateWithDefault(
-                                        'solid.logoutConfirmWipeNotice',
-                                        'I understand that changes that haven\'t been synchronized will be lost.',
+                                        'solid.logoutConfirmWipe',
+                                        'Also remove all existing data',
                                     ),
                                     default: false,
-                                    required: true,
                                 },
-                            }
-                            : undefined
-                        : {
-                            wipeLocalData: {
-                                label: translateWithDefault(
-                                    'solid.logoutConfirmWipe',
-                                    'Also remove all existing data',
-                                ),
-                                default: false,
                             },
-                        },
-                },
-            );
+                    },
+                );
 
         if (!confirmLogout) {
             return;
