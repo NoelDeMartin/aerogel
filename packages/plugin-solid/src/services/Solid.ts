@@ -176,7 +176,7 @@ export class SolidService extends Service {
 
     public async logout(force: boolean = false): Promise<void> {
         const isCloudReady = !App.plugin('@aerogel/local-first') || !!App.service('$cloud')?.ready;
-        const hasLocalChanges = !App.plugin('@aerogel/local-first') || !!App.service('$cloud')?.dirty;
+        const hasLocalChanges = !!App.plugin('@aerogel/local-first') && !!App.service('$cloud')?.dirty;
         const [confirmLogout, options] = force
             ? [true, { wipeLocalData: isCloudReady }]
             : await UI.confirm(
