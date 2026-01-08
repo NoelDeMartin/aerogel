@@ -13,7 +13,7 @@ export function basePath(path: string = ''): string {
     if (
         File.contains(
             fileURLToPath(new URL(/* @vite-ignore */ '../../../package.json', import.meta.url)),
-            '"packages/create-aerogel"',
+            '"name": "aerogel"',
         )
     ) {
         return resolve(fileURLToPath(new URL(/* @vite-ignore */ '../', import.meta.url)), path);

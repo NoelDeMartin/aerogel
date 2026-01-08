@@ -1,5 +1,5 @@
 import { setupSolidNodeEvents } from 'cypress-solid/config';
-import { addMatchImageSnapshotPlugin } from '@simonsmith/cypress-image-snapshot/plugin';
+import { addMatchImageSnapshotPlugin } from '@simonsmith/cypress-image-snapshot/plugin.js';
 import type { CypressSolidConfig } from 'cypress-solid';
 
 export function setupAerogelNodeEvents(

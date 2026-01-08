@@ -29,7 +29,7 @@ export default defineConfig({
             external: [
                 '@noeldemartin/utils',
                 '@simonsmith/cypress-image-snapshot/command.js',
-                '@simonsmith/cypress-image-snapshot/plugin',
+                '@simonsmith/cypress-image-snapshot/plugin.js',
                 'cypress-solid',
                 'cypress-solid/config',
                 'idb',
