@@ -26,13 +26,17 @@
         "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.3"
+        "@noeldemartin/utils": "catalog:"
     },
     "devDependencies": {
-        "@aerogel/core": "*",
-        "@aerogel/plugin-local-first": "0.0.0-next.4acd5ba45cff8f2ad835a2f7ed8132dcb161865e",
-        "@aerogel/plugin-solid": "0.0.1-next.4acd5ba45cff8f2ad835a2f7ed8132dcb161865e",
-        "@aerogel/vite": "*"
+        "@aerogel/core": "workspace:*",
+        "@aerogel/plugin-local-first": "workspace:*",
+        "@aerogel/plugin-solid": "workspace:*",
+        "@aerogel/vite": "workspace:*",
+        "@arethetypeswrong/cli": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "eslint": "catalog:",
+        "publint": "catalog:"
     },
     "eslintConfig": {
         "extends": [

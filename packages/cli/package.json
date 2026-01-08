@@ -26,12 +26,18 @@
         "verify": "noeldemartin-verify"
     },
     "dependencies": {
-        "@noeldemartin/utils": "0.7.3",
+        "@noeldemartin/utils": "catalog:",
         "chalk": "^5.4.1",
         "commander": "^11.0.0",
         "mustache": "^4.2.0",
         "simple-git": "^3.27.0",
         "ts-morph": "^20.0.0"
+    },
+    "devDependencies": {
+        "@arethetypeswrong/cli": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "eslint": "catalog:",
+        "publint": "catalog:"
     },
     "eslintConfig": {
         "extends": [

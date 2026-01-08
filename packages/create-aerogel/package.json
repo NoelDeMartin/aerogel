@@ -12,6 +12,6 @@
     "author": "Noel De Martin",
     "repository": "github:NoelDeMartin/aerogel",
     "dependencies": {
-        "@aerogel/cli": "^0.1.1"
+        "@aerogel/cli": "workspace:*"
     }
 }
