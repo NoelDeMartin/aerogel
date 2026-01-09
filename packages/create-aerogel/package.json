@@ -13,5 +13,8 @@
     "repository": "github:NoelDeMartin/aerogel",
     "dependencies": {
         "@aerogel/cli": "workspace:*"
+    },
+    "devDependencies": {
+        "@noeldemartin/scripts": "catalog:"
     }
 }
