@@ -69,11 +69,11 @@ jobs:
             - name: Lint
               working-directory: app
               run: |
-                  sed -i '47d' ../package.json
-                  sed -i '47d' ../package.json
-                  sed -i '47d' ../package.json
-                  sed -i '47d' ../package.json
-                  sed -i '47d' ../package.json
+                  sed -i '49d' ../package.json
+                  sed -i '49d' ../package.json
+                  sed -i '49d' ../package.json
+                  sed -i '49d' ../package.json
+                  sed -i '49d' ../package.json
                   pnpm lint
             - run: pnpm test:ci
               working-directory: app
