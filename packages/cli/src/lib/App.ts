@@ -1,11 +1,12 @@
 import { resolve } from 'node:path';
+import { simpleGit } from 'simple-git';
+import { stringToSlug } from '@noeldemartin/utils';
 
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Template from '@aerogel/cli/lib/Template';
 import { packNotFound, packagePackPath, packagePath, templatePath } from '@aerogel/cli/lib/utils/paths';
 import { Editor } from '@aerogel/cli/lib/Editor';
-import { simpleGit } from 'simple-git';
 
 export interface Options {
     next?: boolean;
@@ -41,6 +42,7 @@ export default class App {
             `Aerogel({ name: '${this.name}' })`,
         );
 
+        File.replace(resolve(path, 'vite.config.ts'), 'hello-aerogel', `${stringToSlug(this.name)}`);
         File.replace(resolve(path, 'src/lang/en.yaml'), 'title: \'App\'', `title: '${this.name}'`);
 
         for (const [name, version] of Object.entries(dependencies)) {
