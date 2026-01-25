@@ -1,8 +1,8 @@
 <template>
     <div class="grid grow place-items-center">
         <div class="flex flex-col items-center p-8">
-            <i-majesticons-exclamation class="size-20 text-red-600" />
-            <h1 class="mt-0 mb-0 text-center text-4xl font-medium text-red-600">
+            <IconExclamationSolid class="size-20 text-red-600" />
+            <h1 class="mb-0 mt-0 text-center text-4xl font-medium text-red-600">
                 {{ $td('startupCrash.title', 'Oops, something went wrong!') }}
             </h1>
             <Markdown
@@ -41,6 +41,7 @@
 <script setup lang="ts">
 import IconBug from '~icons/material-symbols/bug-report';
 import IconDelete from '~icons/material-symbols/delete-forever-rounded';
+import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
 import IconFrameInspect from '~icons/material-symbols/frame-inspect';
 import IconRefresh from '~icons/material-symbols/refresh-rounded';
 
