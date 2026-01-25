@@ -31,4 +31,7 @@ export default defineConfig({
             '@aerogel/plugin-soukai': fileURLToPath(new URL('./src/', import.meta.url)),
         },
     },
+    test: {
+        setupFiles: ['./src/testing/setup.ts'],
+    },
 });

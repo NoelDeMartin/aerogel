@@ -23,11 +23,11 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
-        "soukai": "*",
-        "soukai-bis": "*"
+        "soukai": "*"
     },
     "dependencies": {
-        "@noeldemartin/utils": "catalog:"
+        "@noeldemartin/utils": "catalog:",
+        "soukai-bis": "catalog:"
     },
     "devDependencies": {
         "@aerogel/core": "workspace:*",
