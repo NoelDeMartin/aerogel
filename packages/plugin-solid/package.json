@@ -27,6 +27,7 @@
         "@aerogel/plugin-soukai": "*",
         "@aerogel/vite": "*",
         "soukai": "*",
+        "soukai-bis": "*",
         "soukai-solid": "*"
     },
     "dependencies": {
@@ -45,6 +46,7 @@
         "eslint": "catalog:",
         "publint": "catalog:",
         "soukai": "catalog:",
+        "soukai-bis": "catalog:",
         "soukai-solid": "catalog:"
     },
     "eslintConfig": {

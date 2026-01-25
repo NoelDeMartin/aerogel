@@ -1,3 +1,5 @@
+import Aerogel from 'virtual:aerogel';
+
 import {
     after,
     arrayFilter,
@@ -22,8 +24,10 @@ import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { getBootedModels, setEngine } from 'soukai';
 import { SolidContainer, SolidTypeIndex, coreModels, isSolidModel } from 'soukai-solid';
+import { SolidEngine, TypeIndex, TypeRegistration, setEngine as setBisEngine } from 'soukai-bis';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
+import type { Container, ContainerConstructor, GetModelAttributes, ModelConstructor } from 'soukai-bis';
 import type { NullablePartial } from '@noeldemartin/utils';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
@@ -277,6 +281,28 @@ export class SolidService extends Service {
         this.setState({ dismissed: true });
     }
 
+    public async findRegisteredContainer<T extends Container = Container>(
+        modelClass: ModelConstructor,
+        containerClass?: ContainerConstructor<T>,
+    ): Promise<T | null> {
+        const typeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
+        const bisTypeIndexes = arrayFilter(typeIndexes).map((typeIndex) => {
+            const bisTypeIndex = new TypeIndex(typeIndex.getAttributes() as GetModelAttributes<TypeIndex>);
+
+            bisTypeIndex.relatedRegistrations.related = typeIndex.registrations.map((registration) => {
+                return new TypeRegistration(registration.getAttributes() as GetModelAttributes<TypeRegistration>);
+            });
+
+            return bisTypeIndex;
+        });
+
+        const containers = await Promise.all(
+            bisTypeIndexes.map((typeIndex) => typeIndex?.findContainer(modelClass, containerClass)),
+        );
+
+        return containers.find((model) => !!model) ?? null;
+    }
+
     public async findOrCreatePrivateTypeIndex(): Promise<SolidTypeIndex> {
         return (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex());
     }
@@ -509,7 +535,11 @@ export class SolidService extends Service {
                     await this.refreshUserProfile();
                 }
 
-                App.plugin('@aerogel/local-first') || setEngine(session.authenticator.engine);
+                if (Aerogel.soukaiBis) {
+                    setBisEngine(new SolidEngine((...args: [RequestInfo]) => this.fetch(...args)));
+                } else {
+                    App.plugin('@aerogel/local-first') || setEngine(session.authenticator.engine);
+                }
 
                 coreModels.forEach((model) => model.setEngine(session.authenticator.engine));
 

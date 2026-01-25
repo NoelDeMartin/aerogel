@@ -1,3 +1,6 @@
+import Aerogel from 'virtual:aerogel';
+
+import { bootModelsFromViteGlob as bootBisModelsFromViteGlob, bootCoreModels } from 'soukai-bis';
 import { IndexedDBEngine, bootModelsFromViteGlob, setEngine } from 'soukai';
 
 import { Events, appNamespace } from '@aerogel/core';
@@ -27,7 +30,13 @@ export default function soukai(options: Options): Plugin {
 
             setupTestingRuntime();
             setEngine(engine);
-            bootModelsFromViteGlob(options.models);
+
+            if (Aerogel.soukaiBis) {
+                bootCoreModels();
+                bootBisModelsFromViteGlob(options.models);
+            } else {
+                bootModelsFromViteGlob(options.models);
+            }
 
             Events.on('purge-storage', () => engine.purgeDatabase());
         },

@@ -23,7 +23,8 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
-        "soukai": "*"
+        "soukai": "*",
+        "soukai-bis": "*"
     },
     "dependencies": {
         "@noeldemartin/utils": "catalog:"
@@ -36,7 +37,9 @@
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "eslint": "catalog:",
-        "publint": "catalog:"
+        "publint": "catalog:",
+        "soukai": "catalog:",
+        "soukai-bis": "catalog:"
     },
     "eslintConfig": {
         "extends": [

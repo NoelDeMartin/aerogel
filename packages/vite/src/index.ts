@@ -41,6 +41,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 basePath: app.basePath,
                 sourceUrl: app.sourceUrl,
                 locales: app.locales ?? { en: 'English' },
+                soukaiBis: options.soukaiBis ?? false,
             };
 
             return `export default ${JSON.stringify(virtual)};`;
@@ -73,6 +74,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             app.basePath = config.base ?? app.basePath;
             config.optimizeDeps = config.optimizeDeps ?? {};
             config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), ...Object.keys(virtualHandlers)];
+            config.optimizeDeps.include = [...(config.optimizeDeps.include ?? []), 'soukai-bis/patch-zod'];
 
             config.define = {
                 ...(config.define ?? {}),
@@ -85,11 +87,38 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             generate404Assets(this, app, options);
             generateSolidAssets(this, app, options);
         },
-        load: (id) => virtualHandlers[id]?.(),
-        resolveId: (id) => (id in virtualHandlers ? id : undefined),
+        load(id) {
+            if (id in virtualHandlers) {
+                return virtualHandlers[id]?.();
+            }
+
+            if (id === 'virtual:soukai-bis/patch-zod') {
+                return 'import \'soukai-bis/patch-zod\';';
+            }
+        },
+        resolveId(id) {
+            if (id in virtualHandlers) {
+                return id;
+            }
+
+            if (id.startsWith('/_virtual/')) {
+                return `virtual:${id.slice(10)}`;
+            }
+        },
         transformIndexHtml: {
             order: 'pre',
-            handler: (html, context) => renderHTML(html, context.filename, app),
+            handler: (html, context) => ({
+                html: renderHTML(html, context.filename, app),
+                tags: options.soukaiBis
+                    ? [
+                        {
+                            tag: 'script',
+                            attrs: { type: 'module', src: '/_virtual/soukai-bis/patch-zod' },
+                            injectTo: 'head-prepend',
+                        },
+                    ]
+                    : [],
+            }),
         },
     };
 

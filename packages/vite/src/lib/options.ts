@@ -9,6 +9,7 @@ export interface Options {
     themeColor?: string;
     icons?: Record<string, string> | IconResource[];
     baseUrl?: string;
+    soukaiBis?: boolean;
     static404Redirect?: boolean | string;
     solidClientId?: boolean | ClientIDDocument;
     pwa?: {

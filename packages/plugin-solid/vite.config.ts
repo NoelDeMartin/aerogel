@@ -22,6 +22,7 @@ export default defineConfig({
                 '@noeldemartin/solid-utils',
                 '@noeldemartin/utils',
                 'solid-auth-client',
+                'soukai-bis',
                 'soukai-solid',
                 'soukai',
                 'virtual:aerogel-solid',
