@@ -13,8 +13,8 @@ catalogs:
       specifier: next
       version: 0.4.0-next.2da6eab8f3c6dbb77ce708fac551334bddd474db
     '@noeldemartin/solid-utils':
-      specifier: 0.6.1
-      version: 0.6.1
+      specifier: next
+      version: 0.6.1-next.ec7d2bb0dd35f1caf9b7522043ad5ae5fd4dfb33
     '@types/node':
       specifier: ^24.10.4
       version: 24.10.4
@@ -30,18 +30,17 @@ catalogs:
     publint:
       specifier: ^0.3.12
       version: 0.3.16
-    soukai:
-      specifier: 0.7.1
-      version: 0.7.1
     soukai-bis:
       specifier: next
       version: 0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77
-    soukai-solid:
-      specifier: 0.7.1
-      version: 0.7.1
+    vue:
+      specifier: ^3.5.0
+      version: 3.5.27
 
 overrides:
-  '@noeldemartin/utils': 0.7.3
+  '@noeldemartin/utils': next
+  soukai: next
+  soukai-solid: next
 
 importers:
 
@@ -72,8 +71,8 @@ importers:
         specifier: 0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19
         version: 0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.4(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@total-typescript/ts-reset':
         specifier: ^0.4.2
         version: 0.4.2
@@ -105,11 +104,11 @@ importers:
         specifier: ^0.6.11
         version: 0.6.14(prettier@3.8.1)
       soukai:
-        specifier: 'catalog:'
-        version: 0.7.1
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
       soukai-solid:
-        specifier: 'catalog:'
-        version: 0.7.1(soukai@0.7.1)(web-streams-polyfill@3.3.3)
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3)
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
@@ -132,7 +131,7 @@ importers:
         specifier: ^3.0.9
         version: 3.2.4(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2)
       vue:
-        specifier: ^3.5.13
+        specifier: 'catalog:'
         version: 3.5.27(typescript@5.9.3)
       vue-i18n:
         specifier: ^11.1.2
@@ -147,8 +146,8 @@ importers:
   packages/cli:
     dependencies:
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       chalk:
         specifier: ^5.4.1
         version: 5.6.2
@@ -181,11 +180,11 @@ importers:
   packages/core:
     dependencies:
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@noeldemartin/vue-modals':
         specifier: 0.1.1
-        version: 0.1.1(vue@3.5.26(typescript@5.9.3))
+        version: 0.1.1(vue@3.5.27(typescript@5.9.3))
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.11(tailwindcss@4.1.18)
@@ -212,10 +211,10 @@ importers:
         version: 15.0.12
       pinia:
         specifier: ^2.1.6
-        version: 2.3.1(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
+        version: 2.3.1(typescript@5.9.3)(vue@3.5.27(typescript@5.9.3))
       reka-ui:
         specifier: ^2.2.0
-        version: 2.7.0(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
+        version: 2.7.0(typescript@5.9.3)(vue@3.5.27(typescript@5.9.3))
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.4.0
@@ -223,8 +222,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.18
       vue:
-        specifier: ^3.5.0
-        version: 3.5.26(typescript@5.9.3)
+        specifier: 'catalog:'
+        version: 3.5.27(typescript@5.9.3)
       vue-component-type-helpers:
         specifier: ^2.2.8
         version: 2.2.12
@@ -258,8 +257,8 @@ importers:
   packages/cypress:
     dependencies:
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@simonsmith/cypress-image-snapshot':
         specifier: ^8.1.2
         version: 8.1.2(cypress@14.2.0)
@@ -301,8 +300,8 @@ importers:
   packages/plugin-i18n:
     dependencies:
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -327,13 +326,19 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: 'catalog:'
-        version: 0.6.1(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.ec7d2bb0dd35f1caf9b7522043ad5ae5fd4dfb33(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       idb:
         specifier: 'catalog:'
         version: 8.0.3
+      soukai:
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
+      soukai-solid:
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -365,12 +370,9 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.16
-      soukai:
+      soukai-bis:
         specifier: 'catalog:'
-        version: 0.7.1
-      soukai-solid:
-        specifier: 'catalog:'
-        version: 0.7.1(soukai@0.7.1)(web-streams-polyfill@3.3.3)
+        version: 0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77(web-streams-polyfill@3.3.3)(zod@4.3.6)
 
   packages/plugin-routing:
     dependencies:
@@ -378,8 +380,8 @@ importers:
         specifier: '*'
         version: 0.1.2(@babel/parser@7.28.6)(vite@6.4.1(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))(workbox-build@7.4.0)(workbox-window@7.4.0)
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.27(typescript@5.9.3))
@@ -405,6 +407,9 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.16
+      soukai-bis:
+        specifier: 'catalog:'
+        version: 0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77(web-streams-polyfill@3.3.3)(zod@4.3.6)
 
   packages/plugin-solid:
     dependencies:
@@ -413,13 +418,19 @@ importers:
         version: 3.1.1
       '@noeldemartin/solid-utils':
         specifier: 'catalog:'
-        version: 0.6.1(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.ec7d2bb0dd35f1caf9b7522043ad5ae5fd4dfb33(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       solid-auth-client:
         specifier: 2.4.1
         version: 2.4.1(encoding@0.1.13)
+      soukai:
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
+      soukai-solid:
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -445,21 +456,21 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.16
-      soukai:
-        specifier: 'catalog:'
-        version: 0.7.1
       soukai-bis:
         specifier: 'catalog:'
         version: 0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77(web-streams-polyfill@3.3.3)(zod@4.3.6)
-      soukai-solid:
-        specifier: 'catalog:'
-        version: 0.7.1(soukai@0.7.1)(web-streams-polyfill@3.3.3)
 
   packages/plugin-soukai:
     dependencies:
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
+      soukai:
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
+      soukai-bis:
+        specifier: 'catalog:'
+        version: 0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77(web-streams-polyfill@3.3.3)(zod@4.3.6)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -485,18 +496,12 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.16
-      soukai:
-        specifier: 'catalog:'
-        version: 0.7.1
-      soukai-bis:
-        specifier: 'catalog:'
-        version: 0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77(web-streams-polyfill@3.3.3)(zod@4.3.6)
 
   packages/vite:
     dependencies:
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.1.18(vite@6.4.1(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))
@@ -557,10 +562,10 @@ importers:
         version: link:../packages/plugin-soukai
       '@noeldemartin/solid-utils':
         specifier: 'catalog:'
-        version: 0.6.1(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.ec7d2bb0dd35f1caf9b7522043ad5ae5fd4dfb33(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: next
+        version: 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.11(tailwindcss@4.1.18)
@@ -568,11 +573,14 @@ importers:
         specifier: ^0.5.16
         version: 0.5.19(tailwindcss@4.1.18)
       soukai:
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
+      soukai-bis:
         specifier: 'catalog:'
-        version: 0.7.1
+        version: 0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77(web-streams-polyfill@3.3.3)(zod@4.3.6)
       soukai-solid:
-        specifier: 'catalog:'
-        version: 0.7.1(soukai@0.7.1)(web-streams-polyfill@3.3.3)
+        specifier: next
+        version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.1.18
@@ -2529,8 +2537,8 @@ packages:
     peerDependencies:
       vitest: '*'
 
-  '@noeldemartin/utils@0.7.3':
-    resolution: {integrity: sha512-G/tT8r77H3HxklJl+nRFCflRLyBHAQF27A1kcfhoo1sl6SU3cB1JXBz4w5t21XeUB75O911zA3HyMttXp9d3lg==}
+  '@noeldemartin/utils@0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5':
+    resolution: {integrity: sha512-OgUkBjyIbhFN0V7u3g/BDrU7yC7slST7INdgvfkehvd5DMOGF+FBoLLGH4ARhqOg0CSjvXoVkv3pimSCh1RIEA==}
 
   '@noeldemartin/vue-modals@0.1.1':
     resolution: {integrity: sha512-iQc3AKYRCsOdycAXAyPiy2xrE/kyXoBS3z7zk24Ptziksoxbt8kR8oEtPcR97GAkUibakOW6AqrIJE3LWkMtsg==}
@@ -3691,26 +3699,14 @@ packages:
   '@volar/typescript@2.4.27':
     resolution: {integrity: sha512-eWaYCcl/uAPInSK2Lze6IqVWaBu/itVqR5InXcHXFyles4zO++Mglt3oxdgj75BDcv1Knr9Y93nowS8U3wqhxg==}
 
-  '@vue/compiler-core@3.5.26':
-    resolution: {integrity: sha512-vXyI5GMfuoBCnv5ucIT7jhHKl55Y477yxP6fc4eUswjP8FG3FFVFd41eNDArR+Uk3QKn2Z85NavjaxLxOC19/w==}
-
   '@vue/compiler-core@3.5.27':
     resolution: {integrity: sha512-gnSBQjZA+//qDZen+6a2EdHqJ68Z7uybrMf3SPjEGgG4dicklwDVmMC1AeIHxtLVPT7sn6sH1KOO+tS6gwOUeQ==}
-
-  '@vue/compiler-dom@3.5.26':
-    resolution: {integrity: sha512-y1Tcd3eXs834QjswshSilCBnKGeQjQXB6PqFn/1nxcQw4pmG42G8lwz+FZPAZAby6gZeHSt/8LMPfZ4Rb+Bd/A==}
 
   '@vue/compiler-dom@3.5.27':
     resolution: {integrity: sha512-oAFea8dZgCtVVVTEC7fv3T5CbZW9BxpFzGGxC79xakTr6ooeEqmRuvQydIiDAkglZEAd09LgVf1RoDnL54fu5w==}
 
-  '@vue/compiler-sfc@3.5.26':
-    resolution: {integrity: sha512-egp69qDTSEZcf4bGOSsprUr4xI73wfrY5oRs6GSgXFTiHrWj4Y3X5Ydtip9QMqiCMCPVwLglB9GBxXtTadJ3mA==}
-
   '@vue/compiler-sfc@3.5.27':
     resolution: {integrity: sha512-sHZu9QyDPeDmN/MRoshhggVOWE5WlGFStKFwu8G52swATgSny27hJRWteKDSUUzUH+wp+bmeNbhJnEAel/auUQ==}
-
-  '@vue/compiler-ssr@3.5.26':
-    resolution: {integrity: sha512-lZT9/Y0nSIRUPVvapFJEVDbEXruZh2IYHMk2zTtEgJSlP5gVOqeWXH54xDKAaFS4rTnDeDBQUYDtxKyoW9FwDw==}
 
   '@vue/compiler-ssr@3.5.27':
     resolution: {integrity: sha512-Sj7h+JHt512fV1cTxKlYhg7qxBvack+BGncSpH+8vnN+KN95iPIcqB5rsbblX40XorP+ilO7VIKlkuu3Xq2vjw==}
@@ -3746,36 +3742,19 @@ packages:
       typescript:
         optional: true
 
-  '@vue/reactivity@3.5.26':
-    resolution: {integrity: sha512-9EnYB1/DIiUYYnzlnUBgwU32NNvLp/nhxLXeWRhHUEeWNTn1ECxX8aGO7RTXeX6PPcxe3LLuNBFoJbV4QZ+CFQ==}
-
   '@vue/reactivity@3.5.27':
     resolution: {integrity: sha512-vvorxn2KXfJ0nBEnj4GYshSgsyMNFnIQah/wczXlsNXt+ijhugmW+PpJ2cNPe4V6jpnBcs0MhCODKllWG+nvoQ==}
-
-  '@vue/runtime-core@3.5.26':
-    resolution: {integrity: sha512-xJWM9KH1kd201w5DvMDOwDHYhrdPTrAatn56oB/LRG4plEQeZRQLw0Bpwih9KYoqmzaxF0OKSn6swzYi84e1/Q==}
 
   '@vue/runtime-core@3.5.27':
     resolution: {integrity: sha512-fxVuX/fzgzeMPn/CLQecWeDIFNt3gQVhxM0rW02Tvp/YmZfXQgcTXlakq7IMutuZ/+Ogbn+K0oct9J3JZfyk3A==}
 
-  '@vue/runtime-dom@3.5.26':
-    resolution: {integrity: sha512-XLLd/+4sPC2ZkN/6+V4O4gjJu6kSDbHAChvsyWgm1oGbdSO3efvGYnm25yCjtFm/K7rrSDvSfPDgN1pHgS4VNQ==}
-
   '@vue/runtime-dom@3.5.27':
     resolution: {integrity: sha512-/QnLslQgYqSJ5aUmb5F0z0caZPGHRB8LEAQ1s81vHFM5CBfnun63rxhvE/scVb/j3TbBuoZwkJyiLCkBluMpeg==}
-
-  '@vue/server-renderer@3.5.26':
-    resolution: {integrity: sha512-TYKLXmrwWKSodyVuO1WAubucd+1XlLg4set0YoV+Hu8Lo79mp/YMwWV5mC5FgtsDxX3qo1ONrxFaTP1OQgy1uA==}
-    peerDependencies:
-      vue: 3.5.26
 
   '@vue/server-renderer@3.5.27':
     resolution: {integrity: sha512-qOz/5thjeP1vAFc4+BY3Nr6wxyLhpeQgAE/8dDtKo6a6xdk+L4W46HDZgNmLOBUDEkFXV3G7pRiUqxjX0/2zWA==}
     peerDependencies:
       vue: 3.5.27
-
-  '@vue/shared@3.5.26':
-    resolution: {integrity: sha512-7Z6/y3uFI5PRoKeorTOSXKcDj0MSasfNNltcslbFrPpcw6aXRUALq4IfJlaTRspiWIUOEZbrpM+iQGmCOiWe4A==}
 
   '@vue/shared@3.5.27':
     resolution: {integrity: sha512-dXr/3CgqXsJkZ0n9F3I4elY8wM9jMJpP3pvRG52r6m0tu/MsAFIe6JpXVGeNMd/D9F4hQynWT8Rfuj0bdm9kFQ==}
@@ -4663,10 +4642,6 @@ packages:
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
-    engines: {node: '>=0.12'}
-
-  entities@7.0.0:
-    resolution: {integrity: sha512-FDWG5cmEYf2Z00IkYRhbFrwIwvdFKH07uV8dvNy0omp/Qb1xcyCWp2UDtcwJF4QZZvk0sLudP6/hAu42TaqVhQ==}
     engines: {node: '>=0.12'}
 
   entities@7.0.1:
@@ -6819,21 +6794,13 @@ packages:
     peerDependencies:
       zod: ^4.3.4
 
-  soukai-solid@0.6.2:
-    resolution: {integrity: sha512-NFiGdfQo6wwdo+2gA8y687Va+eAxuQx3+5jFljMrLcYgTRsNeLQ2fQ78tfDRClOk1tiHHWRf4It8Isb9sMzsCg==}
+  soukai-solid@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053:
+    resolution: {integrity: sha512-RqBcYI3vbR6fFuirlAMjdnnjFf3Am/W5wiJWg9g/CdROPH1mtJsWcCwr3/F4KNEWI3shH8o2zRDV0dylQIbEcA==}
     peerDependencies:
       soukai: '*'
 
-  soukai-solid@0.7.1:
-    resolution: {integrity: sha512-CmT/nNtwafMvehWLHNgyuF/rZIg0JdWWFWLtaMjaVqzUL3D+dYbOSYDnyZdlcfLlEb78QvMlSDFqdc1+FHQJbQ==}
-    peerDependencies:
-      soukai: '*'
-
-  soukai@0.6.2:
-    resolution: {integrity: sha512-/SZrDrPfaM3EwOm/bOgdMQZ/F8MnOzD8R40Fr4uFIZT2WATBOC6Vz3L+acMSWKKmMb83N5NLO9/tEavRTiJ9HA==}
-
-  soukai@0.7.1:
-    resolution: {integrity: sha512-39VZEJC8xGTsl6XM8fumlMZh1Hn9T9SKgzcrm6u9LIK2DWSm2eSrSvs7h7RLxhZ28Wpgbhk6kdnOZUOihWPCWQ==}
+  soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053:
+    resolution: {integrity: sha512-vU7HOBoFeMFLTUtqe8GFidYgjg0WXLsHKQq+bmVxOHDJFHGX/v1tSOrXNwYXOg2mCDMT48ua+Lg3HimefQYVsQ==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -7619,14 +7586,6 @@ packages:
     peerDependencies:
       typescript: '>=5.0.0'
 
-  vue@3.5.26:
-    resolution: {integrity: sha512-SJ/NTccVyAoNUJmkM9KUqPcYlY+u8OVL1X5EW9RIs3ch5H2uERxyyIUI4MRxVCSOiEcupX9xNGde1tL9ZKpimA==}
-    peerDependencies:
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   vue@3.5.27:
     resolution: {integrity: sha512-aJ/UtoEyFySPBGarREmN4z6qNKpbEguYHMmXSiOGk69czc+zhs0NF6tEFrY8TZKAl8N/LYAkd4JHVd5E/AsSmw==}
     peerDependencies:
@@ -7851,7 +7810,7 @@ snapshots:
 
   '@aerogel/vite@0.1.2(@babel/parser@7.28.6)(vite@6.4.1(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))(workbox-build@7.4.0)(workbox-window@7.4.0)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@tailwindcss/vite': 4.1.18(vite@6.4.1(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))
       '@vitejs/plugin-vue': 5.2.4(vite@6.4.1(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))
       image-size: 2.0.2
@@ -9074,7 +9033,7 @@ snapshots:
       '@comunica/context-entries': 2.10.0(encoding@0.1.13)
       '@comunica/core': 2.10.0
       '@comunica/types': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       asynciterator: 3.10.0
       rdf-data-factory: 1.1.3
       rdf-string: 1.6.3
@@ -10259,7 +10218,7 @@ snapshots:
 
   '@comunica/bindings-factory@2.10.1':
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       immutable: 4.3.7
       rdf-data-factory: 1.1.3
       rdf-string: 1.6.3
@@ -10335,7 +10294,7 @@ snapshots:
   '@comunica/bus-query-parse@2.10.0':
     dependencies:
       '@comunica/core': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       sparqlalgebrajs: 4.3.8
 
   '@comunica/bus-query-result-serialize@2.10.0':
@@ -10364,7 +10323,7 @@ snapshots:
       '@comunica/mediatortype-join-coefficients': 2.10.0
       '@comunica/metadata': 2.10.0
       '@comunica/types': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       rdf-data-factory: 1.1.3
       rdf-string: 1.6.3
     transitivePeerDependencies:
@@ -10378,12 +10337,12 @@ snapshots:
   '@comunica/bus-rdf-metadata-extract@2.10.0':
     dependencies:
       '@comunica/core': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   '@comunica/bus-rdf-metadata@2.10.0':
     dependencies:
       '@comunica/core': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   '@comunica/bus-rdf-parse-html@2.10.0':
     dependencies:
@@ -10406,13 +10365,13 @@ snapshots:
     dependencies:
       '@comunica/core': 2.10.0
       '@comunica/types': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   '@comunica/bus-rdf-resolve-hypermedia@2.10.0(encoding@0.1.13)':
     dependencies:
       '@comunica/bus-rdf-resolve-quad-pattern': 2.10.0(encoding@0.1.13)
       '@comunica/core': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
     transitivePeerDependencies:
       - encoding
 
@@ -10421,7 +10380,7 @@ snapshots:
       '@comunica/context-entries': 2.10.0(encoding@0.1.13)
       '@comunica/core': 2.10.0
       '@comunica/types': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       asynciterator: 3.10.0
       sparqlalgebrajs: 4.3.8
     transitivePeerDependencies:
@@ -10447,7 +10406,7 @@ snapshots:
       '@comunica/context-entries': 2.10.0(encoding@0.1.13)
       '@comunica/core': 2.10.0
       '@comunica/types': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       asynciterator: 3.10.0
       stream-to-string: 1.2.1
     transitivePeerDependencies:
@@ -10472,11 +10431,11 @@ snapshots:
 
   '@comunica/data-factory@2.7.0':
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   '@comunica/expression-evaluator@2.10.0':
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       '@types/spark-md5': 3.0.5
       '@types/uuid': 9.0.8
       bignumber.js: 9.3.1
@@ -10541,7 +10500,7 @@ snapshots:
   '@comunica/mediatortype-join-coefficients@2.10.0':
     dependencies:
       '@comunica/core': 2.10.0
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   '@comunica/mediatortype-time@2.10.0':
     dependencies:
@@ -10967,11 +10926,11 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@floating-ui/vue@1.1.9(vue@3.5.26(typescript@5.9.3))':
+  '@floating-ui/vue@1.1.9(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@floating-ui/dom': 1.7.4
       '@floating-ui/utils': 0.2.10
-      vue-demi: 0.14.10(vue@3.5.26(typescript@5.9.3))
+      vue-demi: 0.14.10(vue@3.5.27(typescript@5.9.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -11343,7 +11302,7 @@ snapshots:
 
   '@noeldemartin/solid-utils@0.6.1(web-streams-polyfill@3.3.3)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@rdfjs/types': 2.0.1
       jsonld: 8.3.3(web-streams-polyfill@3.3.3)
       md5: 2.3.0
@@ -11353,7 +11312,7 @@ snapshots:
 
   '@noeldemartin/solid-utils@0.6.1-next.ec7d2bb0dd35f1caf9b7522043ad5ae5fd4dfb33(web-streams-polyfill@3.3.3)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@rdfjs/types': 2.0.1
       jsonld: 8.3.3(web-streams-polyfill@3.3.3)
       md5: 2.3.0
@@ -11364,17 +11323,17 @@ snapshots:
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.4(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))':
     dependencies:
       '@noeldemartin/faker': 7.6.0
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       vitest: 3.2.4(@types/node@25.0.10)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2)
 
-  '@noeldemartin/utils@0.7.3':
+  '@noeldemartin/utils@0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5':
     dependencies:
       idb: 8.0.3
 
-  '@noeldemartin/vue-modals@0.1.1(vue@3.5.26(typescript@5.9.3))':
+  '@noeldemartin/vue-modals@0.1.1(vue@3.5.27(typescript@5.9.3))':
     dependencies:
-      '@noeldemartin/utils': 0.7.3
-      vue: 3.5.26(typescript@5.9.3)
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
+      vue: 3.5.27(typescript@5.9.3)
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -11383,7 +11342,7 @@ snapshots:
 
   '@rdfjs/data-model@1.3.4':
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
 
   '@rdfjs/dataset@1.1.1':
     dependencies:
@@ -12202,10 +12161,10 @@ snapshots:
 
   '@tanstack/virtual-core@3.13.13': {}
 
-  '@tanstack/vue-virtual@3.13.13(vue@3.5.26(typescript@5.9.3))':
+  '@tanstack/vue-virtual@3.13.13(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@tanstack/virtual-core': 3.13.13
-      vue: 3.5.26(typescript@5.9.3)
+      vue: 3.5.27(typescript@5.9.3)
 
   '@total-typescript/ts-reset@0.4.2': {}
 
@@ -12451,7 +12410,7 @@ snapshots:
 
   '@types/rdfjs__environment@1.0.0':
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       '@types/node': 24.10.4
 
   '@types/readable-stream@2.3.15':
@@ -12780,14 +12739,6 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  '@vue/compiler-core@3.5.26':
-    dependencies:
-      '@babel/parser': 7.28.6
-      '@vue/shared': 3.5.26
-      entities: 7.0.0
-      estree-walker: 2.0.2
-      source-map-js: 1.2.1
-
   '@vue/compiler-core@3.5.27':
     dependencies:
       '@babel/parser': 7.28.6
@@ -12796,27 +12747,10 @@ snapshots:
       estree-walker: 2.0.2
       source-map-js: 1.2.1
 
-  '@vue/compiler-dom@3.5.26':
-    dependencies:
-      '@vue/compiler-core': 3.5.26
-      '@vue/shared': 3.5.26
-
   '@vue/compiler-dom@3.5.27':
     dependencies:
       '@vue/compiler-core': 3.5.27
       '@vue/shared': 3.5.27
-
-  '@vue/compiler-sfc@3.5.26':
-    dependencies:
-      '@babel/parser': 7.28.5
-      '@vue/compiler-core': 3.5.26
-      '@vue/compiler-dom': 3.5.26
-      '@vue/compiler-ssr': 3.5.26
-      '@vue/shared': 3.5.26
-      estree-walker: 2.0.2
-      magic-string: 0.30.21
-      postcss: 8.5.6
-      source-map-js: 1.2.1
 
   '@vue/compiler-sfc@3.5.27':
     dependencies:
@@ -12829,11 +12763,6 @@ snapshots:
       magic-string: 0.30.21
       postcss: 8.5.6
       source-map-js: 1.2.1
-
-  '@vue/compiler-ssr@3.5.26':
-    dependencies:
-      '@vue/compiler-dom': 3.5.26
-      '@vue/shared': 3.5.26
 
   '@vue/compiler-ssr@3.5.27':
     dependencies:
@@ -12891,30 +12820,14 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
-  '@vue/reactivity@3.5.26':
-    dependencies:
-      '@vue/shared': 3.5.26
-
   '@vue/reactivity@3.5.27':
     dependencies:
       '@vue/shared': 3.5.27
-
-  '@vue/runtime-core@3.5.26':
-    dependencies:
-      '@vue/reactivity': 3.5.26
-      '@vue/shared': 3.5.26
 
   '@vue/runtime-core@3.5.27':
     dependencies:
       '@vue/reactivity': 3.5.27
       '@vue/shared': 3.5.27
-
-  '@vue/runtime-dom@3.5.26':
-    dependencies:
-      '@vue/reactivity': 3.5.26
-      '@vue/runtime-core': 3.5.26
-      '@vue/shared': 3.5.26
-      csstype: 3.2.3
 
   '@vue/runtime-dom@3.5.27':
     dependencies:
@@ -12923,19 +12836,11 @@ snapshots:
       '@vue/shared': 3.5.27
       csstype: 3.2.3
 
-  '@vue/server-renderer@3.5.26(vue@3.5.26(typescript@5.9.3))':
-    dependencies:
-      '@vue/compiler-ssr': 3.5.26
-      '@vue/shared': 3.5.26
-      vue: 3.5.26(typescript@5.9.3)
-
   '@vue/server-renderer@3.5.27(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@vue/compiler-ssr': 3.5.27
       '@vue/shared': 3.5.27
       vue: 3.5.27(typescript@5.9.3)
-
-  '@vue/shared@3.5.26': {}
 
   '@vue/shared@3.5.27': {}
 
@@ -12949,7 +12854,7 @@ snapshots:
       '@types/web-bluetooth': 0.0.21
       '@vueuse/metadata': 12.8.2
       '@vueuse/shared': 12.8.2(typescript@5.9.3)
-      vue: 3.5.26(typescript@5.9.3)
+      vue: 3.5.27(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -12968,7 +12873,7 @@ snapshots:
 
   '@vueuse/shared@12.8.2(typescript@5.9.3)':
     dependencies:
-      vue: 3.5.26(typescript@5.9.3)
+      vue: 3.5.27(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -13585,11 +13490,11 @@ snapshots:
     dependencies:
       '@inrupt/solid-client-authn-core': 2.5.0
       '@noeldemartin/solid-utils': 0.6.1(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       cypress: 14.2.0
       debug: 4.4.3(supports-color@8.1.1)
-      soukai: 0.6.2
-      soukai-solid: 0.6.2(soukai@0.6.2)(web-streams-polyfill@3.3.3)
+      soukai: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
+      soukai-solid: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3)
     transitivePeerDependencies:
       - supports-color
       - web-streams-polyfill
@@ -13830,8 +13735,6 @@ snapshots:
       strip-ansi: 6.0.1
 
   entities@4.5.0: {}
-
-  entities@7.0.0: {}
 
   entities@7.0.1: {}
 
@@ -14471,7 +14374,7 @@ snapshots:
 
   graphql-to-sparql@3.0.1(encoding@0.1.13):
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       graphql: 15.10.1
       jsonld-context-parser: 2.4.0(encoding@0.1.13)
       minimist: 1.2.8
@@ -14959,7 +14862,7 @@ snapshots:
   jsonld-streaming-parser@3.4.0(encoding@0.1.13):
     dependencies:
       '@bergos/jsonparse': 1.4.2
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       '@types/http-link-header': 1.0.7
       '@types/readable-stream': 2.3.15
       buffer: 6.0.3
@@ -14973,7 +14876,7 @@ snapshots:
 
   jsonld-streaming-serializer@2.1.0(encoding@0.1.13):
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       '@types/readable-stream': 2.3.15
       buffer: 6.0.3
       jsonld-context-parser: 2.4.0(encoding@0.1.13)
@@ -15273,7 +15176,7 @@ snapshots:
 
   microdata-rdf-streaming-parser@2.0.1:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       htmlparser2: 8.0.2
       rdf-data-factory: 1.1.3
       readable-stream: 4.7.0
@@ -15605,11 +15508,11 @@ snapshots:
 
   pify@2.3.0: {}
 
-  pinia@2.3.1(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)):
+  pinia@2.3.1(typescript@5.9.3)(vue@3.5.27(typescript@5.9.3)):
     dependencies:
       '@vue/devtools-api': 6.6.4
-      vue: 3.5.26(typescript@5.9.3)
-      vue-demi: 0.14.10(vue@3.5.26(typescript@5.9.3))
+      vue: 3.5.27(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.27(typescript@5.9.3))
     optionalDependencies:
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -15910,12 +15813,12 @@ snapshots:
 
   rdf-store-stream@2.0.1:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       rdf-stores: 1.0.0
 
   rdf-stores@1.0.0:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       asynciterator: 3.10.0
       rdf-data-factory: 1.1.3
       rdf-string: 1.6.3
@@ -15923,7 +15826,7 @@ snapshots:
 
   rdf-streaming-store@1.1.5:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       '@types/n3': 1.26.1
       '@types/readable-stream': 4.0.23
       n3: 1.26.0
@@ -15933,7 +15836,7 @@ snapshots:
 
   rdf-string-ttl@1.3.2:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       rdf-data-factory: 1.1.3
 
   rdf-string@1.6.3:
@@ -15966,7 +15869,7 @@ snapshots:
 
   rdfa-streaming-parser@2.0.1:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       htmlparser2: 8.0.2
       rdf-data-factory: 1.1.3
       readable-stream: 4.7.0
@@ -15974,7 +15877,7 @@ snapshots:
 
   rdfxml-streaming-parser@2.4.0:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       '@rubensworks/saxes': 6.0.1
       '@types/readable-stream': 2.3.15
       buffer: 6.0.3
@@ -16062,19 +15965,19 @@ snapshots:
     dependencies:
       jsesc: 3.1.0
 
-  reka-ui@2.7.0(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)):
+  reka-ui@2.7.0(typescript@5.9.3)(vue@3.5.27(typescript@5.9.3)):
     dependencies:
       '@floating-ui/dom': 1.7.4
-      '@floating-ui/vue': 1.1.9(vue@3.5.26(typescript@5.9.3))
+      '@floating-ui/vue': 1.1.9(vue@3.5.27(typescript@5.9.3))
       '@internationalized/date': 3.10.1
       '@internationalized/number': 3.6.5
-      '@tanstack/vue-virtual': 3.13.13(vue@3.5.26(typescript@5.9.3))
+      '@tanstack/vue-virtual': 3.13.13(vue@3.5.27(typescript@5.9.3))
       '@vueuse/core': 12.8.2(typescript@5.9.3)
       '@vueuse/shared': 12.8.2(typescript@5.9.3)
       aria-hidden: 1.2.6
       defu: 6.1.4
       ohash: 2.0.11
-      vue: 3.5.26(typescript@5.9.3)
+      vue: 3.5.27(typescript@5.9.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - typescript
@@ -16375,38 +16278,24 @@ snapshots:
   soukai-bis@0.0.0-next.6c3ecce8ff340d1b8f78248bbce3de43bc0bfe77(web-streams-polyfill@3.3.3)(zod@4.3.6):
     dependencies:
       '@noeldemartin/solid-utils': 0.6.1-next.ec7d2bb0dd35f1caf9b7522043ad5ae5fd4dfb33(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       idb: 8.0.3
       zod: 4.3.6
     transitivePeerDependencies:
       - web-streams-polyfill
 
-  soukai-solid@0.6.2(soukai@0.6.2)(web-streams-polyfill@3.3.3):
+  soukai-solid@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3):
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/solid-utils': 0.6.1-next.ec7d2bb0dd35f1caf9b7522043ad5ae5fd4dfb33(web-streams-polyfill@3.3.3)
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       '@rdfjs/types': 2.0.1
-      soukai: 0.6.2
+      soukai: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
     transitivePeerDependencies:
       - web-streams-polyfill
 
-  soukai-solid@0.7.1(soukai@0.7.1)(web-streams-polyfill@3.3.3):
+  soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053:
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3
-      '@rdfjs/types': 2.0.1
-      soukai: 0.7.1
-    transitivePeerDependencies:
-      - web-streams-polyfill
-
-  soukai@0.6.2:
-    dependencies:
-      '@noeldemartin/utils': 0.7.3
-      idb: 8.0.3
-
-  soukai@0.7.1:
-    dependencies:
-      '@noeldemartin/utils': 0.7.3
+      '@noeldemartin/utils': 0.7.3-next.c584dda9e7c91f8770e15bc456376b6ee6168fe5
       idb: 8.0.3
 
   source-map-js@1.2.1: {}
@@ -16454,7 +16343,7 @@ snapshots:
 
   sparqljson-to-tree@3.0.2:
     dependencies:
-      '@rdfjs/types': 1.1.2
+      '@rdfjs/types': 2.0.1
       rdf-literal: 1.3.2
       sparqljson-parse: 2.2.0
 
@@ -17170,9 +17059,9 @@ snapshots:
 
   vue-component-type-helpers@2.2.12: {}
 
-  vue-demi@0.14.10(vue@3.5.26(typescript@5.9.3)):
+  vue-demi@0.14.10(vue@3.5.27(typescript@5.9.3)):
     dependencies:
-      vue: 3.5.26(typescript@5.9.3)
+      vue: 3.5.27(typescript@5.9.3)
 
   vue-eslint-parser@9.4.3(eslint@8.57.1):
     dependencies:
@@ -17203,16 +17092,6 @@ snapshots:
     dependencies:
       '@volar/typescript': 2.4.15
       '@vue/language-core': 2.2.12(typescript@5.9.3)
-      typescript: 5.9.3
-
-  vue@3.5.26(typescript@5.9.3):
-    dependencies:
-      '@vue/compiler-dom': 3.5.26
-      '@vue/compiler-sfc': 3.5.26
-      '@vue/runtime-dom': 3.5.26
-      '@vue/server-renderer': 3.5.26(vue@3.5.26(typescript@5.9.3))
-      '@vue/shared': 3.5.26
-    optionalDependencies:
       typescript: 5.9.3
 
   vue@3.5.27(typescript@5.9.3):

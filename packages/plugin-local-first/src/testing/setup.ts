@@ -1,4 +1,5 @@
 import 'fake-indexeddb/auto';
+import 'soukai-bis/patch-zod';
 
 import { installVitestSolidMatchers } from '@noeldemartin/solid-utils/vitest';
 import { FakeLocalStorage, FakeServer, mock, setupFacadeMocks } from '@noeldemartin/testing';

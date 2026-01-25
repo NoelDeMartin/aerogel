@@ -46,6 +46,7 @@
         "fake-indexeddb": "^6.0.0",
         "publint": "catalog:",
         "soukai": "catalog:",
+        "soukai-bis": "catalog:",
         "soukai-solid": "catalog:"
     },
     "eslintConfig": {

@@ -38,7 +38,8 @@
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "eslint": "catalog:",
-        "publint": "catalog:"
+        "publint": "catalog:",
+        "soukai-bis": "catalog:"
     },
     "eslintConfig": {
         "extends": [

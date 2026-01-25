@@ -2,6 +2,10 @@ name: Create Aerogel
 
 on: [push, pull_request]
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
     create-aerogel:
         runs-on: ubuntu-latest
@@ -69,11 +73,11 @@ jobs:
             - name: Lint
               working-directory: app
               run: |
-                  sed -i '49d' ../package.json
-                  sed -i '49d' ../package.json
-                  sed -i '49d' ../package.json
-                  sed -i '49d' ../package.json
-                  sed -i '49d' ../package.json
+                  sed -i '52d' ../package.json
+                  sed -i '52d' ../package.json
+                  sed -i '52d' ../package.json
+                  sed -i '52d' ../package.json
+                  sed -i '52d' ../package.json
                   pnpm lint
             - run: pnpm test:ci
               working-directory: app

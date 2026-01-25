@@ -11,7 +11,7 @@ import {
 } from '@noeldemartin/utils';
 import { App, Errors, Job } from '@aerogel/core';
 import { DocumentNotFound, InvalidModelAttributes, requireBootedModel, requireEngine } from 'soukai';
-import { MalformedSolidDocumentError } from '@noeldemartin/solid-utils';
+import { MalformedSolidDocument } from '@noeldemartin/solid-utils';
 import { Solid } from '@aerogel/plugin-solid';
 import { SolidContainer, SolidModel, Tombstone, isContainer, isContainerClass } from 'soukai-solid';
 import type { ObjectsMap } from '@noeldemartin/utils';
@@ -847,7 +847,7 @@ export default class Sync extends mixed(BaseJob, [LoadsChildren, LoadsTypeIndex,
     }
 
     private handleDocumentError(error: unknown): void {
-        if (isInstanceOf(error, MalformedSolidDocumentError)) {
+        if (isInstanceOf(error, MalformedSolidDocument)) {
             // eslint-disable-next-line no-console
             console.warn(error.message);
 
