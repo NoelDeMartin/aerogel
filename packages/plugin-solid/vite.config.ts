@@ -25,6 +25,7 @@ export default defineConfig({
                 'soukai-bis',
                 'soukai-solid',
                 'soukai',
+                'virtual:aerogel',
                 'virtual:aerogel-solid',
                 'vue',
             ],

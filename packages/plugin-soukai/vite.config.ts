@@ -14,7 +14,7 @@ export default defineConfig({
             fileName: 'aerogel-plugin-soukai',
         },
         rollupOptions: {
-            external: ['@aerogel/core', 'soukai', 'soukai-bis', '@noeldemartin/utils', 'vue'],
+            external: ['@aerogel/core', 'soukai', 'soukai-bis', '@noeldemartin/utils', 'virtual:aerogel', 'vue'],
         },
     },
     plugins: [
