@@ -11,6 +11,7 @@ import {
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isDevelopment,
+    isTruthy,
     objectWithout,
     objectWithoutEmpty,
     parseBoolean,
@@ -24,7 +25,7 @@ import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import { getBootedModels, setEngine } from 'soukai';
 import { SolidContainer, SolidTypeIndex, coreModels, isSolidModel } from 'soukai-solid';
-import { SolidEngine, TypeIndex, TypeRegistration, setEngine as setBisEngine } from 'soukai-bis';
+import { SolidEngine as BisSolidEngine, TypeIndex, TypeRegistration, setEngine as setBisEngine } from 'soukai-bis';
 import type { ErrorSource } from '@aerogel/core';
 import type { Fetch, SolidModelConstructor } from 'soukai-solid';
 import type { Container, ContainerConstructor, GetModelAttributes, ModelConstructor } from 'soukai-bis';
@@ -73,6 +74,14 @@ export class SolidService extends Service {
 
     public requireAuthenticator(): Authenticator {
         return this.authenticator ?? fail('Could not get authenticator');
+    }
+
+    public requireEngine(): BisSolidEngine {
+        if (!Aerogel.soukaiBis) {
+            throw new Error('Solid engine is not available');
+        }
+
+        return new BisSolidEngine((...args: [RequestInfo]) => this.fetch(...args));
     }
 
     public requireUser(): SolidUserProfile {
@@ -303,6 +312,15 @@ export class SolidService extends Service {
         return containers.find((model) => !!model) ?? null;
     }
 
+    public async findTypeIndexes(): Promise<TypeIndex[]> {
+        const originalTypeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
+        const newTypeIndexes = await Promise.all(
+            originalTypeIndexes.map((typeIndex) => typeIndex && TypeIndex.find(typeIndex.url)),
+        );
+
+        return newTypeIndexes.filter(isTruthy);
+    }
+
     public async findOrCreatePrivateTypeIndex(): Promise<SolidTypeIndex> {
         return (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex());
     }
@@ -340,6 +358,13 @@ export class SolidService extends Service {
         }
 
         return asyncMemo(`${webId}-publicTypeIndex`, () => SolidTypeIndex.withEngine(engine).find(publicTypeIndexUrl));
+    }
+
+    public clearTypeIndexesCache(): void {
+        const { webId } = this.requireUser();
+
+        resetAsyncMemo(`${webId}-publicTypeIndex`);
+        resetAsyncMemo(`${webId}-privateTypeIndex`);
     }
 
     public async createPrivateContainer(options: {
@@ -535,13 +560,18 @@ export class SolidService extends Service {
                     await this.refreshUserProfile();
                 }
 
-                if (Aerogel.soukaiBis) {
-                    setBisEngine(new SolidEngine((...args: [RequestInfo]) => this.fetch(...args)));
-                } else {
-                    App.plugin('@aerogel/local-first') || setEngine(session.authenticator.engine);
+                if (!App.plugin('@aerogel/local-first')) {
+                    Aerogel.soukaiBis
+                        ? setBisEngine(new SolidEngine((...args: [RequestInfo]) => this.fetch(...args)))
+                        : setEngine(session.authenticator.engine);
                 }
 
-                coreModels.forEach((model) => model.setEngine(session.authenticator.engine));
+                if (Aerogel.soukaiBis) {
+                    TypeIndex.setEngine(session.authenticator.engine);
+                    TypeRegistration.setEngine(session.authenticator.engine);
+                } else {
+                    coreModels.forEach((model) => model.setEngine(session.authenticator.engine));
+                }
 
                 await Events.emit('auth:login', session);
             },
