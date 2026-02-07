@@ -60,6 +60,8 @@ export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
 
 export class SolidService extends Service {
 
+    private _bisEngine?: BisSolidEngine;
+
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return !!this.session;
     }
@@ -81,7 +83,7 @@ export class SolidService extends Service {
             throw new Error('Solid engine is not available');
         }
 
-        return new BisSolidEngine((...args: [RequestInfo]) => this.fetch(...args));
+        return (this._bisEngine ??= new BisSolidEngine((...args: [RequestInfo]) => this.fetch(...args)));
     }
 
     public requireUser(): SolidUserProfile {
@@ -561,14 +563,12 @@ export class SolidService extends Service {
                 }
 
                 if (!App.plugin('@aerogel/local-first')) {
-                    Aerogel.soukaiBis
-                        ? setBisEngine(new SolidEngine((...args: [RequestInfo]) => this.fetch(...args)))
-                        : setEngine(session.authenticator.engine);
+                    Aerogel.soukaiBis ? setBisEngine(this.requireEngine()) : setEngine(session.authenticator.engine);
                 }
 
                 if (Aerogel.soukaiBis) {
-                    TypeIndex.setEngine(session.authenticator.engine);
-                    TypeRegistration.setEngine(session.authenticator.engine);
+                    TypeIndex.setEngine(this.requireEngine());
+                    TypeRegistration.setEngine(this.requireEngine());
                 } else {
                     coreModels.forEach((model) => model.setEngine(session.authenticator.engine));
                 }
