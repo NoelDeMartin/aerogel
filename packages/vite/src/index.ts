@@ -110,7 +110,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             handler: (html, context) => ({
                 html: renderHTML(html, context.filename, app),
                 tags: arrayFilter([
-                    options.soukaiBis && {
+                    (options.soukaiBis || options.patchZodWithSoukaiBis) && {
                         tag: 'script',
                         attrs: { type: 'module', src: '/_virtual/soukai-bis/patch-zod' },
                         injectTo: 'head-prepend',

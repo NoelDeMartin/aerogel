@@ -10,6 +10,7 @@ export interface Options {
     icons?: Record<string, string> | IconResource[];
     baseUrl?: string;
     soukaiBis?: boolean;
+    patchZodWithSoukaiBis?: boolean;
     static404Redirect?: boolean | string;
     solidClientId?: boolean | ClientIDDocument;
     pwa?: {

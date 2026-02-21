@@ -22,6 +22,7 @@ export default defineConfig({
                 '192x192': 'android-chrome-192x192.png',
                 '512x512': 'android-chrome-512x512.png',
             },
+            patchZodWithSoukaiBis: true,
         }),
         Components({
             dts: 'src/types/components.d.ts',
