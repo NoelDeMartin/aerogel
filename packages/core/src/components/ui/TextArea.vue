@@ -6,7 +6,7 @@
         v-bind="props"
         @update:model-value="$emit('update:modelValue', $event)"
     >
-        <HeadlessInputLabel class="block text-sm leading-6 font-medium text-gray-900" />
+        <HeadlessInputLabel :class="renderedLabelClasses" />
         <div :class="renderedWrapperClasses">
             <HeadlessInputTextArea v-bind="inputAttrs" :class="renderedInputClasses" />
             <div v-if="$input?.errors" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
@@ -35,13 +35,18 @@ import type { InputEmits, InputProps } from '@aerogel/core/components/contracts/
 
 defineOptions({ inheritAttrs: false });
 defineEmits<InputEmits>();
-const { label, inputClass, wrapperClass, ...props } = defineProps<
-    InputProps & { inputClass?: HTMLAttributes['class']; wrapperClass?: HTMLAttributes['class'] }
+const { label, inputClass, labelClass, wrapperClass, ...props } = defineProps<
+    InputProps & {
+        inputClass?: HTMLAttributes['class'];
+        labelClass?: HTMLAttributes['class'];
+        wrapperClass?: HTMLAttributes['class'];
+    }
 >();
 const $input = useTemplateRef('$inputRef');
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedWrapperClasses = computed(() =>
     classes('relative rounded-md shadow-2xs', { 'mt-1': label }, wrapperClass));
+const renderedLabelClasses = computed(() => classes('block text-sm font-medium leading-6 text-gray-900', labelClass));
 const renderedInputClasses = computed(() =>
     classes(
         // eslint-disable-next-line vue/max-len
