@@ -109,13 +109,13 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             order: 'pre',
             handler: (html, context) => ({
                 html: renderHTML(html, context.filename, app),
-                tags: [
-                    {
+                tags: arrayFilter([
+                    options.soukaiBis && {
                         tag: 'script',
                         attrs: { type: 'module', src: '/_virtual/soukai-bis/patch-zod' },
                         injectTo: 'head-prepend',
                     },
-                ],
+                ]),
             }),
         },
     };
@@ -125,6 +125,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         TailwindCSS(),
         !options.lib &&
             VitePWA({
+                // TODO include default icon in order to have PWA
                 registerType: 'autoUpdate',
                 devOptions: { enabled: options.pwa?.development ?? false },
                 includeAssets: [
