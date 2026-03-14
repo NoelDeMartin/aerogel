@@ -60,6 +60,19 @@ export function socialMeta(this: HTMLEvalScope, options: { image?: string } = {}
     `;
 }
 
+export function originTrials(): string {
+    const values = String(process.env.ORIGIN_TRIALS).trim();
+
+    if (!values) {
+        return '';
+    }
+
+    return values
+        .split(',')
+        .map((value) => `<meta http-equiv="origin-trial" content="${value}">`)
+        .join('\n');
+}
+
 export function splashJs(): string {
     return `
         <script>
