@@ -61,7 +61,7 @@ export function socialMeta(this: HTMLEvalScope, options: { image?: string } = {}
 }
 
 export function originTrials(): string {
-    const values = String(process.env.ORIGIN_TRIALS).trim();
+    const values = process.env.ORIGIN_TRIALS && String(process.env.ORIGIN_TRIALS).trim();
 
     if (!values) {
         return '';
