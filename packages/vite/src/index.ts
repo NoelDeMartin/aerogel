@@ -6,6 +6,7 @@ import Vue from '@vitejs/plugin-vue';
 import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
 import { VitePWA } from 'vite-plugin-pwa';
 import type { Plugin } from 'vite';
+import type { RolldownOptions } from 'rolldown';
 
 import { generate404Assets } from '@aerogel/vite/lib/404';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
@@ -80,6 +81,31 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 ...(config.define ?? {}),
                 __AEROGEL_ENV__: JSON.stringify(process.env.NODE_ENV),
             };
+
+            if (options.soukaiBis || options.patchZodWithSoukaiBis) {
+                config.build ??= {};
+                config.build.rollupOptions ??= {};
+
+                if ('rolldownOptions' in config.build) {
+                    const rolldownOptions = config.build.rollupOptions as RolldownOptions;
+
+                    if (!Array.isArray(rolldownOptions.output)) {
+                        rolldownOptions.output ??= {};
+
+                        if (typeof rolldownOptions.output.codeSplitting === 'boolean') {
+                            rolldownOptions.output.codeSplitting = {};
+                        } else {
+                            rolldownOptions.output.codeSplitting ??= {};
+                        }
+
+                        rolldownOptions.output.codeSplitting.groups ??= [];
+                        rolldownOptions.output.codeSplitting.groups.push({
+                            test: /soukai-bis.*patch-zod/,
+                            name: 'patch-zod',
+                        });
+                    }
+                }
+            }
 
             return config;
         },

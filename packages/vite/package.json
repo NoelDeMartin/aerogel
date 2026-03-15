@@ -41,7 +41,8 @@
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "eslint": "catalog:",
-        "publint": "catalog:"
+        "publint": "catalog:",
+        "rolldown": "1.0.0-rc.9"
     },
     "eslintConfig": {
         "extends": [

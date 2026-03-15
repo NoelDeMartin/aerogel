@@ -14,7 +14,7 @@ catalogs:
       version: 0.4.0-next.2da6eab8f3c6dbb77ce708fac551334bddd474db
     '@noeldemartin/solid-utils':
       specifier: next
-      version: 0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0
+      version: 0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d
     '@types/node':
       specifier: ^24.10.4
       version: 24.10.4
@@ -32,7 +32,7 @@ catalogs:
       version: 0.3.16
     soukai-bis:
       specifier: next
-      version: 0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a
+      version: 0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9
     vue:
       specifier: ^3.5.0
       version: 3.5.27
@@ -72,7 +72,7 @@ importers:
         version: 0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.4(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@total-typescript/ts-reset':
         specifier: ^0.4.2
         version: 0.4.2
@@ -147,7 +147,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       chalk:
         specifier: ^5.4.1
         version: 5.6.2
@@ -181,7 +181,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@noeldemartin/vue-modals':
         specifier: 0.1.1
         version: 0.1.1(vue@3.5.27(typescript@5.9.3))
@@ -258,7 +258,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@simonsmith/cypress-image-snapshot':
         specifier: ^8.1.2
         version: 8.1.2(cypress@14.2.0)
@@ -301,7 +301,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -326,10 +326,10 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: 'catalog:'
-        version: 0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       idb:
         specifier: 'catalog:'
         version: 8.0.3
@@ -372,7 +372,7 @@ importers:
         version: 0.3.16
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9(web-streams-polyfill@3.3.3)(zod@4.3.6)
 
   packages/plugin-routing:
     dependencies:
@@ -381,7 +381,7 @@ importers:
         version: 0.1.2(@babel/parser@7.29.0)(vite@6.4.1(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))(workbox-build@7.4.0)(workbox-window@7.4.0)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.27(typescript@5.9.3))
@@ -409,7 +409,7 @@ importers:
         version: 0.3.16
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9(web-streams-polyfill@3.3.3)(zod@4.3.6)
 
   packages/plugin-solid:
     dependencies:
@@ -418,10 +418,10 @@ importers:
         version: 3.1.1
       '@noeldemartin/solid-utils':
         specifier: 'catalog:'
-        version: 0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       solid-auth-client:
         specifier: 2.4.1
         version: 2.4.1(encoding@0.1.13)
@@ -458,19 +458,19 @@ importers:
         version: 0.3.16
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9(web-streams-polyfill@3.3.3)(zod@4.3.6)
 
   packages/plugin-soukai:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       soukai:
         specifier: next
         version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9(web-streams-polyfill@3.3.3)(zod@4.3.6)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -501,7 +501,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.1.18(vite@6.4.1(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))
@@ -539,6 +539,9 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.16
+      rolldown:
+        specifier: 1.0.0-rc.9
+        version: 1.0.0-rc.9
 
   playground:
     dependencies:
@@ -562,10 +565,10 @@ importers:
         version: link:../packages/plugin-soukai
       '@noeldemartin/solid-utils':
         specifier: 'catalog:'
-        version: 0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+        version: 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.11(tailwindcss@4.1.18)
@@ -577,7 +580,7 @@ importers:
         version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9(web-streams-polyfill@3.3.3)(zod@4.3.6)
       soukai-solid:
         specifier: next
         version: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3)
@@ -1914,6 +1917,15 @@ packages:
       search-insights:
         optional: true
 
+  '@emnapi/core@1.9.0':
+    resolution: {integrity: sha512-0DQ98G9ZQZOxfUcQn1waV2yS8aWdZ6kJMbYCJB3oUBecjWYO1fqJ+a1DRfPF3O5JEkwqwP1A9QEN/9mYm2Yd0w==}
+
+  '@emnapi/runtime@1.9.0':
+    resolution: {integrity: sha512-QN75eB0IH2ywSpRpNddCRfQIhmJYBCJ1x5Lb3IscKAL8bMnVAKnRg8dCoXbHzVLLH7P38N2Z3mtulB7W0J0FKw==}
+
+  '@emnapi/wasi-threads@1.2.0':
+    resolution: {integrity: sha512-N10dEJNSsUx41Z6pZsXU8FjPjpBEplgH24sfkmITrBED1/U2Esum9F3lfLrMjKHHjmi557zQn7kR9R+XWXu5Rg==}
+
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
     engines: {node: '>=12'}
@@ -2490,6 +2502,9 @@ packages:
   '@microsoft/tsdoc@0.16.0':
     resolution: {integrity: sha512-xgAyonlVVS+q7Vc7qLW0UrJU7rSFcETRWsqdXZtjzRU8dF+6CkozTK4V4y1LwOX7j8r/vHphjDeMeGI4tNGeGA==}
 
+  '@napi-rs/wasm-runtime@1.1.1':
+    resolution: {integrity: sha512-p64ah1M1ld8xjWv3qbvFwHiFVWrq1yFvV4f7w+mzaqiR4IlSgkqhcRdHwsGgomwzBH51sRY4NEowLxnaBjcW/A==}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -2533,21 +2548,24 @@ packages:
   '@noeldemartin/solid-utils@0.6.1':
     resolution: {integrity: sha512-DJq3DoGgSgA/dbNelkhS/IyfzfXXuVWmF7GH3neEVHZVuhAWkWtW+Grpn41cJ2+USJdVfyqbKonn/QOX+KBbkA==}
 
-  '@noeldemartin/solid-utils@0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0':
-    resolution: {integrity: sha512-uQg7cCmydo0TQ/Og3aqXzUU+hXpJmW+fW0SN2WUyoA0SXVcCo5rUWx3ujYUH9suBZ1xRTzv6RjmImySVZ9f0bw==}
+  '@noeldemartin/solid-utils@0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d':
+    resolution: {integrity: sha512-zJyJ9MaT8LFk/JOJXpuv36VeF09MsvO1fsS1NapNKJbb6mvxMINeErPZdH8jFGtY40tISYadLHhrHIa20Jej0Q==}
 
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19':
     resolution: {integrity: sha512-5moMGAYgqCnHWfbxgkgNjoaYhc6nvtqN7etPP+B76fyZVWWRLK+BOKKcwCXUd2ctD2N7lu9baa7M9qoN8oHEKg==}
     peerDependencies:
       vitest: '*'
 
-  '@noeldemartin/utils@0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41':
-    resolution: {integrity: sha512-uNfo8mFcbe6YXr/gMkngfT4Vi3fEVAw/eDZZqQQyNr/IsMULzBqGBuESWJhmOTqfkbGNrw5K8CaI5i5Am8012Q==}
+  '@noeldemartin/utils@0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d':
+    resolution: {integrity: sha512-jayaDxXHaTtDBTKXcby7Lfm5D3fGmymNo6feJcfVgs5rrenuAGsXGrnnASOXARmEk1Lh8jGI2DrpcxCJg1D/9w==}
 
   '@noeldemartin/vue-modals@0.1.1':
     resolution: {integrity: sha512-iQc3AKYRCsOdycAXAyPiy2xrE/kyXoBS3z7zk24Ptziksoxbt8kR8oEtPcR97GAkUibakOW6AqrIJE3LWkMtsg==}
     peerDependencies:
       vue: '*'
+
+  '@oxc-project/types@0.115.0':
+    resolution: {integrity: sha512-4n91DKnebUS4yjUHl2g3/b2T+IUdCfmoZGhmwsovZCDaJSs+QkVAM+0AqqTxHSsHfeiMuueT75cZaZcT/m0pSw==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -2580,6 +2598,98 @@ packages:
 
   '@rdfjs/types@2.0.1':
     resolution: {integrity: sha512-uyAzpugX7KekAXAHq26m3JlUIZJOC0uSBhpnefGV5i15bevDyyejoB7I+9MKeUrzXD8OOUI3+4FeV1wwQr5ihA==}
+
+  '@rolldown/binding-android-arm64@1.0.0-rc.9':
+    resolution: {integrity: sha512-lcJL0bN5hpgJfSIz/8PIf02irmyL43P+j1pTCfbD1DbLkmGRuFIA4DD3B3ZOvGqG0XiVvRznbKtN0COQVaKUTg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [android]
+
+  '@rolldown/binding-darwin-arm64@1.0.0-rc.9':
+    resolution: {integrity: sha512-J7Zk3kLYFsLtuH6U+F4pS2sYVzac0qkjcO5QxHS7OS7yZu2LRs+IXo+uvJ/mvpyUljDJ3LROZPoQfgBIpCMhdQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@rolldown/binding-darwin-x64@1.0.0-rc.9':
+    resolution: {integrity: sha512-iwtmmghy8nhfRGeNAIltcNXzD0QMNaaA5U/NyZc1Ia4bxrzFByNMDoppoC+hl7cDiUq5/1CnFthpT9n+UtfFyg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [darwin]
+
+  '@rolldown/binding-freebsd-x64@1.0.0-rc.9':
+    resolution: {integrity: sha512-DLFYI78SCiZr5VvdEplsVC2Vx53lnA4/Ga5C65iyldMVaErr86aiqCoNBLl92PXPfDtUYjUh+xFFor40ueNs4Q==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@rolldown/binding-linux-arm-gnueabihf@1.0.0-rc.9':
+    resolution: {integrity: sha512-CsjTmTwd0Hri6iTw/DRMK7kOZ7FwAkrO4h8YWKoX/kcj833e4coqo2wzIFywtch/8Eb5enQ/lwLM7w6JX1W5RQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm]
+    os: [linux]
+
+  '@rolldown/binding-linux-arm64-gnu@1.0.0-rc.9':
+    resolution: {integrity: sha512-2x9O2JbSPxpxMDhP9Z74mahAStibTlrBMW0520+epJH5sac7/LwZW5Bmg/E6CXuEF53JJFW509uP+lSedaUNxg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rolldown/binding-linux-arm64-musl@1.0.0-rc.9':
+    resolution: {integrity: sha512-JA1QRW31ogheAIRhIg9tjMfsYbglXXYGNPLdPEYrwFxdbkQCAzvpSCSHCDWNl4hTtrol8WeboCSEpjdZK8qrCg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rolldown/binding-linux-ppc64-gnu@1.0.0-rc.9':
+    resolution: {integrity: sha512-aOKU9dJheda8Kj8Y3w9gnt9QFOO+qKPAl8SWd7JPHP+Cu0EuDAE5wokQubLzIDQWg2myXq2XhTpOVS07qqvT+w==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@rolldown/binding-linux-s390x-gnu@1.0.0-rc.9':
+    resolution: {integrity: sha512-OalO94fqj7IWRn3VdXWty75jC5dk4C197AWEuMhIpvVv2lw9fiPhud0+bW2ctCxb3YoBZor71QHbY+9/WToadA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [s390x]
+    os: [linux]
+
+  '@rolldown/binding-linux-x64-gnu@1.0.0-rc.9':
+    resolution: {integrity: sha512-cVEl1vZtBsBZna3YMjGXNvnYYrOJ7RzuWvZU0ffvJUexWkukMaDuGhUXn0rjnV0ptzGVkvc+vW9Yqy6h8YX4pg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [linux]
+
+  '@rolldown/binding-linux-x64-musl@1.0.0-rc.9':
+    resolution: {integrity: sha512-UzYnKCIIc4heAKgI4PZ3dfBGUZefGCJ1TPDuLHoCzgrMYPb5Rv6TLFuYtyM4rWyHM7hymNdsg5ik2C+UD9VDbA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [linux]
+
+  '@rolldown/binding-openharmony-arm64@1.0.0-rc.9':
+    resolution: {integrity: sha512-+6zoiF+RRyf5cdlFQP7nm58mq7+/2PFaY2DNQeD4B87N36JzfF/l9mdBkkmTvSYcYPE8tMh/o3cRlsx1ldLfog==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [openharmony]
+
+  '@rolldown/binding-wasm32-wasi@1.0.0-rc.9':
+    resolution: {integrity: sha512-rgFN6sA/dyebil3YTlL2evvi/M+ivhfnyxec7AccTpRPccno/rPoNlqybEZQBkcbZu8Hy+eqNJCqfBR8P7Pg8g==}
+    engines: {node: '>=14.0.0'}
+    cpu: [wasm32]
+
+  '@rolldown/binding-win32-arm64-msvc@1.0.0-rc.9':
+    resolution: {integrity: sha512-lHVNUG/8nlF1IQk1C0Ci574qKYyty2goMiPlRqkC5R+3LkXDkL5Dhx8ytbxq35m+pkHVIvIxviD+TWLdfeuadA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [arm64]
+    os: [win32]
+
+  '@rolldown/binding-win32-x64-msvc@1.0.0-rc.9':
+    resolution: {integrity: sha512-G0oA4+w1iY5AGi5HcDTxWsoxF509hrFIPB2rduV5aDqS9FtDg1CAfa7V34qImbjfhIcA8C+RekocJZA96EarwQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    cpu: [x64]
+    os: [win32]
+
+  '@rolldown/pluginutils@1.0.0-rc.9':
+    resolution: {integrity: sha512-w6oiRWgEBl04QkFZgmW+jnU1EC9b57Oihi2ot3HNWIQRqgHp5PnYDia5iZ5FF7rpa4EQdiqMDXjlqKGXBhsoXw==}
 
   '@rollup/plugin-babel@5.3.1':
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -3280,6 +3390,9 @@ packages:
 
   '@tsconfig/node24@24.0.4':
     resolution: {integrity: sha512-2A933l5P5oCbv6qSxHs7ckKwobs8BDAe9SJ/Xr2Hy+nDlwmLE1GhFh/g/vXGRZWgxBg9nX/5piDtHR9Dkw/XuA==}
+
+  '@tybys/wasm-util@0.10.1':
+    resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
 
   '@types/accepts@1.3.7':
     resolution: {integrity: sha512-Pay9fq2lM2wXPWbteBsRAGiWH2hig4ZE2asK+mm7kUzlxRTfL961rj89I6zV/E3PcIkDqyuBEcMxFT7rccugeQ==}
@@ -6627,6 +6740,11 @@ packages:
     deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
+  rolldown@1.0.0-rc.9:
+    resolution: {integrity: sha512-9EbgWge7ZH+yqb4d2EnELAntgPTWbfL8ajiTW+SyhJEC4qhBbkCKbqFV4Ge4zmu5ziQuVbWxb/XwLZ+RIO7E8Q==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+
   rollup@2.79.2:
     resolution: {integrity: sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ==}
     engines: {node: '>=10.0.0'}
@@ -6800,8 +6918,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a:
-    resolution: {integrity: sha512-apuSup3A7FlK6Ul/NGbsb0BN2bsaPtS5wrLs+VtAEU5/ece++yEu3AAecg67j81IcD0TqhGwLqNKr2sBrZy/RQ==}
+  soukai-bis@0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9:
+    resolution: {integrity: sha512-GaA8RbP7PdyTPwmDKZGSoW8jRbtcO0tPVgjdu5pc9xyDz85bdUVsvhDD8Pv0Ua+wMWwj7Br+K5NPDiUTV7Uw1Q==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -6846,6 +6964,7 @@ packages:
   sparqljs@3.7.3:
     resolution: {integrity: sha512-FQfHUhfwn5PD9WH6xPU7DhFfXMgqK/XoDrYDVxz/grhw66Il0OjRg3JBgwuEvwHnQt7oSTiKWEiCZCPNaUbqgg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     hasBin: true
 
   sparqljson-parse@2.2.0:
@@ -7821,7 +7940,7 @@ snapshots:
 
   '@aerogel/vite@0.1.2(@babel/parser@7.29.0)(vite@6.4.1(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))(workbox-build@7.4.0)(workbox-window@7.4.0)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@tailwindcss/vite': 4.1.18(vite@6.4.1(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))
       '@vitejs/plugin-vue': 5.2.4(vite@6.4.1(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))
       image-size: 2.0.2
@@ -10749,6 +10868,22 @@ snapshots:
     transitivePeerDependencies:
       - '@algolia/client-search'
 
+  '@emnapi/core@1.9.0':
+    dependencies:
+      '@emnapi/wasi-threads': 1.2.0
+      tslib: 2.8.1
+    optional: true
+
+  '@emnapi/runtime@1.9.0':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
+  '@emnapi/wasi-threads@1.2.0':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
 
@@ -11264,6 +11399,13 @@ snapshots:
 
   '@microsoft/tsdoc@0.16.0': {}
 
+  '@napi-rs/wasm-runtime@1.1.1':
+    dependencies:
+      '@emnapi/core': 1.9.0
+      '@emnapi/runtime': 1.9.0
+      '@tybys/wasm-util': 0.10.1
+    optional: true
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -11317,7 +11459,7 @@ snapshots:
 
   '@noeldemartin/solid-utils@0.6.1(web-streams-polyfill@3.3.3)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@rdfjs/types': 2.0.1
       jsonld: 8.3.3(web-streams-polyfill@3.3.3)
       md5: 2.3.0
@@ -11325,9 +11467,9 @@ snapshots:
     transitivePeerDependencies:
       - web-streams-polyfill
 
-  '@noeldemartin/solid-utils@0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0(web-streams-polyfill@3.3.3)':
+  '@noeldemartin/solid-utils@0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d(web-streams-polyfill@3.3.3)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@rdfjs/types': 2.0.1
       jsonld: 8.3.3(web-streams-polyfill@3.3.3)
       md5: 2.3.0
@@ -11338,17 +11480,19 @@ snapshots:
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.4(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))':
     dependencies:
       '@noeldemartin/faker': 7.6.0
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       vitest: 3.2.4(@types/node@25.2.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2)
 
-  '@noeldemartin/utils@0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41':
+  '@noeldemartin/utils@0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d':
     dependencies:
       idb: 8.0.3
 
   '@noeldemartin/vue-modals@0.1.1(vue@3.5.27(typescript@5.9.3))':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       vue: 3.5.27(typescript@5.9.3)
+
+  '@oxc-project/types@0.115.0': {}
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -11380,6 +11524,55 @@ snapshots:
   '@rdfjs/types@2.0.1':
     dependencies:
       '@types/node': 25.2.1
+
+  '@rolldown/binding-android-arm64@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-darwin-arm64@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-darwin-x64@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-freebsd-x64@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-linux-arm-gnueabihf@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-linux-arm64-gnu@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-linux-arm64-musl@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-linux-ppc64-gnu@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-linux-s390x-gnu@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-linux-x64-gnu@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-linux-x64-musl@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-openharmony-arm64@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-wasm32-wasi@1.0.0-rc.9':
+    dependencies:
+      '@napi-rs/wasm-runtime': 1.1.1
+    optional: true
+
+  '@rolldown/binding-win32-arm64-msvc@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/binding-win32-x64-msvc@1.0.0-rc.9':
+    optional: true
+
+  '@rolldown/pluginutils@1.0.0-rc.9': {}
 
   '@rollup/plugin-babel@5.3.1(@babel/core@7.28.5)(rollup@2.79.2)':
     dependencies:
@@ -12207,6 +12400,11 @@ snapshots:
       path-browserify: 1.0.1
 
   '@tsconfig/node24@24.0.4': {}
+
+  '@tybys/wasm-util@0.10.1':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
 
   '@types/accepts@1.3.7':
     dependencies:
@@ -13505,7 +13703,7 @@ snapshots:
     dependencies:
       '@inrupt/solid-client-authn-core': 2.5.0
       '@noeldemartin/solid-utils': 0.6.1(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       cypress: 14.2.0
       debug: 4.4.3(supports-color@8.1.1)
       soukai: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
@@ -16038,6 +16236,27 @@ snapshots:
     dependencies:
       glob: 7.2.3
 
+  rolldown@1.0.0-rc.9:
+    dependencies:
+      '@oxc-project/types': 0.115.0
+      '@rolldown/pluginutils': 1.0.0-rc.9
+    optionalDependencies:
+      '@rolldown/binding-android-arm64': 1.0.0-rc.9
+      '@rolldown/binding-darwin-arm64': 1.0.0-rc.9
+      '@rolldown/binding-darwin-x64': 1.0.0-rc.9
+      '@rolldown/binding-freebsd-x64': 1.0.0-rc.9
+      '@rolldown/binding-linux-arm-gnueabihf': 1.0.0-rc.9
+      '@rolldown/binding-linux-arm64-gnu': 1.0.0-rc.9
+      '@rolldown/binding-linux-arm64-musl': 1.0.0-rc.9
+      '@rolldown/binding-linux-ppc64-gnu': 1.0.0-rc.9
+      '@rolldown/binding-linux-s390x-gnu': 1.0.0-rc.9
+      '@rolldown/binding-linux-x64-gnu': 1.0.0-rc.9
+      '@rolldown/binding-linux-x64-musl': 1.0.0-rc.9
+      '@rolldown/binding-openharmony-arm64': 1.0.0-rc.9
+      '@rolldown/binding-wasm32-wasi': 1.0.0-rc.9
+      '@rolldown/binding-win32-arm64-msvc': 1.0.0-rc.9
+      '@rolldown/binding-win32-x64-msvc': 1.0.0-rc.9
+
   rollup@2.79.2:
     optionalDependencies:
       fsevents: 2.3.3
@@ -16292,10 +16511,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.9f8b9e2dd2104d9e7e92da5410b7442b9f38cb7a(web-streams-polyfill@3.3.3)(zod@4.3.6):
+  soukai-bis@0.0.0-next.fb96ac08832d51464c76a2a03632f88f9c92f9c9(web-streams-polyfill@3.3.3)(zod@4.3.6):
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/solid-utils': 0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d(web-streams-polyfill@3.3.3)
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       idb: 8.0.3
       zod: 4.3.6
     transitivePeerDependencies:
@@ -16303,8 +16522,8 @@ snapshots:
 
   soukai-solid@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053(soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053)(web-streams-polyfill@3.3.3):
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1-next.1553f43b2aa04a742457a6bd9f8a27569eee73f0(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/solid-utils': 0.6.1-next.f20b091ac2162137de880c7e3bf101f9be8f588d(web-streams-polyfill@3.3.3)
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       '@rdfjs/types': 2.0.1
       soukai: 0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053
     transitivePeerDependencies:
@@ -16312,7 +16531,7 @@ snapshots:
 
   soukai@0.7.1-next.0ba7e66e2a7073c9cbbae91bd14e89a2d44eb053:
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.88d9967421b545c8b25cdfd24755f390521f2d41
+      '@noeldemartin/utils': 0.7.3-next.b915cae60b89aff07e176fd3de0a25a77e50324d
       idb: 8.0.3
 
   source-map-js@1.2.1: {}
