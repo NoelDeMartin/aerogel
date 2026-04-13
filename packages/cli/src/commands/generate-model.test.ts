@@ -14,7 +14,7 @@ describe('Generate Model command', () => {
             `
             "dependencies": {
                 "@aerogel/core": "next",
-                "soukai": "next"
+                "soukai-bis": "next"
             }
         `,
         );
@@ -28,16 +28,13 @@ describe('Generate Model command', () => {
         FileMock.expectCreated('src/models/FooBar.ts').toContain('import Model from \'./FooBar.schema\'');
         FileMock.expectCreated('src/models/FooBar.schema.ts').toContain(
             formatCodeBlock(`
-                defineSolidModelSchema({
+                defineSchema({
                     fields: {
-                        name: {
-                            type: FieldType.String,
-                            required: true,
-                        },
-                        age: FieldType.Number,
-                        birth: FieldType.Date,
+                        name: z.string(),
+                        age: z.number().optional(),
+                        birth: z.date().optional(),
                     },
-                })
+                });
             `),
         );
     });

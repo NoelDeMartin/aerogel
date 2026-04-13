@@ -42,11 +42,6 @@ jobs:
                   pnpm pack
                   cd ../../
 
-                  cd packages/plugin-soukai
-                  pnpm build
-                  pnpm pack
-                  cd ../../
-
                   cd packages/plugin-solid
                   pnpm build
                   pnpm pack

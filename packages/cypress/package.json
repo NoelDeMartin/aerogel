@@ -1,61 +1,61 @@
 {
-    "name": "@aerogel/cypress",
-    "version": "0.1.2",
-    "type": "module",
-    "sideEffects": [
-        "./dist/support.js"
-    ],
-    "exports": {
-        ".": {
-            "types": "./dist/aerogel-cypress.d.ts",
-            "default": "./dist/aerogel-cypress.js"
-        },
-        "./config": {
-            "types": "./dist/config.d.ts",
-            "default": "./dist/config.js"
-        },
-        "./support": {
-            "types": "./dist/support.d.ts",
-            "default": "./dist/support.js"
-        }
+  "name": "@aerogel/cypress",
+  "version": "0.1.2",
+  "type": "module",
+  "sideEffects": [
+    "./dist/support.js"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/aerogel-cypress.d.ts",
+      "default": "./dist/aerogel-cypress.js"
     },
-    "files": [
-        "src",
-        "dist"
-    ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
-    "scripts": {
-        "build": "vite build && ./scripts/fix-types.sh",
-        "lint": "noeldemartin-lint src",
-        "verify": "noeldemartin-verify"
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "default": "./dist/config.js"
     },
-    "peerDependencies": {
-        "cypress": "*"
-    },
-    "dependencies": {
-        "@noeldemartin/utils": "catalog:",
-        "@simonsmith/cypress-image-snapshot": "^8.1.2",
-        "cypress-solid": "^0.2.0",
-        "idb": "catalog:"
-    },
-    "devDependencies": {
-        "@aerogel/core": "workspace:*",
-        "@aerogel/plugin-soukai": "workspace:*",
-        "@arethetypeswrong/cli": "catalog:",
-        "@noeldemartin/scripts": "catalog:",
-        "@types/node": "catalog:",
-        "eslint": "catalog:",
-        "prettier-eslint-cli": "^8.0.1",
-        "publint": "catalog:"
-    },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-typescript"
-        ]
-    },
-    "prettier": {
-        "printWidth": 120
+    "./support": {
+      "types": "./dist/support.d.ts",
+      "default": "./dist/support.js"
     }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "license": "MIT",
+  "author": "Noel De Martin",
+  "repository": "github:NoelDeMartin/aerogel",
+  "scripts": {
+    "build": "vite build && ./scripts/fix-types.sh",
+    "lint": "noeldemartin-lint src",
+    "verify": "noeldemartin-verify"
+  },
+  "peerDependencies": {
+    "cypress": "*"
+  },
+  "dependencies": {
+    "@noeldemartin/utils": "catalog:",
+    "@simonsmith/cypress-image-snapshot": "^8.1.2",
+    "cypress-solid": "^0.2.0",
+    "idb": "catalog:"
+  },
+  "devDependencies": {
+    "@aerogel/core": "workspace:*",
+    "@aerogel/plugin-solid": "workspace:*",
+    "@arethetypeswrong/cli": "catalog:",
+    "@noeldemartin/scripts": "catalog:",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "prettier-eslint-cli": "^8.0.1",
+    "publint": "catalog:"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@noeldemartin/eslint-config-typescript"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120
+  }
 }

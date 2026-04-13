@@ -1,22 +1,22 @@
-import { after, arrayRemove, facade, required } from '@noeldemartin/utils';
+import { after, arrayRemove, facade, isInstanceOf, required } from '@noeldemartin/utils';
 import { App } from '@aerogel/core';
-import { type SolidModel, isContainer } from 'soukai-solid';
+import { Container, type Model } from 'soukai-bis';
 
-import { getContainedModels } from '@aerogel/plugin-local-first/lib/inference';
+import { getContainedModels } from '@aerogel/plugin-local-first/lib/models';
 
 const Cloud = required(() => App.service('$cloud'));
 
 class SyncQueue {
 
-    private models: Set<SolidModel> = new Set();
+    private models: Set<Model> = new Set();
     private promises: Promise<unknown>[] = [];
 
-    public push(model: SolidModel): void {
+    public push(model: Model): void {
         this.models.add(model);
         this.syncAfter(after({ seconds: 1 }));
     }
 
-    public clear(models?: SolidModel[]): void {
+    public clear(models?: Model[]): void {
         if (!models) {
             this.models = new Set();
 
@@ -62,12 +62,12 @@ class SyncQueue {
             });
     }
 
-    private consume(): SolidModel[] {
-        const models: SolidModel[] = [];
-        const children: Set<SolidModel> = new Set();
+    private consume(): Model[] {
+        const models: Model[] = [];
+        const children: Set<Model> = new Set();
 
         for (const model of this.models) {
-            if (!isContainer(model)) {
+            if (!isInstanceOf(model, Container)) {
                 continue;
             }
 

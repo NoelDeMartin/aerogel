@@ -28,8 +28,6 @@
             "@aerogel/plugin-routing/*": ["./packages/plugin-routing/src/*"],
             "@aerogel/plugin-solid": ["./packages/plugin-solid/src"],
             "@aerogel/plugin-solid/*": ["./packages/plugin-solid/src/*"],
-            "@aerogel/plugin-soukai": ["./packages/plugin-soukai/src"],
-            "@aerogel/plugin-soukai/*": ["./packages/plugin-soukai/src/*"],
             "@aerogel/vite": ["./packages/vite/src"],
             "@aerogel/vite/*": ["./packages/vite/src/*"]
         }

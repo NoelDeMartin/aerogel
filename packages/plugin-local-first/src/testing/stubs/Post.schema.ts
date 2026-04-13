@@ -1,17 +1,17 @@
-import { FieldType } from 'soukai';
-import { defineSolidModelSchema } from 'soukai-solid';
+import { z } from 'zod';
+import { belongsToOne, defineSchema } from 'soukai-bis';
 
-export default defineSolidModelSchema({
+import Person from './Person';
+
+export default defineSchema({
     rdfContext: 'https://schema.org/',
-    rdfsClass: 'Article',
+    rdfClass: 'Article',
+    timestamps: false,
     fields: {
-        title: {
-            type: FieldType.String,
-            rdfProperty: 'name',
-        },
-        authorUrl: {
-            type: FieldType.Key,
-            rdfProperty: 'author',
-        },
+        title: z.string().rdfProperty('name'),
+        authorUrl: z.url().rdfProperty('author'),
+    },
+    relations: {
+        author: belongsToOne(Person, 'authorUrl'),
     },
 });

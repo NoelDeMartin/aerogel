@@ -1,7 +1,7 @@
 import { computed } from 'vue';
+import type { Job } from 'soukai-bis';
 
 import { translateWithDefault } from '@aerogel/core/lang';
-import type { Job } from '@aerogel/core/jobs';
 import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
 
 export interface LoadingModalProps {

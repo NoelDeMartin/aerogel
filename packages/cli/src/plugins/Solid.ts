@@ -17,11 +17,15 @@ export default class Solid extends Plugin {
     }
 
     protected override addNpmDependencies(): void {
-        addNpmDependency('soukai-solid', 'next');
+        addNpmDependency('soukai-bis', 'next');
         addNpmDependency('@noeldemartin/solid-utils', 'next');
         addNpmDependency('@solid/community-server', '7.1.6', true);
 
         super.addNpmDependencies();
+    }
+
+    protected override getBootstrapConfig(): string {
+        return 'solid({ models: import.meta.glob(\'@/models/*\', { eager: true }) })';
     }
 
     protected async updateNpmScripts(editor: Editor): Promise<void> {

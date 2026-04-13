@@ -1,9 +1,8 @@
 import { PromisedValue, arr, fail } from '@noeldemartin/utils';
-import { SolidEngine } from 'soukai-solid';
+import { SolidEngine } from 'soukai-bis';
 import type { Closure, FluentArray } from '@noeldemartin/utils';
-import type { Engine } from 'soukai';
-import type { Fetch } from 'soukai-solid';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { Engine } from 'soukai-bis';
+import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { ErrorSource } from '@aerogel/core';
 
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
@@ -41,7 +40,7 @@ export default abstract class Authenticator {
     public abstract logout(): Promise<void>;
 
     public get engine(): Engine {
-        this._engine = this._engine ?? new SolidEngine(this.requireAuthenticatedFetch());
+        this._engine = this._engine ?? new SolidEngine({ fetch: this.requireAuthenticatedFetch() });
 
         return this._engine;
     }

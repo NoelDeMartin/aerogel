@@ -33,7 +33,7 @@ export default defineConfig({
                 'cypress-solid',
                 'cypress-solid/config',
                 'idb',
-                'soukai',
+                'soukai-bis',
             ],
         },
     },

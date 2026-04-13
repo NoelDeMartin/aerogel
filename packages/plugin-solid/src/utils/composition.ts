@@ -8,10 +8,10 @@ import {
     shallowRef,
     watchEffect,
 } from 'vue';
-import { Events, onCleanMounted } from '@aerogel/core';
+import { onCleanMounted } from '@aerogel/core';
 import { isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
-import { Model } from 'soukai';
-import type { ModelConstructor, ModelEvents, ModelListener } from 'soukai';
+import { Model } from 'soukai-bis';
+import type { ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { ComputedRef, Ref } from 'vue';
 
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
@@ -24,7 +24,7 @@ function mapModels<T extends Model>(
     const map = existingMap ?? new Map();
 
     if (isArray(models)) {
-        models.forEach((model) => map.set(model.id, model));
+        models.forEach((model) => map.set(model.url, model));
 
         return map;
     }
@@ -36,7 +36,7 @@ function mapModels<T extends Model>(
             return map;
         }
 
-        map.set(models.id as string, models as T);
+        map.set(models.url as string, models as T);
 
         return map;
     }
@@ -44,7 +44,7 @@ function mapModels<T extends Model>(
     return map;
 }
 
-function shallowComputedModels<T>(modelClass: typeof Model, compute: () => T): ComputedRef<T> {
+function shallowComputedModels<T>(modelClass: ModelConstructor, compute: () => T): ComputedRef<T> {
     return customRef((track, trigger) => {
         let value: T;
         const recompute = () => ((value = compute()), trigger());
@@ -54,8 +54,6 @@ function shallowComputedModels<T>(modelClass: typeof Model, compute: () => T): C
             modelClass.on('updated', recompute),
             modelClass.on('modified', recompute),
             modelClass.on('relation-loaded', recompute),
-            Events.on('cloud:migration-cancelled', recompute),
-            Events.on('cloud:migration-completed', recompute),
         ];
         const stopListeners = () => {
             listeners.forEach((stop) => stop());
@@ -74,12 +72,12 @@ function shallowComputedModels<T>(modelClass: typeof Model, compute: () => T): C
     }) as ComputedRef<T>;
 }
 
-function reactiveComputedModels<T>(modelClass: typeof Model, compute: () => T): ComputedRef<T> {
+function reactiveComputedModels<T>(modelClass: ModelConstructor, compute: () => T): ComputedRef<T> {
     const shallowModels = shallowComputedModels(modelClass, compute);
     const reactiveModels = computed(() => {
         if (isArray(shallowModels.value)) {
             return shallowModels.value
-                .filter((shadowModel) => !isSoftDeleted(shadowModel))
+                .filter((shallowModel) => !isSoftDeleted(shallowModel))
                 .map((shallowModel) => reactive(shallowModel)) as T;
         }
 
@@ -87,7 +85,7 @@ function reactiveComputedModels<T>(modelClass: typeof Model, compute: () => T): 
             return Object.entries(shallowModels.value).reduce((models, [name, value]) => {
                 if (isArray(value)) {
                     models[name as keyof T] = value
-                        .filter((shadowModel) => !isSoftDeleted(shadowModel))
+                        .filter((shallowModel) => !isSoftDeleted(shallowModel))
                         .map((shallowModel) => reactive(shallowModel)) as T[keyof T];
                 } else if (!isSoftDeleted(value as Model)) {
                     models[name as keyof T] = reactive(value as Model) as T[keyof T];
@@ -101,7 +99,11 @@ function reactiveComputedModels<T>(modelClass: typeof Model, compute: () => T): 
     });
     const reactiveModelsMap = computed(() => mapModels(reactiveModels.value));
     const stop = modelClass.on('modified', (updatedModel, field) => {
-        Object.assign(reactiveModelsMap.value.get(updatedModel.id) ?? {}, {
+        if (!updatedModel.url) {
+            return;
+        }
+
+        Object.assign(reactiveModelsMap.value.get(updatedModel.url) ?? {}, {
             [field]: updatedModel.getAttribute(field),
         });
     });
@@ -117,7 +119,7 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
         const listeners: Array<() => void> = [];
-        const onModelUpdated = (model: Model) => value instanceof Model && model.id === value.id && trigger();
+        const onModelUpdated = (model: Model) => value instanceof Model && model.url === value.url && trigger();
         const stopListeners = () => {
             listeners.forEach((stop) => stop());
             listeners.splice(0, listeners.length);
@@ -135,8 +137,6 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
             trigger();
 
             if (value instanceof Model && !listeners.length) {
-                listeners.push(Events.on('cloud:migration-completed', trigger));
-                listeners.push(Events.on('cloud:migration-cancelled', trigger));
                 listeners.push(value.static().on('modified', onModelUpdated));
                 listeners.push(value.static().on('updated', onModelUpdated));
                 listeners.push(value.static().on('relation-loaded', onModelUpdated));
@@ -152,7 +152,7 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     });
 }
 
-export function computedModels<T>(modelClass: typeof Model, compute: () => T): ComputedRef<T> {
+export function computedModels<T>(modelClass: ModelConstructor, compute: () => T): ComputedRef<T> {
     // TODO This implementation is probably very inefficient and needs to be improved for better performance with large
     // collections. There are also more details in the unit tests for this function.
     return reactiveComputedModels(modelClass, compute);

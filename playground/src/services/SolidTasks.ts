@@ -1,7 +1,7 @@
 import { Events } from '@aerogel/core';
-import { facade, stringToSlug, urlResolveDirectory } from '@noeldemartin/utils';
+import { facade, required, stringToSlug, tap, urlResolveDirectory } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
-import { SolidContainer } from 'soukai-solid';
+import { Container, type ModelWithUrl, defineSchema } from 'soukai-bis';
 import type { AuthSession } from '@aerogel/plugin-solid';
 
 import SolidTask from '@/models/SolidTask';
@@ -15,22 +15,24 @@ export class SolidTasksService extends Service {
             const container = await this.findOrCreateTasksContainer(session);
 
             SolidTask.setEngine(Solid.requireAuthenticator().engine);
-            SolidTask.collection = container.url;
+            SolidTask.defaultContainerUrl = container.url;
 
             this.tasksContainer.resolve(container);
             this.setState('tasksContainer', this.tasksContainer);
         });
     }
 
-    private async findOrCreateTasksContainer(session: AuthSession): Promise<SolidContainer> {
+    private async findOrCreateTasksContainer(session: AuthSession): Promise<ModelWithUrl<Container>> {
         const typeIndex = await Solid.findOrCreatePrivateTypeIndex();
-        const [container] = await SolidContainer.withEngine(session.authenticator.engine).fromTypeIndex(
-            typeIndex.url,
-            SolidTask,
-        );
+        const RemoteContainer = tap(defineSchema(Container), (model) => model.setEngine(session.authenticator.engine));
+        const [remoteContainer] = await RemoteContainer.createFromTypeIndex(typeIndex, SolidTask);
 
-        if (container) {
-            return container;
+        if (remoteContainer) {
+            const container = await Container.createFromJsonLD(await remoteContainer.toJsonLD(), {
+                url: remoteContainer.url,
+            });
+
+            return required(container);
         }
 
         // In a real application, you would confirm the name and url of the container with the user before

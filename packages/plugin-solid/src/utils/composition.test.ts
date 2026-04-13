@@ -1,9 +1,9 @@
 import { arrayGroupBy } from '@noeldemartin/utils';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { InMemoryEngine, bootModels, setEngine } from 'soukai';
+import { InMemoryEngine, bootCoreModels, bootModels, setEngine } from 'soukai-bis';
 import { ref, watchEffect } from 'vue';
 
-import User from '@aerogel/plugin-soukai/testing/stubs/models/User';
+import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 
 import { computedModels } from './composition';
 
@@ -11,6 +11,7 @@ describe('Composition helpers', () => {
 
     beforeEach(() => {
         bootModels({ User });
+        bootCoreModels({ reset: true });
         setEngine(new InMemoryEngine());
     });
 
@@ -29,7 +30,7 @@ describe('Composition helpers', () => {
         watchEffect(() => {
             reactiveAlice = Object.values(usersByAge.value)
                 .flat()
-                .find((user) => user.is(alice)) as User | undefined;
+                .find((user) => user.url === alice.url) as User | undefined;
 
             collectionUpdated++;
         });
@@ -53,12 +54,12 @@ describe('Composition helpers', () => {
         // Assert
         expect(Object.keys(usersByAge.value)).toEqual(['23', '25']);
         expect(usersByAge.value[23]).toHaveLength(1);
-        expect(usersByAge.value[23]?.[0]?.is(bob)).toBe(true);
+        expect(usersByAge.value[23]?.[0]?.url === bob.url).toBe(true);
         expect(usersByAge.value[25]).toHaveLength(1);
-        expect(usersByAge.value[25]?.[0]?.is(alice)).toBe(true);
+        expect(usersByAge.value[25]?.[0]?.url === alice.url).toBe(true);
 
         // TODO This should be 3
-        expect(collectionUpdated).toEqual(12);
+        expect(collectionUpdated).toEqual(10);
 
         // TODO This should be 2
         expect(aliceUpdated).toEqual(1);

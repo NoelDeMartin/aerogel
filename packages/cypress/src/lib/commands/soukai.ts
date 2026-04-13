@@ -1,7 +1,7 @@
 import { requireUrlParentDirectory } from '@noeldemartin/utils';
 import { openDB } from 'idb';
 import type { JsonLD } from '@noeldemartin/solid-utils';
-import type { ModelConstructor, ModelsRegistry } from 'soukai';
+import type { ModelConstructor, ModelsRegistry } from 'soukai-bis';
 
 async function getIndexedDBObject<T = object>(database: string, store: string, id: string): Promise<T | null> {
     try {

@@ -1,4 +1,4 @@
-import { formatCodeBlock, stringToStudlyCase } from '@noeldemartin/utils';
+import { formatCodeBlock, stringToCamelCase } from '@noeldemartin/utils';
 
 import Command from '@aerogel/cli/commands/Command';
 import File from '@aerogel/cli/lib/File';
@@ -37,8 +37,6 @@ export class GenerateModelCommand extends Command {
             Log.fail(`${this.name} model already exists!`);
         }
 
-        this.assertSoukaiInstalled();
-
         const filesList = await Log.animate('Creating model', async () => {
             const files = Template.instantiate(templatePath('model'), 'src/models', {
                 model: {
@@ -65,33 +63,19 @@ export class GenerateModelCommand extends Command {
 
                 return {
                     name,
-                    type: stringToStudlyCase(type ?? 'string'),
+                    type: stringToCamelCase(type ?? 'string'),
                     required: rules === 'required',
                 };
             })
             .reduce((definition, field) => {
                 const fieldDefinition = field.required
-                    ? formatCodeBlock(`
-                        ${field.name}: {
-                            type: FieldType.${field.type},
-                            required: true,
-                        }
-                    `)
-                    : `${field.name}: FieldType.${field.type}`;
+                    ? `${field.name}: z.${field.type}()`
+                    : `${field.name}: z.${field.type}().optional()`;
 
                 return definition + `\n${fieldDefinition},`;
             }, '');
 
         return formatCodeBlock(code, { indent: 8 });
-    }
-
-    protected assertSoukaiInstalled(): void {
-        if (!File.contains('package.json', '"soukai"') && !File.contains('package.json', '"@aerogel/plugin-soukai"')) {
-            Log.fail(`
-                Soukai is not installed yet! You can install it running:
-                npx gel install soukai
-            `);
-        }
     }
 
 }

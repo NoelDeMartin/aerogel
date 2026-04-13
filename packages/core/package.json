@@ -1,57 +1,58 @@
 {
-    "name": "@aerogel/core",
-    "version": "0.1.2",
-    "type": "module",
-    "sideEffects": false,
-    "exports": {
-        "types": "./dist/aerogel-core.d.ts",
-        "style": "./src/index.css",
-        "default": "./dist/aerogel-core.js"
-    },
-    "files": [
-        "src",
-        "dist"
-    ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
-    "scripts": {
-        "build": "vite build && ./scripts/fix-types.sh",
-        "lint": "noeldemartin-lint src",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose",
-        "verify": "noeldemartin-verify"
-    },
-    "peerDependencies": {
-        "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/typography": "^0.5.16",
-        "tailwindcss": "^4.1.4",
-        "vue": "catalog:"
-    },
-    "dependencies": {
-        "@noeldemartin/utils": "catalog:",
-        "@noeldemartin/vue-modals": "0.1.1",
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
-        "dompurify": "^3.2.4",
-        "eruda": "^3.4.1",
-        "eruda-indexeddb": "^0.1.1",
-        "marked": "^15.0.7",
-        "pinia": "^2.1.6",
-        "reka-ui": "^2.2.0",
-        "tailwind-merge": "^3.1.0",
-        "vue-component-type-helpers": "^2.2.8"
-    },
-    "devDependencies": {
-        "@aerogel/vite": "workspace:*",
-        "@arethetypeswrong/cli": "catalog:",
-        "@noeldemartin/scripts": "catalog:",
-        "eslint": "catalog:",
-        "publint": "catalog:"
-    },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-vue"
-        ]
-    }
+  "name": "@aerogel/core",
+  "version": "0.1.2",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "types": "./dist/aerogel-core.d.ts",
+    "style": "./src/index.css",
+    "default": "./dist/aerogel-core.js"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "license": "MIT",
+  "author": "Noel De Martin",
+  "repository": "github:NoelDeMartin/aerogel",
+  "scripts": {
+    "build": "vite build && ./scripts/fix-types.sh",
+    "lint": "noeldemartin-lint src",
+    "test": "vitest --run",
+    "test:ci": "vitest --run --reporter verbose",
+    "verify": "noeldemartin-verify"
+  },
+  "peerDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss": "^4.1.4",
+    "vue": "catalog:"
+  },
+  "dependencies": {
+    "@noeldemartin/utils": "catalog:",
+    "@noeldemartin/vue-modals": "0.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dompurify": "^3.2.4",
+    "eruda": "^3.4.1",
+    "eruda-indexeddb": "^0.1.1",
+    "marked": "^15.0.7",
+    "pinia": "^2.1.6",
+    "reka-ui": "^2.2.0",
+    "soukai-bis": "catalog:",
+    "tailwind-merge": "^3.1.0",
+    "vue-component-type-helpers": "^2.2.8"
+  },
+  "devDependencies": {
+    "@aerogel/vite": "workspace:*",
+    "@arethetypeswrong/cli": "catalog:",
+    "@noeldemartin/scripts": "catalog:",
+    "eslint": "catalog:",
+    "publint": "catalog:"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@noeldemartin/eslint-config-vue"
+    ]
+  }
 }

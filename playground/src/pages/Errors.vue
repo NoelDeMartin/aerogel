@@ -1,10 +1,6 @@
 <template>
     <PageTitle source="src/pages/Errors.vue">
         {{ $t('errors.title') }}
-
-        <template #end>
-            <ErrorLogs />
-        </template>
     </PageTitle>
     <div class="flex w-full flex-wrap items-center justify-center gap-3">
         <Button @click="throwError()">

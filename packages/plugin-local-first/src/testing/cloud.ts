@@ -1,10 +1,8 @@
 import { App } from '@aerogel/core';
-import { bootSolidModels } from 'soukai-solid';
 import { uuid } from '@noeldemartin/utils';
-import { InMemoryEngine, bootModels, resetModelListeners, setEngine } from 'soukai';
+import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
 import { it } from 'vitest';
-import { resetTrackedModels } from '@aerogel/plugin-soukai';
-import { Solid } from '@aerogel/plugin-solid';
+import { Solid, resetTrackedModels } from '@aerogel/plugin-solid';
 import type { App as AppInstance } from 'vue';
 
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
@@ -13,19 +11,16 @@ import Movie from '@aerogel/plugin-local-first/testing/stubs/Movie';
 import MoviesContainer from '@aerogel/plugin-local-first/testing/stubs/MoviesContainer';
 import SolidMock from '@aerogel/plugin-local-first/testing/mocks/Solid.mock';
 import Task from '@aerogel/plugin-local-first/testing/stubs/Task';
-import TaskSchema from '@aerogel/plugin-local-first/testing/stubs/Task.schema';
 import TasksList from '@aerogel/plugin-local-first/testing/stubs/TasksList';
 import Workspace from '@aerogel/plugin-local-first/testing/stubs/Workspace';
 import { FakeResponse, mock } from '@noeldemartin/testing';
 
 export async function setupCloudTests(): Promise<void> {
-    bootSolidModels();
+    bootCoreModels({ reset: true });
     bootModels({ Movie, MoviesContainer, Task, TasksList, Workspace });
     setEngine(new InMemoryEngine());
     resetTrackedModels();
     resetModelListeners();
-
-    await Task.updateSchema(TaskSchema);
 
     App.instance = mock<AppInstance>({ config: { globalProperties: { $cloud: Cloud } } });
 

@@ -75,11 +75,6 @@ cloud:
     syncFailed: Sync failed
     logOut: Log out
     disconnect: Disconnect
-    migrationFailed: Migration failed
-    migrationNotLoggedIn: You need to reconnect before starting the migration
-    migrationNotReady: You need to backup your data before starting the migration
-    migrationNotSyncing: Wait for syncing to finish before starting the migration
-    migrationNotOnline: You need to be online in order to start the migration
     setup:
         submit: Back up now
     logIn:
@@ -105,7 +100,6 @@ cloud:
         offline: Everything is up to date, but you're currently offline.
     status:
         syncing: Synchronization in progress
-        migrating: Migration in progress
         online: Online
         offline: Offline
         disconnected: Disconnected

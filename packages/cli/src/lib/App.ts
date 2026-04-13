@@ -74,12 +74,10 @@ export default class App {
             dependencies['@aerogel/plugin-local-first'] = 'next';
             dependencies['@aerogel/plugin-routing'] = 'next';
             dependencies['@aerogel/plugin-solid'] = 'next';
-            dependencies['@aerogel/plugin-soukai'] = 'next';
             dependencies['@aerogel/vite'] = 'next';
             dependencies['@noeldemartin/solid-utils'] = 'next';
             dependencies['@noeldemartin/utils'] = 'next';
-            dependencies['soukai-solid'] = 'next';
-            dependencies['soukai'] = 'next';
+            dependencies['soukai-bis'] = 'next';
         }
 
         if (this.options.linkedLocal) {
@@ -91,7 +89,6 @@ export default class App {
                     '@aerogel/cypress': packagePath('cypress'),
                     '@aerogel/plugin-i18n': packagePath('plugin-i18n'),
                     '@aerogel/plugin-routing': packagePath('plugin-routing'),
-                    '@aerogel/plugin-soukai': packagePath('plugin-soukai'),
                     '@aerogel/plugin-solid': packagePath('plugin-solid'),
                     '@aerogel/plugin-local-first': packagePath('plugin-local-first'),
                     '@aerogel/vite': packagePath('vite'),
@@ -106,7 +103,6 @@ export default class App {
                     '@aerogel/cypress': packagePackPath('cypress') ?? packNotFound('cypress'),
                     '@aerogel/plugin-i18n': packagePackPath('plugin-i18n') ?? packNotFound('plugin-i18n'),
                     '@aerogel/plugin-routing': packagePackPath('plugin-routing') ?? packNotFound('plugin-routing'),
-                    '@aerogel/plugin-soukai': packagePackPath('plugin-soukai') ?? packNotFound('plugin-soukai'),
                     '@aerogel/plugin-solid': packagePackPath('plugin-solid') ?? packNotFound('plugin-solid'),
                     '@aerogel/plugin-local-first':
                         packagePackPath('plugin-local-first') ?? packNotFound('plugin-local-first'),

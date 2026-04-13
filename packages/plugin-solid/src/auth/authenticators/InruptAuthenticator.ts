@@ -1,7 +1,7 @@
 import AerogelSolid from 'virtual:aerogel-solid';
 
 import { Storage, after, fail } from '@noeldemartin/utils';
-import type { Fetch } from 'soukai-solid';
+import type { Fetch } from '@noeldemartin/solid-utils';
 import type {
     ILoginInputOptions,
     events,

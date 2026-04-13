@@ -22,7 +22,6 @@ export default defineConfig({
                 '192x192': 'android-chrome-192x192.png',
                 '512x512': 'android-chrome-512x512.png',
             },
-            patchZodWithSoukaiBis: true,
         }),
         Components({
             dts: 'src/types/components.d.ts',
@@ -47,7 +46,6 @@ export default defineConfig({
             ),
             '@aerogel/plugin-routing': fileURLToPath(new URL('../packages/plugin-routing/src/', import.meta.url)),
             '@aerogel/plugin-solid': fileURLToPath(new URL('../packages/plugin-solid/src/', import.meta.url)),
-            '@aerogel/plugin-soukai': fileURLToPath(new URL('../packages/plugin-soukai/src/', import.meta.url)),
         },
     },
 });

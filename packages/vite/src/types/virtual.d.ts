@@ -7,7 +7,6 @@ declare module 'virtual:aerogel' {
         sourceHash: string;
         sourceUrl?: string;
         locales: Record<string, string>;
-        soukaiBis: boolean;
     }
 
     const virtual: VirtualAerogel;

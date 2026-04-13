@@ -1,6 +1,6 @@
 import { FakeServer, fakeContainerUrl, fakeDocumentUrl, mock } from '@noeldemartin/testing';
 import { facade } from '@noeldemartin/utils';
-import { SolidEngine, coreModels } from 'soukai-solid';
+import { SolidEngine, getCoreModels } from 'soukai-bis';
 import { SolidService } from '@aerogel/plugin-solid';
 import type { AuthSession } from '@aerogel/plugin-solid';
 
@@ -9,7 +9,7 @@ export class SolidMockService extends SolidService {
     constructor() {
         super();
 
-        const engine = new SolidEngine(FakeServer.fetch);
+        const engine = new SolidEngine({ fetch: FakeServer.fetch });
 
         this.setState('session', {
             user: mock({
@@ -22,7 +22,7 @@ export class SolidMockService extends SolidService {
             }),
         } as unknown as AuthSession);
 
-        coreModels.forEach((model) => model.setEngine(engine));
+        getCoreModels().forEach((model) => model.setEngine(engine));
 
         this.booted.resolve();
     }

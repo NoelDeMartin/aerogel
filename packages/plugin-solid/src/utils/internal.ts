@@ -2,7 +2,7 @@ import { computed, toRaw } from 'vue';
 import { Events, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
 import type { ComputedRef } from 'vue';
-import type { Model, ModelConstructor } from 'soukai';
+import type { Model, ModelConstructor } from 'soukai-bis';
 
 interface TrackedModelData<T extends object = Model> {
     modelsSet: ReactiveSet<T>;
@@ -14,9 +14,9 @@ interface TrackedModelData<T extends object = Model> {
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
 
 function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): TrackedModelData<T> {
-    const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.id === b.id });
+    const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.url === b.url });
     const modelsArray = computed(() => modelsSet.values());
-    const collectionsSet = new Set<string>([modelClass.collection]);
+    const collectionsSet = new Set<string>([modelClass.defaultContainerUrl]);
     const data = {
         modelsSet,
         modelsArray,
@@ -25,7 +25,7 @@ function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstruc
             const models = new Set<T>();
 
             for (const collection of collectionsSet) {
-                const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
+                const collectionModels = await modelClass.all({ from: collection });
 
                 collectionModels.forEach((model) => models.add(model));
             }
@@ -39,10 +39,8 @@ function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstruc
     modelClass.on('deleted', (model) => modelsSet.delete(toRaw(model)));
     modelClass.on('updated', (model) => modelsSet.add(toRaw(model)));
     Events.on('purge-storage', () => modelsSet.clear());
-    Events.on('cloud:migration-completed', () => data.refresh());
-    Events.on('cloud:migration-cancelled', () => data.refresh());
     Events.on('cloud:backup-completed', () => data.refresh());
-    Events.emit('soukai:track-models', modelClass);
+    Events.emit('solid:track-models', modelClass);
 
     return data;
 }
@@ -69,6 +67,6 @@ export function _getTrackedModelsData<T extends Model>(modelClass: ModelConstruc
 
 declare module '@aerogel/core' {
     export interface EventsPayload {
-        'soukai:track-models': ModelConstructor;
+        'solid:track-models': ModelConstructor;
     }
 }

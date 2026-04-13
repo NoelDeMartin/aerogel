@@ -1,5 +1,5 @@
-import type ITask from '@/models/ITask';
+import type { Model } from 'soukai-bis';
 
-import Model from './Task.schema';
-
-export default class Task extends Model implements ITask {}
+export default interface ITask extends Model {
+    name: string;
+}

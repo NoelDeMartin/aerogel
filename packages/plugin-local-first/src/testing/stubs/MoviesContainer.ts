@@ -1,20 +1,11 @@
-import { SolidContainer } from 'soukai-solid';
-import type { Relation } from 'soukai';
-import type { SolidContainsRelation } from 'soukai-solid';
+import type { ContainsRelation } from 'soukai-bis';
 
-import Movie from './Movie';
+import Model from './MoviesContainer.schema';
+import type Movie from './Movie';
 
-export default class MoviesContainer extends SolidContainer {
-
-    public static override history = true;
-    public static override timestamps = true;
-    public static override tombstone = false;
+export default class MoviesContainer extends Model {
 
     declare public movies?: Movie[];
-    declare public relatedMovies: SolidContainsRelation<this, Movie, typeof Movie>;
-
-    public moviesRelationship(): Relation {
-        return this.contains(Movie);
-    }
+    declare public relatedMovies: ContainsRelation<this, Movie, typeof Movie>;
 
 }

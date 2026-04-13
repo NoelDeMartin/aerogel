@@ -14,7 +14,7 @@
             />
         </button>
         <div
-            class="pointer-events-none absolute right-0 bottom-0 size-3 rounded-full border-2 border-white"
+            class="pointer-events-none absolute bottom-0 right-0 size-3 rounded-full border-2 border-white"
             :class="accountStatus.classes"
         >
             <span class="sr-only">{{ accountStatus.message }}</span>
@@ -74,8 +74,6 @@ function getAccountStatusMessage(): string | undefined {
     switch (Cloud.status) {
         case CloudStatus.Syncing:
             return translateWithDefault('cloud.status.syncing', 'Synchronization in progress');
-        case CloudStatus.Migrating:
-            return translateWithDefault('cloud.status.migrating', 'Migration in progress');
         case CloudStatus.Online:
             return translateWithDefault('cloud.status.online', 'Online');
         case CloudStatus.Offline:

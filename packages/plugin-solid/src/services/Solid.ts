@@ -1,5 +1,3 @@
-import Aerogel from 'virtual:aerogel';
-
 import {
     after,
     arrayFilter,
@@ -16,6 +14,7 @@ import {
     objectWithoutEmpty,
     parseBoolean,
     requireUrlParse,
+    required,
     resetAsyncMemo,
     setAsyncMemo,
     tap,
@@ -23,19 +22,24 @@ import {
 } from '@noeldemartin/utils';
 import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { getBootedModels, setEngine } from 'soukai';
-import { SolidContainer, SolidTypeIndex, coreModels, isSolidModel } from 'soukai-solid';
-import { SolidEngine as BisSolidEngine, TypeIndex, TypeRegistration, setEngine as setBisEngine } from 'soukai-bis';
+import {
+    Container,
+    SolidEngine,
+    TypeIndex,
+    TypeRegistration,
+    defineSchema,
+    getBootedModels,
+    setEngine,
+} from 'soukai-bis';
 import type { ErrorSource } from '@aerogel/core';
-import type { Fetch, SolidModelConstructor } from 'soukai-solid';
-import type { Container, ContainerConstructor, GetModelAttributes, ModelConstructor } from 'soukai-bis';
 import type { NullablePartial } from '@noeldemartin/utils';
-import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { ContainerConstructor, ModelConstructor, ModelWithUrl } from 'soukai-bis';
+import type { Fetch, SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
 import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
 import { getAuthenticator } from '@aerogel/plugin-solid/auth';
-import { isTrackingModel, trackModelsCollection } from '@aerogel/plugin-soukai';
+import { isTrackingModel, trackModelsCollection } from '@aerogel/plugin-solid/utils';
 import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
 import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
@@ -60,7 +64,7 @@ export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
 
 export class SolidService extends Service {
 
-    private _bisEngine?: BisSolidEngine;
+    private _engine?: SolidEngine;
 
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
         return !!this.session;
@@ -78,12 +82,10 @@ export class SolidService extends Service {
         return this.authenticator ?? fail('Could not get authenticator');
     }
 
-    public requireEngine(): BisSolidEngine {
-        if (!Aerogel.soukaiBis) {
-            throw new Error('Solid engine is not available');
-        }
-
-        return (this._bisEngine ??= new BisSolidEngine((...args: [RequestInfo]) => this.fetch(...args)));
+    public requireEngine(): SolidEngine {
+        return (this._engine ??= new SolidEngine({
+            fetch: (...args: [RequestInfo]) => this.fetch(...args),
+        }));
     }
 
     public requireUser(): SolidUserProfile {
@@ -297,24 +299,14 @@ export class SolidService extends Service {
         containerClass?: ContainerConstructor<T>,
     ): Promise<T | null> {
         const typeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
-        const bisTypeIndexes = arrayFilter(typeIndexes).map((typeIndex) => {
-            const bisTypeIndex = new TypeIndex(typeIndex.getAttributes() as GetModelAttributes<TypeIndex>);
-
-            bisTypeIndex.relatedRegistrations.related = typeIndex.registrations.map((registration) => {
-                return new TypeRegistration(registration.getAttributes() as GetModelAttributes<TypeRegistration>);
-            });
-
-            return bisTypeIndex;
-        });
-
         const containers = await Promise.all(
-            bisTypeIndexes.map((typeIndex) => typeIndex?.findContainer(modelClass, containerClass)),
+            typeIndexes.map((typeIndex) => typeIndex?.findContainer(modelClass, containerClass)),
         );
 
         return containers.find((model) => !!model) ?? null;
     }
 
-    public async findTypeIndexes(): Promise<TypeIndex[]> {
+    public async findTypeIndexes(): Promise<ModelWithUrl<TypeIndex>[]> {
         const originalTypeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
         const newTypeIndexes = await Promise.all(
             originalTypeIndexes.map((typeIndex) => typeIndex && TypeIndex.find(typeIndex.url)),
@@ -323,13 +315,12 @@ export class SolidService extends Service {
         return newTypeIndexes.filter(isTruthy);
     }
 
-    public async findOrCreatePrivateTypeIndex(): Promise<SolidTypeIndex> {
+    public async findOrCreatePrivateTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
         return (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex());
     }
 
-    public async findPrivateTypeIndex(options: { fresh?: boolean } = {}): Promise<SolidTypeIndex | null> {
+    public async findPrivateTypeIndex(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex> | null> {
         const { webId, privateTypeIndexUrl } = this.requireUser();
-        const engine = this.requireAuthenticator().engine;
 
         if (!privateTypeIndexUrl) {
             return null;
@@ -339,17 +330,11 @@ export class SolidService extends Service {
             resetAsyncMemo(`${webId}-privateTypeIndex`);
         }
 
-        return asyncMemo(`${webId}-privateTypeIndex`, () =>
-            SolidTypeIndex.withEngine(engine).find(privateTypeIndexUrl));
+        return asyncMemo(`${webId}-privateTypeIndex`, () => TypeIndex.find(privateTypeIndexUrl));
     }
 
-    public async findOrCreatePublicTypeIndex(): Promise<SolidTypeIndex> {
-        return (await this.findPublicTypeIndex()) ?? (await this.createPublicTypeIndex());
-    }
-
-    public async findPublicTypeIndex(options: { fresh?: boolean } = {}): Promise<SolidTypeIndex | null> {
+    public async findPublicTypeIndex(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex> | null> {
         const { webId, publicTypeIndexUrl } = this.requireUser();
-        const engine = this.requireAuthenticator().engine;
 
         if (!publicTypeIndexUrl) {
             return null;
@@ -359,7 +344,7 @@ export class SolidService extends Service {
             resetAsyncMemo(`${webId}-publicTypeIndex`);
         }
 
-        return asyncMemo(`${webId}-publicTypeIndex`, () => SolidTypeIndex.withEngine(engine).find(publicTypeIndexUrl));
+        return asyncMemo(`${webId}-publicTypeIndex`, () => TypeIndex.find(publicTypeIndexUrl));
     }
 
     public clearTypeIndexesCache(): void {
@@ -372,30 +357,32 @@ export class SolidService extends Service {
     public async createPrivateContainer(options: {
         url: string;
         name?: string;
-        registerFor?: SolidModelConstructor;
+        registerFor?: ModelConstructor;
         reuseExisting?: boolean;
-    }): Promise<SolidContainer> {
+    }): Promise<ModelWithUrl<Container>> {
         const engine = this.requireAuthenticator().engine;
+        const RemoteContainer = tap(defineSchema(Container), (model) => model.setEngine(engine));
+        const existingContainer = await RemoteContainer.find(options.url);
 
-        return SolidContainer.withEngine(engine, async () => {
-            const existingContainer = await SolidContainer.find(options.url);
+        if (existingContainer && !options.reuseExisting) {
+            throw new ContainerAlreadyInUse(existingContainer);
+        }
 
-            if (existingContainer && !options.reuseExisting) {
-                throw new ContainerAlreadyInUse(existingContainer);
-            }
+        const remoteContainer = existingContainer ?? new RemoteContainer({ url: options.url, name: options.name });
 
-            const container = existingContainer ?? new SolidContainer({ url: options.url, name: options.name });
+        await remoteContainer.save();
 
-            await container.save();
+        if (options.registerFor) {
+            const typeIndex = await this.findOrCreatePrivateTypeIndex();
 
-            if (options.registerFor) {
-                const typeIndex = await this.findOrCreatePrivateTypeIndex();
+            await remoteContainer.register(typeIndex, options.registerFor);
+        }
 
-                await container.register(typeIndex, options.registerFor);
-            }
-
-            return container;
+        const container = await Container.createFromJsonLD(await remoteContainer.toJsonLD(), {
+            url: remoteContainer.url,
         });
+
+        return required(container);
     }
 
     protected override async boot(): Promise<void> {
@@ -420,29 +407,14 @@ export class SolidService extends Service {
         await this.trackSolidModels();
     }
 
-    protected async createPrivateTypeIndex(): Promise<SolidTypeIndex> {
+    protected async createPrivateTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
         const user = this.requireUser();
-        const authenticator = this.requireAuthenticator();
-        const typeIndex = await SolidTypeIndex.withEngine(authenticator.engine).createPrivate(user);
+        const typeIndex = await TypeIndex.createPrivate(user);
 
         return tap(typeIndex, () => {
             user.privateTypeIndexUrl = typeIndex.url;
 
             setAsyncMemo(`${user.webId}-privateTypeIndex`, typeIndex);
-
-            this.rememberProfile(user);
-        });
-    }
-
-    public async createPublicTypeIndex(): Promise<SolidTypeIndex> {
-        const user = this.requireUser();
-        const authenticator = this.requireAuthenticator();
-        const typeIndex = await SolidTypeIndex.withEngine(authenticator.engine).createPublic(user);
-
-        return tap(typeIndex, () => {
-            user.privateTypeIndexUrl = typeIndex.url;
-
-            setAsyncMemo(`${user.webId}-publicTypeIndex`, typeIndex);
 
             this.rememberProfile(user);
         });
@@ -563,15 +535,11 @@ export class SolidService extends Service {
                 }
 
                 if (!App.plugin('@aerogel/local-first')) {
-                    Aerogel.soukaiBis ? setBisEngine(this.requireEngine()) : setEngine(session.authenticator.engine);
+                    setEngine(this.requireEngine());
                 }
 
-                if (Aerogel.soukaiBis) {
-                    TypeIndex.setEngine(this.requireEngine());
-                    TypeRegistration.setEngine(this.requireEngine());
-                } else {
-                    coreModels.forEach((model) => model.setEngine(session.authenticator.engine));
-                }
+                TypeIndex.setEngine(this.requireEngine());
+                TypeRegistration.setEngine(this.requireEngine());
 
                 await Events.emit('auth:login', session);
             },
@@ -607,17 +575,13 @@ export class SolidService extends Service {
 
     private async trackSolidModels(): Promise<void> {
         Events.on('purge-storage', () => (this.collections = {}));
-        Events.on('soukai:track-models', async (modelClass) => {
-            if (!isSolidModel(modelClass)) {
-                return;
-            }
-
+        Events.on('solid:track-models', async (modelClass) => {
             modelClass.on('created', async (model) => {
                 const containerUrl = model.getContainerUrl();
 
                 if (
                     !containerUrl ||
-                    model.getDefaultCollection() === containerUrl ||
+                    model.static().defaultContainerUrl === containerUrl ||
                     this.collections[model.static().modelName]?.includes(containerUrl)
                 ) {
                     return;

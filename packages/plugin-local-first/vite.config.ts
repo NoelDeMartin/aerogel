@@ -17,12 +17,10 @@ export default defineConfig({
             external: [
                 '@aerogel/core',
                 '@aerogel/plugin-solid',
-                '@aerogel/plugin-soukai',
                 '@noeldemartin/solid-utils',
                 '@noeldemartin/utils',
                 'idb',
-                'soukai-solid',
-                'soukai',
+                'soukai-bis',
                 'vue',
             ],
         },

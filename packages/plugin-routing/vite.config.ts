@@ -16,7 +16,7 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 '@aerogel/core',
-                '@aerogel/plugin-soukai',
+                '@aerogel/plugin-solid',
                 '@aerogel/vite',
                 '@noeldemartin/utils',
                 'virtual:aerogel',
@@ -40,6 +40,7 @@ export default defineConfig({
         },
     },
     test: {
+        clearMocks: true,
         setupFiles: ['./src/testing/setup.ts'],
     },
 });

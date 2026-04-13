@@ -1,5 +1,3 @@
-import 'soukai-bis/patch-zod';
-
 import { FakeLocalStorage } from '@noeldemartin/testing';
 import { vi } from 'vitest';
 

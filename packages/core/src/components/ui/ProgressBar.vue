@@ -18,9 +18,9 @@
 
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue';
+import type { Job } from 'soukai-bis';
 
 import { classes } from '@aerogel/core/utils/classes';
-import type Job from '@aerogel/core/jobs/Job';
 import type { Falsifiable } from '@aerogel/core/utils';
 
 const { filledClass, overflowClass, progress, job } = defineProps<{

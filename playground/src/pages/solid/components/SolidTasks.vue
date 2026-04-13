@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import SolidTask from '@/models/SolidTask';
-import { useModelCollection } from '@aerogel/plugin-soukai';
+import { useModelCollection } from '@aerogel/plugin-solid';
 
 const tasks = useModelCollection(SolidTask);
 </script>

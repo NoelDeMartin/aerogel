@@ -1,15 +1,11 @@
-import { FieldType } from 'soukai';
-import { defineSolidModelSchema } from 'soukai-solid';
+import { z } from 'zod';
+import { defineSchema } from 'soukai-bis';
 
-export default defineSolidModelSchema({
+export default defineSchema({
     rdfContext: 'http://www.w3.org/2002/12/cal/ical#',
-    rdfsClass: 'Vtodo',
+    rdfClass: 'Vtodo',
     history: true,
-    tombstone: false,
     fields: {
-        name: {
-            type: FieldType.String,
-            rdfProperty: 'summary',
-        },
+        name: z.string().rdfProperty('summary'),
     },
 });

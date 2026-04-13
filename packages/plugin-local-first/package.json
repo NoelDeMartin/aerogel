@@ -25,9 +25,7 @@
     "peerDependencies": {
         "@aerogel/core": "*",
         "@aerogel/plugin-solid": "*",
-        "@aerogel/plugin-soukai": "*",
-        "soukai": "*",
-        "soukai-solid": "*"
+        "soukai-bis": "*"
     },
     "dependencies": {
         "@noeldemartin/solid-utils": "catalog:",
@@ -37,7 +35,6 @@
     "devDependencies": {
         "@aerogel/core": "workspace:*",
         "@aerogel/plugin-solid": "workspace:*",
-        "@aerogel/plugin-soukai": "workspace:*",
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
@@ -45,9 +42,8 @@
         "eslint": "catalog:",
         "fake-indexeddb": "^6.0.0",
         "publint": "catalog:",
-        "soukai": "catalog:",
         "soukai-bis": "catalog:",
-        "soukai-solid": "catalog:"
+        "zod": "^4.3.6"
     },
     "eslintConfig": {
         "extends": [

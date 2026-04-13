@@ -1,9 +1,15 @@
-import { FieldType } from 'soukai';
-import { defineSolidModelSchema } from 'soukai-solid';
+import { z } from 'zod';
+import { defineSchema, hasMany } from 'soukai-bis';
 
-export default defineSolidModelSchema({
+import Post from './Post';
+
+export default defineSchema({
     rdfContext: 'https://schema.org/',
+    timestamps: false,
     fields: {
-        name: FieldType.String,
+        name: z.string(),
+    },
+    relations: {
+        posts: hasMany(() => Post, 'authorUrl'),
     },
 });

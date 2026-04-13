@@ -1,8 +1,9 @@
 import { createApp } from 'vue';
 import { describe, expect, it } from 'vitest';
 import { Errors, bootServices } from '@aerogel/core';
-import { Metadata } from 'soukai-solid';
-import { requireBootedModel } from 'soukai';
+import { IndexedDBEngine, Metadata, requireBootedModel, requireEngine } from 'soukai-bis';
+
+import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 
 import solid from './index';
 
@@ -19,6 +20,21 @@ describe('Solid plugin', () => {
 
         // Assert
         expect(requireBootedModel('Metadata')).toEqual(Metadata);
+    });
+
+    it('Initializes models and engine', async () => {
+        // Arrange
+        const models: Record<string, Record<string, unknown>> = import.meta.glob(
+            '@aerogel/plugin-solid/testing/stubs/models/*',
+            { eager: true },
+        );
+
+        // Act
+        await solid({ models }).install(createApp({}), {});
+
+        // Assert
+        expect(requireBootedModel('User')).toEqual(User);
+        expect(requireEngine()).toBeInstanceOf(IndexedDBEngine);
     });
 
 });

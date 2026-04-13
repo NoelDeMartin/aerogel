@@ -3,7 +3,6 @@ export * from './components';
 export * from './directives';
 export * from './errors';
 export * from './forms';
-export * from './jobs';
 export * from './lang';
 export * from './plugins';
 export * from './services';

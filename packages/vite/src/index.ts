@@ -42,7 +42,6 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 basePath: app.basePath,
                 sourceUrl: app.sourceUrl,
                 locales: app.locales ?? { en: 'English' },
-                soukaiBis: options.soukaiBis ?? false,
             };
 
             return `export default ${JSON.stringify(virtual)};`;
@@ -82,28 +81,26 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 __AEROGEL_ENV__: JSON.stringify(process.env.NODE_ENV),
             };
 
-            if (options.soukaiBis || options.patchZodWithSoukaiBis) {
-                config.build ??= {};
-                config.build.rollupOptions ??= {};
+            config.build ??= {};
+            config.build.rollupOptions ??= {};
 
-                if ('rolldownOptions' in config.build) {
-                    const rolldownOptions = config.build.rollupOptions as RolldownOptions;
+            if ('rolldownOptions' in config.build) {
+                const rolldownOptions = config.build.rollupOptions as RolldownOptions;
 
-                    if (!Array.isArray(rolldownOptions.output)) {
-                        rolldownOptions.output ??= {};
+                if (!Array.isArray(rolldownOptions.output)) {
+                    rolldownOptions.output ??= {};
 
-                        if (typeof rolldownOptions.output.codeSplitting === 'boolean') {
-                            rolldownOptions.output.codeSplitting = {};
-                        } else {
-                            rolldownOptions.output.codeSplitting ??= {};
-                        }
-
-                        rolldownOptions.output.codeSplitting.groups ??= [];
-                        rolldownOptions.output.codeSplitting.groups.push({
-                            test: /soukai-bis.*patch-zod/,
-                            name: 'patch-zod',
-                        });
+                    if (typeof rolldownOptions.output.codeSplitting === 'boolean') {
+                        rolldownOptions.output.codeSplitting = {};
+                    } else {
+                        rolldownOptions.output.codeSplitting ??= {};
                     }
+
+                    rolldownOptions.output.codeSplitting.groups ??= [];
+                    rolldownOptions.output.codeSplitting.groups.push({
+                        test: /soukai-bis.*patch-zod/,
+                        name: 'patch-zod',
+                    });
                 }
             }
 
@@ -135,13 +132,13 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             order: 'pre',
             handler: (html, context) => ({
                 html: renderHTML(html, context.filename, app),
-                tags: arrayFilter([
-                    (options.soukaiBis || options.patchZodWithSoukaiBis) && {
+                tags: [
+                    {
                         tag: 'script',
                         attrs: { type: 'module', src: '/_virtual/soukai-bis/patch-zod' },
                         injectTo: 'head-prepend',
                     },
-                ]),
+                ],
             }),
         },
     };

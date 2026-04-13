@@ -1,5 +1,5 @@
-import { Events, bootServices, registerErrorHandler } from '@aerogel/core';
-import { bootSolidModels } from 'soukai-solid';
+import { Events, appNamespace, bootServices, registerErrorHandler } from '@aerogel/core';
+import { IndexedDBEngine, bootCoreModels, bootModelsFromViteGlob, setEngine } from 'soukai-bis';
 import type { Plugin } from '@aerogel/core';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
@@ -16,18 +16,32 @@ import { AuthenticationFailedError } from '@aerogel/plugin-solid/errors';
 import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
 
+import { testingRuntime } from './testing';
+
 const services = { $solid: Solid };
+
+function setupTestingRuntime(): void {
+    if (!globalThis.testingRuntime) {
+        return;
+    }
+
+    Object.assign(globalThis.testingRuntime, testingRuntime);
+}
 
 export * from './auth';
 export * from './components';
 export * from './errors';
 export * from './services/Solid';
+export * from './testing';
+export * from './utils';
+
 export { Solid };
 
 export interface Options {
     autoReconnect?: boolean;
     authenticators?: Record<string, Authenticator>;
     defaultAuthenticator?: AuthenticatorName;
+    models?: Record<string, Record<string, unknown>>;
     onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): Promise<unknown> | unknown;
 }
 
@@ -36,7 +50,12 @@ export type SolidServices = typeof services;
 export default function solid(options: Options = {}): Plugin {
     return {
         async install(app) {
-            bootSolidModels();
+            const engine = new IndexedDBEngine(appNamespace());
+
+            setupTestingRuntime();
+            setEngine(engine);
+            bootCoreModels({ reset: true });
+            bootModelsFromViteGlob(options.models ?? {});
             registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
             registerFormValidationRules();
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
@@ -57,6 +76,8 @@ export default function solid(options: Options = {}): Plugin {
                     options.onUserProfileLoaded?.(user, store);
                 });
             }
+
+            Events.on('purge-storage', () => engine.clear());
 
             await bootServices(app, services);
         },

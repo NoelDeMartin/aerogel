@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useModelCollection } from '@aerogel/plugin-soukai';
+import { useModelCollection } from '@aerogel/plugin-solid';
 
 import LocalTask from '@/models/LocalTask';
 

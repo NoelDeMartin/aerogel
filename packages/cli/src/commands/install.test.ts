@@ -22,27 +22,7 @@ describe('Install plugin command', () => {
                 '@aerogel/core': 'next',
                 '@aerogel/plugin-solid': 'next',
                 '@noeldemartin/solid-utils': 'next',
-                'soukai-solid': 'next',
-                'vue': '^3.5.13',
-            },
-        });
-    });
-
-    it('installs soukai', async () => {
-        // Arrange
-        stubPackageJson();
-
-        // Act
-        await InstallCommand.run('soukai', { skipInstall: true });
-
-        // Assert
-        ShellMock.expectNotRan('pnpm install --no-save');
-
-        expectPackageJson({
-            dependencies: {
-                '@aerogel/core': 'next',
-                '@aerogel/plugin-soukai': 'next',
-                'soukai': 'next',
+                'soukai-bis': 'next',
                 'vue': '^3.5.13',
             },
         });

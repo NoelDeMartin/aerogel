@@ -1,12 +1,10 @@
-import { FieldType } from 'soukai';
-import { defineSolidModelSchema } from 'soukai-solid';
+import { z } from 'zod';
+import { defineSchema } from 'soukai-bis';
 
-export default defineSolidModelSchema({
-    rdfsClass: 'schema:Action',
+export default defineSchema({
+    rdfContext: 'https://schema.org/',
+    rdfClass: 'Action',
     fields: {
-        name: {
-            type: FieldType.String,
-            required: true,
-        },
+        name: z.string(),
     },
 });

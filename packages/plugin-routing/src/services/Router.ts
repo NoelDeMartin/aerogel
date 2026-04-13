@@ -1,5 +1,5 @@
 import { computed, ref, shallowRef, unref, watch } from 'vue';
-import { computedModel } from '@aerogel/plugin-soukai';
+import { computedModel } from '@aerogel/plugin-solid';
 import { App, Events, computedAsync } from '@aerogel/core';
 import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
 import type { ComputedRef, Ref, WatchStopHandle } from 'vue';

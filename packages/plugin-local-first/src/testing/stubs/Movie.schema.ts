@@ -1,15 +1,11 @@
-import { FieldType } from 'soukai';
-import { defineSolidModelSchema } from 'soukai-solid';
+import { z } from 'zod';
+import { defineSchema } from 'soukai-bis';
 
-export default defineSolidModelSchema({
+export default defineSchema({
     rdfContext: 'https://schema.org/',
     history: true,
-    tombstone: false,
     fields: {
-        name: FieldType.String,
-        releaseDate: {
-            type: FieldType.Date,
-            rdfProperty: 'schema:datePublished',
-        },
+        name: z.string(),
+        releaseDate: z.date().rdfProperty('datePublished'),
     },
 });

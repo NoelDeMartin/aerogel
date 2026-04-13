@@ -12,12 +12,8 @@ catalog:
     eslint-plugin-vue: ^9.33.0
     idb: ^8.0.2
     publint: ^0.3.12
-    soukai: next
     soukai-bis: next
-    soukai-solid: next
     vue: ^3.5.0
 
 overrides:
     '@noeldemartin/utils': next
-    soukai: next
-    soukai-solid: next

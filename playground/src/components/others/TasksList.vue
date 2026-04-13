@@ -2,8 +2,8 @@
     <ul role="list" class="mt-4 space-y-3">
         <li
             v-for="task of tasks"
-            :key="task.id"
-            class="flex justify-between overflow-hidden rounded-md bg-gray-100 px-6 py-4 shadow-2xs"
+            :key="task.url"
+            class="shadow-2xs flex justify-between overflow-hidden rounded-md bg-gray-100 px-6 py-4"
         >
             <Markdown :text="task.name" />
 
@@ -32,15 +32,15 @@
     </Form>
 </template>
 
-<script setup lang="ts" generic="T extends ITask">
+<script setup lang="ts">
 import { requiredStringInput, useForm } from '@aerogel/core';
 
-import type ITask from '@/models/ITask';
+import type SolidTask from '@/models/SolidTask';
 
-defineProps<{ tasks: T[] }>();
+defineProps<{ tasks: SolidTask[] }>();
 defineEmits<{
     create: [value: string];
-    delete: [task: T];
+    delete: [task: SolidTask];
 }>();
 
 const form = useForm({ draft: requiredStringInput() });

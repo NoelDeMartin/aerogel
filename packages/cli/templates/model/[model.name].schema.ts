@@ -1,7 +1,7 @@
-import { FieldType } from 'soukai';
-import { defineSolidModelSchema } from 'soukai-solid';
+import { z } from 'zod';
+import { defineSchema } from 'soukai-bis';
 
-export default defineSolidModelSchema({
+export default defineSchema({
     fields: {
 <% &model.fieldsDefinition %>
     },

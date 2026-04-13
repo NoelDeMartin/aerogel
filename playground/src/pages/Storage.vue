@@ -5,15 +5,15 @@
 
     <TasksList
         :tasks="tasks"
-        @create="(name: string) => Task.create({ name })"
-        @delete="(task: Task) => task.delete()"
+        @create="(name: string) => LocalTask.create({ name })"
+        @delete="(task: LocalTask) => task.delete()"
     />
 </template>
 
 <script setup lang="ts">
-import { useModelCollection } from '@aerogel/plugin-soukai';
+import { useModelCollection } from '@aerogel/plugin-solid';
 
-import Task from '@/models/Task';
+import LocalTask from '@/models/LocalTask';
 
-const tasks = useModelCollection(Task);
+const tasks = useModelCollection(LocalTask);
 </script>

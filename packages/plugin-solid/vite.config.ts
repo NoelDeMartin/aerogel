@@ -16,15 +16,12 @@ export default defineConfig({
         rollupOptions: {
             external: [
                 '@aerogel/core',
-                '@aerogel/plugin-soukai',
                 '@aerogel/vite',
                 '@inrupt/solid-client-authn-browser',
                 '@noeldemartin/solid-utils',
                 '@noeldemartin/utils',
                 'solid-auth-client',
                 'soukai-bis',
-                'soukai-solid',
-                'soukai',
                 'virtual:aerogel',
                 'virtual:aerogel-solid',
                 'vue',

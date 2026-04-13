@@ -3,7 +3,7 @@ import { unref } from 'vue';
 import { cva } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import type { ClassValue } from 'clsx';
-import type { PropType } from 'vue';
+import type { HTMLAttributes, PropType } from 'vue';
 
 export type CVAConfig<T> = NonNullable<Parameters<typeof cva<T>>[1]>;
 export type CVAProps<T> = NonNullable<Parameters<ReturnType<typeof cva<T>>>[0]>;
@@ -25,8 +25,8 @@ export type PickComponentProps<TValues, TDefinitions> = {
 };
 
 export function variantClasses<T>(
-    value: { baseClasses?: string } & CVAProps<T>,
-    config: { baseClasses?: string } & CVAConfig<T>,
+    value: { baseClasses?: HTMLAttributes['class'] } & CVAProps<T>,
+    config: { baseClasses?: HTMLAttributes['class'] } & CVAConfig<T>,
 ): string {
     const { baseClasses: valueBaseClasses, ...values } = value;
     const { baseClasses: configBaseClasses, ...configs } = config;

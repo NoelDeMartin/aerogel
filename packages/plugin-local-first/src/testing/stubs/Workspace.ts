@@ -1,15 +1,11 @@
-import type { Relation } from 'soukai';
-import type { SolidContainsRelation } from 'soukai-solid';
+import type { ContainsRelation } from 'soukai-bis';
 
-import TasksList from './TasksList';
+import Model from './Workspace.schema';
+import type TasksList from './TasksList';
 
-export default class Workspace extends TasksList {
+export default class Workspace extends Model {
 
     declare public lists?: TasksList[];
-    declare public relatedLists: SolidContainsRelation<this, TasksList, typeof TasksList>;
-
-    public listsRelationship(): Relation {
-        return this.contains(TasksList);
-    }
+    declare public relatedLists: ContainsRelation<this, TasksList, typeof TasksList>;
 
 }

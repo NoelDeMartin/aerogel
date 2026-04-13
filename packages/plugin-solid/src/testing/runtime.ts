@@ -1,5 +1,5 @@
-import { requireBootedModel } from 'soukai';
-import type { ModelConstructor, ModelsRegistry } from 'soukai';
+import { requireBootedModel } from 'soukai-bis';
+import type { ModelConstructor, ModelsRegistry } from 'soukai-bis';
 
 export function model<T extends keyof ModelsRegistry>(name: T): ModelsRegistry[T];
 export function model<T extends ModelConstructor = ModelConstructor>(name: string): T;

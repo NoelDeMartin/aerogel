@@ -24,7 +24,7 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
-        "@aerogel/plugin-soukai": "*",
+        "@aerogel/plugin-solid": "*",
         "@aerogel/vite": "*",
         "vue-router": "^4.5.0"
     },
@@ -33,7 +33,6 @@
     },
     "devDependencies": {
         "@aerogel/core": "workspace:*",
-        "@aerogel/plugin-soukai": "workspace:*",
         "@aerogel/plugin-solid": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",

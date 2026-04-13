@@ -1,6 +1,6 @@
 import { required } from '@noeldemartin/utils';
 import { watchEffect } from 'vue';
-import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai';
+import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { Service } from '@aerogel/core';
 
 import { _getTrackedModels, _getTrackedModelsData, _setTrackedModels, isSoftDeleted } from './internal';
@@ -69,7 +69,7 @@ export async function trackModelsCollection(
     modelData.collectionsSet.add(collection);
 
     if (refresh) {
-        const collectionModels = await modelClass.withCollection(collection, () => modelClass.all());
+        const collectionModels = await modelClass.all({ from: collection });
 
         for (const model of collectionModels) {
             modelData.modelsSet.add(model);
