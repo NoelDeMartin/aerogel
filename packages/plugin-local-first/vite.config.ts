@@ -39,8 +39,4 @@ export default defineConfig({
             '@aerogel/plugin-local-first': fileURLToPath(new URL('./src/', import.meta.url)),
         },
     },
-    test: {
-        clearMocks: true,
-        setupFiles: ['./src/testing/setup.ts'],
-    },
 });
