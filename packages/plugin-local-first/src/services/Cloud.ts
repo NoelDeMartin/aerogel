@@ -8,19 +8,9 @@ import {
     isArray,
     isTesting,
     parseBoolean,
-    required,
     urlRoute,
 } from '@noeldemartin/utils';
-import {
-    Container,
-    Model,
-    Sync,
-    dispatch,
-    getBootedModels,
-    isContainerClass,
-    isCoreModel,
-    requireEngine,
-} from 'soukai-bis';
+import { Container, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
 import { Errors, Events, translateWithDefault } from '@aerogel/core';
 import { Solid, getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-solid';
 import { watchEffect } from 'vue';
@@ -28,11 +18,7 @@ import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine, IndexedDBEngine, JobListener, ModelConstructor } from 'soukai-bis';
 
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
-import {
-    getContainedModels,
-    getContainerRelations,
-    getRemoteContainerUrl,
-} from '@aerogel/plugin-local-first/lib/models';
+import { getContainedModels, getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
 
 import Service, { CloudStatus } from './Cloud.state';
 
@@ -193,16 +179,10 @@ export class CloudService extends Service {
         });
     }
 
-    public async register(modelClass: ModelConstructor, options: RegisterOptions = {}): Promise<void> {
+    public async track(modelClass: ModelConstructor, options: { register?: CloudRegistration } = {}): Promise<void> {
         if (this.registeredModels.find((registered) => modelClass === registered.modelClass)) {
             return;
         }
-
-        this.whenReady(async () => {
-            const rootCollection = this.rootModelCollections[modelClass.modelName];
-
-            modelClass.defaultContainerUrl = rootCollection ?? getRemoteContainerUrl(modelClass, options.path);
-        });
 
         await trackModels(modelClass, {
             created: (model) => this.ready && this.onModelCreated(model),
@@ -210,20 +190,20 @@ export class CloudService extends Service {
             deleted: (model) => this.ready && this.onModelUpdated(model, { reset: true }),
         });
 
-        if (isContainerClass(modelClass)) {
-            getContainerRelations(modelClass).forEach((relation) => {
-                const relatedClass = required(modelClass.schema.relations[relation]).relatedClass as ModelConstructor;
+        if (options.register) {
+            const path = typeof options.register === 'object' ? options.register.path : undefined;
 
-                relatedClass.on('created', (model) => this.ready && this.onModelCreated(model));
-                relatedClass.on('updated', (model) => this.ready && this.onModelUpdated(model));
-                relatedClass.on('deleted', (model) => this.ready && this.onModelUpdated(model, { reset: true }));
+            this.whenReady(async () => {
+                const rootCollection = this.rootModelCollections[modelClass.modelName];
+
+                modelClass.defaultContainerUrl = rootCollection ?? getRemoteContainerUrl(modelClass, path);
             });
-        }
 
-        this.registeredModels.push({ modelClass, path: options.path });
+            this.registeredModels.push({ modelClass, path });
 
-        for (const collection of this.modelCollections[modelClass.modelName] ?? []) {
-            await trackModelsCollection(modelClass, collection);
+            for (const collection of this.modelCollections[modelClass.modelName] ?? []) {
+                await trackModelsCollection(modelClass, collection);
+            }
         }
     }
 
@@ -262,7 +242,7 @@ export class CloudService extends Service {
         });
 
         this.watchNetworkStatus();
-        await this.registerModels();
+        await this.trackModels();
     }
 
     protected getDirtyLocalModels(): Model[] {
@@ -385,15 +365,13 @@ export class CloudService extends Service {
         return this.startupSync;
     }
 
-    private async registerModels(): Promise<void> {
+    private async trackModels(): Promise<void> {
         for (const modelClass of getBootedModels().values()) {
-            if (isCoreModel(modelClass) || !modelClass.cloud) {
+            if (isCoreModel(modelClass)) {
                 continue;
             }
 
-            await this.register(modelClass, {
-                path: typeof modelClass.cloud === 'object' ? modelClass.cloud.path : undefined,
-            });
+            await this.track(modelClass, { register: modelClass.cloud });
         }
     }
 

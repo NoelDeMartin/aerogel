@@ -5,7 +5,7 @@ import type { GetModelRelationName, Model, ModelConstructor } from 'soukai-bis';
 
 const containerRelations: WeakMap<ModelConstructor, string[]> = new WeakMap();
 
-export function getContainerRelations<T extends ModelConstructor>(modelClass: T): GetModelRelationName<T>[] {
+function getContainerRelations<T extends ModelConstructor>(modelClass: T): GetModelRelationName<T>[] {
     if (!containerRelations.has(modelClass)) {
         containerRelations.set(
             modelClass,
