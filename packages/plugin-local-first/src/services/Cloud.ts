@@ -180,7 +180,10 @@ export class CloudService extends Service {
     }
 
     public async track(modelClass: ModelConstructor, options: { register?: CloudRegistration } = {}): Promise<void> {
-        if (this.registeredModels.find((registered) => modelClass === registered.modelClass)) {
+        if (
+            options.register === false ||
+            this.registeredModels.find((registered) => modelClass === registered.modelClass)
+        ) {
             return;
         }
 
