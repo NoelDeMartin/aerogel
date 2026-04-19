@@ -127,12 +127,16 @@ export class CloudService extends Service {
                         localEngine: requireEngine(),
                         remoteEngine: Solid.requireEngine(),
                         typeIndexes: await Solid.findTypeIndexes(),
-                        applicationModels: applicationModels.map((modelClass) => ({
-                            model: modelClass as ModelConstructor,
-                            registered: this.registeredModels.some(
+                        applicationModels: applicationModels.map((modelClass) => {
+                            const registration = this.registeredModels.find(
                                 (registered) => registered.modelClass === modelClass,
-                            ),
-                        })),
+                            );
+
+                            return {
+                                model: modelClass as ModelConstructor,
+                                registration: registration?.path ? { path: registration.path } : !!registration,
+                            };
+                        }),
                     });
 
                     this.syncJob.listeners.add({
