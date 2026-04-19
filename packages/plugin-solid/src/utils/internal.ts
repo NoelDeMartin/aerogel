@@ -5,6 +5,7 @@ import type { ComputedRef } from 'vue';
 import type { Model, ModelConstructor } from 'soukai-bis';
 
 interface TrackedModelData<T extends object = Model> {
+    depth: number | undefined;
     modelsSet: ReactiveSet<T>;
     modelsArray: ComputedRef<T[]>;
     collectionsSet: Set<string>;
@@ -13,11 +14,15 @@ interface TrackedModelData<T extends object = Model> {
 
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
 
-function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): TrackedModelData<T> {
+function initializedTrackedModelsData<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options?: { depth?: number },
+): TrackedModelData<T> {
     const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.url === b.url });
     const modelsArray = computed(() => modelsSet.values());
     const collectionsSet = new Set<string>([modelClass.defaultContainerUrl]);
     const data = {
+        depth: options?.depth,
         modelsSet,
         modelsArray,
         collectionsSet,
@@ -25,7 +30,7 @@ function initializedTrackedModelsData<T extends Model>(modelClass: ModelConstruc
             const models = new Set<T>();
 
             for (const collection of collectionsSet) {
-                const collectionModels = await modelClass.all({ from: collection });
+                const collectionModels = await modelClass.all({ from: collection, depth: options?.depth });
 
                 collectionModels.forEach((model) => models.add(model));
             }
@@ -61,8 +66,18 @@ export function _setTrackedModels(value: WeakMap<ModelConstructor, TrackedModelD
     trackedModels = value;
 }
 
-export function _getTrackedModelsData<T extends Model>(modelClass: ModelConstructor<T>): TrackedModelData<T> {
-    return (trackedModels.get(modelClass) as TrackedModelData<T>) ?? initializedTrackedModelsData<T>(modelClass);
+export function _getTrackedModelsData<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options?: { depth?: number },
+): TrackedModelData<T> {
+    const data =
+        (trackedModels.get(modelClass) as TrackedModelData<T>) ?? initializedTrackedModelsData<T>(modelClass, options);
+
+    if (options?.depth && data.depth !== options.depth) {
+        throw new Error('Model collection is already being tracked with a different depth');
+    }
+
+    return data;
 }
 
 declare module '@aerogel/core' {

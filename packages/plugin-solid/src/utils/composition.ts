@@ -160,10 +160,10 @@ export function computedModels<T>(modelClass: ModelConstructor, compute: () => T
 
 export function useModelCollection<T extends Model>(
     modelClass: ModelConstructor<T>,
-    options: { includeSoftDeleted?: boolean } = {},
+    options: { includeSoftDeleted?: boolean; depth?: number } = {},
 ): Ref<T[]> {
     const models = shallowRef([]) as Ref<T[]>;
-    const modelData = _getTrackedModelsData<T>(modelClass);
+    const modelData = _getTrackedModelsData<T>(modelClass, { depth: options?.depth });
 
     watchEffect(() => (models.value = modelData.modelsArray.value));
     onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));

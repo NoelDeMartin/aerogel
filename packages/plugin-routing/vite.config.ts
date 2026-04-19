@@ -19,6 +19,7 @@ export default defineConfig({
                 '@aerogel/plugin-solid',
                 '@aerogel/vite',
                 '@noeldemartin/utils',
+                'soukai-bis',
                 'virtual:aerogel',
                 'vue-router',
                 'vue',

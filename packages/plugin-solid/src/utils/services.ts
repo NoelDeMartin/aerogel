@@ -13,6 +13,7 @@ export type TrackOptions<TModel extends Model = Model, TKey extends string = str
     service?: ModelService<TModel, TKey>;
     property?: TKey;
     transform?: (models: TModel[]) => TModel[];
+    depth?: number;
 } & {
     [K in keyof ModelEvents]?: ModelListener<TModel, K>;
 };
@@ -84,7 +85,7 @@ export async function trackModels<TModel extends Model, TKey extends string>(
     const { service, property: stateKey, transform: optionsTransform, ...eventListeners } = options ?? {};
     const transform = optionsTransform ?? ((models) => models);
     const wasTracked = _getTrackedModels().has(modelClass);
-    const modelData = _getTrackedModelsData<TModel>(modelClass);
+    const modelData = _getTrackedModelsData<TModel>(modelClass, { depth: options?.depth });
 
     for (const [event, listener] of Object.entries(eventListeners)) {
         modelClass.on(event as keyof ModelEvents, listener as ModelListener<TModel, keyof ModelEvents>);
