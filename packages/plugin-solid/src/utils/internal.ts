@@ -8,7 +8,6 @@ interface TrackedModelData<T extends object = Model> {
     depth: number | undefined;
     modelsSet: ReactiveSet<T>;
     modelsArray: ComputedRef<T[]>;
-    collectionsSet: Set<string>;
     refresh(): Promise<void>;
 }
 
@@ -20,20 +19,12 @@ function initializedTrackedModelsData<T extends Model>(
 ): TrackedModelData<T> {
     const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.url === b.url });
     const modelsArray = computed(() => modelsSet.values());
-    const collectionsSet = new Set<string>([modelClass.defaultContainerUrl]);
     const data = {
         depth: options?.depth,
         modelsSet,
         modelsArray,
-        collectionsSet,
         async refresh() {
-            const models = new Set<T>();
-
-            for (const collection of collectionsSet) {
-                const collectionModels = await modelClass.all({ from: collection, depth: options?.depth });
-
-                collectionModels.forEach((model) => models.add(model));
-            }
+            const models = await modelClass.all({ depth: options?.depth });
 
             modelsSet.reset(models);
         },

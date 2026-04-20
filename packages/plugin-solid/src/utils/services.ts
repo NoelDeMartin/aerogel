@@ -1,4 +1,3 @@
-import { required } from '@noeldemartin/utils';
 import { watchEffect } from 'vue';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { Service } from '@aerogel/core';
@@ -41,41 +40,6 @@ export function isTrackingModel(modelClass: ModelConstructor): boolean {
 
 export function resetTrackedModels(): void {
     _setTrackedModels(new WeakMap());
-}
-
-export function ignoreModelsCollection(modelClass: ModelConstructor, collection: string): void {
-    const modelData = required(
-        _getTrackedModels().get(modelClass),
-        'Failed ignoring models collection, please track the model first using trackModels()',
-    );
-
-    modelData.collectionsSet.delete(collection);
-}
-
-export async function trackModelsCollection(
-    modelClass: ModelConstructor,
-    collection: string,
-    options: TrackCollectionsOptions = {},
-): Promise<void> {
-    const refresh = options.refresh ?? true;
-    const modelData = required(
-        _getTrackedModels().get(modelClass),
-        'Failed tracking models collection, please track the model first using trackModels()',
-    );
-
-    if (modelData.collectionsSet.has(collection)) {
-        return;
-    }
-
-    modelData.collectionsSet.add(collection);
-
-    if (refresh) {
-        const collectionModels = await modelClass.all({ from: collection });
-
-        for (const model of collectionModels) {
-            modelData.modelsSet.add(model);
-        }
-    }
 }
 
 export async function trackModels<TModel extends Model, TKey extends string>(

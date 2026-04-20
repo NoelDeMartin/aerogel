@@ -12,7 +12,7 @@ import {
 } from '@noeldemartin/utils';
 import { Container, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
 import { Errors, Events, translateWithDefault } from '@aerogel/core';
-import { Solid, getTrackedModels, trackModels, trackModelsCollection } from '@aerogel/plugin-solid';
+import { Solid, getTrackedModels, trackModels } from '@aerogel/plugin-solid';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine, IndexedDBEngine, JobListener, ModelConstructor } from 'soukai-bis';
@@ -209,10 +209,6 @@ export class CloudService extends Service {
             });
 
             this.registeredModels.push({ modelClass, path });
-
-            for (const collection of this.modelCollections[modelClass.modelName] ?? []) {
-                await trackModelsCollection(modelClass, collection);
-            }
         }
     }
 
@@ -334,7 +330,6 @@ export class CloudService extends Service {
         this.setState({
             autoPush: true,
             localModelUpdates: {},
-            modelCollections: {},
             rootModelCollections: {},
             pollingEnabled: true,
             pollingMinutes: 10,
