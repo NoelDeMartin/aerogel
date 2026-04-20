@@ -24,6 +24,7 @@ import Service, { CloudStatus } from './Cloud.state';
 
 export interface RegisterOptions {
     path?: string;
+    depth?: number;
 }
 
 export interface SyncOptions extends JobListener {
@@ -192,6 +193,7 @@ export class CloudService extends Service {
         }
 
         await trackModels(modelClass, {
+            depth: typeof options.register === 'object' ? options.register.depth : undefined,
             created: (model) => this.ready && this.onModelCreated(model),
             updated: (model) => this.ready && this.onModelUpdated(model),
             deleted: (model) => this.ready && this.onModelUpdated(model, { reset: true }),
