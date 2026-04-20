@@ -42,6 +42,10 @@ export function resetTrackedModels(): void {
     _setTrackedModels(new WeakMap());
 }
 
+export async function refreshTrackedModels(modelClass: ModelConstructor): Promise<void> {
+    await _getTrackedModelsData(modelClass).refresh();
+}
+
 export async function trackModels<TModel extends Model, TKey extends string>(
     modelClass: ModelConstructor<TModel>,
     options?: TrackOptions<TModel, TKey>,

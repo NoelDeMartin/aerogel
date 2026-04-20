@@ -12,7 +12,7 @@ import {
 } from '@noeldemartin/utils';
 import { Container, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
 import { Errors, Events, translateWithDefault } from '@aerogel/core';
-import { Solid, getTrackedModels, trackModels } from '@aerogel/plugin-solid';
+import { Solid, getTrackedModels, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine, IndexedDBEngine, JobListener, ModelConstructor } from 'soukai-bis';
@@ -179,6 +179,7 @@ export class CloudService extends Service {
             } finally {
                 this.status = CloudStatus.Online;
 
+                await this.refreshTrackedModels();
                 await Events.emit('cloud:sync-completed', models);
             }
         });
@@ -231,6 +232,8 @@ export class CloudService extends Service {
 
         Events.on('auth:login', ({ authenticator }) => this.login(authenticator));
         Events.on('auth:logout', () => this.logout());
+        Events.on('auth:after-logout', () => this.refreshTrackedModels());
+        Events.on('purge-storage', () => this.refreshTrackedModels());
         Events.once('application-ready', () => this.onApplicationReady());
         Events.once('application-mounted', () => this.onApplicationMounted());
 
@@ -376,6 +379,16 @@ export class CloudService extends Service {
             }
 
             await this.track(modelClass, { register: modelClass.cloud });
+        }
+    }
+
+    private async refreshTrackedModels(): Promise<void> {
+        for (const modelClass of getBootedModels().values()) {
+            if (isCoreModel(modelClass) || modelClass.cloud === false) {
+                continue;
+            }
+
+            await refreshTrackedModels(modelClass);
         }
     }
 
