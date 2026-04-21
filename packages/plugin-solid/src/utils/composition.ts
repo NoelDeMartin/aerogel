@@ -15,6 +15,7 @@ import type { ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { ComputedRef, Ref } from 'vue';
 
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
+import { throttle } from '@aerogel/plugin-solid/utils/timing';
 
 function mapModels<T extends Model>(
     models: unknown,
@@ -119,7 +120,7 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
         const listeners: Array<() => void> = [];
-        const onModelUpdated = (model: Model) => value instanceof Model && model.url === value.url && trigger();
+        const onModelUpdated = throttle(trigger);
         const stopListeners = () => {
             listeners.forEach((stop) => stop());
             listeners.splice(0, listeners.length);
