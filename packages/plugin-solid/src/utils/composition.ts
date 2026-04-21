@@ -10,7 +10,7 @@ import {
 } from 'vue';
 import { onCleanMounted } from '@aerogel/core';
 import { isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
-import { Model } from 'soukai-bis';
+import { Model, getRelatedClasses } from 'soukai-bis';
 import type { ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { ComputedRef, Ref } from 'vue';
 
@@ -136,10 +136,15 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
             value = newValue;
             trigger();
 
-            if (value instanceof Model && !listeners.length) {
-                listeners.push(value.static().on('modified', onModelUpdated));
-                listeners.push(value.static().on('updated', onModelUpdated));
-                listeners.push(value.static().on('relation-loaded', onModelUpdated));
+            if (!isInstanceOf(value, Model) || listeners.length) {
+                return;
+            }
+
+            for (const modelClass of getRelatedClasses(value.static())) {
+                listeners.push(modelClass.on('modified', onModelUpdated));
+                listeners.push(modelClass.on('updated', onModelUpdated));
+                listeners.push(modelClass.on('deleted', onModelUpdated));
+                listeners.push(modelClass.on('relation-loaded', onModelUpdated));
             }
         });
 
