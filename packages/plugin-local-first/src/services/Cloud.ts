@@ -7,10 +7,11 @@ import {
     hasLocationQueryParameter,
     isArray,
     isTesting,
+    objectFromEntries,
     parseBoolean,
     urlRoute,
 } from '@noeldemartin/utils';
-import { Container, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
+import { Container, MigrateUrls, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
 import { Errors, Events, translateWithDefault } from '@aerogel/core';
 import { Solid, getTrackedModels, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
 import { watchEffect } from 'vue';
@@ -54,13 +55,15 @@ export class CloudService extends Service {
         });
     }
 
-    public async setup(modelUrlMappings?: WeakMap<ModelConstructor, Record<string, string>>): Promise<void> {
+    public async setup(): Promise<void> {
         this.setupOngoing = true;
 
         try {
-            await this.backup(modelUrlMappings);
+            await Events.emit('cloud:backup-started');
+            await this.migrateUrls();
             await this.setReady(true);
             await this.sync();
+            await Events.emit('cloud:backup-completed');
         } finally {
             this.setupOngoing = false;
         }
@@ -294,9 +297,18 @@ export class CloudService extends Service {
         this.ready = true;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected async backup(modelUrlMappings?: WeakMap<ModelConstructor, Record<string, string>>): Promise<void> {
-        throw new Error('Not implemented');
+    protected async migrateUrls(): Promise<void> {
+        const job = new MigrateUrls({
+            engine: requireEngine('ManagesContainers'),
+            migrations: objectFromEntries(
+                this.registeredModels.map(({ modelClass, path }) => [
+                    modelClass.defaultContainerUrl,
+                    getRemoteContainerUrl(modelClass, path),
+                ]),
+            ),
+        });
+
+        await dispatch(job);
     }
 
     protected async onApplicationReady(): Promise<void> {
