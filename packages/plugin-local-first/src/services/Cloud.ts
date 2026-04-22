@@ -11,7 +11,16 @@ import {
     parseBoolean,
     urlRoute,
 } from '@noeldemartin/utils';
-import { Container, MigrateUrls, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
+import {
+    Container,
+    MigrateLocalUrls,
+    Model,
+    Sync,
+    dispatch,
+    getBootedModels,
+    isCoreModel,
+    requireEngine,
+} from 'soukai-bis';
 import { Errors, Events, translateWithDefault } from '@aerogel/core';
 import { Solid, getTrackedModels, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
 import { watchEffect } from 'vue';
@@ -60,7 +69,7 @@ export class CloudService extends Service {
 
         try {
             await Events.emit('cloud:backup-started');
-            await this.migrateUrls();
+            await this.migrateLocalUrls();
             await this.setReady(true);
             await this.sync();
             await Events.emit('cloud:backup-completed');
@@ -297,8 +306,8 @@ export class CloudService extends Service {
         this.ready = true;
     }
 
-    protected async migrateUrls(): Promise<void> {
-        const job = new MigrateUrls({
+    protected async migrateLocalUrls(): Promise<void> {
+        const job = new MigrateLocalUrls({
             engine: requireEngine('ManagesContainers'),
             migrations: objectFromEntries(
                 this.registeredModels.map(({ modelClass, path }) => [

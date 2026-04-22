@@ -32,7 +32,7 @@ catalogs:
       version: 0.3.18
     soukai-bis:
       specifier: next
-      version: 0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24
+      version: 0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861
     vue:
       specifier: ^3.5.0
       version: 3.5.33
@@ -106,7 +106,7 @@ importers:
         version: 0.6.14(prettier@3.8.3)
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6)
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
@@ -215,7 +215,7 @@ importers:
         version: 2.9.6(vue@3.5.33(typescript@5.9.3))
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.5.0
@@ -364,7 +364,7 @@ importers:
         version: 0.3.18
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6)
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -401,7 +401,7 @@ importers:
         version: 0.3.18
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6)
 
   packages/plugin-solid:
     dependencies:
@@ -419,7 +419,7 @@ importers:
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -523,7 +523,7 @@ importers:
         version: 0.5.19(tailwindcss@4.2.4)
       soukai-bis:
         specifier: 'catalog:'
-        version: 0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24(web-streams-polyfill@3.3.3)(zod@4.3.6)
+        version: 0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.2.4
@@ -3781,8 +3781,8 @@ packages:
     resolution: {integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==}
     engines: {node: '>=6.0.0'}
 
-  baseline-browser-mapping@2.10.20:
-    resolution: {integrity: sha512-1AaXxEPfXT+GvTBJFuy4yXVHWJBXa4OdbIebGN/wX5DlsIkU0+wzGnd2lOzokSk51d5LUmqjgBLRLlypLUqInQ==}
+  baseline-browser-mapping@2.10.21:
+    resolution: {integrity: sha512-Q+rUQ7Uz8AHM7DEaNdwvfFCTq7a43lNTzuS94eiWqwyxfV/wJv+oUivef51T91mmRY4d4A1u9rcSvkeufCVXlA==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -6558,8 +6558,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24:
-    resolution: {integrity: sha512-4YA4F6Afe78UCp6ggSTSTaDZiKgFdToELXveb2fkLd6BNH92MyUjlmg7NlurBvvDOcOj28F7NmR5nHcKrQ/kEA==}
+  soukai-bis@0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861:
+    resolution: {integrity: sha512-JJleaCybUWY60kG4/jZBdNtbZJDn+nax/RB7kSORbcLBA0gEm9ulE5OWGPmM1sLtDRAwODMpKz+V0ZkOp1IQ6Q==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -12302,7 +12302,7 @@ snapshots:
 
   base64url@3.0.1: {}
 
-  baseline-browser-mapping@2.10.20: {}
+  baseline-browser-mapping@2.10.21: {}
 
   bcrypt-pbkdf@1.0.2:
     dependencies:
@@ -12347,7 +12347,7 @@ snapshots:
 
   browserslist@4.28.2:
     dependencies:
-      baseline-browser-mapping: 2.10.20
+      baseline-browser-mapping: 2.10.21
       caniuse-lite: 1.0.30001790
       electron-to-chromium: 1.5.343
       node-releases: 2.0.38
@@ -15547,7 +15547,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.20a568521511fc54388859ed31cfc3ee5f18cd24(web-streams-polyfill@3.3.3)(zod@4.3.6):
+  soukai-bis@0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6):
     dependencies:
       '@noeldemartin/solid-utils': 0.6.1-next.8a3843ade3240ce34001d34e4816dd6215e46f29(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.f652b59860379bc6e327044024f2b5e27fa8b5e3
