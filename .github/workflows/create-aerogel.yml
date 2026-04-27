@@ -10,10 +10,11 @@ jobs:
     create-aerogel:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
+            - uses: actions/checkout@v6
+            - uses: voidzero-dev/setup-vp@v1
               with:
-                  run_install: false
+                  node-version-file: '.nvmrc'
+                  cache: true
             - run: pnpm install
             - name: Build packages
               run: |
@@ -51,37 +52,16 @@ jobs:
                   pnpm build
                   pnpm pack
                   cd ../../
-
-                  cd packages/cypress
-                  pnpm build
-                  pnpm pack
-                  cd ../../
             - name: Create app
               run: |
                   git config --global user.email "john@example.com"
                   git config --global user.name "John Doe"
                   ./packages/cli/bin/gel create app --next --local --copy
                   cd app
-                  pnpm install
-            - run: pnpm build
+                  vp install
+            - run: vp build
               working-directory: app
-            - name: Lint
+            - run: vp check lint
               working-directory: app
-              run: |
-                  sed -i '52d' ../package.json
-                  sed -i '52d' ../package.json
-                  sed -i '52d' ../package.json
-                  sed -i '52d' ../package.json
-                  sed -i '52d' ../package.json
-                  pnpm lint
-            - run: pnpm test:ci
+            - run: vp test
               working-directory: app
-            - name: Cypress
-              run: pnpm cy:test
-              working-directory: app
-            - name: Upload Cypress screenshots
-              uses: actions/upload-artifact@v4
-              if: ${{ failure() }}
-              with:
-                  name: cypress_screenshots
-                  path: app/cypress/screenshots

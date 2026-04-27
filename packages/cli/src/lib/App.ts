@@ -100,7 +100,6 @@ export default class App {
                 withFilePrefix({
                     '@aerogel/cli': packagePackPath('cli') ?? packNotFound('cli'),
                     '@aerogel/core': packagePackPath('core') ?? packNotFound('core'),
-                    '@aerogel/cypress': packagePackPath('cypress') ?? packNotFound('cypress'),
                     '@aerogel/plugin-i18n': packagePackPath('plugin-i18n') ?? packNotFound('plugin-i18n'),
                     '@aerogel/plugin-routing': packagePackPath('plugin-routing') ?? packNotFound('plugin-routing'),
                     '@aerogel/plugin-solid': packagePackPath('plugin-solid') ?? packNotFound('plugin-solid'),

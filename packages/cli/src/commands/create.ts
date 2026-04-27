@@ -59,8 +59,8 @@ export class CreateCommand extends Command {
             That's it! You can start working on **${name}** doing the following:
 
                 cd ${path}
-                pnpm install
-                pnpm dev
+                vp install
+                vp dev
 
             Have fun!
         `);
