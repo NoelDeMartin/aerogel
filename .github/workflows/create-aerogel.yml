@@ -11,6 +11,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
+            - uses: pnpm/action-setup@v4
+              with:
+                  run_install: false
             - uses: voidzero-dev/setup-vp@v1
               with:
                   node-version-file: '.nvmrc'
@@ -61,7 +64,9 @@ jobs:
                   vp install
             - run: vp build
               working-directory: app
-            - run: vp check lint
+            - run: vp check
+              working-directory: app
+            - run: vp run type-check
               working-directory: app
             - run: vp test
               working-directory: app
