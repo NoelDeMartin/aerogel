@@ -23,7 +23,7 @@ jobs:
                   cache: 'pnpm'
             - run: pnpm install
             - run: pnpm build
-            - uses: actions/cache/save@v4
+            - uses: actions/cache/save@v5
               with:
                   key: build-${{ github.sha }}
                   path: |
@@ -90,13 +90,13 @@ jobs:
             - run: pnpm exec cypress install
             - run: pnpm cy:test
             - name: Upload Cypress screenshots
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               if: ${{ failure() }}
               with:
                   name: cypress_screenshots
                   path: playground/cypress/screenshots
             - name: Upload Cypress snapshots
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               if: ${{ failure() }}
               with:
                   name: cypress_snapshots
