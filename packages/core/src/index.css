@@ -23,7 +23,7 @@
     --color-primary-text: var(--color-gray-900);
     --color-links: var(--color-primary);
 
-    --breakpoint-content: var(--breakpoint-md);
+    --breakpoint-content: 48rem;
     --spacing-edge: 1rem;
 }
 
