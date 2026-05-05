@@ -12,7 +12,7 @@
     "author": "Noel De Martin",
     "repository": "github:NoelDeMartin/aerogel",
     "dependencies": {
-        "@aerogel/cli": "workspace:*"
+        "@aerogel/cli": "next"
     },
     "devDependencies": {
         "@noeldemartin/scripts": "catalog:"
