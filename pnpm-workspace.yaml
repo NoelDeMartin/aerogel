@@ -17,3 +17,9 @@ catalog:
 
 overrides:
     '@noeldemartin/utils': next
+
+allowBuilds:
+    core-js: true
+    cypress: true
+    esbuild: true
+    vue-demi: true

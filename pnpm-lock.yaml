@@ -248,8 +248,8 @@ importers:
   packages/create-aerogel:
     dependencies:
       '@aerogel/cli':
-        specifier: workspace:*
-        version: link:../cli
+        specifier: next
+        version: 0.1.2-next.7549906ad59826e1baff12cfa27149476ab58850
     devDependencies:
       '@noeldemartin/scripts':
         specifier: 'catalog:'
@@ -572,6 +572,10 @@ importers:
         version: 2.1.5
 
 packages:
+
+  '@aerogel/cli@0.1.2-next.7549906ad59826e1baff12cfa27149476ab58850':
+    resolution: {integrity: sha512-WQitm1ZjQBxtJQb0A0QiBBvPStUevFS/7u11wlCdC1Y9JDL9HeftPuawz8Nd0CIK93NkaepY+5TNSxzKrv/K5g==}
+    hasBin: true
 
   '@aerogel/vite@0.1.2':
     resolution: {integrity: sha512-/XbQBvqxEK+R2eNVfVZw5UdnvPaxXTdgNeTFYO8BqfwJzL0JRUvK46Z/1/rCdsNK0rsfhK24jD+eVSANKT2L4g==}
@@ -2405,10 +2409,16 @@ packages:
   '@noeldemartin/solid-utils@0.6.1-next.8a3843ade3240ce34001d34e4816dd6215e46f29':
     resolution: {integrity: sha512-Cgq5LeXfAT8AKH7ir7Gt9qs16KPOoKbSPDUv47wFeyESHxOXQxsX2QXQj0gcfXscRxnDbmzlD8Tw2Rs1GewCRg==}
 
+  '@noeldemartin/solid-utils@0.6.1-next.958eb7e72fbf3294e7e88d194e2e059423cce8bd':
+    resolution: {integrity: sha512-jAJ9edH9zTLMnvKijEYhl8HbWdoAeyRyfGDqmDGhqRJi6GfUTEB8lS8b4cY+ULorN/bDJqrwiwPk2eO984WeWw==}
+
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19':
     resolution: {integrity: sha512-5moMGAYgqCnHWfbxgkgNjoaYhc6nvtqN7etPP+B76fyZVWWRLK+BOKKcwCXUd2ctD2N7lu9baa7M9qoN8oHEKg==}
     peerDependencies:
       vitest: '*'
+
+  '@noeldemartin/utils@0.7.3-next.a09d13e26ec69e194ad71435aaa5716b9855b5fc':
+    resolution: {integrity: sha512-qiNvyN29A8GBpt1LEvFonnRUqX2Hc6bPY0lZUDHgEo9JXc8yf2wwl5gTq4YH/6iXPwstunaWDgpwMo89gFlQ3w==}
 
   '@noeldemartin/utils@0.7.3-next.f652b59860379bc6e327044024f2b5e27fa8b5e3':
     resolution: {integrity: sha512-Xr0liDjt4ky7Uj541Mae5Y6VYnayktIFeG42pGPO2jXAQn4ytOCEFvI7+WxfAx96jqhm0Q3mJC1ng7mlLcFPZA==}
@@ -7579,6 +7589,17 @@ packages:
 
 snapshots:
 
+  '@aerogel/cli@0.1.2-next.7549906ad59826e1baff12cfa27149476ab58850':
+    dependencies:
+      '@noeldemartin/utils': 0.7.3-next.a09d13e26ec69e194ad71435aaa5716b9855b5fc
+      chalk: 5.6.2
+      commander: 11.1.0
+      mustache: 4.2.0
+      simple-git: 3.36.0
+      ts-morph: 20.0.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@aerogel/vite@0.1.2(@babel/parser@7.29.2)(vite@6.4.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))(vue@3.5.33(typescript@5.9.3))(workbox-build@7.4.0)(workbox-window@7.4.0)':
     dependencies:
       '@noeldemartin/utils': 0.7.3-next.f652b59860379bc6e327044024f2b5e27fa8b5e3
@@ -10790,11 +10811,25 @@ snapshots:
     transitivePeerDependencies:
       - web-streams-polyfill
 
+  '@noeldemartin/solid-utils@0.6.1-next.958eb7e72fbf3294e7e88d194e2e059423cce8bd(web-streams-polyfill@3.3.3)':
+    dependencies:
+      '@noeldemartin/utils': 0.7.3-next.a09d13e26ec69e194ad71435aaa5716b9855b5fc
+      '@rdfjs/types': 2.0.1
+      jsonld: 8.3.3(web-streams-polyfill@3.3.3)
+      md5: 2.3.0
+      n3: 1.26.0
+    transitivePeerDependencies:
+      - web-streams-polyfill
+
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.4(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3))':
     dependencies:
       '@noeldemartin/faker': 7.6.0
       '@noeldemartin/utils': 0.7.3-next.f652b59860379bc6e327044024f2b5e27fa8b5e3
       vitest: 3.2.4(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(yaml@2.8.3)
+
+  '@noeldemartin/utils@0.7.3-next.a09d13e26ec69e194ad71435aaa5716b9855b5fc':
+    dependencies:
+      idb: 8.0.3
 
   '@noeldemartin/utils@0.7.3-next.f652b59860379bc6e327044024f2b5e27fa8b5e3':
     dependencies:
@@ -15549,7 +15584,7 @@ snapshots:
 
   soukai-bis@0.0.0-next.7d555eadc6917aeb7ae56e490f16899f3882b861(web-streams-polyfill@3.3.3)(zod@4.3.6):
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1-next.8a3843ade3240ce34001d34e4816dd6215e46f29(web-streams-polyfill@3.3.3)
+      '@noeldemartin/solid-utils': 0.6.1-next.958eb7e72fbf3294e7e88d194e2e059423cce8bd(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.f652b59860379bc6e327044024f2b5e27fa8b5e3
       idb: 8.0.3
       zod: 4.3.6
