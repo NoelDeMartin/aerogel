@@ -205,13 +205,6 @@ export class CloudService extends Service {
             return;
         }
 
-        await trackModels(modelClass, {
-            depth: typeof options.register === 'object' ? options.register.depth : undefined,
-            created: (model) => this.ready && this.onModelCreated(model),
-            updated: (model) => this.ready && this.onModelUpdated(model),
-            deleted: (model) => this.ready && this.onModelUpdated(model, { reset: true }),
-        });
-
         if (options.register) {
             const path = typeof options.register === 'object' ? options.register.path : undefined;
 
@@ -219,6 +212,13 @@ export class CloudService extends Service {
 
             this.registeredModels.push({ modelClass, path });
         }
+
+        await trackModels(modelClass, {
+            depth: typeof options.register === 'object' ? options.register.depth : undefined,
+            created: (model) => this.ready && this.onModelCreated(model),
+            updated: (model) => this.ready && this.onModelUpdated(model),
+            deleted: (model) => this.ready && this.onModelUpdated(model, { reset: true }),
+        });
     }
 
     public requireRemoteContainerUrl(modelClass: ModelConstructor): string {

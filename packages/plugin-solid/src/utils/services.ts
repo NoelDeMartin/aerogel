@@ -1,6 +1,6 @@
 import { watchEffect } from 'vue';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
-import type { Service } from '@aerogel/core';
+import { App, type Service } from '@aerogel/core';
 
 import { _getTrackedModels, _getTrackedModelsData, _setTrackedModels, isSoftDeleted } from './internal';
 
@@ -50,6 +50,10 @@ export async function trackModels<TModel extends Model, TKey extends string>(
     modelClass: ModelConstructor<TModel>,
     options?: TrackOptions<TModel, TKey>,
 ): Promise<void> {
+    if (App.plugin('@aerogel/local-first')) {
+        await App.service('$cloud')?.booted;
+    }
+
     const { service, property: stateKey, transform: optionsTransform, ...eventListeners } = options ?? {};
     const transform = optionsTransform ?? ((models) => models);
     const wasTracked = _getTrackedModels().has(modelClass);
