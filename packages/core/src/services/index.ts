@@ -32,6 +32,8 @@ export type DefaultServices = typeof defaultServices;
 export interface Services extends DefaultServices {}
 
 export async function bootServices(app: AppInstance, services: Record<string, Service>): Promise<void> {
+    Object.assign(app.config.globalProperties, services);
+
     await Promise.all(
         Object.entries(services).map(async ([name, service]) => {
             await service
@@ -39,8 +41,6 @@ export async function bootServices(app: AppInstance, services: Record<string, Se
                 .catch((error) => app.config.errorHandler?.(error, null, `Failed launching ${name}.`));
         }),
     );
-
-    Object.assign(app.config.globalProperties, services);
 
     if (isDevelopment() || isTesting()) {
         Object.assign(globalThis, services);
