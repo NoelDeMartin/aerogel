@@ -13,6 +13,7 @@ export type TrackOptions<TModel extends Model = Model, TKey extends string = str
     property?: TKey;
     transform?: (models: TModel[]) => TModel[];
     depth?: number;
+    bypassServicesCheck?: boolean;
 } & {
     [K in keyof ModelEvents]?: ModelListener<TModel, K>;
 };
@@ -50,7 +51,7 @@ export async function trackModels<TModel extends Model, TKey extends string>(
     modelClass: ModelConstructor<TModel>,
     options?: TrackOptions<TModel, TKey>,
 ): Promise<void> {
-    if (App.plugin('@aerogel/local-first')) {
+    if (!options?.bypassServicesCheck && App.plugin('@aerogel/local-first')) {
         await App.service('$cloud')?.booted;
     }
 
