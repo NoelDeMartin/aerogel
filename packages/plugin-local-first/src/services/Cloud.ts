@@ -215,11 +215,7 @@ export class CloudService extends Service {
         if (options.register) {
             const path = typeof options.register === 'object' ? options.register.path : undefined;
 
-            this.whenReady(async () => {
-                const rootCollection = this.rootModelCollections[modelClass.modelName];
-
-                modelClass.defaultContainerUrl = rootCollection ?? getRemoteContainerUrl(modelClass, path);
-            });
+            this.setupRemoteCollection(modelClass, path);
 
             this.registeredModels.push({ modelClass, path });
         }
@@ -354,7 +350,7 @@ export class CloudService extends Service {
         this.setState({
             autoPush: true,
             localModelUpdates: {},
-            rootModelCollections: {},
+            rootContainerUrls: {},
             pollingEnabled: true,
             pollingMinutes: 10,
             ready: false,
@@ -391,6 +387,27 @@ export class CloudService extends Service {
         }
 
         return this.startupSync;
+    }
+
+    private setupRemoteCollection(modelClass: ModelConstructor, path?: string): void {
+        const rootContainerUrl = this.rootContainerUrls[modelClass.modelName];
+
+        if (rootContainerUrl) {
+            modelClass.defaultContainerUrl = rootContainerUrl;
+
+            return;
+        }
+
+        this.whenReady(() => {
+            const remoteContainerUrl = getRemoteContainerUrl(modelClass, path);
+
+            modelClass.defaultContainerUrl = remoteContainerUrl;
+
+            this.setState('rootContainerUrls', {
+                ...this.rootContainerUrls,
+                [modelClass.modelName]: remoteContainerUrl,
+            });
+        });
     }
 
     private async trackModels(): Promise<void> {
