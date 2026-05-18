@@ -9,9 +9,9 @@ import {
     watchEffect,
 } from 'vue';
 import { onCleanMounted } from '@aerogel/core';
-import { isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
+import { fail, isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
 import { Model, getRelatedClasses } from 'soukai-bis';
-import type { ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
+import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { ComputedRef, Ref } from 'vue';
 
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
@@ -162,6 +162,27 @@ export function computedModels<T>(modelClass: ModelConstructor, compute: () => T
     // TODO This implementation is probably very inefficient and needs to be improved for better performance with large
     // collections. There are also more details in the unit tests for this function.
     return reactiveComputedModels(modelClass, compute);
+}
+
+export function computedModelAttribute<TModel extends Model, TAttribute extends keyof TModel>(
+    model: TModel,
+    attribute: TAttribute,
+): TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never {
+    return customRef((track, trigger) => {
+        const computedAttribute = model[attribute] as ComputedAttribute;
+        const unsubscribe = computedAttribute.subscribe(() => trigger());
+
+        onScopeDispose(() => unsubscribe());
+
+        return {
+            get: () => {
+                track();
+
+                return computedAttribute.value;
+            },
+            set: () => fail('Pending episode dates are read-only'),
+        };
+    }) as TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never;
 }
 
 export function useModelCollection<T extends Model>(
