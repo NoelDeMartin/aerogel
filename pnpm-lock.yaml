@@ -39,6 +39,7 @@ catalogs:
 
 overrides:
   '@noeldemartin/utils': next
+  fflate: 0.7.4
 
 importers:
 
@@ -4655,8 +4656,8 @@ packages:
     resolution: {integrity: sha512-NDbTgK2dPcNA4P2mXVZDbwIA3DY2k2TpEF5+GmCsCNrIbAnAl938JU41SZ2sCSkBXvBoVvb2q5eJ0u7W4K5aog==}
     hasBin: true
 
-  fflate@0.8.3:
-    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
+  fflate@0.7.4:
+    resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
 
   figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
@@ -7786,7 +7787,7 @@ snapshots:
       '@andrewbranch/untar.js': 1.0.3
       '@loaderkit/resolve': 1.0.5
       cjs-module-lexer: 1.4.3
-      fflate: 0.8.3
+      fflate: 0.7.4
       lru-cache: 10.4.3
       semver: 7.8.0
       typescript: 5.6.1-rc
@@ -13446,7 +13447,7 @@ snapshots:
       stream-to-string: 1.2.1
       yargs: 17.7.2
 
-  fflate@0.8.3: {}
+  fflate@0.7.4: {}
 
   figures@3.2.0:
     dependencies:
