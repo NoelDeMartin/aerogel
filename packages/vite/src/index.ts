@@ -76,8 +76,13 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), ...Object.keys(virtualHandlers)];
             config.optimizeDeps.include = [...(config.optimizeDeps.include ?? []), 'soukai-bis/patch-zod'];
 
+            config.resolve = {
+                ...config.resolve,
+                dedupe: [...(config.resolve?.dedupe ?? []), 'zod'],
+            };
+
             config.define = {
-                ...(config.define ?? {}),
+                ...config.define,
                 __AEROGEL_ENV__: JSON.stringify(process.env.NODE_ENV),
             };
 
