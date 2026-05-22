@@ -25,3 +25,6 @@ allowBuilds:
     cypress: true
     esbuild: true
     vue-demi: true
+
+minimumReleaseAgeExclude:
+  - soukai-bis

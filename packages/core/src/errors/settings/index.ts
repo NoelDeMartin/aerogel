@@ -1,10 +1,10 @@
 import { defineSettings } from '@aerogel/core/services';
 
-import Debug from './Debug.vue';
+import DeveloperMode from './DeveloperMode.vue';
 
 export default defineSettings([
     {
         priority: 10,
-        component: Debug,
+        component: DeveloperMode,
     },
 ]);

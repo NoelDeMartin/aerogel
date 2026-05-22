@@ -11,5 +11,7 @@ import { computed } from 'vue';
 import App from '@aerogel/core/services/App';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 
-const settings = computed(() => arraySorted(App.settings, 'priority', 'desc'));
+const settings = computed(() => {
+    return arraySorted(App.settings, 'priority', 'desc').filter((setting) => !setting.development || App.devMode);
+});
 </script>

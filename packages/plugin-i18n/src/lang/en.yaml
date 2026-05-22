@@ -34,11 +34,18 @@ settings:
     locale: Language
     localeDescription: Choose the application's language.
     localeDefault: '{locale} (default)'
+    developerMode: Developer Mode
+    developerModeDescription: Enable developer mode to access advanced options and actions.
     dangerZone: Danger zone
-    purge: Purge data
+    purgeData: Purge Data
+    purgeDataDescription: Wipe all database records and local storage from this device.
     purgeConfirmTitle: Delete everything?
     purgeConfirmMessage: If you proceed, all your data will be deleted forever. If you want to save it before wiping this device, you can [connect to your Solid account](#action:connect) first.
     purgeConfirmAccept: Purge data
+    purgeMetadata: Purge Metadata
+    purgeMetadataDescription: Clear local synchronization metadata to force redownloading all data (does not delete user data).
+    metadataPurged: Metadata purged successfully!
+    metadataCannotBePurged: The current engine doesn't support purging metadata.
     debug: Debugging
     debugDescription: Enable debugging with [Eruda](https://eruda.liriliri.io/).
 

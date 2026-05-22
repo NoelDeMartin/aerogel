@@ -9,6 +9,7 @@ import type { Plugin } from '@aerogel/core/plugins/Plugin';
 export interface AppSetting {
     component: Component;
     priority: number;
+    development?: boolean;
 }
 
 export function defineSettings<T extends AppSetting[]>(settings: T): T {
@@ -17,6 +18,7 @@ export function defineSettings<T extends AppSetting[]>(settings: T): T {
 
 export default defineServiceState({
     name: 'app',
+    persist: ['devMode'],
     initialState: {
         plugins: {} as Record<string, Plugin>,
         instance: null as App | null,
@@ -25,6 +27,7 @@ export default defineServiceState({
         sourceUrl: Aerogel.sourceUrl,
         settings: [] as AppSetting[],
         settingsFullscreenOnMobile: false,
+        devMode: false,
     },
     computed: {
         development: (state) => state.environment === 'development',

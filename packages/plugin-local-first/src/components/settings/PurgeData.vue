@@ -1,19 +1,24 @@
 <template>
-    <details v-if="!$solid.hasLoggedIn()" class="mt-4">
-        <summary>
-            <span class="text-base font-semibold">{{ $td('settings.dangerZone', 'Danger zone') }}</span>
-        </summary>
-        <Button variant="danger" class="mt-4" @click="purgeData()">
-            <IconTrash class="size-4" />
-            <span class="ml-1">{{ $td('settings.purge', 'Purge data') }}</span>
+    <Setting
+        v-if="!$solid.hasLoggedIn()"
+        title-id="purge-data-setting"
+        :title-heading-level="4"
+        :title="$td('settings.purgeData', 'Purge Data')"
+        :description="
+            $td(
+                'settings.purgeDataDescription',
+                'Wipe all database records and local storage from this device.',
+            )
+        "
+    >
+        <Button variant="secondary" @click="purgeData()">
+            {{ $td('settings.purgeData', 'Purge Data') }}
         </Button>
-    </details>
+    </Setting>
 </template>
 
 <script setup lang="ts">
-import IconTrash from '~icons/zondicons/trash';
-
-import { Button, Storage, UI, translateWithDefault } from '@aerogel/core';
+import { Button, Setting, Storage, UI, translateWithDefault } from '@aerogel/core';
 
 import AccountLoginModal from '@aerogel/plugin-local-first/components/AccountLoginModal.vue';
 
