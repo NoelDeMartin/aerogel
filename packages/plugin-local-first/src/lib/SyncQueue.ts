@@ -1,4 +1,4 @@
-import { after, arrayRemove, facade, isInstanceOf, required } from '@noeldemartin/utils';
+import { debounce, facade, isInstanceOf, required } from '@noeldemartin/utils';
 import { App } from '@aerogel/core';
 import { Container, type Model } from 'soukai-bis';
 
@@ -9,16 +9,17 @@ const Cloud = required(() => App.service('$cloud'));
 class SyncQueue {
 
     private models: Set<Model> = new Set();
-    private promises: Promise<unknown>[] = [];
+    private debouncedSync = debounce(() => this.sync(), 1000);
 
     public push(model: Model): void {
         this.models.add(model);
-        this.syncAfter(after({ seconds: 1 }));
+        this.debouncedSync();
     }
 
     public clear(models?: Model[]): void {
         if (!models) {
             this.models = new Set();
+            this.debouncedSync.cancel();
 
             return;
         }
@@ -26,40 +27,20 @@ class SyncQueue {
         for (const model of models) {
             this.models.delete(model);
         }
+
+        if (this.models.size === 0) {
+            this.debouncedSync.cancel();
+        }
     }
 
-    protected async syncAfter<T = void>(operationOrPromise: Promise<T> | (() => Promise<T>)): Promise<T> {
-        const promise = typeof operationOrPromise === 'function' ? operationOrPromise() : operationOrPromise;
+    private sync(): void {
+        const models = this.consume();
 
-        this.promises.push(promise);
-
-        promise.then(() => arrayRemove(this.promises, promise));
-
-        if (this.promises.length === 1) {
-            this.schedule();
+        if (models.length === 0) {
+            return;
         }
 
-        return promise as Promise<T>;
-    }
-
-    private schedule(): void {
-        Promise.all(this.promises)
-            .then(() => after())
-            .then(() => {
-                if (this.promises.length !== 0) {
-                    this.schedule();
-
-                    return;
-                }
-
-                const models = this.consume();
-
-                if (models.length === 0) {
-                    return;
-                }
-
-                Cloud.syncIfOnline(models);
-            });
+        Cloud.syncIfOnline(models);
     }
 
     private consume(): Model[] {
