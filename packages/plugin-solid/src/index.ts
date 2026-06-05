@@ -1,5 +1,12 @@
+import {
+    IndexedDBEngine,
+    bootCoreModels,
+    bootModelsFromViteGlob,
+    clearCache,
+    setEngine,
+    setNamespace,
+} from 'soukai-bis';
 import { Events, appNamespace, bootServices, registerErrorHandler } from '@aerogel/core';
-import { IndexedDBEngine, bootCoreModels, bootModelsFromViteGlob, setEngine } from 'soukai-bis';
 import type { Plugin } from '@aerogel/core';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
@@ -54,9 +61,10 @@ export default function solid(options: Options = {}): Plugin {
 
             setupTestingRuntime();
             setEngine(engine);
+            setNamespace(appNamespace());
             bootCoreModels({ reset: true });
             bootModelsFromViteGlob(options.models ?? {});
-            registerAuthenticators({ ...baseAuthenticators, ...(options.authenticators ?? {}) });
+            registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });
             registerFormValidationRules();
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
             registerErrorHandler((error) => {
@@ -77,7 +85,7 @@ export default function solid(options: Options = {}): Plugin {
                 });
             }
 
-            Events.on('purge-storage', () => engine.clear());
+            Events.on('purge-storage', () => Promise.all([engine.clear(), clearCache()]));
 
             await bootServices(app, services);
         },

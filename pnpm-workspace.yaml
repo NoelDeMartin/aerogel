@@ -3,7 +3,7 @@ packages:
     - playground
 
 catalog:
-    '@arethetypeswrong/cli': ^0.17.4
+    '@arethetypeswrong/cli': ^0.18.3
     '@noeldemartin/scripts': next
     '@noeldemartin/solid-utils': next
     '@noeldemartin/utils': next
@@ -17,8 +17,6 @@ catalog:
 
 overrides:
     '@noeldemartin/utils': next
-    # Temporary workaround for https://github.com/arethetypeswrong/arethetypeswrong.github.io/issues/258
-    fflate: 0.7.4
 
 allowBuilds:
     core-js: true
