@@ -10,8 +10,6 @@ test('Shows formatted content', async ({ page }) => {
         await route.fulfill({ path: resolve(import.meta.dirname, 'fixtures/kitten.jpg') });
     });
 
-    await page.goto('/content'); // reload to apply route intercept if needed
-
     await see(page, 'This is an example');
     await see(page, 'bold', 'strong');
     await see(page, 'italic', 'em');

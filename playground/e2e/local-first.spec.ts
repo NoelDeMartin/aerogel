@@ -1,8 +1,7 @@
 import {
-    ariaInput,
-    ariaLabel,
     dontSee,
     expect,
+    input,
     interceptRequests,
     matchImageSnapshot,
     podUrl,
@@ -26,24 +25,24 @@ test('Manipulates Tasks', async ({ page }) => {
     const deleteTask = interceptRequests(page, 'DELETE', podUrl('/tasks/*'));
 
     // Log in
-    await ariaLabel(page, 'Configuration').click();
+    await press(page, 'Configuration');
     await press(page, 'Connect account');
-    await ariaInput(page, 'Login url').fill(urlClean(serverUrl(), { protocol: false }));
-    await ariaInput(page, 'Login url').press('Enter');
+    await input(page, 'Login url').fill(urlClean(serverUrl(), { protocol: false }));
+    await input(page, 'Login url').press('Enter');
     await solidLogin(page);
     await waitSync(page);
-    await ariaLabel(page, 'Open account').click();
+    await press(page, 'Open account');
     await see(page, 'Alice Cooper');
     await page.keyboard.press('Escape');
     await dontSee(page, 'Alice Cooper');
 
     // Creates local tasks
-    await ariaInput(page, 'Task name').fill('Hello World!');
-    await ariaInput(page, 'Task name').press('Enter');
+    await input(page, 'Task name').fill('Hello World!');
+    await input(page, 'Task name').press('Enter');
     await see(page, 'Hello World!');
 
-    await ariaInput(page, 'Task name').fill('It works!');
-    await ariaInput(page, 'Task name').press('Enter');
+    await input(page, 'Task name').fill('It works!');
+    await input(page, 'Task name').press('Enter');
     await see(page, 'It works!');
 
     // Sync tasks
@@ -58,7 +57,7 @@ test('Manipulates Tasks', async ({ page }) => {
     await matchImageSnapshot(page);
 
     // Deletes local tasks
-    await ariaLabel(page, 'Delete \'It works!\'').click();
+    await press(page, 'Delete \'It works!\'');
     await dontSee(page, 'It works!');
 
     // Sync tasks

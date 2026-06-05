@@ -1,8 +1,7 @@
 import {
-    ariaInput,
-    ariaLabel,
     dontSee,
     expect,
+    input,
     interceptRequests,
     matchImageSnapshot,
     podUrl,
@@ -25,18 +24,18 @@ test('Manipulates Tasks', async ({ page }) => {
     const deleteTask = interceptRequests(page, 'DELETE', podUrl('/tasks/*'));
 
     // Log in
-    await ariaInput(page, 'Login url').fill(urlClean(serverUrl(), { protocol: false }));
-    await ariaInput(page, 'Login url').press('Enter');
+    await input(page, 'Login url').fill(urlClean(serverUrl(), { protocol: false }));
+    await input(page, 'Login url').press('Enter');
     await solidLogin(page);
     await see(page, 'You are logged in as Alice Cooper!');
 
     // Creates tasks
-    await ariaInput(page, 'Task name').fill('Hello World!');
-    await ariaInput(page, 'Task name').press('Enter');
+    await input(page, 'Task name').fill('Hello World!');
+    await input(page, 'Task name').press('Enter');
     await see(page, 'Hello World!');
 
-    await ariaInput(page, 'Task name').fill('It works!');
-    await ariaInput(page, 'Task name').press('Enter');
+    await input(page, 'Task name').fill('It works!');
+    await input(page, 'Task name').press('Enter');
     await see(page, 'It works!');
 
     await expect.poll(() => updateTask.all.length).toBe(3);
@@ -49,15 +48,14 @@ test('Manipulates Tasks', async ({ page }) => {
     await matchImageSnapshot(page);
 
     // Deletes tasks
-    await ariaLabel(page, 'Delete \'It works!\'').click();
+    await press(page, 'Delete \'It works!\'');
     await dontSee(page, 'It works!');
 
     expect(deleteTask.all).toHaveLength(1);
 
     // Log out
     await press(page, 'logout');
-    const dialog = page.locator('[role="dialog"]', { hasText: 'Log out from this device?' });
-    await dialog.locator('button', { hasText: 'Log out' }).click();
+    await press(page, 'Log out', { within: page.getByRole('dialog', { name: 'Log out from this device?' }) });
 
     await dontSee(page, 'Logging out');
     await page.goto('/solid');

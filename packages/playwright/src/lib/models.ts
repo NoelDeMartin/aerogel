@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import type { GetModelInput, ModelsRegistry } from 'soukai-bis';
 
-export async function create<T extends keyof ModelsRegistry>(
+export async function createModel<T extends keyof ModelsRegistry>(
     page: Page,
     name: T,
     data: GetModelInput<ModelsRegistry[T]>,
@@ -18,7 +18,7 @@ export async function create<T extends keyof ModelsRegistry>(
     );
 }
 
-export async function count<T extends keyof ModelsRegistry>(page: Page, name: T): Promise<number> {
+export async function countModels<T extends keyof ModelsRegistry>(page: Page, name: T): Promise<number> {
     return page.evaluate(async (modelName) => {
         if (!window.testingRuntime) {
             throw new Error('Testing runtime is not available');

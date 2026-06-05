@@ -1,27 +1,29 @@
 import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-export type SeeOptions = {
-    srOnly?: boolean;
-    timeout?: number;
-};
-
-export type AriaInputOptions = {
+export type InputOptions = {
     description?: string;
 };
 
-export function a11yGet(page: Page, text: string): Locator {
-    return page
+export type PressOptions = {
+    within?: Locator;
+    selector?: string;
+};
+
+export type SeeOptions = {
+    srOnly?: boolean;
+    timeout?: number;
+    within?: Locator;
+};
+
+function findByA11yText(scope: Page | Locator, text: string): Locator {
+    return scope
         .getByText(text, { exact: false })
-        .or(page.locator(`[aria-label="${text}"]`))
+        .or(scope.locator(`[aria-label="${text}"]`))
         .first();
 }
 
-export function ariaLabel(page: Page, label: string): Locator {
-    return page.locator(`[aria-label="${label}"]`);
-}
-
-export function ariaInput(page: Page, label: string, options: AriaInputOptions = {}): Locator {
+export function input(page: Page, label: string, options: InputOptions = {}): Locator {
     const locator = page.getByLabel(label, { exact: true });
 
     if (options.description) {
@@ -33,21 +35,37 @@ export function ariaInput(page: Page, label: string, options: AriaInputOptions =
     return locator;
 }
 
-export async function dontSee(page: Page, text: string, options?: { timeout?: number }): Promise<void> {
-    await expect(a11yGet(page, text)).not.toBeVisible({ timeout: options?.timeout });
-}
-
-export async function press(page: Page, label: string, selector?: string): Promise<void> {
+export async function press(page: Page, label: string, options: PressOptions = {}): Promise<void> {
     const targetSelector =
-        selector ?? 'button:visible, a:visible, label:visible, details:visible, [role="menuitem"]:visible';
+        options.selector ?? 'button:visible, a:visible, label:visible, details:visible, [role="menuitem"]:visible';
+    const findTarget = (scope: Page | Locator) =>
+        scope
+            .locator(targetSelector)
+            .filter({ hasText: label })
+            .or(scope.locator(`[aria-label="${label}"]`))
+            .first();
+
+    if (options.within) {
+        await findTarget(options.within).click();
+
+        return;
+    }
+
     const dialog = page.locator('[role="dialog"][data-state="open"]:not([aria-hidden="true"])').last();
-    const inDialog = dialog.locator(targetSelector).filter({ hasText: label });
-    const locator =
-        (await inDialog.count()) > 0
-            ? inDialog.first()
-            : page.locator(targetSelector).filter({ hasText: label }).first();
+    const inDialog = findTarget(dialog);
+    const locator = (await inDialog.count()) > 0 ? inDialog : findTarget(page);
 
     await locator.click();
+}
+
+export async function comboboxSelect(page: Page, labelOrSelector: string, value: string): Promise<void> {
+    await page.waitForTimeout(300);
+    const label = page.locator('label[for]').filter({ hasText: labelOrSelector }).first();
+    const id = await label.getAttribute('for');
+
+    await page.locator(id ? `#${id}` : labelOrSelector).click();
+    await page.waitForTimeout(300);
+    await page.locator('*[role="option"]').filter({ hasText: value }).first().click();
 }
 
 export async function see(
@@ -59,10 +77,11 @@ export async function see(
     const srOnly = typeof selectorOrOptions === 'string' ? options.srOnly : selectorOrOptions.srOnly;
     const baseOptions = typeof selectorOrOptions === 'string' ? options : selectorOrOptions;
     const timeout = baseOptions.timeout;
+    const scope = baseOptions.within ?? page;
     const locator =
         typeof selectorOrOptions === 'string'
-            ? page.locator(selectorOrOptions).filter({ hasText: text }).first()
-            : a11yGet(page, text);
+            ? scope.locator(selectorOrOptions).filter({ hasText: text }).first()
+            : findByA11yText(scope, text);
 
     if (srOnly) {
         await expect(locator).toBeAttached({ timeout });
@@ -80,12 +99,8 @@ export async function seeImage(page: Page, alt: string): Promise<void> {
     await expect(locator).toBeVisible();
 }
 
-export async function comboboxSelect(page: Page, labelOrSelector: string, value: string): Promise<void> {
-    await page.waitForTimeout(300);
-    const label = page.locator('label[for]').filter({ hasText: labelOrSelector }).first();
-    const id = await label.getAttribute('for');
+export async function dontSee(page: Page, text: string, options: SeeOptions = {}): Promise<void> {
+    const scope = options.within ?? page;
 
-    await page.locator(id ? `#${id}` : labelOrSelector).click();
-    await page.waitForTimeout(300);
-    await page.locator('*[role="option"]').filter({ hasText: value }).first().click();
+    await expect(findByA11yText(scope, text)).not.toBeVisible({ timeout: options.timeout });
 }
