@@ -3,6 +3,7 @@ import {
     ariaLabel,
     dontSee,
     expect,
+    interceptRequests,
     matchImageSnapshot,
     podUrl,
     press,
@@ -12,7 +13,6 @@ import {
     solidReset,
     test,
 } from '@aerogel/playwright';
-import type { Request } from '@playwright/test';
 import { urlClean } from '@noeldemartin/utils';
 
 test.beforeEach(async ({ page }) => {
@@ -21,26 +21,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Manipulates Tasks', async ({ page }) => {
-    const updateRequests: Request[] = [];
-    const deleteRequests: Request[] = [];
-
-    const trackRequests = (request: Request) => {
-        if (request.url().startsWith(podUrl('/tasks/'))) {
-            if (request.method() === 'PATCH') {
-                updateRequests.push(request);
-            } else if (request.method() === 'DELETE') {
-                deleteRequests.push(request);
-            }
-        }
-    };
+    const updateTask = interceptRequests(page, 'PATCH', podUrl('/tasks/*'));
+    const deleteTask = interceptRequests(page, 'DELETE', podUrl('/tasks/*'));
 
     // Log in
     await ariaInput(page, 'Login url').fill(urlClean(serverUrl(), { protocol: false }));
     await ariaInput(page, 'Login url').press('Enter');
     await solidLogin(page);
     await see(page, 'You are logged in as Alice Cooper!');
-
-    page.on('request', trackRequests);
 
     // Creates tasks
     await ariaInput(page, 'Task name').fill('Hello World!');
@@ -51,12 +39,9 @@ test('Manipulates Tasks', async ({ page }) => {
     await ariaInput(page, 'Task name').press('Enter');
     await see(page, 'It works!');
 
-    // Wait to make sure requests are processed/captured
-    await page.waitForTimeout(500);
-
-    expect(updateRequests).toHaveLength(2);
-    expect(updateRequests[0]?.postData()).toContain('Hello World!');
-    expect(updateRequests[1]?.postData()).toContain('It works!');
+    expect(updateTask.all).toHaveLength(2);
+    expect(updateTask.nth(1)?.body).toContain('Hello World!');
+    expect(updateTask.nth(2)?.body).toContain('It works!');
 
     await matchImageSnapshot(page);
 
@@ -64,8 +49,7 @@ test('Manipulates Tasks', async ({ page }) => {
     await ariaLabel(page, 'Delete \'It works!\'').click();
     await dontSee(page, 'It works!');
 
-    await page.waitForTimeout(500);
-    expect(deleteRequests).toHaveLength(1);
+    expect(deleteTask.all).toHaveLength(1);
 
     // Log out
     await press(page, 'logout');

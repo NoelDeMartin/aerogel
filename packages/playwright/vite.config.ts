@@ -13,6 +13,8 @@ export default defineConfig({
         },
         rollupOptions: {
             external: [
+                '@noeldemartin/solid-utils',
+                '@noeldemartin/solid-utils/testing',
                 '@playwright/test',
                 'playwright-solid',
                 'soukai-bis',

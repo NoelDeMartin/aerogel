@@ -33,7 +33,7 @@
         "@aerogel/playwright": "workspace:*",
         "@aerogel/vite": "workspace:*",
         "@noeldemartin/scripts": "catalog:",
-        "@playwright/test": "^1.59.0",
+        "@playwright/test": "^1.60.0",
         "@solid/community-server": "^7.1.3",
         "@types/node": "catalog:",
         "autoprefixer": "^10.4.14",

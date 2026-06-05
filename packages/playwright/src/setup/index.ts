@@ -1,8 +1,9 @@
-import { test as base, expect } from '@playwright/test';
+import { baseTest } from '@playwright/test';
 
+import { expect } from './matchers';
 import { setupErrorListener } from './errors';
 
-export const test = base.extend({
+export const test = baseTest.extend({
     page: async ({ page }, use) => {
         await setupErrorListener(page);
         await use(page);

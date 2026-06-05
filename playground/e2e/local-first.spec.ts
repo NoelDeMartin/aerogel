@@ -3,6 +3,7 @@ import {
     ariaLabel,
     dontSee,
     expect,
+    interceptRequests,
     matchImageSnapshot,
     podUrl,
     press,
@@ -13,7 +14,6 @@ import {
     test,
     waitSync,
 } from '@aerogel/playwright';
-import type { Request } from '@playwright/test';
 import { urlClean } from '@noeldemartin/utils';
 
 test.beforeEach(async ({ page }) => {
@@ -22,18 +22,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Manipulates Tasks', async ({ page }) => {
-    const updateRequests: Request[] = [];
-    const deleteRequests: Request[] = [];
-
-    const trackRequests = (request: Request) => {
-        if (request.url().startsWith(podUrl('/tasks/'))) {
-            if (request.method() === 'PATCH') {
-                updateRequests.push(request);
-            } else if (request.method() === 'DELETE') {
-                deleteRequests.push(request);
-            }
-        }
-    };
+    const updateTask = interceptRequests(page, 'PATCH', podUrl('/tasks/*'));
+    const deleteTask = interceptRequests(page, 'DELETE', podUrl('/tasks/*'));
 
     // Log in
     await ariaLabel(page, 'Configuration').click();
@@ -46,8 +36,6 @@ test('Manipulates Tasks', async ({ page }) => {
     await see(page, 'Alice Cooper');
     await page.keyboard.press('Escape');
 
-    page.on('request', trackRequests);
-
     // Creates local tasks (click + pressSequentially mimics Cypress .type() on Vue controlled inputs)
     const taskName = ariaInput(page, 'Task name');
     await taskName.click();
@@ -59,17 +47,13 @@ test('Manipulates Tasks', async ({ page }) => {
     await taskName.press('Enter');
     await see(page, 'It works!');
 
-    await page.waitForTimeout(500);
-    expect(updateRequests).toHaveLength(0);
+    expect(updateTask.all).toHaveLength(0);
 
     // Sync tasks
     await waitSync(page);
-
-    await page.waitForTimeout(500);
-    expect(updateRequests).toHaveLength(2);
-    const updateBodies = updateRequests.map((request) => request.postData() ?? '');
-    expect(updateBodies.some((body) => body.includes('Hello World!'))).toBe(true);
-    expect(updateBodies.some((body) => body.includes('It works!'))).toBe(true);
+    expect(updateTask.all).toHaveLength(2);
+    expect(updateTask.nth(1)?.body).toContain('Hello World!');
+    expect(updateTask.nth(2)?.body).toContain('It works!');
 
     await matchImageSnapshot(page);
 
@@ -77,13 +61,12 @@ test('Manipulates Tasks', async ({ page }) => {
     await ariaLabel(page, 'Delete \'It works!\'').click();
     await dontSee(page, 'It works!');
 
-    expect(deleteRequests).toHaveLength(0);
+    expect(deleteTask.all).toHaveLength(0);
 
     // Sync tasks
     await waitSync(page);
 
-    await page.waitForTimeout(500);
-    expect(deleteRequests).toHaveLength(0);
-    expect(updateRequests).toHaveLength(3);
-    expect(updateRequests[2]?.postData()).toContain('Tombstone');
+    expect(deleteTask.all).toHaveLength(0);
+    expect(updateTask.all).toHaveLength(3);
+    expect(updateTask.nth(3)?.body).toContain('Tombstone');
 });

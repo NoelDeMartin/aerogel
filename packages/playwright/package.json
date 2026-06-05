@@ -25,13 +25,14 @@
     "@playwright/test": "*"
   },
   "dependencies": {
+    "@noeldemartin/solid-utils": "catalog:",
     "playwright-solid": "next"
   },
   "devDependencies": {
     "@aerogel/plugin-solid": "workspace:*",
     "@arethetypeswrong/cli": "catalog:",
     "@noeldemartin/scripts": "catalog:",
-    "@playwright/test": "^1.59.0",
+    "@playwright/test": "^1.60.0",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "prettier-eslint-cli": "^8.0.1",

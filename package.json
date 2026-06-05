@@ -30,7 +30,7 @@
         "@types/mustache": "^4.2.2",
         "@typescript-eslint/eslint-plugin": "^5.0.0",
         "@vue/tsconfig": "^0.7.0",
-        "@playwright/test": "^1.59.0",
+        "@playwright/test": "^1.60.0",
         "eslint": "catalog:",
         "eslint-plugin-vue": "catalog:",
         "prettier": "^3.6.2",
