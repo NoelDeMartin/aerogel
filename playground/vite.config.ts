@@ -48,4 +48,7 @@ export default defineConfig({
             '@aerogel/plugin-solid': fileURLToPath(new URL('../packages/plugin-solid/src/', import.meta.url)),
         },
     },
+    test: {
+        include: ['src/**/*.test.ts'],
+    },
 });

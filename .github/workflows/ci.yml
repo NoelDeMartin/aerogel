@@ -49,7 +49,7 @@ jobs:
             - run: pnpm install
             - run: pnpm lint
 
-    unit-tests:
+    tests:
         runs-on: ubuntu-latest
         needs: build
         steps:
@@ -119,7 +119,7 @@ jobs:
     publish:
         if: github.ref == 'refs/heads/main'
         runs-on: ubuntu-latest
-        needs: [lint, unit-tests, e2e, verify]
+        needs: [lint, tests, e2e, verify]
         steps:
             - uses: actions/checkout@v6
               with:

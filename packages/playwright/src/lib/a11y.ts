@@ -59,9 +59,10 @@ export async function see(
     const srOnly = typeof selectorOrOptions === 'string' ? options.srOnly : selectorOrOptions.srOnly;
     const baseOptions = typeof selectorOrOptions === 'string' ? options : selectorOrOptions;
     const timeout = baseOptions.timeout;
-    const locator = typeof selectorOrOptions === 'string'
-        ? page.locator(selectorOrOptions).filter({ hasText: text }).first()
-        : a11yGet(page, text);
+    const locator =
+        typeof selectorOrOptions === 'string'
+            ? page.locator(selectorOrOptions).filter({ hasText: text }).first()
+            : a11yGet(page, text);
 
     if (srOnly) {
         await expect(locator).toBeAttached({ timeout });

@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "pnpm run -r --workspace-concurrency Infinity build",
-        "test:e2e": "pnpm run -r --workspace-concurrency Infinity --parallel e2e:test",
+        "e2e:test": "pnpm run -r --workspace-concurrency Infinity --parallel e2e:test",
         "docs:build": "pnpm docs:build:vitepress && pnpm docs:build:playground",
         "docs:build:playground": "pnpm build -w playground && cp playground/dist docs/.vitepress/dist/playground -r",
         "docs:build:vitepress": "vitepress build docs",
