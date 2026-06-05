@@ -55,8 +55,8 @@ test('Manipulates Tasks', async ({ page }) => {
     await page.waitForTimeout(500);
 
     expect(updateRequests).toHaveLength(2);
-    expect(updateRequests[0].postData()).toContain('Hello World!');
-    expect(updateRequests[1].postData()).toContain('It works!');
+    expect(updateRequests[0]?.postData()).toContain('Hello World!');
+    expect(updateRequests[1]?.postData()).toContain('It works!');
 
     await matchImageSnapshot(page);
 

@@ -85,5 +85,5 @@ test('Manipulates Tasks', async ({ page }) => {
     await page.waitForTimeout(500);
     expect(deleteRequests).toHaveLength(0);
     expect(updateRequests).toHaveLength(3);
-    expect(updateRequests[2].postData()).toContain('Tombstone');
+    expect(updateRequests[2]?.postData()).toContain('Tombstone');
 });

@@ -72,6 +72,10 @@ jobs:
     e2e:
         runs-on: ubuntu-latest
         needs: build
+        strategy:
+            fail-fast: false
+            matrix:
+                browser: [chromium, firefox, webkit]
         steps:
             - uses: actions/checkout@v6
             - uses: pnpm/action-setup@v5
@@ -87,13 +91,14 @@ jobs:
                   path: |
                       packages/*/dist/**
             - run: pnpm install
-            - run: pnpm exec playwright install --with-deps
-            - run: pnpm e2e:test
+            - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+            - run: pnpm exec start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 "playwright test --project=${{ matrix.browser }}"
+              working-directory: playground
             - name: Upload Playwright report
               uses: actions/upload-artifact@v7
               if: ${{ failure() }}
               with:
-                  name: playwright-report
+                  name: playwright-report-${{ matrix.browser }}
                   path: playground/playwright-report
 
     verify:

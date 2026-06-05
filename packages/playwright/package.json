@@ -31,7 +31,7 @@
     "@aerogel/plugin-solid": "workspace:*",
     "@arethetypeswrong/cli": "catalog:",
     "@noeldemartin/scripts": "catalog:",
-    "@playwright/test": "^1.58.2",
+    "@playwright/test": "^1.59.0",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "prettier-eslint-cli": "^8.0.1",
