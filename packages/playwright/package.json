@@ -1,0 +1,49 @@
+{
+  "name": "@aerogel/playwright",
+  "version": "0.1.2",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/aerogel-playwright.d.ts",
+      "default": "./dist/aerogel-playwright.js"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "license": "MIT",
+  "author": "Noel De Martin",
+  "repository": "github:NoelDeMartin/aerogel",
+  "scripts": {
+    "build": "vite build",
+    "lint": "noeldemartin-lint src",
+    "verify": "noeldemartin-verify"
+  },
+  "peerDependencies": {
+    "@playwright/test": "*"
+  },
+  "dependencies": {
+    "playwright-solid": "next"
+  },
+  "devDependencies": {
+    "@aerogel/plugin-solid": "workspace:*",
+    "@arethetypeswrong/cli": "catalog:",
+    "@noeldemartin/scripts": "catalog:",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "prettier-eslint-cli": "^8.0.1",
+    "publint": "catalog:",
+    "soukai-bis": "catalog:"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@noeldemartin/eslint-config-typescript"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120
+  }
+}

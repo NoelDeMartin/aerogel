@@ -39,7 +39,7 @@ export default defineConfig({
         alias: {
             '@': fileURLToPath(new URL('./src/', import.meta.url)),
             '@aerogel/core': fileURLToPath(new URL('../packages/core/src/', import.meta.url)),
-            '@aerogel/cypress': fileURLToPath(new URL('../packages/cypress/src/', import.meta.url)),
+            '@aerogel/playground': fileURLToPath(new URL('../packages/playground/src/', import.meta.url)),
             '@aerogel/plugin-i18n': fileURLToPath(new URL('../packages/plugin-i18n/src/', import.meta.url)),
             '@aerogel/plugin-local-first': fileURLToPath(
                 new URL('../packages/plugin-local-first/src/', import.meta.url),

@@ -69,7 +69,7 @@ export default class App {
         if (this.options.next) {
             dependencies['@aerogel/cli'] = 'next';
             dependencies['@aerogel/core'] = 'next';
-            dependencies['@aerogel/cypress'] = 'next';
+            dependencies['@aerogel/playwright'] = 'next';
             dependencies['@aerogel/plugin-i18n'] = 'next';
             dependencies['@aerogel/plugin-local-first'] = 'next';
             dependencies['@aerogel/plugin-routing'] = 'next';
@@ -86,7 +86,7 @@ export default class App {
                 withFilePrefix({
                     '@aerogel/cli': packagePath('cli'),
                     '@aerogel/core': packagePath('core'),
-                    '@aerogel/cypress': packagePath('cypress'),
+                    '@aerogel/playwright': packagePath('playwright'),
                     '@aerogel/plugin-i18n': packagePath('plugin-i18n'),
                     '@aerogel/plugin-routing': packagePath('plugin-routing'),
                     '@aerogel/plugin-solid': packagePath('plugin-solid'),

@@ -1,0 +1,13 @@
+{
+    "extends": "@tsconfig/node24/tsconfig.json",
+    "include": ["src/**/*.ts"],
+    "compilerOptions": {
+        "baseUrl": ".",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "lib": ["DOM", "ESNext"],
+        "paths": {
+            "@aerogel/playwright/*": ["./src/*"]
+        }
+    }
+}

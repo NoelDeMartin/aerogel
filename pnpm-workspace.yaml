@@ -20,9 +20,10 @@ overrides:
 
 allowBuilds:
     core-js: true
-    cypress: true
     esbuild: true
     vue-demi: true
 
 minimumReleaseAgeExclude:
-  - soukai-bis
+    - '@noeldemartin/*'
+    - soukai-bis
+    - playwright-solid

@@ -4,7 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "pnpm run -r --workspace-concurrency Infinity build",
-        "cy:test": "pnpm run -r --workspace-concurrency Infinity --parallel cy:test",
+        "test:e2e": "pnpm run -r --workspace-concurrency Infinity --parallel e2e:test",
         "docs:build": "pnpm docs:build:vitepress && pnpm docs:build:playground",
         "docs:build:playground": "pnpm build -w playground && cp playground/dist docs/.vitepress/dist/playground -r",
         "docs:build:vitepress": "vitepress build docs",
@@ -30,7 +30,7 @@
         "@types/mustache": "^4.2.2",
         "@typescript-eslint/eslint-plugin": "^5.0.0",
         "@vue/tsconfig": "^0.7.0",
-        "cypress": "14.2.0",
+        "@playwright/test": "^1.58.2",
         "eslint": "catalog:",
         "eslint-plugin-vue": "catalog:",
         "prettier": "^3.6.2",
