@@ -22,7 +22,7 @@
     "verify": "noeldemartin-verify"
   },
   "peerDependencies": {
-    "@playwright/test": "*"
+    "@playwright/test": "^1.60.0"
   },
   "dependencies": {
     "@noeldemartin/solid-utils": "catalog:",

@@ -23,7 +23,7 @@ function matchesUrl(glob: string, url: string): boolean {
 }
 
 function matchesRequest(request: Request, glob: string, method?: string): boolean {
-    if (method && request.method() !== method) {
+    if (method && request.method().toUpperCase() !== method.toUpperCase()) {
         return false;
     }
 
@@ -37,14 +37,10 @@ export function interceptRequests(page: Page, methodOrUrl: string, url?: string)
     const glob = url ?? methodOrUrl;
     const calls: InterceptedCall[] = [];
 
-    const onFinished = async (request: Request) => {
+    const onResponse = (response: Response) => {
+        const request = response.request();
+
         if (!matchesRequest(request, glob, method)) {
-            return;
-        }
-
-        const response = await request.response();
-
-        if (!response) {
             return;
         }
 
@@ -58,7 +54,7 @@ export function interceptRequests(page: Page, methodOrUrl: string, url?: string)
         });
     };
 
-    page.on('requestfinished', onFinished);
+    page.on('response', onResponse);
 
     return {
         get all() {

@@ -1,4 +1,4 @@
-import { baseTest } from '@playwright/test';
+import baseTest from '@playwright/test';
 
 import { expect } from './matchers';
 import { setupErrorListener } from './errors';

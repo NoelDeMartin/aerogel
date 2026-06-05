@@ -39,9 +39,12 @@ test('Manipulates Tasks', async ({ page }) => {
     await ariaInput(page, 'Task name').press('Enter');
     await see(page, 'It works!');
 
-    expect(updateTask.all).toHaveLength(2);
-    expect(updateTask.nth(1)?.body).toContain('Hello World!');
-    expect(updateTask.nth(2)?.body).toContain('It works!');
+    await expect.poll(() => updateTask.all.length).toBe(3);
+
+    expect(updateTask.nth(1)?.url.endsWith('.meta')).toBe(true);
+    expect(updateTask.nth(1)?.body).toContain('Tasks');
+    expect(updateTask.nth(2)?.body).toContain('Hello World!');
+    expect(updateTask.nth(3)?.body).toContain('It works!');
 
     await matchImageSnapshot(page);
 
