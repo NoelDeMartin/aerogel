@@ -5,26 +5,37 @@ import type { ComputedRef } from 'vue';
 import type { Model, ModelConstructor } from 'soukai-bis';
 
 interface TrackedModelData<T extends object = Model> {
-    depth: number | undefined;
+    fetch: boolean;
+    depth?: number;
     modelsSet: ReactiveSet<T>;
     modelsArray: ComputedRef<T[]>;
     refresh(): Promise<void>;
 }
 
+type TrackedModelOptions = {
+    fetch?: boolean;
+    depth?: number;
+};
+
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
 
 function initializedTrackedModelsData<T extends Model>(
     modelClass: ModelConstructor<T>,
-    options?: { depth?: number },
+    options: TrackedModelOptions = {},
 ): TrackedModelData<T> {
     const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.url === b.url });
     const modelsArray = computed(() => modelsSet.values());
     const data = {
-        depth: options?.depth,
+        fetch: options.fetch ?? true,
+        depth: options.depth,
         modelsSet,
         modelsArray,
         async refresh() {
-            const models = await modelClass.all({ depth: options?.depth });
+            if (!data.fetch) {
+                return;
+            }
+
+            const models = await modelClass.all({ depth: data.depth });
 
             modelsSet.reset(models);
         },
@@ -59,13 +70,17 @@ export function _setTrackedModels(value: WeakMap<ModelConstructor, TrackedModelD
 
 export function _getTrackedModelsData<T extends Model>(
     modelClass: ModelConstructor<T>,
-    options?: { depth?: number },
+    options: TrackedModelOptions = {},
 ): TrackedModelData<T> {
     const data =
         (trackedModels.get(modelClass) as TrackedModelData<T>) ?? initializedTrackedModelsData<T>(modelClass, options);
 
-    if (options?.depth && data.depth !== options.depth) {
+    if (options.depth !== undefined && data.depth !== options.depth) {
         throw new Error('Model collection is already being tracked with a different depth');
+    }
+
+    if (options.fetch !== undefined && data.fetch !== options.fetch) {
+        throw new Error('Model collection is already being tracked with a different fetching behavior');
     }
 
     return data;

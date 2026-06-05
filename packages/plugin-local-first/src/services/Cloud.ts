@@ -215,6 +215,7 @@ export class CloudService extends Service {
 
         await trackModels(modelClass, {
             bypassServicesCheck: true,
+            fetch: !!options.register,
             depth: typeof options.register === 'object' ? options.register.depth : undefined,
             created: (model) => this.ready && this.onModelCreated(model),
             updated: (model) => this.ready && this.onModelUpdated(model),
