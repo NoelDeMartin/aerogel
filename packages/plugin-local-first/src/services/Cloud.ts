@@ -21,7 +21,7 @@ import {
     isCoreModel,
     requireEngine,
 } from 'soukai-bis';
-import { Errors, Events, translateWithDefault } from '@aerogel/core';
+import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
 import { Solid, getTrackedModels, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
 import { watchEffect } from 'vue';
 import type { Authenticator } from '@aerogel/plugin-solid';
@@ -118,6 +118,7 @@ export class CloudService extends Service {
             this.syncError = null;
             this.status = CloudStatus.Syncing;
 
+            Browser.acquireScreenLock();
             SyncQueue.clear(models);
 
             try {
@@ -191,6 +192,7 @@ export class CloudService extends Service {
             } finally {
                 this.status = CloudStatus.Online;
 
+                Browser.releaseScreenLock();
                 await this.refreshTrackedModels();
                 await Events.emit('cloud:sync-completed', models);
             }

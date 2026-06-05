@@ -4,6 +4,7 @@ import { definePlugin } from '@aerogel/core/plugins';
 import { isDevelopment, isTesting } from '@noeldemartin/utils';
 
 import App from './App';
+import Browser from './Browser';
 import Cache from './Cache';
 import Events from './Events';
 import Service from './Service';
@@ -13,16 +14,18 @@ import type { AppSetting } from './App.state';
 import type { FormFieldValidator } from '@aerogel/core/forms';
 
 export * from './App';
+export * from './Browser';
 export * from './Cache';
 export * from './Events';
 export * from './Service';
 export * from './store';
 export * from './utils';
 
-export { App, Cache, Events, Storage, Service };
+export { App, Browser, Cache, Events, Storage, Service };
 
 const defaultServices = {
     $app: App,
+    $browser: Browser,
     $events: Events,
     $storage: Storage,
 };
