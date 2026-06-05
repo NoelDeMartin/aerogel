@@ -11,6 +11,7 @@ export type InterceptedCall = {
 
 export type InterceptHandle = {
     readonly all: InterceptedCall[];
+    slice(start: number, end: number): InterceptedCall[];
     nth(index: number): InterceptedCall | undefined;
 };
 
@@ -59,6 +60,9 @@ export function interceptRequests(page: Page, methodOrUrl: string, url?: string)
     return {
         get all() {
             return calls;
+        },
+        slice(start: number, end: number) {
+            return calls.slice(start, end);
         },
         nth(index: number) {
             return calls[index - 1];

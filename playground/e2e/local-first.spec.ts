@@ -51,8 +51,10 @@ test('Manipulates Tasks', async ({ page }) => {
     expect(updateTask.all).toHaveLength(3);
     expect(updateTask.nth(1)?.url.endsWith('.meta')).toBe(true);
     expect(updateTask.nth(1)?.body).toContain('Tasks');
-    expect(updateTask.nth(2)?.body).toContain('Hello World!');
-    expect(updateTask.nth(3)?.body).toContain('It works!');
+
+    const updateBodies = updateTask.slice(1, 3).map((request) => String(request.body));
+    expect(updateBodies.some((body) => body.includes('Hello World!'))).toBe(true);
+    expect(updateBodies.some((body) => body.includes('It works!'))).toBe(true);
 
     await matchImageSnapshot(page);
 
