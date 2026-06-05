@@ -3,7 +3,7 @@ import Aerogel from 'virtual:aerogel';
 import { getEnv } from '@noeldemartin/utils';
 import type { App, Component } from 'vue';
 
-import { defineServiceState } from '@aerogel/core/services/Service';
+import { defineServiceState } from '@aerogel/core/services/utils';
 import type { Plugin } from '@aerogel/core/plugins/Plugin';
 
 export interface AppSetting {

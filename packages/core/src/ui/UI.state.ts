@@ -1,6 +1,6 @@
 import type { Component } from 'vue';
 
-import { defineServiceState } from '@aerogel/core/services/Service';
+import { defineServiceState } from '@aerogel/core/services/utils';
 
 import { Layouts, getCurrentLayout } from './utils';
 

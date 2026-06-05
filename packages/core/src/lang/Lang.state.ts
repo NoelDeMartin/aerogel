@@ -1,4 +1,4 @@
-import { defineServiceState } from '@aerogel/core/services/Service';
+import { defineServiceState } from '@aerogel/core/services/utils';
 
 export default defineServiceState({
     name: 'lang',

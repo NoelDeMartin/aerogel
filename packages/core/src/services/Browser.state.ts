@@ -1,4 +1,4 @@
-import { defineServiceState } from '@aerogel/core/services/Service';
+import { defineServiceState } from '@aerogel/core/services/utils';
 
 const hasNavigator = typeof navigator !== 'undefined';
 
