@@ -16,8 +16,7 @@ export const expect = baseExpect.extend({
 
                 return [
                     result.message,
-                    `- Expected: ${this.utils.printExpected(normalizeSparql(expected))}`,
-                    `+ Received: ${this.utils.printReceived(normalizeSparql(actual))}`,
+                    this.utils.diff(normalizeSparql(expected), normalizeSparql(actual)),
                 ].join('\n');
             },
         };
