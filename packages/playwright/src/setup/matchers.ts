@@ -14,7 +14,9 @@ export const expect = baseExpect.extend({
                     return 'Expected SPARQL not to match.';
                 }
 
-                return [result.message, this.utils.diff(normalizeSparql(expected), normalizeSparql(actual))].join('\n');
+                return [result.message, '', this.utils.diff(normalizeSparql(expected), normalizeSparql(actual))].join(
+                    '\n',
+                );
             },
         };
     },

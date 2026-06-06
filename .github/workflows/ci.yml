@@ -92,7 +92,7 @@ jobs:
                       packages/*/dist/**
             - run: pnpm install
             - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
-            - run: pnpm exec start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 "playwright test --project=${{ matrix.browser }}"
+            - run: pnpm run e2e:test:${{ matrix.browser }}
               working-directory: playground
             - name: Upload Playwright report
               uses: actions/upload-artifact@v7

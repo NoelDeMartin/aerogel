@@ -11,7 +11,9 @@
         "e2e:run": "playwright test",
         "e2e:serve-app": "vite --port 5001 --mode testing",
         "e2e:serve-pod": "community-solid-server -l warn",
-        "e2e:test": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 e2e:run",
+        "e2e:test:chromium": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'pnpm run e2e:run --project=chromium'",
+        "e2e:test:firefox": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'pnpm run e2e:run --project=firefox'",
+        "e2e:test:webkit": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'pnpm run e2e:run --project=webkit'",
         "lint": "noeldemartin-lint src e2e"
     },
     "dependencies": {
