@@ -1,5 +1,7 @@
 import type { Page, Request, Response } from '@playwright/test';
 
+export type UrlMatcher = string;
+
 export type InterceptedCall = {
     url: string;
     method: string;
@@ -13,9 +15,11 @@ export type InterceptHandle = {
     readonly all: InterceptedCall[];
     slice(start: number, end: number): InterceptedCall[];
     nth(index: number): InterceptedCall | undefined;
+    first(url: UrlMatcher): InterceptedCall | undefined;
+    matching(url: UrlMatcher): InterceptedCall[];
 };
 
-function matchesUrl(glob: string, url: string): boolean {
+function matchesUrl(glob: UrlMatcher, url: string): boolean {
     if (glob.endsWith('*')) {
         return url.startsWith(glob.slice(0, -1));
     }
@@ -23,7 +27,7 @@ function matchesUrl(glob: string, url: string): boolean {
     return url === glob;
 }
 
-function matchesRequest(request: Request, glob: string, method?: string): boolean {
+function matchesRequest(request: Request, glob: UrlMatcher, method?: string): boolean {
     if (method && request.method().toUpperCase() !== method.toUpperCase()) {
         return false;
     }
@@ -31,9 +35,9 @@ function matchesRequest(request: Request, glob: string, method?: string): boolea
     return matchesUrl(glob, request.url());
 }
 
-export function interceptRequests(page: Page, url: string): InterceptHandle;
-export function interceptRequests(page: Page, method: string, url: string): InterceptHandle;
-export function interceptRequests(page: Page, methodOrUrl: string, url?: string): InterceptHandle {
+export function interceptRequests(page: Page, url: UrlMatcher): InterceptHandle;
+export function interceptRequests(page: Page, method: string, url: UrlMatcher): InterceptHandle;
+export function interceptRequests(page: Page, methodOrUrl: string | UrlMatcher, url?: UrlMatcher): InterceptHandle {
     const method = url === undefined ? undefined : methodOrUrl;
     const glob = url ?? methodOrUrl;
     const calls: InterceptedCall[] = [];
@@ -66,6 +70,12 @@ export function interceptRequests(page: Page, methodOrUrl: string, url?: string)
         },
         nth(index: number) {
             return calls[index - 1];
+        },
+        first(urlPattern: UrlMatcher) {
+            return calls.find((call) => matchesUrl(urlPattern, call.url));
+        },
+        matching(urlPattern: UrlMatcher) {
+            return calls.filter((call) => matchesUrl(urlPattern, call.url));
         },
     };
 }
