@@ -62,6 +62,7 @@ jobs:
                   ./packages/cli/bin/gel create app --next --local --copy
                   cd app
                   vp install
+                  vp exec playwright install --with-deps chromium
             - run: vp build
               working-directory: app
             - run: vp check
@@ -69,4 +70,6 @@ jobs:
             - run: vp run type-check
               working-directory: app
             - run: vp test
+              working-directory: app
+            - run: vp run e2e:test:chromium
               working-directory: app
