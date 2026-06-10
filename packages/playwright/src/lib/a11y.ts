@@ -8,6 +8,7 @@ export type InputOptions = {
 export type PressOptions = {
     within?: Locator;
     selector?: string;
+    role?: Parameters<Locator['getByRole']>[0];
 };
 
 export type SeeOptions = {
@@ -36,14 +37,19 @@ export function input(page: Page, label: string, options: InputOptions = {}): Lo
 }
 
 export async function press(page: Page, label: string, options: PressOptions = {}): Promise<void> {
-    const targetSelector =
-        options.selector ?? 'button:visible, a:visible, label:visible, details:visible, [role="menuitem"]:visible';
-    const findTarget = (scope: Page | Locator) =>
-        scope
-            .locator(targetSelector)
+    const findTarget = (scope: Page | Locator) => {
+        const locator = options.role
+            ? scope.getByRole(options.role)
+            : scope.locator(
+                options.selector ??
+                      'button:visible, a:visible, label:visible, details:visible, [role="menuitem"]:visible',
+            );
+
+        return locator
             .filter({ hasText: label })
             .or(scope.locator(`[aria-label="${label}"]`))
             .first();
+    };
 
     if (options.within) {
         await findTarget(options.within).click();
