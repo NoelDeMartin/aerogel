@@ -7,7 +7,7 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 1 : undefined,
-    reporter: process.env.CI ? 'github' : 'html',
+    reporter: process.env.CI ? 'github' : 'list',
     use: {
         baseURL: 'http://localhost:5001',
         trace: 'on-first-retry',
@@ -29,7 +29,7 @@ export default defineConfig({
         {
             name: 'chromium',
             use: {
-                headless: false,
+                headless: !process.env.UI,
                 ...devices['Desktop Chrome'],
             },
         },

@@ -38,7 +38,7 @@ test('Manipulates Tasks', async ({ page }) => {
     await input(page, 'Task name').press('Enter');
     await see(page, 'It works!');
 
-    await expect.poll(() => updateTask.all.length).toBe(3);
+    await expect.poll(() => updateTask.all).toHaveLength(3);
 
     expect(updateTask.nth(1)?.url.endsWith('.meta')).toBe(true);
     expect(updateTask.nth(1)?.body).toContain('Tasks');

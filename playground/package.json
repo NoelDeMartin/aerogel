@@ -7,7 +7,7 @@
         "dev": "vite",
         "dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid",
         "e2e:dev": "concurrently --kill-others \"pnpm e2e:serve-app\" \"pnpm e2e:serve-pod\" \"pnpm e2e:open\"",
-        "e2e:open": "playwright test --ui",
+        "e2e:open": "UI=true playwright test --ui",
         "e2e:run": "playwright test",
         "e2e:serve-app": "vite --port 5001 --mode testing",
         "e2e:serve-pod": "community-solid-server -l warn",
