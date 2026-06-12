@@ -172,6 +172,8 @@ export function computedModelAttribute<TModel extends Model, TAttribute extends 
         const computedAttribute = model[attribute] as ComputedAttribute;
         const unsubscribe = computedAttribute.subscribe(() => trigger());
 
+        computedAttribute.updateValue({ refresh: false, useCache: true });
+
         onScopeDispose(() => unsubscribe());
 
         return {
