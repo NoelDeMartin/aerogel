@@ -1,4 +1,11 @@
+import { isObject, toString } from '@noeldemartin/utils';
 import type { Page } from '@playwright/test';
+
+const knownErrors = new WeakSet();
+
+function isError(error: unknown): error is Error {
+    return isObject(error) && 'message' in error;
+}
 
 export async function setupErrorListener(page: Page): Promise<void> {
     await page.addInitScript(() => {
@@ -8,11 +15,21 @@ export async function setupErrorListener(page: Page): Promise<void> {
                     return;
                 }
 
-                const errorToThrow = error instanceof Error ? error : new Error(message || String(error));
+                if (!isError(error)) {
+                    throw new Error(message ?? toString(error));
+                }
 
-                setTimeout(() => {
-                    throw errorToThrow;
-                });
+                if (knownErrors.has(error)) {
+                    return;
+                }
+
+                if (message) {
+                    error = new Error(message, { cause: error });
+                }
+
+                knownErrors.add(error as Error);
+
+                throw error;
             },
         };
     });

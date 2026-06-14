@@ -26,9 +26,11 @@
   },
   "dependencies": {
     "@noeldemartin/solid-utils": "catalog:",
+    "@noeldemartin/utils": "catalog:",
     "playwright-solid": "next"
   },
   "devDependencies": {
+    "@aerogel/core": "workspace:*",
     "@aerogel/plugin-solid": "workspace:*",
     "@arethetypeswrong/cli": "catalog:",
     "@noeldemartin/scripts": "catalog:",

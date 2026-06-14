@@ -156,4 +156,8 @@ export default facade(EventsService);
 declare global {
     // eslint-disable-next-line no-var
     var __aerogelEvents__: AerogelGlobalEvents | undefined;
+
+    interface Window {
+        __aerogelEvents__: AerogelGlobalEvents | undefined;
+    }
 }
