@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@noeldemartin/solid-utils": "catalog:",
-    "@noeldemartin/utils": "catalog:",
     "playwright-solid": "next"
   },
   "devDependencies": {

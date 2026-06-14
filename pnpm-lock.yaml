@@ -263,9 +263,6 @@ importers:
       '@noeldemartin/solid-utils':
         specifier: 'catalog:'
         version: 0.6.1-next.4f19fa3a733afc3b173d049d4cb963a29879f23a(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils':
-        specifier: next
-        version: 0.7.3-next.34910d628c683b1ef338aec029997b6b0156e64c
       playwright-solid:
         specifier: next
         version: 0.0.0-next.4f571c3043b2158e53771282fcf8e53fb36fd50b(web-streams-polyfill@3.3.3)
