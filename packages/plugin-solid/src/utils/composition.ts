@@ -4,8 +4,9 @@ import {
     getCurrentScope,
     onScopeDispose,
     onUnmounted,
-    reactive,
+    shallowReactive,
     shallowRef,
+    toRaw,
     watchEffect,
 } from 'vue';
 import { onCleanMounted } from '@aerogel/core';
@@ -79,7 +80,7 @@ function reactiveComputedModels<T>(modelClass: ModelConstructor, compute: () => 
         if (isArray(shallowModels.value)) {
             return shallowModels.value
                 .filter((shallowModel) => !isSoftDeleted(shallowModel))
-                .map((shallowModel) => reactive(shallowModel)) as T;
+                .map((shallowModel) => shallowReactive(shallowModel)) as T;
         }
 
         if (isObject(shallowModels.value)) {
@@ -87,9 +88,9 @@ function reactiveComputedModels<T>(modelClass: ModelConstructor, compute: () => 
                 if (isArray(value)) {
                     models[name as keyof T] = value
                         .filter((shallowModel) => !isSoftDeleted(shallowModel))
-                        .map((shallowModel) => reactive(shallowModel)) as T[keyof T];
+                        .map((shallowModel) => shallowReactive(shallowModel)) as T[keyof T];
                 } else if (!isSoftDeleted(value as Model)) {
-                    models[name as keyof T] = reactive(value as Model) as T[keyof T];
+                    models[name as keyof T] = shallowReactive(value as Model) as T[keyof T];
                 }
 
                 return models;
@@ -128,7 +129,7 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
 
         getCurrentScope() && onScopeDispose(stopListeners);
         watchEffect(() => {
-            const newValue = compute();
+            const newValue = toRaw(compute());
 
             if (value instanceof Model && (!isInstanceOf(newValue, Model) || newValue.static() !== value.static())) {
                 stopListeners();
@@ -169,7 +170,7 @@ export function computedModelAttribute<TModel extends Model, TAttribute extends 
     attribute: TAttribute,
 ): TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never {
     return customRef((track, trigger) => {
-        const computedAttribute = model[attribute] as ComputedAttribute;
+        const computedAttribute = toRaw(model)[attribute] as ComputedAttribute;
         const unsubscribe = computedAttribute.subscribe(() => trigger());
 
         computedAttribute.updateValue({ refresh: false, useCache: true });
