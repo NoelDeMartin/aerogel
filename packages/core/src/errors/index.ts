@@ -30,8 +30,14 @@ function setUpErrorHandler(app: AppInstance, baseHandler: ErrorHandler = () => f
     const errorHandler: ErrorHandler = (error) => baseHandler(error) || frameworkHandler(error);
 
     app.config.errorHandler = errorHandler;
-    globalThis.onerror = (event, _, __, ___, error) => errorHandler(error ?? event);
-    globalThis.onunhandledrejection = (event) => errorHandler(event.reason);
+
+    globalThis.addEventListener('error', (event) => {
+        errorHandler(event.error ?? event);
+    });
+
+    globalThis.addEventListener('unhandledrejection', (event) => {
+        errorHandler(event.reason);
+    });
 }
 
 export type ErrorHandler = (error: ErrorSource) => boolean;
