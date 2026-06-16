@@ -9,6 +9,7 @@ export interface Options {
     themeColor?: string;
     icons?: Record<string, string> | IconResource[];
     baseUrl?: string;
+    developmentHost?: string;
     static404Redirect?: boolean | string;
     solidClientId?: boolean | ClientIDDocument;
     pwa?: {
@@ -27,6 +28,7 @@ export interface AppInfo {
     additionalManifestEntries: ManifestEntry[];
     description?: string;
     baseUrl?: string;
+    developmentHost?: string;
     sourceUrl?: string;
     plugins?: string[];
     locales?: Record<string, string>;

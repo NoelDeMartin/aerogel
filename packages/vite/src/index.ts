@@ -30,6 +30,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         description: options.description,
         basePath: '/',
         baseUrl: process.env.AEROGEL_BASE_URL ?? options.baseUrl,
+        developmentHost: options.developmentHost,
         themeColor: options.themeColor ?? '#ffffff',
         additionalManifestEntries: options.pwa?.additionalManifestEntries ?? [],
     };
@@ -62,7 +63,9 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             server.httpServer?.once('listening', async () => {
                 await after({ ms: 100 });
 
-                app.baseUrl = server.resolvedUrls?.network?.[0] ?? server.resolvedUrls?.local?.[0] ?? app.baseUrl;
+                app.baseUrl = options.developmentHost
+                    ? `https://${options.developmentHost}/`
+                    : server.resolvedUrls?.network?.[0] ?? server.resolvedUrls?.local?.[0] ?? app.baseUrl;
             });
 
             server.middlewares.use(solidMiddleware(app, options));
@@ -88,6 +91,17 @@ export default function Aerogel(options: Options = {}): Plugin[] {
 
             config.build ??= {};
             config.build.rollupOptions ??= {};
+
+            if (app.developmentHost) {
+                config.server = {
+                    allowedHosts: [app.developmentHost],
+                    hmr: {
+                        protocol: 'wss',
+                        host: app.developmentHost,
+                        clientPort: 443,
+                    },
+                };
+            }
 
             if ('rolldownOptions' in config.build) {
                 const rolldownOptions = config.build.rollupOptions as RolldownOptions;
