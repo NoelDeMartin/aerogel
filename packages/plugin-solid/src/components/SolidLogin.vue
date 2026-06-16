@@ -116,7 +116,9 @@ const measured = ref(false);
 const usingManualUrl = ref(false);
 const showInput = computed(() => !showDevLogin.value || usingManualUrl.value);
 const showDevLogin = computed(
-    () => App.development && (!form.url || form.url === 'dev' || form.url.trim().length === 0),
+    () =>
+        (App.development || App.testing) &&
+        (!form.url || form.url === 'dev' || form.url.trim().length === 0),
 );
 const renderedClasses = computed(() => classes('flex flex-col items-center gap-2 w-full md:w-auto', rootClasses));
 const renderedButtonClasses = computed(() =>
