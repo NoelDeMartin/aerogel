@@ -15,6 +15,7 @@ export default defineConfig({
             external: [
                 '@noeldemartin/solid-utils',
                 '@noeldemartin/solid-utils/testing',
+                '@noeldemartin/utils',
                 '@playwright/test',
                 'playwright-solid',
                 'soukai-bis',

@@ -3,17 +3,15 @@ import {
     expect,
     input,
     interceptRequests,
+    localFirstLogin,
     matchImageSnapshot,
     podUrl,
     press,
     see,
-    serverUrl,
-    solidLogin,
     solidReset,
     test,
     waitSync,
 } from '@aerogel/playwright';
-import { urlClean } from '@noeldemartin/utils';
 
 test.beforeEach(async ({ page }) => {
     await solidReset();
@@ -25,12 +23,7 @@ test('Manipulates Tasks', async ({ page }) => {
     const deleteTask = interceptRequests(page, 'DELETE', podUrl('/tasks/*'));
 
     // Log in
-    await press(page, 'Configuration');
-    await press(page, 'Connect account');
-    await input(page, 'Login url').fill(urlClean(serverUrl(), { protocol: false }));
-    await input(page, 'Login url').press('Enter');
-    await solidLogin(page);
-    await waitSync(page);
+    await localFirstLogin(page);
     await press(page, 'Open account');
     await see(page, 'Alice Cooper');
     await page.keyboard.press('Escape');
