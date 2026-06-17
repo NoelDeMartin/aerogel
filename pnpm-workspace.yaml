@@ -17,6 +17,7 @@ catalog:
 
 overrides:
     '@noeldemartin/utils': next
+    vue: $vue
 
 allowBuilds:
     core-js: true
