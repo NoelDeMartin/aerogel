@@ -46,7 +46,47 @@ function mapModels<T extends Model>(
     return map;
 }
 
-function shallowComputedModels<T>(modelClass: ModelConstructor, compute: () => T): ComputedRef<T> {
+function watchComputedAttributes(modelClass: ModelConstructor, attributes: string[], callback: () => void) {
+    const modelData = _getTrackedModelsData(modelClass);
+    const subscriptions = new Map<string, () => void>();
+
+    watchEffect(() => {
+        const watchedUrls = new Set(
+            modelData.modelsArray.value.map((model) => model.url).filter((url): url is string => !!url),
+        );
+
+        for (const [url, unsubscribe] of subscriptions.entries()) {
+            if (watchedUrls.has(url)) {
+                continue;
+            }
+
+            unsubscribe();
+            subscriptions.delete(url);
+        }
+
+        modelData.modelsArray.value.forEach((model) => {
+            if (!model.url || subscriptions.has(model.url)) {
+                return;
+            }
+
+            const unsubscribes = attributes.map((attribute) => {
+                const computedAttribute = toRaw(model).getComputedAttribute(attribute);
+
+                return computedAttribute.subscribe(callback);
+            });
+
+            subscriptions.set(model.url, () => unsubscribes.forEach((unsubscribe) => unsubscribe()));
+        });
+    });
+
+    getCurrentScope() && onScopeDispose(() => subscriptions.forEach((unsubscribe) => unsubscribe()));
+}
+
+function shallowComputedModels<T>(
+    modelClass: ModelConstructor,
+    compute: () => T,
+    options: ComputedModelsOptions = {},
+): ComputedRef<T> {
     return customRef((track, trigger) => {
         let value: T;
         const recompute = () => ((value = compute()), trigger());
@@ -57,13 +97,10 @@ function shallowComputedModels<T>(modelClass: ModelConstructor, compute: () => T
             modelClass.on('modified', recompute),
             modelClass.on('relation-loaded', recompute),
         ];
-        const stopListeners = () => {
-            listeners.forEach((stop) => stop());
-            listeners.splice(0, listeners.length);
-        };
 
-        getCurrentScope() && onScopeDispose(stopListeners);
         watchEffect(recompute);
+        watchComputedAttributes(modelClass, options.watch ?? [], recompute);
+        getCurrentScope() && onScopeDispose(() => listeners.forEach((stop) => stop()));
 
         return {
             get: () => tap(value, () => track()),
@@ -74,8 +111,12 @@ function shallowComputedModels<T>(modelClass: ModelConstructor, compute: () => T
     }) as ComputedRef<T>;
 }
 
-function reactiveComputedModels<T>(modelClass: ModelConstructor, compute: () => T): ComputedRef<T> {
-    const shallowModels = shallowComputedModels(modelClass, compute);
+function reactiveComputedModels<T>(
+    modelClass: ModelConstructor,
+    compute: () => T,
+    options: ComputedModelsOptions = {},
+): ComputedRef<T> {
+    const shallowModels = shallowComputedModels(modelClass, compute, options);
     const reactiveModels = computed(() => {
         if (isArray(shallowModels.value)) {
             return shallowModels.value
@@ -116,6 +157,10 @@ function reactiveComputedModels<T>(modelClass: ModelConstructor, compute: () => 
 }
 
 export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
+
+export interface ComputedModelsOptions {
+    watch?: string[];
+}
 
 export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
@@ -159,21 +204,23 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     });
 }
 
-export function computedModels<T>(modelClass: ModelConstructor, compute: () => T): ComputedRef<T> {
+export function computedModels<T>(
+    modelClass: ModelConstructor,
+    compute: () => T,
+    options: ComputedModelsOptions = {},
+): ComputedRef<T> {
     // TODO This implementation is probably very inefficient and needs to be improved for better performance with large
     // collections. There are also more details in the unit tests for this function.
-    return reactiveComputedModels(modelClass, compute);
+    return reactiveComputedModels(modelClass, compute, options);
 }
 
-export function computedModelAttribute<TModel extends Model, TAttribute extends keyof TModel>(
+export function computedModelAttribute<TModel extends Model, TAttribute extends string & keyof TModel>(
     model: TModel,
     attribute: TAttribute,
 ): TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never {
     return customRef((track, trigger) => {
-        const computedAttribute = toRaw(model)[attribute] as ComputedAttribute;
+        const computedAttribute = toRaw(model).getComputedAttribute(attribute);
         const unsubscribe = computedAttribute.subscribe(() => trigger());
-
-        computedAttribute.updateValue({ refresh: false, useCache: true });
 
         onScopeDispose(() => unsubscribe());
 
