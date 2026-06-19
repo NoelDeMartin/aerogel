@@ -7,13 +7,16 @@ import {
     shallowReactive,
     shallowRef,
     toRaw,
+    toValue,
+    unref,
     watchEffect,
 } from 'vue';
 import { onCleanMounted } from '@aerogel/core';
 import { fail, isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
 import { Model, getRelatedClasses } from 'soukai-bis';
 import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
-import type { ComputedRef, Ref } from 'vue';
+import type { ComputedRef, MaybeRef, MaybeRefOrGetter, Ref } from 'vue';
+import type { Nullable } from '@noeldemartin/utils';
 
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
 import { throttle } from '@aerogel/plugin-solid/utils/timing';
@@ -48,24 +51,22 @@ function mapModels<T extends Model>(
 
 function watchComputedAttributes(modelClass: ModelConstructor, attributes: string[], callback: () => void) {
     const modelData = _getTrackedModelsData(modelClass);
-    const subscriptions = new Map<string, () => void>();
+    const subscriptions = new Map<Model, () => void>();
 
     watchEffect(() => {
-        const watchedUrls = new Set(
-            modelData.modelsArray.value.map((model) => model.url).filter((url): url is string => !!url),
-        );
+        const watchedModels = new Set(modelData.modelsArray.value);
 
-        for (const [url, unsubscribe] of subscriptions.entries()) {
-            if (watchedUrls.has(url)) {
+        for (const [model, unsubscribe] of subscriptions.entries()) {
+            if (watchedModels.has(model)) {
                 continue;
             }
 
             unsubscribe();
-            subscriptions.delete(url);
+            subscriptions.delete(model);
         }
 
         modelData.modelsArray.value.forEach((model) => {
-            if (!model.url || subscriptions.has(model.url)) {
+            if (!model.url || subscriptions.has(model)) {
                 return;
             }
 
@@ -75,7 +76,7 @@ function watchComputedAttributes(modelClass: ModelConstructor, attributes: strin
                 return computedAttribute.subscribe(callback);
             });
 
-            subscriptions.set(model.url, () => unsubscribes.forEach((unsubscribe) => unsubscribe()));
+            subscriptions.set(model, () => unsubscribes.forEach((unsubscribe) => unsubscribe()));
         });
     });
 
@@ -215,20 +216,34 @@ export function computedModels<T>(
 }
 
 export function computedModelAttribute<TModel extends Model, TAttribute extends string & keyof TModel>(
-    model: TModel,
+    model: MaybeRefOrGetter<TModel | null | undefined>,
     attribute: TAttribute,
 ): TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never {
     return customRef((track, trigger) => {
-        const computedAttribute = toRaw(model).getComputedAttribute(attribute);
-        const unsubscribe = computedAttribute.subscribe(() => trigger());
+        let computedAttribute: Nullable<ComputedAttribute>;
+        let unsubscribe: Nullable<() => void>;
 
-        onScopeDispose(() => unsubscribe());
+        watchEffect(() => {
+            const currentModel = toValue(model);
+            const currentComputedAttribute = currentModel && toRaw(currentModel).getComputedAttribute(attribute);
+
+            if (currentComputedAttribute === computedAttribute) {
+                return;
+            }
+
+            unsubscribe?.();
+
+            computedAttribute = currentComputedAttribute;
+            unsubscribe = computedAttribute?.subscribe(() => trigger());
+        });
+
+        onScopeDispose(() => unsubscribe?.());
 
         return {
             get: () => {
                 track();
 
-                return computedAttribute.value;
+                return computedAttribute?.value;
             },
             set: () => fail('Pending episode dates are read-only'),
         };
