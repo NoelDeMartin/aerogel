@@ -8,14 +8,13 @@ import {
     shallowRef,
     toRaw,
     toValue,
-    unref,
     watchEffect,
 } from 'vue';
 import { onCleanMounted } from '@aerogel/core';
 import { fail, isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
 import { Model, getRelatedClasses } from 'soukai-bis';
 import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
-import type { ComputedRef, MaybeRef, MaybeRefOrGetter, Ref } from 'vue';
+import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
