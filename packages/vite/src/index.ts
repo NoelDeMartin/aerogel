@@ -197,6 +197,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                                 }))),
                 }),
                 workbox: {
+                    mode: ['production', 'staging'].includes(process.env.NODE_ENV ?? '') ? 'production' : 'development',
                     maximumFileSizeToCacheInBytes: 10000000,
                     additionalManifestEntries: app.additionalManifestEntries,
                 },
