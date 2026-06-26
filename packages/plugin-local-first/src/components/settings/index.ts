@@ -1,12 +1,12 @@
 import { defineSettings } from '@aerogel/core';
 
+import ClearCache from './ClearCache.vue';
 import PurgeData from './PurgeData.vue';
-import PurgeMetadata from './PurgeMetadata.vue';
 
 export default defineSettings([
     {
         priority: 1,
-        component: PurgeMetadata,
+        component: ClearCache,
         development: true,
     },
     {
@@ -15,4 +15,3 @@ export default defineSettings([
         development: true,
     },
 ]);
-

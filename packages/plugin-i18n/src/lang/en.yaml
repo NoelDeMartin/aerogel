@@ -42,10 +42,9 @@ settings:
     purgeConfirmTitle: Delete everything?
     purgeConfirmMessage: If you proceed, all your data will be deleted forever. If you want to save it before wiping this device, you can [connect to your Solid account](#action:connect) first.
     purgeConfirmAccept: Purge data
-    purgeMetadata: Purge Metadata
-    purgeMetadataDescription: Clear local synchronization metadata to force redownloading all data (does not delete user data).
-    metadataPurged: Metadata purged successfully!
-    metadataCannotBePurged: The current engine doesn't support purging metadata.
+    clearCache: Clear Cache
+    clearCacheDescription: Clear caches to force re-downloading all data (does not delete user data).
+    cacheCleared: Cache cleared successfully!
     debug: Debugging
     debugDescription: Enable debugging with [Eruda](https://eruda.liriliri.io/).
 

@@ -11,7 +11,7 @@
             )
         "
     >
-        <Button variant="secondary" @click="purgeData()">
+        <Button variant="secondary" @click="purgeData()" class="whitespace-nowrap">
             {{ $td('settings.purgeData', 'Purge Data') }}
         </Button>
     </Setting>
