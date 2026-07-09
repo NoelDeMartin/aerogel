@@ -4,8 +4,10 @@
     </PageTitle>
 
     <div class="prose-sm">
-        <section>
-            <h2>{{ $t('components.buttons') }}</h2>
+        <section aria-labelledby="buttons-title">
+            <h2 id="buttons-title">
+                {{ $t('components.buttons') }}
+            </h2>
             <div class="mt-4 flex items-center gap-2">
                 <span>{{ $t('components.buttons_variants') }}:</span>
                 <Button> {{ $t('components.buttons_variants_default') }} </Button>
@@ -51,8 +53,10 @@
             </div>
         </section>
 
-        <section>
-            <h2>{{ $t('components.inputs') }}</h2>
+        <section aria-labelledby="inputs-title">
+            <h2 id="inputs-title">
+                {{ $t('components.inputs') }}
+            </h2>
             <div class="mt-4">
                 <Input :label="$t('components.inputs_text')" :placeholder="$t('components.inputs_textPlaceholder')" />
             </div>
@@ -100,8 +104,10 @@
             </div>
         </section>
 
-        <section>
-            <h2>{{ $t('components.modals') }}</h2>
+        <section aria-labelledby="modals-title">
+            <h2 id="modals-title">
+                {{ $t('components.modals') }}
+            </h2>
             <div class="mt-4 flex gap-2">
                 <Button @click="$ui.alert($t('components.modals_alertTitle'), $t('components.modals_alertMessage'))">
                     {{ $t('components.modals_alert') }}
@@ -189,8 +195,10 @@
             </div>
         </section>
 
-        <section>
-            <h2>{{ $t('components.toasts') }}</h2>
+        <section aria-labelledby="toasts-title">
+            <h2 id="toasts-title">
+                {{ $t('components.toasts') }}
+            </h2>
             <div class="mt-4 flex gap-2">
                 <Button @click="$ui.toast($t('components.toasts_message'))">
                     {{ $t('components.toasts_default') }}

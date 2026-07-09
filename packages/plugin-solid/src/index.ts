@@ -1,10 +1,4 @@
-import {
-    IndexedDBEngine,
-    bootCoreModels,
-    bootModelsFromViteGlob,
-    setEngine,
-    setNamespace,
-} from 'soukai-bis';
+import { IndexedDBEngine, bootCoreModels, bootModelsFromViteGlob, setEngine, setNamespace } from 'soukai-bis';
 import { Events, appNamespace, bootServices, registerErrorHandler } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -56,7 +50,7 @@ export type SolidServices = typeof services;
 export default function solid(options: Options = {}): Plugin {
     return {
         async install(app) {
-            const engine = new IndexedDBEngine(appNamespace());
+            const engine = new IndexedDBEngine();
 
             setupTestingRuntime();
             setEngine(engine);

@@ -31,7 +31,7 @@ test('Modals', async ({ page }) => {
     await dontSee(page, 'Are you sure you want to continue?');
     await page.keyboard.press('Escape');
 
-    await press(page, 'Loading');
+    await press(page, 'Loading', { within: page.getByRole('region', { name: 'Modals' }) });
     await see(page, 'The elfs are working, please wait...');
     await dontSee(page, 'The elfs are working, please wait...');
 

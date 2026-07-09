@@ -20,7 +20,7 @@ catalog:
 
 overrides:
     '@noeldemartin/utils': next
-    vue: $vue
+    vue: 'catalog:'
 
 allowBuilds:
     core-js: true
