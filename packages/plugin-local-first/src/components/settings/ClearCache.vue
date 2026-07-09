@@ -9,15 +9,24 @@
             )
         "
     >
-        <Button variant="secondary" @click="clearCache()" class="whitespace-nowrap">
-            {{ $td('settings.clearCache', 'Clear Cache') }}
+        <Button
+            variant="secondary"
+            class="whitespace-nowrap"
+            :loading
+            @click="clearCache()"
+        >
+            {{
+                loading ? $td('settings.clearingCache', 'Clearing cache...') : $td('settings.clearCache', 'Clear Cache')
+            }}
         </Button>
     </Setting>
 </template>
 
 <script setup lang="ts">
-import { Button, Setting, UI, translateWithDefault } from '@aerogel/core';
+import { Button, Setting, UI, translateWithDefault, useLoading } from '@aerogel/core';
 import { ComputedAttributesCache, engineFulfillsContract, requireEngine } from 'soukai-bis';
+
+const { loading, run } = useLoading();
 
 async function clearCache(): Promise<void> {
     const engine = requireEngine();
@@ -33,7 +42,7 @@ async function clearCache(): Promise<void> {
         return;
     }
 
-    await Promise.all([engine.purgeMetadata(), ComputedAttributesCache.clear()]);
+    await run(engine.purgeMetadata(), ComputedAttributesCache.clear());
 
     UI.toast(translateWithDefault('settings.cacheCleared', 'Cache cleared successfully!'));
 }

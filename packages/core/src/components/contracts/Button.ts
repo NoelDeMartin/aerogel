@@ -7,6 +7,7 @@ export interface ButtonProps extends PrimitiveProps {
     class?: HTMLAttributes['class'];
     disabled?: boolean;
     href?: string;
+    loading?: boolean;
     route?: string;
     routeParams?: object;
     routeQuery?: object;

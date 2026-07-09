@@ -38,11 +38,14 @@ settings:
     developerModeDescription: Enable developer mode to access advanced options and actions.
     dangerZone: Danger zone
     purgeData: Purge Data
+    purgingData: Purging data...
     purgeDataDescription: Wipe all database records and local storage from this device.
     purgeConfirmTitle: Delete everything?
     purgeConfirmMessage: If you proceed, all your data will be deleted forever. If you want to save it before wiping this device, you can [connect to your Solid account](#action:connect) first.
     purgeConfirmAccept: Purge data
+    dataPurged: Data purged successfully!
     clearCache: Clear Cache
+    clearingCache: Clearing cache...
     clearCacheDescription: Clear caches to force re-downloading all data (does not delete user data).
     cacheCleared: Cache cleared successfully!
     debug: Debugging

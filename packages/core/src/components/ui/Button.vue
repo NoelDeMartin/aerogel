@@ -1,10 +1,12 @@
 <template>
-    <HeadlessButton :class="renderedClasses" :disabled v-bind="props">
+    <HeadlessButton :class="renderedClasses" :disabled="disabled || loading" v-bind="props">
+        <IconSpinner v-if="loading" class="size-4 shrink-0" />
         <slot />
     </HeadlessButton>
 </template>
 
 <script setup lang="ts">
+import IconSpinner from '~icons/svg-spinners/90-ring-with-bg';
 import { computed } from 'vue';
 
 import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue';
@@ -12,12 +14,12 @@ import { variantClasses } from '@aerogel/core/utils/classes';
 import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
 import type { Variants } from '@aerogel/core/utils/classes';
 
-const { class: baseClasses, size, variant, disabled, ...props } = defineProps<ButtonProps>();
+const { class: baseClasses, size, variant, disabled, loading, ...props } = defineProps<ButtonProps>();
 
 /* eslint-disable vue/max-len */
 // prettier-ignore
 const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps, 'size' | 'variant' | 'disabled'>>>(
-    { baseClasses, variant, size, disabled },
+    { baseClasses, variant, size, disabled: disabled || loading },
     {
         baseClasses: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         variants: {

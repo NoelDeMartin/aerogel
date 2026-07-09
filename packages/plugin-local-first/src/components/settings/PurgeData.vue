@@ -5,22 +5,26 @@
         :title-heading-level="4"
         :title="$td('settings.purgeData', 'Purge Data')"
         :description="
-            $td(
-                'settings.purgeDataDescription',
-                'Wipe all database records and local storage from this device.',
-            )
+            $td('settings.purgeDataDescription', 'Wipe all database records and local storage from this device.')
         "
     >
-        <Button variant="secondary" @click="purgeData()" class="whitespace-nowrap">
-            {{ $td('settings.purgeData', 'Purge Data') }}
+        <Button
+            variant="secondary"
+            class="whitespace-nowrap"
+            :loading
+            @click="purgeData()"
+        >
+            {{ loading ? $td('settings.purgingData', 'Purging data...') : $td('settings.purgeData', 'Purge Data') }}
         </Button>
     </Setting>
 </template>
 
 <script setup lang="ts">
-import { Button, Setting, Storage, UI, translateWithDefault } from '@aerogel/core';
+import { Button, Setting, Storage, UI, translateWithDefault, useLoading } from '@aerogel/core';
 
 import AccountLoginModal from '@aerogel/plugin-local-first/components/AccountLoginModal.vue';
+
+const { loading, run } = useLoading();
 
 async function purgeData(): Promise<void> {
     const confirmed = await UI.confirm(
@@ -42,7 +46,8 @@ async function purgeData(): Promise<void> {
         return;
     }
 
-    await UI.closeAllModals();
-    await Storage.purge();
+    await run(UI.closeAllModals(), Storage.purge());
+
+    UI.toast(translateWithDefault('settings.dataPurged', 'Data purged successfully!'));
 }
 </script>

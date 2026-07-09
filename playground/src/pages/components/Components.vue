@@ -45,6 +45,9 @@
                 <Button size="small" disabled>
                     {{ $t('components.buttons_states_disabled') }}
                 </Button>
+                <Button size="small" loading>
+                    {{ $t('components.buttons_states_loading') }}
+                </Button>
             </div>
         </section>
 

@@ -33,6 +33,7 @@ components:
     buttons_sizes_large: Large
     buttons_states: States
     buttons_states_disabled: Disabled
+    buttons_states_loading: Loading
     inputs: Inputs
     inputs_text: Text
     inputs_textPlaceholder: Type here...
