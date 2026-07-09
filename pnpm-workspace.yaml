@@ -4,6 +4,7 @@ packages:
 
 catalog:
     '@arethetypeswrong/cli': ^0.18.3
+    '@intlify/unplugin-vue-i18n': ^6.0.5
     '@noeldemartin/scripts': next
     '@noeldemartin/solid-utils': next
     '@noeldemartin/utils': next
@@ -13,6 +14,8 @@ catalog:
     idb: ^8.0.2
     publint: ^0.3.12
     soukai-bis: next
+    unplugin-icons: ^22.1.0
+    unplugin-vue-components: ^28.4.1
     vue: ^3.5.0
 
 overrides:

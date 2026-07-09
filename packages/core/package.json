@@ -49,7 +49,8 @@
     "@noeldemartin/scripts": "catalog:",
     "eslint": "catalog:",
     "happy-dom": "^20.10.1",
-    "publint": "catalog:"
+    "publint": "catalog:",
+    "unplugin-icons": "catalog:"
   },
   "eslintConfig": {
     "extends": [

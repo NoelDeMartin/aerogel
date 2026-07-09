@@ -43,6 +43,7 @@
         "fake-indexeddb": "^6.0.0",
         "publint": "catalog:",
         "soukai-bis": "catalog:",
+        "unplugin-icons": "catalog:",
         "zod": "^4.3.6"
     },
     "eslintConfig": {

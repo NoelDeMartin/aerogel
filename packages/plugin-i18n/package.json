@@ -31,9 +31,11 @@
         "@aerogel/core": "workspace:*",
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
+        "@intlify/unplugin-vue-i18n": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "eslint": "catalog:",
-        "publint": "catalog:"
+        "publint": "catalog:",
+        "unplugin-icons": "catalog:"
     },
     "eslintConfig": {
         "extends": [

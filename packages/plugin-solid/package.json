@@ -42,6 +42,7 @@
         "@noeldemartin/scripts": "catalog:",
         "eslint": "catalog:",
         "publint": "catalog:",
+        "unplugin-icons": "catalog:",
         "zod": "^4.3.6"
     },
     "eslintConfig": {

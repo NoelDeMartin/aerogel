@@ -39,7 +39,8 @@
         "@noeldemartin/scripts": "catalog:",
         "eslint": "catalog:",
         "publint": "catalog:",
-        "soukai-bis": "catalog:"
+        "soukai-bis": "catalog:",
+        "unplugin-icons": "catalog:"
     },
     "eslintConfig": {
         "extends": [
