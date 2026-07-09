@@ -43,11 +43,11 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
         },
         compoundVariants: [
             {
-                variant: ['default', 'secondary', 'danger', 'ghost', 'outline'],
+                variant: ['default', 'secondary', 'danger', 'warning', 'ghost', 'outline'],
                 class: 'flex items-center justify-center gap-1 font-medium',
             },
             {
-                variant: ['default', 'danger'],
+                variant: ['default', 'danger', 'warning'],
                 class: 'shadow-sm',
             },
             {
@@ -55,17 +55,17 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
                 class: 'ring-1 ring-inset',
             },
             {
-                variant: ['default', 'secondary', 'danger', 'ghost', 'outline'],
+                variant: ['default', 'secondary', 'danger', 'warning', 'ghost', 'outline'],
                 size: 'small',
                 class: 'rounded px-2 py-1',
             },
             {
-                variant: ['default', 'secondary', 'danger', 'ghost', 'outline'],
+                variant: ['default', 'secondary', 'danger', 'warning', 'ghost', 'outline'],
                 size: 'default',
                 class: 'rounded-md px-2.5 py-1.5',
             },
             {
-                variant: ['default', 'secondary', 'danger', 'ghost', 'outline'],
+                variant: ['default', 'secondary', 'danger', 'warning', 'ghost', 'outline'],
                 size: 'large',
                 class: 'rounded-md px-3 py-2',
             },
