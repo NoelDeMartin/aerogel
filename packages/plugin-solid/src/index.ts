@@ -2,7 +2,6 @@ import {
     IndexedDBEngine,
     bootCoreModels,
     bootModelsFromViteGlob,
-    clearCache,
     setEngine,
     setNamespace,
 } from 'soukai-bis';
@@ -85,10 +84,7 @@ export default function solid(options: Options = {}): Plugin {
                 });
             }
 
-            Events.on('purge-storage', async () => {
-                await clearCache();
-                await engine.clear();
-            });
+            Events.on('purge-storage', () => engine.clear());
 
             await bootServices(app, services);
         },
