@@ -85,7 +85,10 @@ export default function solid(options: Options = {}): Plugin {
                 });
             }
 
-            Events.on('purge-storage', () => Promise.all([engine.clear(), clearCache()]));
+            Events.on('purge-storage', async () => {
+                await clearCache();
+                await engine.clear();
+            });
 
             await bootServices(app, services);
         },
