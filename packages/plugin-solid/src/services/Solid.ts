@@ -266,6 +266,7 @@ export class SolidService extends Service {
 
             await Events.emit('auth:logout');
             await Events.emit('auth:after-logout');
+            await App.reload();
         });
     }
 
