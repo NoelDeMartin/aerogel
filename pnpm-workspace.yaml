@@ -19,7 +19,9 @@ catalog:
     vue: ^3.5.0
 
 overrides:
-    '@noeldemartin/utils': next
+    '@noeldemartin/solid-utils': 'catalog:'
+    '@noeldemartin/utils': 'catalog:'
+    soukai-bis: 'catalog:'
     vue: 'catalog:'
 
 allowBuilds:
