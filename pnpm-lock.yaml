@@ -64,7 +64,7 @@ importers:
         version: 0.4.0-next.c4947cf24d83e9a211c2705b97f764039d7863ab
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/testing':
         specifier: next
         version: 0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.7(@types/node@26.1.1)(happy-dom@20.10.4)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(yaml@2.9.0))
@@ -97,16 +97,16 @@ importers:
         version: 9.33.0(eslint@8.57.1)
       prettier:
         specifier: ^3.6.2
-        version: 3.9.4
+        version: 3.9.5
       prettier-eslint-cli:
         specifier: ^8.0.1
         version: 8.0.1(prettier-eslint@16.4.2(typescript@5.9.3))(typescript@5.9.3)
       prettier-plugin-tailwindcss:
         specifier: ^0.6.11
-        version: 0.6.14(prettier@3.9.4)
+        version: 0.6.14(prettier@3.9.5)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
@@ -118,7 +118,7 @@ importers:
         version: 4.5.0(@types/node@26.1.1)(rollup@4.62.2)(typescript@5.9.3)(vite@6.4.3(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(yaml@2.9.0))
       vitepress:
         specifier: ^1.6.3
-        version: 1.6.4(@algolia/client-search@5.55.2)(@types/node@26.1.1)(axios@1.18.0)(lightningcss@1.32.0)(postcss@8.5.16)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3)
+        version: 1.6.4(@algolia/client-search@5.55.2)(@types/node@26.1.1)(axios@1.18.0)(lightningcss@1.32.0)(postcss@8.5.19)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3)
       vitest:
         specifier: ^3.0.9
         version: 3.2.7(@types/node@26.1.1)(happy-dom@20.10.4)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(yaml@2.9.0)
@@ -209,7 +209,7 @@ importers:
         version: 2.9.10(vue@3.5.39(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.6.0
@@ -259,7 +259,7 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
@@ -296,7 +296,7 @@ importers:
         version: 0.3.21
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
 
   packages/plugin-i18n:
     dependencies:
@@ -333,7 +333,7 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
@@ -342,7 +342,7 @@ importers:
         version: 8.0.3
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -388,7 +388,7 @@ importers:
         version: 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.39(typescript@5.9.3))
@@ -422,7 +422,7 @@ importers:
         version: 3.1.1
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
@@ -431,7 +431,7 @@ importers:
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -526,7 +526,7 @@ importers:
         version: link:../packages/plugin-solid
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
@@ -538,7 +538,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.1)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.3.1
@@ -572,7 +572,7 @@ importers:
         version: 24.13.2
       autoprefixer:
         specifier: ^10.4.14
-        version: 10.5.0(postcss@8.5.16)
+        version: 10.5.0(postcss@8.5.19)
       concurrently:
         specifier: ^8.0.1
         version: 8.2.2
@@ -2175,8 +2175,8 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/simple-icons@1.2.89':
-    resolution: {integrity: sha512-hRaCY5s2G5oWAIhc4LCGYn6g6RrwLL4zhoLOT+KUO3joVCxVlZKA+839bv/47Nbe9/ZD4UA6dznZ4XPYcI53wA==}
+  '@iconify-json/simple-icons@1.2.90':
+    resolution: {integrity: sha512-zt2o2ZvQpHVvZJARIkZ51RnaHY2oqcPJMvHE+mVnxkSr+c33fnX4gciiXu+wyX5ei+s0qbVX1wD0DWBbaGBYMA==}
 
   '@iconify/json@2.2.341':
     resolution: {integrity: sha512-IwH6m5hbVRtjBcmcI7xI6/H3VV3Tt0rqzWO4UxV1L82Cv32CsnvwpykLe9a2DgC06/gnrCmp3vgEzPsEHzndqg==}
@@ -2398,8 +2398,8 @@ packages:
     resolution: {integrity: sha512-uwN63R+u/ef5UxUHmNobTCvbTjg1aOvj3t9w/DsKkrJlNilmAwbFxWf/XuK5qmtJVlQV7MyOtLy2XLbwYVRh1A==}
     hasBin: true
 
-  '@noeldemartin/solid-utils@0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e':
-    resolution: {integrity: sha512-2xFOEJ9IK+Mu7wIuzMkFCEDxfEt4q7AcLJaHNjv133Pcd8WUs+Odbt+YmXzhKCif3QAe3XST8q+WScnwsOJ/HQ==}
+  '@noeldemartin/solid-utils@0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0':
+    resolution: {integrity: sha512-zDMxwBSA3GX2Sax+9WXrVe+8LX1MtIrhy508v5QMLhecBuEo8bBi7hbudSqUlQjY00FrITMHqW3rl33/7M2v7Q==}
 
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19':
     resolution: {integrity: sha512-5moMGAYgqCnHWfbxgkgNjoaYhc6nvtqN7etPP+B76fyZVWWRLK+BOKKcwCXUd2ctD2N7lu9baa7M9qoN8oHEKg==}
@@ -3042,8 +3042,8 @@ packages:
   '@types/fs-extra@11.0.4':
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
 
-  '@types/hast@3.0.4':
-    resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
+  '@types/hast@3.0.5':
+    resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
 
   '@types/http-assert@1.5.6':
     resolution: {integrity: sha512-TTEwmtjgVbYAzZYWyeHPrrtWnfVkm8tQkP8P21uQifPgMRgjrow3XDEYqucuC8SKZJT7pUnhU/JymvjggxO9vw==}
@@ -3317,8 +3317,8 @@ packages:
     resolution: {integrity: sha512-6fJ9MHWtK14C1DSkiMlHUSOmrVebL7150xZJBlJiL62jjhIA4JmOq6flwBgDxIdBKKdoiZRel+dfPD5MLfny3w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@ungap/structured-clone@1.3.2':
-    resolution: {integrity: sha512-5jsZFwgR5rTdKwidH9Qmat75RKwqfpKlWWB1frDkljN127mwqBu8K0PYo7/hFpF03IEJpfVPpCQDY/eDx3iHvA==}
+  '@ungap/structured-clone@1.3.3':
+    resolution: {integrity: sha512-60YRaenCQcVjYEKOcG824+DRGGIQ3VKErcBoAEDJZz5bKIs2ZG+X/H9Nk+Q6EVkwJk5QNApxbrc5QtBSwtrXAg==}
 
   '@vitejs/plugin-vue@5.2.4':
     resolution: {integrity: sha512-7Yx/SXSOcQq5HiiV3orevHUFn+pmMB4cgbEkDYgnkUWb0WfeQ/wa2yFv6D5ICiCQOVpjA7vYDXrC7AGO8yjDHA==}
@@ -5729,8 +5729,12 @@ packages:
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  postcss@8.5.16:
-    resolution: {integrity: sha512-vuwillviilfKZsg0VGj5R/YwwcHx4SLsIOI/7K6mQkWx+l5cUHTjj5g0AasTBcyXsbfTgrwsUNmVUb5xVwyPwg==}
+  postcss@8.5.17:
+    resolution: {integrity: sha512-J7EF+8X+CzRPaJPOv9Ck2wNWJvGnnl3PcNPAdGg6GTLjyVpyQ0yATMSXRFRV01BviT/9Gwuc3rjEyJbDJG9a4w==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.5.19:
+    resolution: {integrity: sha512-Mz8SaolMd8nB+G13WkORcxQKHZ/NE4xXevtkJHVuG+guo9/wYKlIMTKAqGdEmYOXR2ijPjTYNHssizdaVSUNdQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   preact@10.29.7:
@@ -5828,8 +5832,8 @@ packages:
       prettier-plugin-svelte:
         optional: true
 
-  prettier@3.9.4:
-    resolution: {integrity: sha512-yWG/o/4oJfo036EKAfK6ACAoDOfHeRHx4tuxkfBZiauURiaSmYwlpOr5LQqKtIkRD2z1PLteme2WoxEnj4tHTg==}
+  prettier@3.9.5:
+    resolution: {integrity: sha512-/FVl766LpUfB5vXgCYOYa0MeV/441Ia99AeICQIQFTY/Nw0roZwULcXpku5i1/m5kt/baz+s4Zogspd839HSMg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -6248,8 +6252,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c:
-    resolution: {integrity: sha512-iM40gymtuSSLcIb8H+kHkqeY/T6d5Oh3z/kVbRld2jqK14uER84tHmgeheTKYHjoXM4hn8nxTWSfOj05e0gf3A==}
+  soukai-bis@0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc:
+    resolution: {integrity: sha512-rh+OqShiilqke1R45pi3lTlCrybzq/cnnI2u9TKrP1c+AbKmC3xamj6hqE5lllKJfVF6rq8UMbiC8tRp0lc0gg==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -10054,7 +10058,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iconify-json/simple-icons@1.2.89':
+  '@iconify-json/simple-icons@1.2.90':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -10366,7 +10370,7 @@ snapshots:
 
   '@noeldemartin/scripts@0.4.0-next.c4947cf24d83e9a211c2705b97f764039d7863ab': {}
 
-  '@noeldemartin/solid-utils@0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)':
+  '@noeldemartin/solid-utils@0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)':
     dependencies:
       '@noeldemartin/utils': 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
       '@rdfjs/types': 2.0.1
@@ -10647,7 +10651,7 @@ snapshots:
       '@shikijs/engine-oniguruma': 2.5.0
       '@shikijs/types': 2.5.0
       '@shikijs/vscode-textmate': 10.0.2
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       hast-util-to-html: 9.0.5
 
   '@shikijs/engine-javascript@2.5.0':
@@ -10677,7 +10681,7 @@ snapshots:
   '@shikijs/types@2.5.0':
     dependencies:
       '@shikijs/vscode-textmate': 10.0.2
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
 
   '@shikijs/vscode-textmate@10.0.2': {}
 
@@ -11020,7 +11024,7 @@ snapshots:
       '@types/jsonfile': 6.1.4
       '@types/node': 26.1.1
 
-  '@types/hast@3.0.4':
+  '@types/hast@3.0.5':
     dependencies:
       '@types/unist': 3.0.3
 
@@ -11373,7 +11377,7 @@ snapshots:
       '@typescript-eslint/types': 8.61.1
       eslint-visitor-keys: 5.0.1
 
-  '@ungap/structured-clone@1.3.2': {}
+  '@ungap/structured-clone@1.3.3': {}
 
   '@vitejs/plugin-vue@5.2.4(vite@5.4.21(@types/node@26.1.1)(lightningcss@1.32.0)(terser@5.48.0))(vue@3.5.39(typescript@5.9.3))':
     dependencies:
@@ -11473,7 +11477,7 @@ snapshots:
       '@vue/shared': 3.5.39
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.16
+      postcss: 8.5.17
       source-map-js: 1.2.1
 
   '@vue/compiler-ssr@3.5.39':
@@ -11766,13 +11770,13 @@ snapshots:
 
   auth-header@1.0.0: {}
 
-  autoprefixer@10.5.0(postcss@8.5.16):
+  autoprefixer@10.5.0(postcss@8.5.19):
     dependencies:
       browserslist: 4.28.2
       caniuse-lite: 1.0.30001799
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.16
+      postcss: 8.5.19
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -12543,7 +12547,7 @@ snapshots:
       '@humanwhocodes/config-array': 0.13.0
       '@humanwhocodes/module-importer': 1.0.1
       '@nodelib/fs.walk': 1.2.8
-      '@ungap/structured-clone': 1.3.2
+      '@ungap/structured-clone': 1.3.3
       ajv: 6.15.0
       chalk: 4.1.2
       cross-spawn: 7.0.6
@@ -13044,7 +13048,7 @@ snapshots:
 
   hast-util-to-html@9.0.5:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/unist': 3.0.3
       ccount: 2.0.1
       comma-separated-tokens: 2.0.3
@@ -13058,7 +13062,7 @@ snapshots:
 
   hast-util-whitespace@3.0.0:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
 
   he@1.2.0: {}
 
@@ -13660,9 +13664,9 @@ snapshots:
 
   mdast-util-to-hast@13.2.1:
     dependencies:
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
-      '@ungap/structured-clone': 1.3.2
+      '@ungap/structured-clone': 1.3.3
       devlop: 1.1.0
       micromark-util-sanitize-uri: 2.0.1
       trim-lines: 3.0.1
@@ -14030,11 +14034,11 @@ snapshots:
   playwright-solid@0.0.0-next.4f571c3043b2158e53771282fcf8e53fb36fd50b(web-streams-polyfill@3.3.3):
     dependencies:
       '@inrupt/solid-client-authn-core': 3.1.1
-      '@noeldemartin/solid-utils': 0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)
+      '@noeldemartin/solid-utils': 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
       '@playwright/test': 1.61.1
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3)
+      soukai-bis: 0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3)
       zod: 4.4.3
     transitivePeerDependencies:
       - web-streams-polyfill
@@ -14059,7 +14063,13 @@ snapshots:
 
   postcss-value-parser@4.2.0: {}
 
-  postcss@8.5.16:
+  postcss@8.5.17:
+    dependencies:
+      nanoid: 3.3.13
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.19:
     dependencies:
       nanoid: 3.3.13
       picocolors: 1.1.1
@@ -14106,7 +14116,7 @@ snapshots:
       indent-string: 4.0.0
       lodash.merge: 4.6.2
       loglevel-colored-level-prefix: 1.0.0
-      prettier: 3.9.4
+      prettier: 3.9.5
       pretty-format: 29.7.0
       require-relative: 0.8.7
       tslib: 2.8.1
@@ -14115,11 +14125,11 @@ snapshots:
       - supports-color
       - typescript
 
-  prettier-plugin-tailwindcss@0.6.14(prettier@3.9.4):
+  prettier-plugin-tailwindcss@0.6.14(prettier@3.9.5):
     dependencies:
-      prettier: 3.9.4
+      prettier: 3.9.5
 
-  prettier@3.9.4: {}
+  prettier@3.9.5: {}
 
   pretty-bytes@5.6.0: {}
 
@@ -14692,7 +14702,7 @@ snapshots:
       '@shikijs/themes': 2.5.0
       '@shikijs/types': 2.5.0
       '@shikijs/vscode-textmate': 10.0.2
-      '@types/hast': 3.0.4
+      '@types/hast': 3.0.5
 
   side-channel-list@1.0.1:
     dependencies:
@@ -14756,9 +14766,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.164223677238fcafffd4bebe73d0d6909599211c(web-streams-polyfill@3.3.3)(zod@4.4.3):
+  soukai-bis@0.0.0-next.31dc94d62bb92f4bb40ae830b74a0a0b92258ccc(web-streams-polyfill@3.3.3)(zod@4.4.3):
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1-next.c48fb7c2d26eb001e7501c6ab198d96c58f99a4e(web-streams-polyfill@3.3.3)
+      '@noeldemartin/solid-utils': 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.a0ef3c875be6f86a88e67b4c3c2f2d770d053c19
       idb: 8.0.3
       zod: 4.4.3
@@ -15381,7 +15391,7 @@ snapshots:
   vite@5.4.21(@types/node@26.1.1)(lightningcss@1.32.0)(terser@5.48.0):
     dependencies:
       esbuild: 0.21.5
-      postcss: 8.5.16
+      postcss: 8.5.19
       rollup: 4.62.2
     optionalDependencies:
       '@types/node': 26.1.1
@@ -15394,7 +15404,7 @@ snapshots:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.5)
       picomatch: 4.0.5
-      postcss: 8.5.16
+      postcss: 8.5.19
       rollup: 4.62.2
       tinyglobby: 0.2.17
     optionalDependencies:
@@ -15405,11 +15415,11 @@ snapshots:
       terser: 5.48.0
       yaml: 2.9.0
 
-  vitepress@1.6.4(@algolia/client-search@5.55.2)(@types/node@26.1.1)(axios@1.18.0)(lightningcss@1.32.0)(postcss@8.5.16)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3):
+  vitepress@1.6.4(@algolia/client-search@5.55.2)(@types/node@26.1.1)(axios@1.18.0)(lightningcss@1.32.0)(postcss@8.5.19)(search-insights@2.17.3)(terser@5.48.0)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.55.2)(search-insights@2.17.3)
-      '@iconify-json/simple-icons': 1.2.89
+      '@iconify-json/simple-icons': 1.2.90
       '@shikijs/core': 2.5.0
       '@shikijs/transformers': 2.5.0
       '@shikijs/types': 2.5.0
@@ -15426,7 +15436,7 @@ snapshots:
       vite: 5.4.21(@types/node@26.1.1)(lightningcss@1.32.0)(terser@5.48.0)
       vue: 3.5.39(typescript@5.9.3)
     optionalDependencies:
-      postcss: 8.5.16
+      postcss: 8.5.19
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/node'

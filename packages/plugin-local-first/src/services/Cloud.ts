@@ -141,6 +141,7 @@ export class CloudService extends Service {
                         localEngine: requireEngine(),
                         remoteEngine: Solid.requireEngine(),
                         typeIndexes: await Solid.findTypeIndexes(),
+                        createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
                         applicationModels: applicationModels.map((modelClass) => {
                             const registration = this.registeredModels.find(
                                 (registered) => registered.modelClass === modelClass,
