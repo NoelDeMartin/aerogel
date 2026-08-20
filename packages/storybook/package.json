@@ -1,0 +1,46 @@
+{
+  "name": "@aerogel/storybook",
+  "version": "0.1.2",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/aerogel-storybook.d.ts",
+      "default": "./dist/aerogel-storybook.js"
+    }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "license": "MIT",
+  "author": "Noel De Martin",
+  "repository": "github:NoelDeMartin/aerogel",
+  "scripts": {
+    "build": "vite build",
+    "lint": "noeldemartin-lint src",
+    "verify": "noeldemartin-verify"
+  },
+  "peerDependencies": {
+    "@aerogel/core": "*",
+    "@storybook/vue3-vite": "^10.0.0"
+  },
+  "devDependencies": {
+    "@aerogel/core": "workspace:*",
+    "@arethetypeswrong/cli": "catalog:",
+    "@noeldemartin/scripts": "catalog:",
+    "@storybook/vue3-vite": "^10.5.4",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "prettier-eslint-cli": "^8.0.1",
+    "publint": "catalog:"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@noeldemartin/eslint-config-typescript"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120
+  }
+}
