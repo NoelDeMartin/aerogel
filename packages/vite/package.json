@@ -30,6 +30,7 @@
         "@noeldemartin/utils": "catalog:",
         "@tailwindcss/vite": "^4.1.4",
         "@vitejs/plugin-vue": "^5.2.3",
+        "@vitejs/plugin-vue-jsx": "^5.1.6",
         "image-size": "^2.0.2",
         "mustache": "^4.2.0",
         "rollup": "^4.54.0",

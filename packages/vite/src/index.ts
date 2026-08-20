@@ -3,6 +3,7 @@ import type { VirtualAerogel } from 'virtual:aerogel';
 
 import TailwindCSS from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
+import VueJsx from '@vitejs/plugin-vue-jsx';
 import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
 import { VitePWA } from 'vite-plugin-pwa';
 import type { Plugin } from 'vite';
@@ -164,6 +165,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
 
     return arrayFilter([
         Vue(),
+        VueJsx(),
         TailwindCSS(),
         !options.lib &&
             VitePWA({

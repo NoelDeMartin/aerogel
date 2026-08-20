@@ -16,6 +16,7 @@ export default defineConfig({
                 '@noeldemartin/utils',
                 '@tailwindcss/vite',
                 '@vitejs/plugin-vue',
+                '@vitejs/plugin-vue-jsx',
                 'image-size',
                 'mustache',
                 'node:child_process',
