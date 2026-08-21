@@ -13,6 +13,7 @@ export * from './utils';
 export { Errors };
 export { default as JobCancelledError } from './JobCancelledError';
 export { default as ServiceBootError } from './ServiceBootError';
+export { default as InvalidEnvError } from './InvalidEnvError';
 export type { ErrorSource, ErrorReport, ErrorReportLog };
 
 const services = { $errors: Errors };

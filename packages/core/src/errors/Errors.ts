@@ -10,6 +10,7 @@ import { translateWithDefault } from '@aerogel/core/lang/utils';
 import { Events } from '@aerogel/core/services';
 
 import Service from './Errors.state';
+import { consumeStartupErrors } from './internal';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
 
 export class ErrorsService extends Service {
@@ -138,6 +139,14 @@ export class ErrorsService extends Service {
             this.eruda.init();
             this.erudaPlugins.forEach((plugin) => this.eruda?.add(plugin));
         });
+
+        const startupErrors = consumeStartupErrors();
+
+        if (startupErrors.length > 0) {
+            this.setState({
+                startupErrors: await Promise.all(startupErrors.map((error) => this.createErrorReport(error))),
+            });
+        }
     }
 
     private logError(error: unknown): void {

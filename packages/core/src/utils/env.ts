@@ -1,5 +1,7 @@
-import { parseBoolean } from '@noeldemartin/utils';
+import { isInstanceOf, parseBoolean } from '@noeldemartin/utils';
 import z from 'zod';
+
+import InvalidEnvError from '@aerogel/core/errors/InvalidEnvError';
 
 const DefaultSchema = z.object({
     CI: z.string().optional().transform(parseBoolean),
@@ -16,7 +18,15 @@ export function extendEnv(extendedSchema: z.ZodObject): void {
 }
 
 export function env<T extends keyof Env>(key: T): Env[T] {
-    parsedEnv ??= schema.parse(process.env);
+    try {
+        parsedEnv ??= schema.parse(import.meta.env);
+    } catch (error) {
+        if (!isInstanceOf(error, z.ZodError)) {
+            throw error;
+        }
+
+        throw new InvalidEnvError(error);
+    }
 
     return (parsedEnv as Env)[key];
 }
