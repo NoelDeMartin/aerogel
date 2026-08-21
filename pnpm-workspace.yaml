@@ -17,12 +17,14 @@ catalog:
     unplugin-icons: ^22.1.0
     unplugin-vue-components: ^28.4.1
     vue: ^3.5.0
+    zod: ^4.3.4
 
 overrides:
     '@noeldemartin/solid-utils': 'catalog:'
     '@noeldemartin/utils': 'catalog:'
     soukai-bis: 'catalog:'
     vue: 'catalog:'
+    zod: 'catalog:'
 
 allowBuilds:
     core-js: true

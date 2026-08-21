@@ -29,6 +29,7 @@ export default defineConfig({
                 'virtual:aerogel',
                 'vue',
                 'vue-component-type-helpers',
+                'zod',
             ],
         },
     },

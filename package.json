@@ -13,7 +13,7 @@
         "test:ci": "vitest --run --reporter verbose",
         "verify": "pnpm run -r --workspace-concurrency Infinity --parallel verify"
     },
-    "packageManager": "pnpm@11.10.0",
+    "packageManager": "pnpm@11.22.0",
     "devDependencies": {
         "@iconify/json": "2.2.341",
         "@noeldemartin/eslint-config-typescript": "next",

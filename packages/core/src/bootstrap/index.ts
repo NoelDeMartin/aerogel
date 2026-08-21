@@ -11,6 +11,7 @@ import services from '@aerogel/core/services';
 import testing from '@aerogel/core/testing';
 import ui from '@aerogel/core/ui';
 import forms from '@aerogel/core/forms';
+import { extendEnv } from '@aerogel/core/utils/env';
 import { installPlugins } from '@aerogel/core/plugins';
 import type { AerogelOptions } from '@aerogel/core/bootstrap/options';
 
@@ -33,6 +34,8 @@ export async function bootstrap(rootComponent: Component, options: AerogelOption
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).$aerogel = app;
     }
+
+    options.env && extendEnv(options.env);
 
     await bootstrapApplication(app, options);
 
