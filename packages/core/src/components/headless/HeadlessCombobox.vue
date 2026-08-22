@@ -8,6 +8,7 @@
         :reset-search-term-on-select
         :model-value="acceptableValue"
         :by="compareOptions"
+        :class="wrapperClass"
         @update:open="emit('update:open', $event)"
         @update:model-value="update($event)"
     >
@@ -20,6 +21,7 @@
 <script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
 import { ComboboxRoot } from 'reka-ui';
 import { computed } from 'vue';
+import type { HTMLAttributes } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import { useCombobox } from '@aerogel/core/components/contracts/Combobox';
@@ -37,6 +39,8 @@ const {
     resetSearchTermOnBlur = true,
     resetSearchTermOnSelect = true,
     disabled = false,
+    open,
+    wrapperClass,
     ...props
 } = defineProps<
     ComboboxProps<T> & {
@@ -45,19 +49,12 @@ const {
         resetSearchTermOnBlur?: boolean;
         resetSearchTermOnSelect?: boolean;
         disabled?: boolean;
+        wrapperClass?: HTMLAttributes['class'];
     }
 >();
 
 const { expose, acceptableValue, update } = useCombobox(
-    computed(() => ({
-        as,
-        compareOptions,
-        ignoreFilter,
-        resetSearchTermOnBlur,
-        resetSearchTermOnSelect,
-        disabled,
-        ...props,
-    })),
+    computed(() => ({ as, compareOptions, ...props })),
     emit,
 );
 

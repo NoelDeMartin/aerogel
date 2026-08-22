@@ -1,5 +1,5 @@
 <template>
-    <HeadlessSelectOption :class="renderedOuterClasses" :value>
+    <HeadlessSelectOption :class="renderedWrapperClasses" :value>
         <div :class="renderedInnerClasses">
             <slot />
         </div>
@@ -14,12 +14,12 @@ import type { HTMLAttributes } from 'vue';
 import HeadlessSelectOption from '@aerogel/core/components/headless/HeadlessSelectOption.vue';
 import { classes } from '@aerogel/core/utils';
 
-const { class: outerClass, innerClass } = defineProps<{
+const { class: wrapperClass, innerClass } = defineProps<{
     value: AcceptableValue;
     class?: HTMLAttributes['class'];
     innerClass?: HTMLAttributes['class'];
 }>();
-const renderedOuterClasses = computed(() => classes('group p-1 outline-none', outerClass));
+const renderedWrapperClasses = computed(() => classes('group p-1 outline-none', wrapperClass));
 const renderedInnerClasses = computed(() =>
     classes(
         // eslint-disable-next-line vue/max-len
