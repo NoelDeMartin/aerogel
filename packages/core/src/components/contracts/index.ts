@@ -4,7 +4,7 @@ export * from './Combobox';
 export * from './ConfirmModal';
 export * from './DropdownMenu';
 export * from './ErrorReportModal';
-export * from './Input';
+export * from './FormControl';
 export * from './LoadingModal';
 export * from './Modal';
 export * from './PromptModal';

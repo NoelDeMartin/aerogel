@@ -9,7 +9,10 @@ import { useSelect } from './Select';
 import type { SelectEmits, SelectExpose, SelectProps } from './Select';
 import type { AcceptRefs } from '@aerogel/core/utils';
 
-export interface ComboboxExpose<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends SelectExpose<T> {
+export interface ComboboxExpose<
+    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
+    TControlElement extends HTMLElement = HTMLElement,
+> extends SelectExpose<T, TControlElement> {
     input: Ref<string>;
     preventChange: Ref<boolean>;
     $group: Ref<HTMLDivElement | null>;
@@ -24,7 +27,7 @@ export type ComboboxEmits<T extends Nullable<FormFieldValue> = Nullable<FormFiel
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function useCombobox<T extends Nullable<FormFieldValue>>(
+export function useCombobox<T extends Nullable<FormFieldValue>, TControlElement extends HTMLElement = HTMLElement>(
     props: Ref<ComboboxProps<T>>,
     emit: EmitFn<ComboboxEmits<T>>,
 ) {
@@ -33,7 +36,7 @@ export function useCombobox<T extends Nullable<FormFieldValue>>(
         acceptableValue,
         update: baseUpdate,
         renderOption,
-    } = useSelect(
+    } = useSelect<T, TControlElement>(
         computed(() => ({
             as: props.value.as ?? 'div',
             compareOptions: props.value.compareOptions ?? ((a, b) => a === b),
@@ -50,7 +53,7 @@ export function useCombobox<T extends Nullable<FormFieldValue>>(
         input: ref(acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
         preventChange: ref(false),
         $group: ref(null),
-    } satisfies AcceptRefs<ComboboxExpose<T>>;
+    } satisfies AcceptRefs<ComboboxExpose<T, TControlElement>>;
 
     function update(value: AcceptableValue) {
         if (props.value.options || props.value.newInputValue) {

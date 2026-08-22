@@ -3,18 +3,22 @@ import type { Nullable } from '@noeldemartin/utils';
 
 import type { FormFieldValue } from '@aerogel/core/forms';
 
-export interface InputProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
+export interface FormControlProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
     name?: string;
     label?: string;
     description?: string;
     modelValue?: T;
 }
 
-export interface InputEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
+export interface FormControlEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
     'update:modelValue': [value: T];
 }
 
-export interface InputExpose<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
+export interface FormControlExpose<
+    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
+    TControlElement extends HTMLElement = HTMLElement,
+> {
+    $control: Ref<TControlElement | null>;
     id: string;
     name: ComputedRef<Nullable<string>>;
     label: ComputedRef<Nullable<string>>;
@@ -23,4 +27,6 @@ export interface InputExpose<T extends Nullable<FormFieldValue> = Nullable<FormF
     required: ComputedRef<Nullable<boolean>>;
     errors: DeepReadonly<Ref<Nullable<string[]>>>;
     update(value: T): void;
+    focus(): void;
+    blur(): void;
 }

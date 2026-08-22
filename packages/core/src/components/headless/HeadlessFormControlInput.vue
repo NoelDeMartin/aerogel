@@ -1,14 +1,18 @@
 <template>
     <input
-        :id="input.id"
-        ref="$inputRef"
+        :id="formControl.id"
+        ref="$controlRef"
         :name
         :checked
         :type="renderedType"
-        :required="input.required ?? undefined"
-        :aria-invalid="input.errors ? 'true' : 'false'"
+        :required="formControl.required ?? undefined"
+        :aria-invalid="formControl.errors ? 'true' : 'false'"
         :aria-describedby="
-            input.errors ? `${input.id}-error` : input.description ? `${input.id}-description` : undefined
+            formControl.errors
+                ? `${formControl.id}-error`
+                : formControl.description
+                    ? `${formControl.id}-description`
+                    : undefined
         "
         @input="update"
     >
@@ -22,14 +26,17 @@ import { onFormFocus } from '@aerogel/core/utils/composition/forms';
 import { getLocalTimezoneOffset } from '@aerogel/core/utils';
 import type FormController from '@aerogel/core/forms/FormController';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
-import type { InputExpose } from '@aerogel/core/components/contracts/Input';
+import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 
 const { type } = defineProps<{ type?: string }>();
-const $input = useTemplateRef('$inputRef');
-const input = injectReactiveOrFail<InputExpose>('input', '<HeadlessInputInput> must be a child of a <HeadlessInput>');
+const $control = useTemplateRef('$controlRef');
+const formControl = injectReactiveOrFail<FormControlExpose>(
+    'form-control',
+    '<HeadlessFormControlInput> must be a child of a <HeadlessFormControl>',
+);
 const form = inject<FormController | null>('form', null);
-const name = computed(() => input.name ?? undefined);
-const value = computed(() => input.value);
+const name = computed(() => formControl.name ?? undefined);
+const value = computed(() => formControl.value);
 const renderedType = computed(() => {
     if (type) {
         return type;
@@ -48,27 +55,27 @@ const checked = computed(() => {
 });
 
 function update() {
-    if (!$input.value) {
+    if (!$control.value) {
         return;
     }
 
-    input.update(getValue());
+    formControl.update(getValue());
 }
 
 function getValue(): FormFieldValue | null {
-    if (!$input.value) {
+    if (!$control.value) {
         return null;
     }
 
     switch (renderedType.value) {
         case 'checkbox':
-            return $input.value.checked;
+            return $control.value.checked;
         case 'date':
         case 'time':
         case 'datetime-local': {
             const date = new Date(
-                Math.round($input.value.valueAsNumber / 60000) * 60000 +
-                    getLocalTimezoneOffset($input.value.valueAsDate ?? new Date($input.value.valueAsNumber)),
+                Math.round($control.value.valueAsNumber / 60000) * 60000 +
+                    getLocalTimezoneOffset($control.value.valueAsDate ?? new Date($control.value.valueAsNumber)),
             );
 
             if (isNaN(date.getTime())) {
@@ -79,30 +86,42 @@ function getValue(): FormFieldValue | null {
         }
 
         case 'number':
-            return $input.value.valueAsNumber;
+            return $control.value.valueAsNumber;
         default:
-            return $input.value.value;
+            return $control.value.value;
     }
 }
 
-onFormFocus(input, () => $input.value?.focus());
+onFormFocus(formControl, () => $control.value?.focus());
 watchEffect(() => {
-    if (!$input.value) {
+    formControl.$control = $control.value ?? null;
+
+    if (!$control.value) {
         return;
     }
 
     if (['date', 'time', 'datetime-local'].includes(renderedType.value) && value.value instanceof Date) {
         const roundedValue = Math.round(value.value.getTime() / 60000) * 60000;
 
-        $input.value.valueAsNumber = roundedValue - getLocalTimezoneOffset(value.value);
+        $control.value.valueAsNumber = roundedValue - getLocalTimezoneOffset(value.value);
 
         if (value.value.getTime() !== roundedValue) {
-            input.update(new Date(roundedValue));
+            formControl.update(new Date(roundedValue));
         }
 
         return;
     }
 
-    $input.value.value = (value.value as string) ?? null;
+    $control.value.value = (value.value as string) ?? null;
+});
+
+defineExpose({
+    $el: $control,
+    focus() {
+        $control.value?.focus();
+    },
+    blur() {
+        $control.value?.blur();
+    },
 });
 </script>

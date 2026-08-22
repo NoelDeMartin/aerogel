@@ -1,8 +1,9 @@
 <template>
     <ComboboxAnchor class="relative">
         <ComboboxInput
-            v-bind="$attrs"
             :id="id ?? combobox.id"
+            ref="$controlRef"
+            v-bind="$attrs"
             :model-value="modelValue ?? combobox.input"
             :placeholder="placeholder ?? combobox.placeholder"
             :name="name ?? combobox.name"
@@ -18,7 +19,7 @@
 
 <script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
 import { ComboboxAnchor, ComboboxInput } from 'reka-ui';
-import { watch } from 'vue';
+import { useTemplateRef, watch, watchEffect } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils';
@@ -46,6 +47,8 @@ const combobox = injectReactiveOrFail<ComboboxExpose>(
     '<HeadlessComboboxInput> must be a child of a <HeadlessCombobox>',
 );
 
+const $control = useTemplateRef('$controlRef');
+
 const onInput = (value: string) => {
     combobox.input = value;
 
@@ -61,6 +64,8 @@ function onBlur() {
 
     emit('blur');
 }
+
+watchEffect(() => (combobox.$control = $control.value?.$el ?? null));
 
 watch(
     () => combobox.input,

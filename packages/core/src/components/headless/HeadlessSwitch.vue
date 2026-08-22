@@ -5,6 +5,7 @@
         </label>
         <SwitchRoot
             :id="expose.id"
+            ref="$rootRef"
             :name
             :model-value="expose.value.value"
             v-bind="$attrs"
@@ -18,13 +19,17 @@
 
 <script setup lang="ts" generic="T extends boolean = boolean">
 import { SwitchRoot, SwitchThumb } from 'reka-ui';
-import { computed, inject, readonly, watchEffect } from 'vue';
+import { computed, inject, readonly, ref, useTemplateRef, watchEffect } from 'vue';
 import { uuid } from '@noeldemartin/utils';
-import type { HTMLAttributes } from 'vue';
+import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
 
 import type FormController from '@aerogel/core/forms/FormController';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
-import type { InputEmits, InputExpose, InputProps } from '@aerogel/core/components/contracts/Input';
+import type {
+    FormControlEmits,
+    FormControlExpose,
+    FormControlProps,
+} from '@aerogel/core/components/contracts/FormControl';
 
 defineOptions({ inheritAttrs: false });
 
@@ -35,14 +40,16 @@ const {
     modelValue,
     class: rootClass,
 } = defineProps<
-    InputProps<T> & {
+    FormControlProps<T> & {
         class?: HTMLAttributes['class'];
         labelClass?: HTMLAttributes['class'];
         inputClass?: HTMLAttributes['class'];
         thumbClass?: HTMLAttributes['class'];
     }
 >();
-const emit = defineEmits<InputEmits>();
+const $root = useTemplateRef<ComponentPublicInstance>('$rootRef');
+const $control = ref<HTMLElement | null>(null);
+const emit = defineEmits<FormControlEmits>();
 const form = inject<FormController | null>('form', null);
 const errors = computed(() => {
     if (!form || !name) {
@@ -53,16 +60,17 @@ const errors = computed(() => {
 });
 
 const expose = {
+    $control,
     id: `switch-${uuid()}`,
     name: computed(() => name),
     label: computed(() => label),
     description: computed(() => description),
     value: computed(() => {
         if (form && name) {
-            return form.getFieldValue(name) as boolean;
+            return form.getFieldValue(name) as T;
         }
 
-        return modelValue;
+        return modelValue as T;
     }),
     errors: readonly(errors),
     required: computed(() => {
@@ -81,10 +89,17 @@ const expose = {
 
         emit('update:modelValue', value);
     },
-} satisfies InputExpose;
+    focus() {
+        $control.value?.focus();
+    },
+    blur() {
+        $control.value?.blur();
+    },
+} satisfies FormControlExpose<T, HTMLElement>;
 
 defineExpose(expose);
 
+watchEffect(() => ($control.value = $root.value?.$el ?? null));
 watchEffect(() => {
     if (!description && !errors.value) {
         return;

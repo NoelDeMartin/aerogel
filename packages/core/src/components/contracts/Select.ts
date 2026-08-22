@@ -1,4 +1,4 @@
-import { computed, inject, provide, readonly } from 'vue';
+import { computed, inject, provide, readonly, ref } from 'vue';
 import { evaluate, toString, uuid } from '@noeldemartin/utils';
 import type { AcceptRefs } from '@aerogel/core/utils';
 import type { AcceptableValue, AsTag, SelectContentProps } from 'reka-ui';
@@ -8,7 +8,7 @@ import type { Nullable } from '@noeldemartin/utils';
 import { translateWithDefault } from '@aerogel/core/lang';
 import type { FormController, FormFieldValue } from '@aerogel/core/forms';
 
-import type { InputEmits, InputExpose, InputProps } from './Input';
+import type { FormControlEmits, FormControlExpose, FormControlProps } from './FormControl';
 
 export type SelectOptionData = {
     key: string;
@@ -20,7 +20,9 @@ export interface HasSelectOptionLabel {
     label: string | (() => string);
 }
 
-export interface SelectProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputProps<T> {
+export interface SelectProps<
+    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
+> extends FormControlProps<T> {
     as?: AsTag | Component;
     options?: readonly T[];
     placeholder?: string;
@@ -32,9 +34,14 @@ export interface SelectProps<T extends Nullable<FormFieldValue> = Nullable<FormF
     side?: SelectContentProps['side'];
 }
 
-export interface SelectEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputEmits<T> {}
+export interface SelectEmits<
+    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
+> extends FormControlEmits<T> {}
 
-export interface SelectExpose<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends InputExpose<T> {
+export interface SelectExpose<
+    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
+    TControlElement extends HTMLElement = HTMLElement,
+> extends FormControlExpose<T, TControlElement> {
     options: ComputedRef<Nullable<readonly SelectOptionData[]>>;
     selectedOption: ComputedRef<Nullable<SelectOptionData>>;
     placeholder: ComputedRef<string>;
@@ -50,10 +57,11 @@ export function hasSelectOptionLabel(option: unknown): option is HasSelectOption
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function useSelect<T extends Nullable<FormFieldValue>>(
+export function useSelect<T extends Nullable<FormFieldValue>, TControlElement extends HTMLElement = HTMLElement>(
     props: Ref<SelectProps<T>>,
     emit: EmitFn<SelectEmits<T>>,
 ) {
+    const $control = ref<TControlElement | null>(null) as Ref<TControlElement | null>;
     const form = inject<FormController | null>('form', null);
     const renderOption = (option: T): string => {
         if (option === undefined || option === null) {
@@ -97,6 +105,7 @@ export function useSelect<T extends Nullable<FormFieldValue>>(
 
     const expose = {
         renderOption,
+        $control,
         labelClass: computed(() => props.value.labelClass),
         optionsClass: computed(() => props.value.optionsClass),
         align: computed(() => props.value.align),
@@ -109,7 +118,10 @@ export function useSelect<T extends Nullable<FormFieldValue>>(
         placeholder: computed(() => props.value.placeholder ?? translateWithDefault('ui.select', 'Select an option')),
         options: computedOptions,
         selectedOption: computed(() =>
-            computedOptions.value?.find((option) => option.value === props.value.modelValue)),
+            computedOptions.value?.find((option) =>
+                props.value.compareOptions
+                    ? props.value.compareOptions(option.value as T, props.value.modelValue as T)
+                    : option.value === props.value.modelValue)),
         errors: readonly(errors),
         required: computed(() => {
             if (!props.value.name || !form) {
@@ -127,7 +139,13 @@ export function useSelect<T extends Nullable<FormFieldValue>>(
 
             emit('update:modelValue', value);
         },
-    } satisfies AcceptRefs<SelectExpose<T>>;
+        focus() {
+            $control.value?.focus();
+        },
+        blur() {
+            $control.value?.blur();
+        },
+    } satisfies AcceptRefs<SelectExpose<T, TControlElement>>;
 
     function update(value: AcceptableValue) {
         expose.update(value as T);

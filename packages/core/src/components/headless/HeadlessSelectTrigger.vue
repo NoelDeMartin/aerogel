@@ -1,5 +1,5 @@
 <template>
-    <SelectTrigger :id="select.id">
+    <SelectTrigger :id="select.id" ref="$controlRef">
         <slot>
             <HeadlessSelectValue :placeholder="select.placeholder" />
             <SelectIcon />
@@ -9,6 +9,7 @@
 
 <script setup lang="ts">
 import { SelectIcon, SelectTrigger } from 'reka-ui';
+import { useTemplateRef, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
@@ -19,4 +20,8 @@ const select = injectReactiveOrFail<SelectExpose>(
     'select',
     '<HeadlessSelectTrigger> must be a child of a <HeadlessSelect>',
 );
+
+const $control = useTemplateRef('$controlRef');
+
+watchEffect(() => (select.$control = $control.value?.$el ?? null));
 </script>

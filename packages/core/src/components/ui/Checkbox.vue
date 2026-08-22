@@ -1,54 +1,54 @@
 <template>
-    <HeadlessInput
-        ref="$inputRef"
+    <HeadlessFormControl
+        ref="$controlRef"
         :class="renderedClasses"
         v-bind="props"
         @update:model-value="$emit('update:modelValue', $event)"
     >
         <div class="flex h-6 items-center">
-            <HeadlessInputInput v-bind="inputAttrs" type="checkbox" :class="renderedInputClasses" />
+            <HeadlessFormControlInput v-bind="inputAttrs" type="checkbox" :class="renderedInputClasses" />
         </div>
         <div v-if="$slots.default" :class="renderedLabelClasses">
-            <HeadlessInputLabel class="text-gray-900">
+            <HeadlessFormControlLabel class="text-gray-900">
                 <slot />
-            </HeadlessInputLabel>
-            <HeadlessInputError class="text-red-600" />
+            </HeadlessFormControlLabel>
+            <HeadlessFormControlError class="text-red-600" />
         </div>
         <div v-else-if="label" :class="renderedLabelClasses">
-            <HeadlessInputLabel class="text-gray-900" />
-            <HeadlessInputError class="text-red-600" />
+            <HeadlessFormControlLabel class="text-gray-900" />
+            <HeadlessFormControlError class="text-red-600" />
         </div>
-    </HeadlessInput>
+    </HeadlessFormControl>
 </template>
 
 <script setup lang="ts">
 import { computed, useTemplateRef } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
-import HeadlessInput from '@aerogel/core/components/headless/HeadlessInput.vue';
-import HeadlessInputError from '@aerogel/core/components/headless/HeadlessInputError.vue';
-import HeadlessInputInput from '@aerogel/core/components/headless/HeadlessInputInput.vue';
-import HeadlessInputLabel from '@aerogel/core/components/headless/HeadlessInputLabel.vue';
+import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
+import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
+import HeadlessFormControlInput from '@aerogel/core/components/headless/HeadlessFormControlInput.vue';
+import HeadlessFormControlLabel from '@aerogel/core/components/headless/HeadlessFormControlLabel.vue';
 import { classes } from '@aerogel/core/utils/classes';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
-import type { InputEmits, InputProps } from '@aerogel/core/components/contracts/Input';
+import type { FormControlEmits, FormControlProps } from '@aerogel/core/components/contracts/FormControl';
 
 defineOptions({ inheritAttrs: false });
-defineEmits<InputEmits>();
+defineEmits<FormControlEmits>();
 
 const { inputClass, labelClass, ...props } = defineProps<
-    InputProps & { inputClass?: HTMLAttributes['class']; labelClass?: HTMLAttributes['class'] }
+    FormControlProps & { inputClass?: HTMLAttributes['class']; labelClass?: HTMLAttributes['class'] }
 >();
 
-const $input = useTemplateRef('$inputRef');
+const $control = useTemplateRef('$controlRef');
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedClasses = computed(() => classes('relative flex items-start', rootClasses.value));
 const renderedInputClasses = computed(() =>
     classes(
         'size-4 rounded text-primary-600 not-checked:hover:bg-gray-200 checked:hover:text-primary-500 checked:border-0',
         {
-            'border-gray-300 focus:ring-primary-600': !$input.value?.errors,
-            'border-red-400 border-2 focus:ring-red-600': $input.value?.errors,
+            'border-gray-300 focus:ring-primary-600': !$control.value?.errors,
+            'border-red-400 border-2 focus:ring-red-600': $control.value?.errors,
         },
         inputClass,
     ));

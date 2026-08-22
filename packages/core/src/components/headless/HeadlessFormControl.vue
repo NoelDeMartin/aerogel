@@ -5,15 +5,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, provide, readonly } from 'vue';
+import { computed, inject, provide, readonly, ref } from 'vue';
 import { uuid } from '@noeldemartin/utils';
+import type { Nullable } from '@noeldemartin/utils';
 
 import type FormController from '@aerogel/core/forms/FormController';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
-import type { InputEmits, InputExpose, InputProps } from '@aerogel/core/components/contracts/Input';
+import type {
+    FormControlEmits,
+    FormControlExpose,
+    FormControlProps,
+} from '@aerogel/core/components/contracts/FormControl';
 
-const { as = 'div', name, label, description, modelValue } = defineProps<InputProps & { as?: string }>();
-const emit = defineEmits<InputEmits>();
+const { as = 'div', name, label, description, modelValue } = defineProps<FormControlProps & { as?: string }>();
+const emit = defineEmits<FormControlEmits>();
 const form = inject<FormController | null>('form', null);
 const errors = computed(() => {
     if (!form || !name) {
@@ -23,7 +28,10 @@ const errors = computed(() => {
     return form.errors[name] ?? null;
 });
 
+const $control = ref<HTMLElement | null>(null);
+
 const expose = {
+    $control,
     id: `input-${uuid()}`,
     name: computed(() => name),
     label: computed(() => label),
@@ -52,8 +60,14 @@ const expose = {
 
         emit('update:modelValue', value);
     },
-} satisfies InputExpose;
+    focus() {
+        $control.value?.focus();
+    },
+    blur() {
+        $control.value?.blur();
+    },
+} satisfies FormControlExpose<Nullable<FormFieldValue>, HTMLElement>;
 
-provide('input', expose);
+provide('form-control', expose);
 defineExpose(expose);
 </script>
