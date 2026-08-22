@@ -56,7 +56,7 @@ export function useSelect<T extends Nullable<FormFieldValue>>(
 ) {
     const form = inject<FormController | null>('form', null);
     const renderOption = (option: T): string => {
-        if (option === undefined) {
+        if (option === undefined || option === null) {
             return '';
         }
 

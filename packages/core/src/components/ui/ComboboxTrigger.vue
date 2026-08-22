@@ -1,35 +1,29 @@
 <template>
-    <ComboboxAnchor class="relative">
-        <ComboboxInput
-            :id="select.id"
-            v-model="combobox.input"
-            :placeholder="select.placeholder"
-            :class="renderedRootClasses"
-            :display-value="select.renderOption"
-            :name="select.name"
-            @focus="$emit('focus')"
-            @blur="onBlur()"
-            @keydown.esc="$emit('blur')"
-        />
+    <HeadlessComboboxInput
+        :class="renderedRootClasses"
+        @focus="$emit('focus')"
+        @blur="$emit('blur')"
+        @change="$emit('change')"
+    >
         <div v-if="select?.errors" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
             <IconExclamationSolid class="size-5 text-red-500" />
         </div>
-    </ComboboxAnchor>
+    </HeadlessComboboxInput>
 </template>
 
 <script setup lang="ts">
 import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
 
-import { ComboboxAnchor, ComboboxInput } from 'reka-ui';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 
 import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
-import type { ComboboxContext } from '@aerogel/core/components/contracts/Combobox';
 
-const emit = defineEmits<{ focus: []; change: []; blur: [] }>();
+import HeadlessComboboxInput from '../headless/HeadlessComboboxInput.vue';
+
+defineEmits<{ focus: []; change: []; blur: [] }>();
+
 const select = injectReactiveOrFail<SelectExpose>('select', '<ComboboxTrigger> must be a child of a <Combobox>');
-const combobox = injectReactiveOrFail<ComboboxContext>('combobox');
 const renderedRootClasses = computed(() =>
     classes(
         // eslint-disable-next-line vue/max-len
@@ -41,27 +35,4 @@ const renderedRootClasses = computed(() =>
             'pr-10 text-red-900 ring-red-900/10 placeholder:text-red-300 focus:ring-red-500': select.errors,
         },
     ));
-
-function onBlur() {
-    const elements = Array.from(document.querySelectorAll(':hover'));
-
-    if (elements.some((element) => combobox.$group?.contains(element))) {
-        return;
-    }
-
-    emit('blur');
-}
-
-watch(
-    () => combobox.input,
-    () => {
-        if (combobox.preventChange) {
-            combobox.preventChange = false;
-
-            return;
-        }
-
-        emit('change');
-    },
-);
 </script>

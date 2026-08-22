@@ -1,4 +1,11 @@
 export { default as HeadlessButton } from './HeadlessButton.vue';
+export { default as HeadlessCombobox } from './HeadlessCombobox.vue';
+export { default as HeadlessComboboxContent } from './HeadlessComboboxContent.vue';
+export { default as HeadlessComboboxEmpty } from './HeadlessComboboxEmpty.vue';
+export { default as HeadlessComboboxGroup } from './HeadlessComboboxGroup.vue';
+export { default as HeadlessComboboxInput } from './HeadlessComboboxInput.vue';
+export { default as HeadlessComboboxLabel } from './HeadlessComboboxLabel.vue';
+export { default as HeadlessComboboxOption } from './HeadlessComboboxOption.vue';
 export { default as HeadlessInput } from './HeadlessInput.vue';
 export { default as HeadlessInputDescription } from './HeadlessInputDescription.vue';
 export { default as HeadlessInputError } from './HeadlessInputError.vue';

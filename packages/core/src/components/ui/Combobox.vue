@@ -1,94 +1,38 @@
 <template>
-    <ComboboxRoot
-        ignore-filter
-        :open
+    <HeadlessCombobox
+        :ref="forwardRef"
+        v-bind="$props"
+        v-model:open="open"
+        :ignore-filter="true"
         :reset-search-term-on-blur="false"
         :reset-search-term-on-select="false"
-        :model-value="acceptableValue"
-        :by="compareOptions"
-        @update:model-value="update($event)"
+        @update:model-value="emit('update:modelValue', $event)"
     >
-        <Provide name="combobox" :value="combobox">
-            <ComboboxLabel />
-            <ComboboxTrigger @focus="open = true" @change="open = true" @blur="open = false" />
-            <HeadlessSelectError class="mt-2 text-sm text-red-600" />
-            <ComboboxOptions :new-input-value @select="open = false" />
-        </Provide>
-    </ComboboxRoot>
+        <ComboboxLabel />
+        <ComboboxTrigger @focus="open = true" @change="open = true" @blur="open = false" />
+        <HeadlessSelectError class="mt-2 text-sm text-red-600" />
+        <ComboboxOptions :new-input-value="newInputValue" @select="open = false" />
+    </HeadlessCombobox>
 </template>
 
 <script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
-import { ComboboxRoot } from 'reka-ui';
-import { computed, ref, watch } from 'vue';
-import type { AcceptableValue } from 'reka-ui';
+import { ref } from 'vue';
+import { useForwardExpose } from 'reka-ui';
 import type { Nullable } from '@noeldemartin/utils';
 
-import Provide from '@aerogel/core/components/vue/Provide.vue';
-import { useSelect } from '@aerogel/core/components/contracts/Select';
-import type { AcceptRefs } from '@aerogel/core/utils';
-import type { ComboboxContext } from '@aerogel/core/components/contracts/Combobox';
-import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
+import type { ComboboxEmits, ComboboxProps } from '@aerogel/core/components/contracts/Combobox';
 import type { FormFieldValue } from '@aerogel/core/forms';
 
+import ComboboxLabel from './ComboboxLabel.vue';
 import ComboboxOptions from './ComboboxOptions.vue';
 import ComboboxTrigger from './ComboboxTrigger.vue';
-import ComboboxLabel from './ComboboxLabel.vue';
+import HeadlessCombobox from '../headless/HeadlessCombobox.vue';
 import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 
-const emit = defineEmits<SelectEmits<T>>();
-const {
-    as = 'div',
-    compareOptions = (a, b) => a === b,
-    newInputValue,
-    ...props
-} = defineProps<SelectProps<T> & { newInputValue?: (value: string) => T }>();
-const {
-    expose,
-    acceptableValue,
-    update: baseUpdate,
-    renderOption,
-} = useSelect(
-    computed(() => ({ as, compareOptions, ...props })),
-    emit,
-);
+defineOptions({ inheritAttrs: false });
+defineProps<ComboboxProps<T>>();
+
+const emit = defineEmits<ComboboxEmits<T>>();
 const open = ref(false);
-const optionsByLabel = computed(() =>
-    Object.fromEntries(expose.options.value?.map((option) => [option.label, option.value]) ?? []));
-const combobox = {
-    input: ref(acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
-    preventChange: ref(false),
-    $group: ref(null),
-} satisfies AcceptRefs<ComboboxContext>;
-
-function update(value: AcceptableValue) {
-    combobox.input.value = renderOption(value as T);
-
-    baseUpdate(value);
-}
-
-watch(expose.value, (value) => {
-    const newOptionLabel = renderOption(value as T);
-
-    if (combobox.input.value === newOptionLabel) {
-        return;
-    }
-
-    combobox.preventChange.value = true;
-    combobox.input.value = newOptionLabel;
-});
-
-watch(combobox.input, (value) => {
-    const newInputOption = newInputValue ? (newInputValue(value) as AcceptableValue) : value;
-    const newInputOptionLabel = renderOption(newInputOption as T);
-
-    if (newInputOptionLabel in optionsByLabel.value) {
-        update(optionsByLabel.value[newInputOptionLabel] as AcceptableValue);
-
-        return;
-    }
-
-    update(newInputOption);
-});
-
-defineExpose(expose);
+const { forwardRef } = useForwardExpose();
 </script>
