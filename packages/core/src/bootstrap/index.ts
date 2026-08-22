@@ -11,7 +11,7 @@ import services from '@aerogel/core/services';
 import testing from '@aerogel/core/testing';
 import ui from '@aerogel/core/ui';
 import forms from '@aerogel/core/forms';
-import { env, extendEnv } from '@aerogel/core/utils/env';
+import { setupEnv } from '@aerogel/core/utils/env';
 import { installPlugins } from '@aerogel/core/plugins';
 import { queueStartupError } from '@aerogel/core/errors/internal';
 import type { AerogelOptions } from '@aerogel/core/bootstrap/options';
@@ -36,14 +36,10 @@ export async function bootstrap(rootComponent: Component, options: AerogelOption
         (window as any).$aerogel = app;
     }
 
-    if (options.env) {
-        extendEnv(options.env);
-
-        try {
-            env('CI');
-        } catch (error) {
-            queueStartupError(error);
-        }
+    try {
+        setupEnv(options.env);
+    } catch (error) {
+        queueStartupError(error);
     }
 
     await bootstrapApplication(app, options);
