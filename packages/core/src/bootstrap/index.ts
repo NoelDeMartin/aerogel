@@ -36,10 +36,12 @@ export async function bootstrap(rootComponent: Component, options: AerogelOption
         (window as any).$aerogel = app;
     }
 
-    try {
-        setupEnv(options.env);
-    } catch (error) {
-        queueStartupError(error);
+    if (options.env) {
+        try {
+            setupEnv(options.env);
+        } catch (error) {
+            queueStartupError(error);
+        }
     }
 
     await bootstrapApplication(app, options);

@@ -49,9 +49,12 @@ describe('Aerogel', () => {
 
         // Act
         await bootstrap(rootComponent, {
-            env: z.object({
-                FOOBAR: z.string().default('foobar'),
-            }),
+            env: {
+                value: {},
+                schema: z.object({
+                    FOOBAR: z.string().default('foobar'),
+                }),
+            },
         });
 
         // Assert

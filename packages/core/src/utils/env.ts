@@ -1,47 +1,38 @@
-import { isDevelopment, isInstanceOf, parseBoolean } from '@noeldemartin/utils';
+import { isInstanceOf } from '@noeldemartin/utils';
 import z from 'zod';
 
 import InvalidEnvError from '@aerogel/core/errors/InvalidEnvError';
 
-const DefaultSchema = z.object({
-    CI: z.string().optional().transform(parseBoolean),
-});
+const DefaultSchema = z.object({});
 
-let ready = false;
-let schema: z.ZodObject = DefaultSchema;
-let parsedEnv: z.infer<typeof schema> | null = null;
+let parsedEnv: Record<string, unknown> | null = null;
+
+export type EnvConfig = {
+    value: Record<string, unknown>;
+    schema: z.ZodObject;
+};
 
 export interface Env extends z.infer<typeof DefaultSchema> {}
 
-export function setupEnv(extendedSchema?: z.ZodObject): void {
-    if (extendedSchema) {
-        schema = schema.extend(extendedSchema.shape);
-    }
-
-    ready = true;
-    parsedEnv = null;
-
-    env('CI');
+export function defineEnv(value: Record<string, unknown>, schema: z.ZodObject): EnvConfig {
+    return { value, schema };
 }
 
-export function env<T extends keyof Env>(key: T): Env[T] {
-    if (!ready) {
-        if (isDevelopment()) {
-            throw new Error(`Tried to read env '${key}' before bootstrapping application.`);
-        }
-
-        // eslint-disable-next-line no-console
-        console.warn(`Reading env '${key}' before bootstrapping application can lead to unexpected behavior.`);
-    }
-
+export function setupEnv(config: EnvConfig): void {
     try {
-        parsedEnv ??= schema.parse(import.meta.env);
+        parsedEnv = DefaultSchema.extend(config.schema.shape).parse(config.value);
     } catch (error) {
         if (!isInstanceOf(error, z.ZodError)) {
             throw error;
         }
 
         throw new InvalidEnvError(error);
+    }
+}
+
+export function env<T extends keyof Env>(key: T): Env[T] {
+    if (!parsedEnv) {
+        throw new Error(`Tried to read env '${key}' before initialization (use env option in bootstrap options).`);
     }
 
     return (parsedEnv as Env)[key];
