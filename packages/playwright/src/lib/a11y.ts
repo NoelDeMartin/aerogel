@@ -17,10 +17,14 @@ export type SeeOptions = {
     within?: Locator;
 };
 
+function escapeCSSSelector(value: string): string {
+    return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
 function findByA11yText(scope: Page | Locator, text: string): Locator {
     return scope
         .getByText(text, { exact: false })
-        .or(scope.locator(`[aria-label="${text}"]`))
+        .or(scope.locator(`[aria-label="${escapeCSSSelector(text)}"]`))
         .first();
 }
 
@@ -29,7 +33,7 @@ export function input(page: Page, label: string, options: InputOptions = {}): Lo
 
     if (options.description) {
         return locator.filter({
-            has: page.locator(`[aria-description="${options.description}"], [aria-describedby]`),
+            has: page.locator(`[aria-description="${escapeCSSSelector(options.description)}"], [aria-describedby]`),
         });
     }
 
@@ -42,12 +46,19 @@ export async function press(page: Page, label: string, options: PressOptions = {
             ? scope.getByRole(options.role)
             : scope.locator(
                 options.selector ??
-                      'button:visible, a:visible, label:visible, details:visible, [role="menuitem"]:visible',
+                      [
+                          'button:visible',
+                          'a:visible',
+                          'label:visible',
+                          'details:visible',
+                          '[role="menuitem"]:visible',
+                          '[role="option"]:visible',
+                      ].join(', '),
             );
 
         return locator
             .filter({ hasText: label })
-            .or(scope.locator(`[aria-label="${label}"]`))
+            .or(scope.locator(`[aria-label="${escapeCSSSelector(label)}"]`))
             .first();
     };
 
@@ -99,7 +110,7 @@ export async function see(
 }
 
 export async function seeImage(page: Page, alt: string): Promise<void> {
-    const locator = page.locator(`img[alt="${alt}"]`).first();
+    const locator = page.locator(`img[alt="${escapeCSSSelector(alt)}"]`).first();
 
     await locator.scrollIntoViewIfNeeded();
     await expect(locator).toBeVisible();
