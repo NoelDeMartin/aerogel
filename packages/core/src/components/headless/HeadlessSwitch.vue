@@ -23,6 +23,7 @@ import { computed, inject, readonly, ref, useTemplateRef, watchEffect } from 'vu
 import { uuid } from '@noeldemartin/utils';
 import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
 
+import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
 import type FormController from '@aerogel/core/forms/FormController';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type {
@@ -89,12 +90,7 @@ const expose = {
 
         emit('update:modelValue', value);
     },
-    focus() {
-        $control.value?.focus();
-    },
-    blur() {
-        $control.value?.blur();
-    },
+    ...exposeElementMethods(() => $control.value),
 } satisfies FormControlExpose<T, HTMLElement>;
 
 defineExpose(expose);

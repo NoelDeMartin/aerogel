@@ -1,5 +1,10 @@
 <template>
-    <HeadlessButton :class="renderedClasses" :disabled="disabled || loading" v-bind="props">
+    <HeadlessButton
+        :ref="forwardRef"
+        :class="renderedClasses"
+        :disabled="disabled || loading"
+        v-bind="props"
+    >
         <IconSpinner v-if="loading" class="size-4 shrink-0" />
         <slot />
     </HeadlessButton>
@@ -13,8 +18,10 @@ import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue
 import { variantClasses } from '@aerogel/core/utils/classes';
 import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
 import type { Variants } from '@aerogel/core/utils/classes';
+import { useForwardExpose } from 'reka-ui';
 
 const { class: baseClasses, size, variant, disabled, loading, ...props } = defineProps<ButtonProps>();
+const { forwardRef } = useForwardExpose();
 
 /* eslint-disable vue/max-len */
 // prettier-ignore

@@ -24,6 +24,7 @@ import { computed, inject, useTemplateRef, watchEffect } from 'vue';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
 import { getLocalTimezoneOffset } from '@aerogel/core/utils';
+import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
 import type FormController from '@aerogel/core/forms/FormController';
 import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
@@ -117,11 +118,6 @@ watchEffect(() => {
 
 defineExpose({
     $el: $control,
-    focus() {
-        $control.value?.focus();
-    },
-    blur() {
-        $control.value?.blur();
-    },
+    ...exposeElementMethods(() => $control.value),
 });
 </script>

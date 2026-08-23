@@ -8,6 +8,7 @@ import type { Nullable } from '@noeldemartin/utils';
 import { translateWithDefault } from '@aerogel/core/lang';
 import type { FormController, FormFieldValue } from '@aerogel/core/forms';
 
+import { exposeElementMethods } from './helpers';
 import type { FormControlEmits, FormControlExpose, FormControlProps } from './FormControl';
 
 export type SelectOptionData = {
@@ -139,12 +140,7 @@ export function useSelect<T extends Nullable<FormFieldValue>, TControlElement ex
 
             emit('update:modelValue', value);
         },
-        focus() {
-            $control.value?.focus();
-        },
-        blur() {
-            $control.value?.blur();
-        },
+        ...exposeElementMethods(() => $control.value),
     } satisfies AcceptRefs<SelectExpose<T, TControlElement>>;
 
     function update(value: AcceptableValue) {

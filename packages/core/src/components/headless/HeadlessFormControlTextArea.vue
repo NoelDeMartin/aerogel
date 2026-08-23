@@ -20,6 +20,7 @@
 <script setup lang="ts">
 import { computed, useTemplateRef, watchEffect } from 'vue';
 
+import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
@@ -46,11 +47,6 @@ watchEffect(() => (formControl.$control = $textArea.value ?? null));
 
 defineExpose({
     $el: $textArea,
-    focus() {
-        $textArea.value?.focus();
-    },
-    blur() {
-        $textArea.value?.blur();
-    },
+    ...exposeElementMethods(() => $textArea.value),
 });
 </script>

@@ -3,6 +3,8 @@ import type { Nullable } from '@noeldemartin/utils';
 
 import type { FormFieldValue } from '@aerogel/core/forms';
 
+import type { ElementMethods } from './helpers';
+
 export interface FormControlProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
     name?: string;
     label?: string;
@@ -17,7 +19,7 @@ export interface FormControlEmits<T extends Nullable<FormFieldValue> = Nullable<
 export interface FormControlExpose<
     T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
     TControlElement extends HTMLElement = HTMLElement,
-> {
+> extends ElementMethods {
     $control: Ref<TControlElement | null>;
     id: string;
     name: ComputedRef<Nullable<string>>;
@@ -27,6 +29,4 @@ export interface FormControlExpose<
     required: ComputedRef<Nullable<boolean>>;
     errors: DeepReadonly<Ref<Nullable<string[]>>>;
     update(value: T): void;
-    focus(): void;
-    blur(): void;
 }
