@@ -23,7 +23,8 @@
   },
   "peerDependencies": {
     "@aerogel/core": "*",
-    "@storybook/vue3-vite": "^10.0.0"
+    "@storybook/vue3-vite": "^10.0.0",
+    "soukai-bis": "catalog:"
   },
   "devDependencies": {
     "@aerogel/core": "workspace:*",
@@ -33,7 +34,8 @@
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "prettier-eslint-cli": "^8.0.1",
-    "publint": "catalog:"
+    "publint": "catalog:",
+    "soukai-bis": "catalog:"
   },
   "eslintConfig": {
     "extends": [

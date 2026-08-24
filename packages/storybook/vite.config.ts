@@ -12,7 +12,7 @@ export default defineConfig({
             fileName: 'aerogel-storybook',
         },
         rollupOptions: {
-            external: ['@aerogel/core', '@storybook/vue3-vite'],
+            external: ['@aerogel/core', '@storybook/vue3-vite', 'soukai-bis'],
         },
     },
     plugins: [

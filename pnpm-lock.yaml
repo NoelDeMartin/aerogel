@@ -466,6 +466,10 @@ importers:
         version: 4.4.3
 
   packages/storybook:
+    dependencies:
+      soukai-bis:
+        specifier: next
+        version: 0.0.0-next.c245eb6327fb12c39af3223af7e2954eb9970cc4(web-streams-polyfill@3.3.3)(zod@4.4.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
