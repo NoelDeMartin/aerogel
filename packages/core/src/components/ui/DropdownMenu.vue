@@ -1,6 +1,6 @@
 <template>
     <DropdownMenuRoot>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger as-child>
             <slot />
         </DropdownMenuTrigger>
         <DropdownMenuPortal>
