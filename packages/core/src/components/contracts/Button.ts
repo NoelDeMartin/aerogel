@@ -15,3 +15,7 @@ export interface ButtonProps extends PrimitiveProps {
     submit?: boolean;
     variant?: ButtonVariant;
 }
+
+export interface ButtonEmits {
+    click: [event: MouseEvent];
+}

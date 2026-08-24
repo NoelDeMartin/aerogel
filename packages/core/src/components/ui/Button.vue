@@ -4,6 +4,7 @@
         :class="renderedClasses"
         :disabled="disabled || loading"
         v-bind="props"
+        @click="$emit('click', $event)"
     >
         <IconSpinner v-if="loading" class="size-4 shrink-0" />
         <slot />
@@ -16,7 +17,7 @@ import { computed } from 'vue';
 
 import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue';
 import { variantClasses } from '@aerogel/core/utils/classes';
-import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
+import type { ButtonEmits, ButtonProps } from '@aerogel/core/components/contracts/Button';
 import type { Variants } from '@aerogel/core/utils/classes';
 import { useForwardExpose } from 'reka-ui';
 
@@ -122,4 +123,6 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
     },
 ));
 /* eslint-enable vue/max-len */
+
+defineEmits<ButtonEmits>();
 </script>
