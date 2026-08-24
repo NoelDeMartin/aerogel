@@ -1,16 +1,16 @@
 import { arrayGroupBy } from '@noeldemartin/utils';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { InMemoryEngine, bootCoreModels, bootModels, setEngine } from 'soukai-bis';
-import { ref, watchEffect } from 'vue';
+import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 
-import { computedModels } from './composition';
+import { computedModel, computedModels } from './composition';
 
 describe('Composition helpers', () => {
 
     beforeEach(() => {
-        bootModels({ User });
+        bootModels({ User }, { reset: true });
         bootCoreModels({ reset: true });
         setEngine(new InMemoryEngine());
     });
@@ -63,6 +63,28 @@ describe('Composition helpers', () => {
 
         // TODO This should be 2
         expect(aliceUpdated).toEqual(1);
+    });
+
+    it('Computes model instances', async () => {
+        // Arrange
+        let aliceUpdated = 0;
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const reactiveAlice = computedModel(() => alice);
+
+        watchEffect(() => {
+            reactiveAlice.value;
+            aliceUpdated++;
+        });
+
+        // Act & Assert
+        await alice.update({ name: 'Alice Cooper' });
+        await nextTick();
+
+        expect(toRaw(reactiveAlice.value)).toBe(alice);
+        expect(reactiveAlice.value.name).toEqual('Alice Cooper');
+
+        // TODO This should be 1
+        expect(aliceUpdated).toEqual(2);
     });
 
 });

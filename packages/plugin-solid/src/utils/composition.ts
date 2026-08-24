@@ -3,7 +3,6 @@ import {
     customRef,
     getCurrentScope,
     onScopeDispose,
-    onUnmounted,
     shallowReactive,
     shallowRef,
     toRaw,
@@ -13,12 +12,13 @@ import {
 import { onCleanMounted } from '@aerogel/core';
 import { fail, isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
 import { Model, getRelatedClasses } from 'soukai-bis';
+import { throttle } from '@aerogel/plugin-solid/utils/timing';
 import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
-import { throttle } from '@aerogel/plugin-solid/utils/timing';
+import { IS_REACTIVE, RAW } from './flags';
 
 function mapModels<T extends Model>(
     models: unknown,
@@ -151,9 +151,33 @@ function reactiveComputedModels<T>(
         });
     });
 
-    onUnmounted(stop);
+    getCurrentScope() && onScopeDispose(stop);
 
     return reactiveModels;
+}
+
+function createModelProxy<T extends object>(model: T, track: () => void, trigger: () => void): T {
+    return new Proxy(model, {
+        get(target, prop, receiver) {
+            if (prop === RAW) {
+                return target;
+            }
+
+            if (prop === IS_REACTIVE) {
+                return true;
+            }
+
+            track();
+            return Reflect.get(target, prop, receiver);
+        },
+        set(target, prop, val, receiver) {
+            const result = Reflect.set(target, prop, val, receiver);
+
+            trigger();
+
+            return result;
+        },
+    });
 }
 
 export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
@@ -165,6 +189,8 @@ export interface ComputedModelsOptions {
 export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
+        let rawValue: T;
+        let proxy: T | null = null;
         const listeners: Array<() => void> = [];
         const onModelUpdated = throttle(trigger);
         const stopListeners = () => {
@@ -176,19 +202,35 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
         watchEffect(() => {
             const newValue = toRaw(compute());
 
-            if (value instanceof Model && (!isInstanceOf(newValue, Model) || newValue.static() !== value.static())) {
+            if (
+                rawValue instanceof Model &&
+                (!isInstanceOf(newValue, Model) || newValue.static() !== rawValue.static())
+            ) {
                 stopListeners();
             }
 
-            value = newValue;
+            if (newValue instanceof Model) {
+                if (newValue !== rawValue) {
+                    proxy = createModelProxy(newValue, track, trigger) as T;
+                }
+
+                value = proxy as T;
+            } else {
+                value = newValue;
+                proxy = null;
+            }
+
+            rawValue = newValue;
+
             trigger();
 
-            if (!isInstanceOf(value, Model) || listeners.length) {
+            if (!isInstanceOf(rawValue, Model) || listeners.length) {
                 return;
             }
 
-            for (const modelClass of getRelatedClasses(value.static())) {
+            for (const modelClass of getRelatedClasses(rawValue.static())) {
                 listeners.push(modelClass.on('modified', onModelUpdated));
+                listeners.push(modelClass.on('created', onModelUpdated));
                 listeners.push(modelClass.on('updated', onModelUpdated));
                 listeners.push(modelClass.on('deleted', onModelUpdated));
                 listeners.push(modelClass.on('relation-loaded', onModelUpdated));
@@ -275,5 +317,5 @@ export function useModelEvent<TModel extends Model, TEvent extends keyof ModelEv
 ): void {
     const cleanUp = modelClass.on(event, listener);
 
-    onUnmounted(cleanUp);
+    getCurrentScope() && onScopeDispose(cleanUp);
 }
