@@ -56,7 +56,7 @@ export default function solid(options: Options = {}): Plugin {
             setEngine(engine);
             setNamespace(appNamespace());
             bootCoreModels({ reset: true });
-            bootModelsFromViteGlob(options.models ?? {});
+            bootModelsFromViteGlob(options.models ?? {}, { reset: true });
             registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });
             registerFormValidationRules();
             setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));

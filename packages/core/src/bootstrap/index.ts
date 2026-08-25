@@ -18,6 +18,11 @@ import type { AerogelOptions } from '@aerogel/core/bootstrap/options';
 
 export type { AerogelOptions };
 
+export interface AerogelApp {
+    app: AppInstance;
+    options: AerogelOptions;
+}
+
 export async function bootstrapApplication(app: AppInstance, options: AerogelOptions = {}): Promise<void> {
     const plugins = [testing, directives, errors, lang, services, ui, forms, ...(options.plugins ?? [])];
 
@@ -28,7 +33,7 @@ export async function bootstrapApplication(app: AppInstance, options: AerogelOpt
     await Events.emit('application-ready');
 }
 
-export async function bootstrap(rootComponent: Component, options: AerogelOptions = {}): Promise<void> {
+export async function bootstrap(rootComponent: Component, options: AerogelOptions = {}): Promise<AerogelApp> {
     const app = createApp(rootComponent);
 
     if (isDevelopment()) {
@@ -50,6 +55,8 @@ export async function bootstrap(rootComponent: Component, options: AerogelOption
     app._container?.classList.remove('loading');
 
     await Events.emit('application-mounted');
+
+    return { app, options };
 }
 
 declare module '@aerogel/core/services/Events' {
