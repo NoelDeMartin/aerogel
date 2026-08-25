@@ -148,6 +148,11 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 return `virtual:${id.slice(10)}`;
             }
         },
+        transform(code, id) {
+            if (id.endsWith('.jsonld')) {
+                return `export default ${code}`;
+            }
+        },
         transformIndexHtml: {
             order: 'pre',
             handler: (html, context) => ({

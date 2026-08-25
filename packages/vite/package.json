@@ -8,6 +8,9 @@
             "types": "./dist/aerogel-vite.d.ts",
             "default": "./dist/aerogel-vite.js"
         },
+        "./shims": {
+            "types": "./dist/shims.d.ts"
+        },
         "./virtual": {
             "types": "./dist/virtual.d.ts"
         }
@@ -20,7 +23,7 @@
     "author": "Noel De Martin",
     "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "vite build && cp src/types/virtual.d.ts dist/virtual.d.ts",
+        "build": "vite build && cp src/types/shims.d.ts dist/shims.d.ts && cp src/types/virtual.d.ts dist/virtual.d.ts",
         "lint": "noeldemartin-lint src",
         "test": "vitest --run",
         "test:ci": "vitest --run --reporter verbose",
