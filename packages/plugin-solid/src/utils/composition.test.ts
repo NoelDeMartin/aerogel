@@ -58,10 +58,10 @@ describe('Composition helpers', () => {
         expect(usersByAge.value[25]).toHaveLength(1);
         expect(usersByAge.value[25]?.[0]?.url === alice.url).toBe(true);
 
-        // TODO This should be 3
+        // FIXME This should be 3
         expect(collectionUpdated).toEqual(10);
 
-        // TODO This should be 2
+        // FIXME This should be 2
         expect(aliceUpdated).toEqual(1);
     });
 
@@ -83,7 +83,7 @@ describe('Composition helpers', () => {
         expect(toRaw(reactiveAlice.value)).toBe(alice);
         expect(reactiveAlice.value.name).toEqual('Alice Cooper');
 
-        // TODO This should be 1
+        // FIXME This should be 1
         expect(aliceUpdated).toEqual(2);
     });
 
