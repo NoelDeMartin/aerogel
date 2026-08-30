@@ -96,7 +96,12 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 config.test ??= {};
                 config.test.server ??= {};
                 config.test.server.deps ??= {};
-                config.test.server.deps.inline = [...(testInlineDeps ?? []), /^@aerogel\//];
+                config.test.server.deps.inline = [
+                    '@aerogel/core',
+                    '@aerogel/plugin-routing',
+                    '@aerogel/plugin-solid',
+                    ...(testInlineDeps ?? []),
+                ];
             }
 
             config.build ??= {};
