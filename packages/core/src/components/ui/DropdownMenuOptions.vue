@@ -22,7 +22,8 @@
                 "
                 @select="option.click?.()"
             >
-                {{ option.label }}
+                <component :is="option.icon" v-if="option.icon" class="size-4 shrink-0" />
+                <span class="pointer-events-none">{{ option.label }}</span>
             </DropdownMenuOption>
         </slot>
     </DropdownMenuContent>
