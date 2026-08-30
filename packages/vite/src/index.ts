@@ -66,7 +66,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
 
                 app.baseUrl = options.developmentHost
                     ? `https://${options.developmentHost}/`
-                    : server.resolvedUrls?.network?.[0] ?? server.resolvedUrls?.local?.[0] ?? app.baseUrl;
+                    : (server.resolvedUrls?.network?.[0] ?? server.resolvedUrls?.local?.[0] ?? app.baseUrl);
             });
 
             server.middlewares.use(solidMiddleware(app, options));
@@ -75,6 +75,8 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             loadLocales(app, `${server.config.root}/src/lang/locales.json`);
         },
         config: (config, { mode }) => {
+            const testInlineDeps = config.test?.server?.deps?.inline;
+
             app.basePath = config.base ?? app.basePath;
             config.optimizeDeps = config.optimizeDeps ?? {};
             config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), ...Object.keys(virtualHandlers)];
@@ -89,6 +91,13 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 ...config.define,
                 __AEROGEL_ENV__: JSON.stringify(mode === 'testing' ? 'testing' : process.env.NODE_ENV),
             };
+
+            if (testInlineDeps !== true) {
+                config.test ??= {};
+                config.test.server ??= {};
+                config.test.server.deps ??= {};
+                config.test.server.deps.inline = [...(testInlineDeps ?? []), /^@aerogel\//];
+            }
 
             config.build ??= {};
             config.build.rollupOptions ??= {};
