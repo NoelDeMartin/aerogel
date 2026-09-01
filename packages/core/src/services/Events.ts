@@ -154,8 +154,7 @@ export class EventsService extends Service {
 export default facade(EventsService);
 
 declare global {
-    // eslint-disable-next-line no-var
-    var __aerogelEvents__: AerogelGlobalEvents | undefined;
+    var __aerogelEvents__: AerogelGlobalEvents | undefined; // eslint-disable-line no-var
 
     interface Window {
         __aerogelEvents__: AerogelGlobalEvents | undefined;
