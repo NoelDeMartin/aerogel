@@ -1,9 +1,17 @@
 import clsx from 'clsx';
 import { unref } from 'vue';
 import { cva } from 'class-variance-authority';
-import { twMerge } from 'tailwind-merge';
+import { extendTailwindMerge } from 'tailwind-merge';
 import type { ClassValue } from 'clsx';
 import type { HTMLAttributes, PropType } from 'vue';
+
+const twMerge = extendTailwindMerge({
+    extend: {
+        theme: {
+            text: ['page-title'],
+        },
+    },
+});
 
 export type CVAConfig<T> = NonNullable<Parameters<typeof cva<T>>[1]>;
 export type CVAProps<T> = NonNullable<Parameters<ReturnType<typeof cva<T>>>[0]>;

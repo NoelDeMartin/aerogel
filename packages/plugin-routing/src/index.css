@@ -1,1 +1,6 @@
 @source './';
+
+@theme {
+    --text-page-title: var(--text-xl);
+    --text-page-title--font-weight: var(--font-weight-semibold);
+}
