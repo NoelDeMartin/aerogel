@@ -265,7 +265,7 @@ export class UIService extends Service {
 
             return result;
         } finally {
-            await closeModal(modal.id, { removeAfter: 1000 });
+            await this.closeModal(modal.id);
         }
     }
 
@@ -296,7 +296,7 @@ export class UIService extends Service {
     }
 
     public async closeAllModals(): Promise<void> {
-        await Promise.all(modals.value.map(({ id }) => closeModal(id, { removeAfter: 1000 })));
+        await Promise.all(modals.value.map(({ id }) => this.closeModal(id)));
     }
 
     public async runJob<T extends Job>(job: T, options: { message?: string } = {}): Promise<ReturnType<T['process']>> {
@@ -306,9 +306,9 @@ export class UIService extends Service {
         });
 
         job.listeners.add({
-            onFinished: () => modal.close(),
-            onCancelled: () => modal.close(),
-            onFailed: (error) => (modal.close(), App.service('$errors')?.report(error)),
+            onFinished: () => this.closeModal(modal.id),
+            onCancelled: () => this.closeModal(modal.id),
+            onFailed: (error) => (this.closeModal(modal.id), App.service('$errors')?.report(error)),
         });
 
         showModal(modal);
@@ -351,6 +351,10 @@ export class UIService extends Service {
         const media = globalThis.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`);
 
         media.addEventListener('change', () => this.setState({ layout: getCurrentLayout() }));
+    }
+
+    private async closeModal(id: string): Promise<void> {
+        await closeModal(id, { removeAfter: 1000 });
     }
 
 }
