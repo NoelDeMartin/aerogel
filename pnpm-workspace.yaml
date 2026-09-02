@@ -31,6 +31,8 @@ allowBuilds:
     esbuild: true
     vue-demi: true
 
+ignoreWorkspaceCycles: true
+
 minimumReleaseAgeExclude:
     - '@noeldemartin/*'
     - soukai-bis
