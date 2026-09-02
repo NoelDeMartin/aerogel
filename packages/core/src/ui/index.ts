@@ -1,6 +1,7 @@
 import AlertModal from '@aerogel/core/components/ui/AlertModal.vue';
 import ConfirmModal from '@aerogel/core/components/ui/ConfirmModal.vue';
 import ErrorReportModal from '@aerogel/core/components/ui/ErrorReportModal.vue';
+import JobProgressModal from '@aerogel/core/components/ui/JobProgressModal.vue';
 import LoadingModal from '@aerogel/core/components/ui/LoadingModal.vue';
 import PromptModal from '@aerogel/core/components/ui/PromptModal.vue';
 import StartupCrash from '@aerogel/core/components/ui/StartupCrash.vue';
@@ -27,6 +28,7 @@ export default definePlugin({
             'alert-modal': AlertModal,
             'confirm-modal': ConfirmModal,
             'error-report-modal': ErrorReportModal,
+            'job-progress-modal': JobProgressModal,
             'loading-modal': LoadingModal,
             'prompt-modal': PromptModal,
             'startup-crash': StartupCrash,

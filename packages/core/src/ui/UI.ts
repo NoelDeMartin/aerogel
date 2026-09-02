@@ -2,7 +2,9 @@ import { after, facade, fail, isDevelopment, uuid } from '@noeldemartin/utils';
 import { markRaw, unref } from 'vue';
 import type { Constructor } from '@noeldemartin/utils';
 import type { Component, ComputedOptions, MethodOptions } from 'vue';
+import type { Job } from 'soukai-bis';
 
+import App from '@aerogel/core/services/App';
 import Events from '@aerogel/core/services/Events';
 import { closeModal, createModal, modals, showModal } from '@aerogel/core/ui/modals';
 import type { GetModalProps, GetModalResponse } from '@aerogel/core/ui/modals';
@@ -22,6 +24,10 @@ import type {
     ErrorReportModalProps,
 } from '@aerogel/core/components/contracts/ErrorReportModal';
 import type {
+    JobProgressModalExpose,
+    JobProgressModalProps,
+} from '@aerogel/core/components/contracts/JobProgressModal';
+import type {
     PromptModalEmits,
     PromptModalExpose,
     PromptModalProps,
@@ -38,6 +44,7 @@ export interface UIComponents {
     'alert-modal': UIComponent<AlertModalProps, AlertModalExpose>;
     'confirm-modal': UIComponent<ConfirmModalProps, ConfirmModalExpose, ConfirmModalEmits>;
     'error-report-modal': UIComponent<ErrorReportModalProps, ErrorReportModalExpose>;
+    'job-progress-modal': UIComponent<JobProgressModalProps, JobProgressModalExpose>;
     'loading-modal': UIComponent<LoadingModalProps, LoadingModalExpose>;
     'prompt-modal': UIComponent<PromptModalProps, PromptModalExpose, PromptModalEmits>;
     'router-link': UIComponent;
@@ -61,8 +68,9 @@ export type LoadingOptions = AcceptRefs<{
     delay?: number;
 }>;
 
-export interface ConfirmOptionsWithCheckboxes<T extends ConfirmModalCheckboxes = ConfirmModalCheckboxes>
-    extends ConfirmOptions {
+export interface ConfirmOptionsWithCheckboxes<
+    T extends ConfirmModalCheckboxes = ConfirmModalCheckboxes,
+> extends ConfirmOptions {
     checkboxes?: T;
 }
 
@@ -289,6 +297,23 @@ export class UIService extends Service {
 
     public async closeAllModals(): Promise<void> {
         await Promise.all(modals.value.map(({ id }) => closeModal(id, { removeAfter: 1000 })));
+    }
+
+    public async runJob(job: Job, options: { message?: string } = {}): Promise<void> {
+        const modal = createModal(this.requireComponent('job-progress-modal'), {
+            job,
+            message: options.message,
+        });
+
+        job.listeners.add({
+            onFinished: () => modal.close(),
+            onCancelled: () => modal.close(),
+            onFailed: (error) => (modal.close(), App.service('$errors')?.report(error)),
+        });
+
+        showModal(modal);
+
+        await job.start();
     }
 
     protected override async boot(): Promise<void> {

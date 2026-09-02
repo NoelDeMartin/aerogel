@@ -21,6 +21,7 @@ export { default as ErrorReportModalButtons } from './ErrorReportModalButtons.vu
 export { default as ErrorReportModalTitle } from './ErrorReportModalTitle.vue';
 export { default as Form } from './Form.vue';
 export { default as Input } from './Input.vue';
+export { default as JobProgressModal } from './JobProgressModal.vue';
 export { default as Link } from './Link.vue';
 export { default as LoadingModal } from './LoadingModal.vue';
 export { default as Markdown } from './Markdown.vue';

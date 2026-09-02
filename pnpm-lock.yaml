@@ -107,7 +107,7 @@ importers:
         version: 0.6.14(prettier@3.9.6)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
@@ -210,7 +210,7 @@ importers:
         version: 2.10.3(vue@3.5.42(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.6.0
@@ -300,7 +300,7 @@ importers:
         version: 0.3.21
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
 
   packages/plugin-i18n:
     dependencies:
@@ -346,7 +346,7 @@ importers:
         version: 8.0.3
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -392,7 +392,7 @@ importers:
         version: 0.7.3-next.73dccef19c27b56d09b04e13693f6150d68d5d9a
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.42(typescript@5.9.3))
@@ -435,7 +435,7 @@ importers:
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -469,7 +469,7 @@ importers:
     dependencies:
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -576,7 +576,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+        version: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.3.3
@@ -6850,8 +6850,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4:
-    resolution: {integrity: sha512-Ah8v0WBubmtkgE0DC4h9ZG8LQU7yE+e0dy6CbylwRMVE0aLR6lZ6eo/YQRdY+Os1kbQrVEKToSNklUNfkAunOg==}
+  soukai-bis@0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6:
+    resolution: {integrity: sha512-wyHwjkKvNyAJMkAQUKrb1M2MZJywr6lvWiiDYMl1da+vHP87Ro7hHkRal4iiJMpMhmVXeQ5hmChYJICkXyiGyg==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -15171,7 +15171,7 @@ snapshots:
       '@noeldemartin/utils': 0.7.3-next.73dccef19c27b56d09b04e13693f6150d68d5d9a
       '@playwright/test': 1.62.1
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3)
+      soukai-bis: 0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3)
       zod: 4.4.3
     transitivePeerDependencies:
       - web-streams-polyfill
@@ -15990,7 +15990,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.38850539d916fc4f4d1f289c8e361bb64e4650e4(web-streams-polyfill@3.3.3)(zod@4.4.3):
+  soukai-bis@0.0.0-next.ccc6b5b45f07430fc0b6e38f80f5e9b8c1ee31a6(web-streams-polyfill@3.3.3)(zod@4.4.3):
     dependencies:
       '@noeldemartin/solid-utils': 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.73dccef19c27b56d09b04e13693f6150d68d5d9a

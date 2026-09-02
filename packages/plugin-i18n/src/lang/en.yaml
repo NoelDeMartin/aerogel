@@ -4,9 +4,11 @@ ui:
     alert: Alert
     accept: Ok
     cancel: Cancel
+    cancelling: Cancelling...
     confirm: Confirm
     close: Close
     loading: Loading
+    processing: Processing...
     progress: '{progress}% complete'
     loadingInProgress: Loading in progress...
     select: Select an option
