@@ -139,14 +139,14 @@ export class UIService extends Service {
         const getProperties = (): AcceptRefs<ConfirmModalProps> => {
             if (typeof messageOrOptions !== 'string') {
                 return {
-                    ...(messageOrOptions ?? {}),
+                    ...messageOrOptions,
                     message: messageOrTitle,
                     required: !!messageOrOptions?.required,
                 };
             }
 
             return {
-                ...(options ?? {}),
+                ...options,
                 title: messageOrTitle,
                 message: messageOrOptions,
                 required: !!options?.required,
@@ -195,14 +195,14 @@ export class UIService extends Service {
             if (typeof messageOrOptions !== 'string') {
                 return {
                     message: messageOrTitle,
-                    ...(messageOrOptions ?? {}),
+                    ...messageOrOptions,
                 } as PromptModalProps;
             }
 
             return {
                 title: messageOrTitle,
                 message: messageOrOptions,
-                ...(options ?? {}),
+                ...options,
             } as PromptModalProps;
         };
 
@@ -299,7 +299,7 @@ export class UIService extends Service {
         await Promise.all(modals.value.map(({ id }) => closeModal(id, { removeAfter: 1000 })));
     }
 
-    public async runJob(job: Job, options: { message?: string } = {}): Promise<void> {
+    public async runJob<T extends Job>(job: T, options: { message?: string } = {}): Promise<ReturnType<T['process']>> {
         const modal = createModal(this.requireComponent('job-progress-modal'), {
             job,
             message: options.message,
@@ -313,7 +313,7 @@ export class UIService extends Service {
 
         showModal(modal);
 
-        await job.start();
+        return job.process();
     }
 
     protected override async boot(): Promise<void> {
