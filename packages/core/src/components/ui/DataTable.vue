@@ -50,10 +50,10 @@
                                     {{ translateWithDefault('pagination.unsort', 'Reset sort') }}
                                 </span>
                             </template>
-                            <span class="text-base font-semibold">{{ column.label }}</span>
+                            <span class="text-base font-semibold">{{ column.header }}</span>
                         </Button>
                         <span v-else class="text-base font-semibold">
-                            {{ column.label }}
+                            {{ column.header }}
                         </span>
                     </th>
                 </tr>
@@ -77,7 +77,7 @@
                         start: pagination.start,
                         end: pagination.end,
                         total: items.length,
-                        items: itemsName,
+                        items: itemsLabel,
                     })
                 }}
             </span>
@@ -146,28 +146,28 @@ const CellContent = (props: { content: (item: T) => VNodeChild; item: T }) => pr
 
 const {
     items,
-    keyField,
-    itemsName = 'items',
-    pageLength = 10,
-} = defineProps<{ items: T[]; itemsName?: string; keyField?: DeepKeyOf<T>; pageLength?: number }>();
+    itemKey,
+    itemsLabel = 'items',
+    itemsPerPage = 10,
+} = defineProps<{ items: T[]; itemsLabel?: string; itemKey?: DeepKeyOf<T>; itemsPerPage?: number }>();
 const slots = defineSlots<{ default?(): VNode[] }>();
 const id = `data-table-${uuid()}`;
 const currentPage = ref(1);
 const sorting = shallowRef<SortedColumn[]>([]);
 const sortingColumns = computed(() => Object.fromEntries(sorting.value.map((s) => [s.field, s.direction])));
-const normalizedPageLength = computed(() => Math.max(1, pageLength));
+const normalizedItemsPerPage = computed(() => Math.max(1, itemsPerPage));
 
 const pagination = computed(() => {
-    if (items.length <= normalizedPageLength.value) {
+    if (items.length <= normalizedItemsPerPage.value) {
         return;
     }
 
-    const totalPages = Math.ceil(items.length / normalizedPageLength.value);
+    const totalPages = Math.ceil(items.length / normalizedItemsPerPage.value);
 
     return {
         totalPages,
-        start: (currentPage.value - 1) * normalizedPageLength.value + 1,
-        end: Math.min(currentPage.value * normalizedPageLength.value, items.length),
+        start: (currentPage.value - 1) * normalizedItemsPerPage.value + 1,
+        end: Math.min(currentPage.value * normalizedItemsPerPage.value, items.length),
         pages: getPaginationPages(totalPages, currentPage.value),
     };
 });
@@ -179,8 +179,8 @@ const filteredItems = computed(() => {
     );
 
     return sortedItems.slice(
-        (currentPage.value - 1) * normalizedPageLength.value,
-        currentPage.value * normalizedPageLength.value,
+        (currentPage.value - 1) * normalizedItemsPerPage.value,
+        currentPage.value * normalizedItemsPerPage.value,
     );
 });
 
@@ -203,7 +203,7 @@ const columns = computed(() =>
             return {
                 field,
                 sortable,
-                label: String(slot.props.label ?? ''),
+                header: String(slot.props.header ?? ''),
                 content: hasDefaultSlot(children)
                     ? (item: T) => children.default({ item })
                     : (item: T) => {
@@ -231,7 +231,7 @@ function hasDefaultSlot(
 }
 
 function getItemKey(item: T, index: number) {
-    return String((keyField ? deepGet(item, keyField) : index) ?? index);
+    return String((itemKey ? deepGet(item, itemKey) : index) ?? index);
 }
 
 function getPaginationPages(total: number, current: number) {

@@ -2,7 +2,7 @@
 import type { DeepKeyOf } from '@noeldemartin/utils';
 
 defineProps<{
-    label?: string;
+    header?: string;
     field?: DeepKeyOf<T>;
     sortable?: boolean;
 }>();

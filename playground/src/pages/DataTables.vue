@@ -2,10 +2,10 @@
     <PageTitle source="src/pages/DataTables.vue">
         {{ $t('datatables.title') }}
     </PageTitle>
-    <Table items-name="people">
-        <TableColumn label="Name" field="name" />
-        <TableColumn label="Age" field="age" sortable />
-        <TableColumn label="Email" field="email" sortable>
+    <Table items-label="people">
+        <TableColumn header="Name" field="name" />
+        <TableColumn header="Age" field="age" sortable />
+        <TableColumn header="Email" field="email" sortable>
             <template #default="{ item: person }">
                 <a v-if="person.email" :href="`mailto:${person.email}`">{{ person.email }}</a>
                 <span v-else>No email</span>
