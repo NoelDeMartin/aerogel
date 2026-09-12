@@ -13,6 +13,7 @@ home:
     content: Formatted Content
     errors: Error Handling
     forms: Forms
+    datatables: Data Tables
     storage: Storage
     solid: Solid
     localFirst: Local First
@@ -116,6 +117,9 @@ forms:
     conditions: Accept Terms & Conditions
     submit: Say My Name
     greeting: Hello, {name}!
+
+datatables:
+    title: Data Tables
 
 storage:
     title: Storage

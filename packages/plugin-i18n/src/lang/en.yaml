@@ -15,6 +15,15 @@ ui:
     selectEmpty: No options available
     comboboxEmpty: No options found
 
+pagination:
+    sortAscending: 'Sort ascending'
+    sortDescending: 'Sort descending'
+    unsort: 'Reset sort'
+    label: 'Pagination'
+    previous: 'Previous'
+    next: 'Next'
+    summary: 'Showing {start} to {end} of {total} {items}'
+
 errors:
     unknown: Unknown Error
     unknownDescription: Unknown error object

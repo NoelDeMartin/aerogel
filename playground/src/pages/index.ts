@@ -2,6 +2,7 @@ import { defineRoutes } from '@aerogel/plugin-routing';
 
 import Components from './components/Components.vue';
 import Content from './Content.vue';
+import DataTables from './DataTables.vue';
 import Errors from './Errors.vue';
 import Forms from './Forms.vue';
 import Home from './Home.vue';
@@ -34,6 +35,11 @@ export const routes = defineRoutes([
         name: 'forms',
         path: '/forms',
         component: Forms,
+    },
+    {
+        name: 'datatables',
+        path: '/datatables',
+        component: DataTables,
     },
     {
         name: 'storage',

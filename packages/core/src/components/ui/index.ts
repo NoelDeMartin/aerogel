@@ -8,6 +8,8 @@ export { default as ComboboxOption } from './ComboboxOption.vue';
 export { default as ComboboxOptions } from './ComboboxOptions.vue';
 export { default as ComboboxTrigger } from './ComboboxTrigger.vue';
 export { default as ConfirmModal } from './ConfirmModal.vue';
+export { default as DataTable } from './DataTable.vue';
+export { default as DataTableColumn } from './DataTableColumn.vue';
 export { default as Details } from './Details.vue';
 export { default as DropdownMenu } from './DropdownMenu.vue';
 export { default as DropdownMenuOption } from './DropdownMenuOption.vue';

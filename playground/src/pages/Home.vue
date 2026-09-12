@@ -39,6 +39,10 @@ const sections: Section[] = [
         route: 'forms',
     },
     {
+        langKey: 'home.datatables',
+        route: 'datatables',
+    },
+    {
         langKey: 'home.storage',
         route: 'storage',
     },
