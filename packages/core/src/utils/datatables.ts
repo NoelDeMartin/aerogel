@@ -9,7 +9,7 @@ import type { DeepKeyOf } from '@noeldemartin/utils';
 
 type TableComponent<T extends object> = typeof DataTable &
     (new () => {
-        $props: Omit<ComponentProps<typeof DataTable>, 'items'> & { items?: T[] };
+        $props: Omit<ComponentProps<typeof DataTable>, 'items' | 'itemKey'> & { items?: T[]; itemKey?: DeepKeyOf<T> };
     });
 type TableColumnComponent<T extends object> = typeof DataTableColumn &
     (new () => {
