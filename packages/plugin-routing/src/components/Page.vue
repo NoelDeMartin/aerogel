@@ -12,8 +12,12 @@ import { computed } from 'vue';
 import { classes } from '@aerogel/core';
 import type { HTMLAttributes } from 'vue';
 
-const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class']; title?: string }>();
+const { class: rootClasses, fullbleed } = defineProps<{
+    class?: HTMLAttributes['class'];
+    title?: string;
+    fullbleed?: boolean;
+}>();
 
 const renderedRootClasses = computed(() =>
-    classes('mx-auto flex w-full max-w-screen-content grow flex-col px-edge py-8', rootClasses));
+    classes('mx-auto flex w-full grow flex-col px-edge py-8', fullbleed || 'max-w-screen-content', rootClasses));
 </script>
