@@ -3,15 +3,15 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "pnpm run -r --workspace-concurrency Infinity build",
+        "build": "pnpm run -r --workspace-concurrency 0 build",
         "docs:build": "pnpm docs:build:vitepress && pnpm docs:build:playground",
         "docs:build:playground": "pnpm build -w playground && cp playground/dist docs/.vitepress/dist/playground -r",
         "docs:build:vitepress": "vitepress build docs",
         "docs:dev": "vitepress dev docs",
-        "lint": "pnpm run -r --workspace-concurrency Infinity --parallel lint",
+        "lint": "pnpm run -r --parallel lint",
         "test": "vitest --run",
         "test:ci": "vitest --run --reporter verbose",
-        "verify": "pnpm run -r --workspace-concurrency Infinity --parallel verify"
+        "verify": "pnpm run -r --parallel verify"
     },
     "packageManager": "pnpm@12.4.1",
     "devDependencies": {
