@@ -208,12 +208,12 @@ const columns = computed(() =>
                     ? (item: T) => children.default({ item })
                     : (item: T) => {
                         if (!field) {
-                            return '';
+                            return '-';
                         }
 
                         const value = deepGet(item, field);
 
-                        return isEmpty(value) ? '' : String(value);
+                        return isEmpty(value) ? '-' : String(value);
                     },
             };
         })
