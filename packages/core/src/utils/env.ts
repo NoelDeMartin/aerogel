@@ -1,4 +1,4 @@
-import { isInstanceOf } from '@noeldemartin/utils';
+import { fail, isInstanceOf } from '@noeldemartin/utils';
 import z from 'zod';
 
 import InvalidEnvError from '@aerogel/core/errors/InvalidEnvError';
@@ -36,4 +36,8 @@ export function env<T extends keyof Env>(key: T): Env[T] {
     }
 
     return (parsedEnv as Env)[key];
+}
+
+export function requireEnv<T extends keyof Env>(key: T): NonNullable<Env[T]> {
+    return env(key) ?? fail(`Missing required '${key}' environment variable.`);
 }
