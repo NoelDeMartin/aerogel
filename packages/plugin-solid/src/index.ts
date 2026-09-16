@@ -40,7 +40,7 @@ export { Solid };
 export interface Options {
     autoReconnect?: boolean;
     authenticators?: Record<string, Authenticator>;
-    defaultAuthenticator?: AuthenticatorName;
+    defaultAuthenticator?: AuthenticatorName | (() => AuthenticatorName);
     models?: Record<string, Record<string, unknown>>;
     onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): Promise<unknown> | unknown;
 }
@@ -59,7 +59,13 @@ export default function solid(options: Options = {}): Plugin {
             bootModelsFromViteGlob(options.models ?? {}, { reset: true });
             registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });
             registerFormValidationRules();
-            setDefaultAuthenticator(getAuthenticator(options.defaultAuthenticator ?? 'inrupt'));
+            setDefaultAuthenticator(
+                getAuthenticator(
+                    typeof options.defaultAuthenticator === 'function'
+                        ? options.defaultAuthenticator()
+                        : options.defaultAuthenticator ?? 'inrupt',
+                ),
+            );
             registerErrorHandler((error) => {
                 if (!(error instanceof AuthenticationFailedError)) {
                     return;
