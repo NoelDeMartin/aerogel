@@ -12,7 +12,7 @@ export type EnvConfig = {
     schema: z.ZodObject;
 };
 
-export interface Env extends z.infer<typeof DefaultSchema> {}
+export interface Env {}
 
 export function defineEnv(value: Record<string, unknown>, schema: z.ZodObject): EnvConfig {
     return { value, schema };
