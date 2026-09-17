@@ -152,6 +152,14 @@ export default class Service<
         this.onPersistentStateUpdated(state);
     }
 
+    public clearPersistedState(): void {
+        if (!this.hasPersistedState()) {
+            return;
+        }
+
+        Storage.remove(this.storageKey);
+    }
+
     protected override __get(property: string): unknown {
         if (this.hasState(property)) {
             return this.getState(property);

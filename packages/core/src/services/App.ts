@@ -1,9 +1,17 @@
 import Aerogel from 'virtual:aerogel';
 
-import { PromisedValue, facade, forever, updateLocationQueryParameters } from '@noeldemartin/utils';
+import {
+    PromisedValue,
+    facade,
+    forever,
+    isFacade,
+    isInstanceOf,
+    updateLocationQueryParameters,
+} from '@noeldemartin/utils';
 import { markRaw } from 'vue';
 
-import Events from '@aerogel/core/services/Events';
+import BaseService from '@aerogel/core/services/Service';
+import Events, { EventListenerPriorities } from '@aerogel/core/services/Events';
 import type { Plugin } from '@aerogel/core/plugins';
 import type { AppSetting, Services } from '@aerogel/core/services';
 
@@ -60,6 +68,19 @@ export class AppService extends Service {
     protected override async boot(): Promise<void> {
         Events.once('application-ready', () => this.ready.resolve());
         Events.once('application-mounted', () => this.mounted.resolve());
+        Events.on('purge-storage', { priority: EventListenerPriorities.Low }, () => this.purgeServicesStorage());
+    }
+
+    private purgeServicesStorage(): void {
+        for (const globalProperty of Object.values(this.instance?.config.globalProperties ?? {})) {
+            const instance = isFacade(globalProperty) ? globalProperty.requireInstance() : null;
+
+            if (!instance || !isInstanceOf(instance, BaseService)) {
+                continue;
+            }
+
+            instance.clearPersistedState();
+        }
     }
 
 }
