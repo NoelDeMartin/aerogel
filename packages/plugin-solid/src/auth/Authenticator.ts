@@ -1,6 +1,6 @@
 import { PromisedValue, arr, fail } from '@noeldemartin/utils';
 import { SolidEngine } from 'soukai-bis';
-import type { Closure, FluentArray } from '@noeldemartin/utils';
+import type { Closure, FluentArray, Nullable } from '@noeldemartin/utils';
 import type { Engine } from 'soukai-bis';
 import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { ErrorSource } from '@aerogel/core';
@@ -19,6 +19,10 @@ export interface AuthSession {
     authenticator: Authenticator;
 }
 
+export interface AuthenticatorLoginOptions {
+    user?: Nullable<SolidUserProfile>;
+}
+
 export interface AuthenticatorListener {
     onSessionStarted?: (session: AuthSession) => Promise<void> | void;
     onSessionFailed?: (loginUrl: string, error: ErrorSource) => Promise<void> | void;
@@ -35,7 +39,7 @@ export default abstract class Authenticator {
     protected listeners: FluentArray<AuthenticatorListener> = arr<AuthenticatorListener>([]);
     protected _engine?: SolidEngine;
 
-    public abstract login(loginUrl: string, user?: SolidUserProfile | null): Promise<AuthSession>;
+    public abstract login(loginUrl: string, options?: AuthenticatorLoginOptions): Promise<AuthSession>;
 
     public abstract logout(): Promise<void>;
 

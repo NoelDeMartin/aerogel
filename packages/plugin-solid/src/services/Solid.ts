@@ -42,6 +42,8 @@ export type LoginOptions = NullablePartial<{
     onError(error: ErrorSource): unknown;
     fallbackUrl: string;
     loading: boolean;
+    skipProfile?: boolean;
+    extra?: Record<string, unknown>;
 }>;
 
 export type UserProfileOptions = NullablePartial<{
@@ -427,7 +429,7 @@ export class SolidService extends Service {
         this.loginOngoing = true;
 
         try {
-            const profile = await this.getUserProfile(loginUrl, { markStale: true });
+            const profile = options.skipProfile ? null : await this.getUserProfile(loginUrl, { markStale: true });
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
             const authenticator = await this.bootAuthenticator(authenticatorName);
             const { domain: loginDomain } = requireUrlParse(loginUrl);
@@ -451,7 +453,10 @@ export class SolidService extends Service {
 
             // This should redirect away from the app, so in most cases
             // the rest of the code won't be reached.
-            await authenticator.login(oidcIssuerUrl, profile);
+            await authenticator.login(oidcIssuerUrl, {
+                user: profile,
+                ...options.extra,
+            });
 
             return true;
         } catch (error) {

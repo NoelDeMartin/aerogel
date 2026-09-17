@@ -1,12 +1,11 @@
 import { after, required } from '@noeldemartin/utils';
 import { persistent } from '@aerogel/core';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { UnwrapNestedRefs } from 'vue';
 
 import Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import AuthenticationFailedError from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
 import Solid from '@aerogel/plugin-solid/services/Solid';
-import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthSession, AuthenticatorLoginOptions } from '@aerogel/plugin-solid/auth/Authenticator';
 
 interface Data {
     webId?: string;
@@ -23,7 +22,7 @@ export default class LegacyAuthenticator extends Authenticator {
         this.store = persistent('legacy-authenticator', {});
     }
 
-    public async login(loginUrl: string, user?: SolidUserProfile | null): Promise<AuthSession> {
+    public async login(loginUrl: string, { user }: AuthenticatorLoginOptions = {}): Promise<AuthSession> {
         const { SolidAuthClient } = await import('./LegacyAuthenticator.lazy');
 
         this.store.webId = user?.webId;
@@ -64,7 +63,7 @@ export default class LegacyAuthenticator extends Authenticator {
         const session = await SolidAuthClient.currentSession();
         const loginUrl = required(this.store.loginUrl);
 
-        await this.initAuthenticatedFetch((input: RequestInfo, options?: Object) => {
+        await this.initAuthenticatedFetch((input: RequestInfo, options?: object) => {
             return SolidAuthClient.fetch(input, options);
         });
 
