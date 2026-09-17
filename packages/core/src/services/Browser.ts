@@ -4,8 +4,23 @@ import Errors from '@aerogel/core/errors/Errors';
 
 import Service from './Browser.state';
 
+function getBrowserName(): 'chrome' | 'edge' | 'other' {
+    const userAgent = navigator.userAgent;
+
+    if (userAgent.includes('Edg/')) {
+        return 'edge';
+    }
+
+    if (userAgent.includes('Chrome/')) {
+        return 'chrome';
+    }
+
+    return 'other';
+}
+
 export class BrowserService extends Service {
 
+    public readonly name: 'chrome' | 'edge' | 'other' = getBrowserName();
     private wakeLock: Promise<void | { release(): Promise<void> }> | null = null;
     private wakeLockRequested: 'screen' | null = null;
 
