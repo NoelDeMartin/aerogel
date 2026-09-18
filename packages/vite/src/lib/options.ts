@@ -16,7 +16,7 @@ export interface Options {
         development?: boolean;
         includeAssets?: string[];
         additionalManifestEntries?: ManifestEntry[];
-    };
+    } | false;
 }
 
 export interface AppInfo {

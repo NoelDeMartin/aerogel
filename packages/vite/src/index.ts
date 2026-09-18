@@ -33,7 +33,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         baseUrl: process.env.AEROGEL_BASE_URL ?? options.baseUrl,
         developmentHost: options.developmentHost,
         themeColor: options.themeColor ?? '#ffffff',
-        additionalManifestEntries: options.pwa?.additionalManifestEntries ?? [],
+        additionalManifestEntries: options.pwa ? options.pwa.additionalManifestEntries ?? [] : [],
     };
     const virtualHandlers: Record<string, () => string> = {
         'virtual:aerogel'() {
@@ -187,23 +187,23 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         VueJsx(),
         TailwindCSS(),
         !options.lib &&
-            VitePWA({
-                // TODO include default icon in order to have PWA
-                registerType: 'autoUpdate',
-                devOptions: { enabled: options.pwa?.development ?? false },
-                includeAssets: [
-                    'apple-touch-icon.png',
-                    'favicon-32x32.png',
-                    'favicon-16x16.png',
-                    'safari-pinned-tab.svg',
-                    ...(options.pwa?.includeAssets ?? []),
-                ],
-                manifest: objectWithoutEmpty({
-                    name: app.name,
-                    short_name: app.name,
-                    description: app.description,
-                    theme_color: options.themeColor,
-                    icons:
+            options.pwa !== false && VitePWA({
+            // FIXME include default icon in order to have PWA
+            registerType: 'autoUpdate',
+            devOptions: { enabled: options.pwa?.development ?? false },
+            includeAssets: [
+                'apple-touch-icon.png',
+                'favicon-32x32.png',
+                'favicon-16x16.png',
+                'safari-pinned-tab.svg',
+                ...(options.pwa?.includeAssets ?? []),
+            ],
+            manifest: objectWithoutEmpty({
+                name: app.name,
+                short_name: app.name,
+                description: app.description,
+                theme_color: options.themeColor,
+                icons:
                         options.icons &&
                         (Array.isArray(options.icons)
                             ? options.icons.map((icon) => ({
@@ -216,13 +216,13 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                                     sizes,
                                     type: guessMediaType(src) ?? undefined,
                                 }))),
-                }),
-                workbox: {
-                    mode: ['production', 'staging'].includes(process.env.NODE_ENV ?? '') ? 'production' : 'development',
-                    maximumFileSizeToCacheInBytes: 10000000,
-                    additionalManifestEntries: app.additionalManifestEntries,
-                },
             }),
+            workbox: {
+                mode: ['production', 'staging'].includes(process.env.NODE_ENV ?? '') ? 'production' : 'development',
+                maximumFileSizeToCacheInBytes: 10000000,
+                additionalManifestEntries: app.additionalManifestEntries,
+            },
+        }),
         AerogelPlugin,
     ]).flat();
 }
