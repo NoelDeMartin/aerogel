@@ -1,6 +1,6 @@
 <template>
     <Select
-        v-model="$lang.locale"
+        v-model="$lang.selectedLocale"
         class="flex flex-col items-start md:flex-row"
         as="div"
         :options
@@ -32,17 +32,18 @@ import Select from '@aerogel/core/components/ui/Select.vue';
 import SelectLabel from '@aerogel/core/components/ui/SelectLabel.vue';
 import SelectTrigger from '@aerogel/core/components/ui/SelectTrigger.vue';
 import SelectOptions from '@aerogel/core/components/ui/SelectOptions.vue';
-import { Lang, translateWithDefault } from '@aerogel/core/lang';
+import { Lang, SYSTEM_LOCALE, getBrowserLocale, translateWithDefault } from '@aerogel/core/lang';
 
-const browserLocale = Lang.getBrowserLocale();
-const options = computed(() => [null, ...Lang.locales]);
+const browserLocale = computed(() => getBrowserLocale(Lang.locales) ?? Lang.fallbackLocale);
+const options = computed(() => [SYSTEM_LOCALE, ...Lang.locales]);
 
-function renderLocale(locale: string | null): string {
-    return (
-        (locale && Aerogel.locales[locale]) ??
-        translateWithDefault('settings.localeDefault', '{locale} (default)', {
-            locale: Aerogel.locales[browserLocale] ?? browserLocale,
-        })
-    );
+function renderLocale(locale: string): string {
+    if (locale === SYSTEM_LOCALE) {
+        return translateWithDefault('settings.localeSystem', 'System ({locale})', {
+            locale: Aerogel.locales[browserLocale.value] ?? browserLocale.value,
+        });
+    }
+
+    return Aerogel.locales[locale] ?? locale;
 }
 </script>

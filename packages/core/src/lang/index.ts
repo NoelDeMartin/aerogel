@@ -4,10 +4,11 @@ import { definePlugin } from '@aerogel/core/plugins';
 
 import Lang from './Lang';
 import settings from './settings';
-import { translate, translateWithDefault } from './utils';
+import { getBrowserLocale, translate, translateWithDefault } from './utils';
+import { SYSTEM_LOCALE } from './constants';
 import type { LangProvider } from './Lang';
 
-export { Lang, translate, translateWithDefault };
+export { Lang, SYSTEM_LOCALE, getBrowserLocale, translate, translateWithDefault };
 export type { LangProvider };
 
 const services = { $lang: Lang };

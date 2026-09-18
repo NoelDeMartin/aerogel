@@ -44,7 +44,7 @@ settings:
     title: Settings
     locale: Language
     localeDescription: Choose the application's language.
-    localeDefault: '{locale} (default)'
+    localeSystem: 'System ({locale})'
     developerMode: Developer Mode
     developerModeDescription: Enable developer mode to access advanced options and actions.
     dangerZone: Danger zone

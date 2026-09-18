@@ -21,8 +21,8 @@ export class LangService extends Service {
         super();
 
         this.provider = new DefaultLangProvider(
-            this.getState('locale') ?? this.getBrowserLocale(),
-            this.getState('fallbackLocale'),
+            this.locale,
+            this.fallbackLocale,
         );
     }
 
@@ -30,7 +30,7 @@ export class LangService extends Service {
         this.provider = provider;
         this.locales = provider.getLocales();
 
-        await provider.setLocale(this.locale ?? this.getBrowserLocale());
+        await provider.setLocale(this.locale);
         await provider.setFallbackLocale(this.fallbackLocale);
     }
 
@@ -46,12 +46,6 @@ export class LangService extends Service {
         return this.provider.translateWithDefault(key, defaultMessage, parameters);
     }
 
-    public getBrowserLocale(): string {
-        const locales = this.getState('locales');
-
-        return navigator.languages.find((locale) => locales.includes(locale)) ?? 'en';
-    }
-
     protected override async boot(): Promise<void> {
         if (!globalThis.document) {
             return;
@@ -59,12 +53,10 @@ export class LangService extends Service {
 
         this.requireStore().$subscribe(
             async () => {
-                await this.provider.setLocale(this.locale ?? this.getBrowserLocale());
+                await this.provider.setLocale(this.locale);
                 await this.provider.setFallbackLocale(this.fallbackLocale);
 
-                this.locale
-                    ? document.querySelector('html')?.setAttribute('lang', this.locale)
-                    : document.querySelector('html')?.removeAttribute('lang');
+                document.querySelector('html')?.setAttribute('lang', this.locale);
             },
             { immediate: true },
         );
