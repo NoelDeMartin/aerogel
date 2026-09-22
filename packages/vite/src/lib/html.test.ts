@@ -60,9 +60,9 @@ describe('HTML helpers', () => {
         `;
         const expected = formatCodeBlock(`
             <link rel="apple-touch-icon" sizes="180x180" href="/site/apple-touch-icon.png" />
-            <link rel="icon" type="image/png" sizes="32x32" href="/site/favicon-32x32.png" />
-            <link rel="icon" type="image/png" sizes="16x16" href="/site/favicon-16x16.png" />
-            <link rel="mask-icon" href="/site/safari-pinned-tab.svg" color="#123456" />
+            <link rel="icon" type="image/png" sizes="96x96" href="/site/favicon-96x96.png"  />
+            <link rel="icon" type="image/svg+xml" href="/site/favicon.svg" />
+            <link rel="shortcut icon" href="/site/favicon.ico" />
 
 
             <meta name="apple-mobile-web-app-title" content="My App" />
