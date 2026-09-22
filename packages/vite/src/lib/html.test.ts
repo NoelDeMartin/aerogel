@@ -55,7 +55,7 @@ describe('HTML helpers', () => {
         }));
 
         const html = `
-            {{ favicons({ maskIconColor: '#123456' }) }}
+            {{ favicons() }}
             {{ socialMeta({ image: './src/assets/banner.png' }) }}
         `;
         const expected = formatCodeBlock(`
