@@ -21,7 +21,6 @@
                 <Button
                     size="icon"
                     variant="ghost"
-                    :aria-label="$td('errors.viewDetails', 'View details')"
                     :title="$td('errors.viewDetails', 'View details')"
                     class="self-center"
                     @click="
@@ -32,6 +31,7 @@
                     "
                 >
                     <IconViewShow class="size-4" aria-hidden="true" />
+                    <span class="sr-only">{{ $td('errors.viewDetails', 'View details') }}</span>
                 </Button>
             </li>
         </ol>

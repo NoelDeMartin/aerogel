@@ -11,9 +11,9 @@
                 class="p-0 text-gray-600 hover:text-gray-800"
                 :href="sourceUrl"
                 :title="$t('app.viewPageSource')"
-                :aria-label="$t('app.viewPageSource')"
             >
                 <i-mdi-github class="size-5" />
+                <span class="sr-only">{{ $t('app.viewPageSource') }}</span>
             </Button>
         </div>
         <slot name="end" />

@@ -12,11 +12,11 @@
                 size="icon"
                 variant="ghost"
                 class="absolute top-1 right-1 hover:bg-gray-200"
-                :aria-label="$td('user.settings', 'Settings')"
                 :title="$td('user.settings', 'Settings')"
                 @click="$ui.modal(SettingsModal)"
             >
                 <IconCog class="size-5" />
+                <span class="sr-only">{{ $td('user.settings', 'Settings') }}</span>
             </Button>
         </div>
 

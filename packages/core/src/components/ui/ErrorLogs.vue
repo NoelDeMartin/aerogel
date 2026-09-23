@@ -4,10 +4,10 @@
         size="icon"
         variant="ghost"
         :title="$td('errors.viewLogs', 'View error logs')"
-        :aria-label="$td('errors.viewLogs', 'View error logs')"
         @click="$ui.modal(ErrorLogsModal)"
     >
         <IconWarning class="size-6 text-red-500" />
+        <span class="sr-only">{{ $td('errors.viewLogs', 'View error logs') }}</span>
     </Button>
 </template>
 

@@ -9,10 +9,10 @@
         <Button
             size="icon"
             variant="ghost"
-            :aria-label="$td('user.menu', 'Configuration')"
             :title="$td('user.menu', 'Configuration')"
         >
             <IconCog class="size-5" />
+            <span class="sr-only">{{ $td('user.menu', 'Configuration') }}</span>
         </Button>
     </DropdownMenu>
 </template>

@@ -21,21 +21,21 @@
                             size="icon"
                             variant="ghost"
                             :disabled="activeReportIndex === 0"
-                            :aria-label="previousReportText"
                             :title="previousReportText"
                             @click="activeReportIndex--"
                         >
                             <IconCheveronLeft class="size-4" />
+                            <span class="sr-only">{{ previousReportText }}</span>
                         </Button>
                         <Button
                             size="icon"
                             variant="ghost"
                             :disabled="activeReportIndex === reports.length - 1"
-                            :aria-label="nextReportText"
                             :title="nextReportText"
                             @click="activeReportIndex++"
                         >
                             <IconCheveronRight class="size-4" />
+                            <span class="sr-only">{{ nextReportText }}</span>
                         </Button>
                     </span>
                 </div>

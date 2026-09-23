@@ -3,7 +3,6 @@
         <button
             class="clickable focus-visible:outline-primary-600 flex size-full rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             type="button"
-            :aria-label="$td('account.open', 'Open account')"
             :title="$td('account.open', 'Open account')"
             @click="$ui.modal(AccountModal)"
         >
@@ -12,6 +11,7 @@
                 v-if="accountStatus.loading"
                 class="absolute -inset-1 animate-spin rounded-full border-2 border-[currentColor_transparent] text-green-500"
             />
+            <span class="sr-only">{{ $td('account.open', 'Open account') }}</span>
         </button>
         <div
             class="pointer-events-none absolute bottom-0 right-0 size-3 rounded-full border-2 border-white"
