@@ -90,6 +90,10 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         return this._submitted.value;
     }
 
+    public getFieldValue<T extends keyof Fields>(field: T): GetFormFieldValue<Fields[T]['type']> {
+        return this._data[field] as unknown as GetFormFieldValue<Fields[T]['type']>;
+    }
+
     public setFieldValue<T extends keyof Fields>(field: T, value: FormData<Fields>[T]): void {
         this._data[field] = value;
 
@@ -100,12 +104,20 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         this.validate();
     }
 
-    public getFieldValue<T extends keyof Fields>(field: T): GetFormFieldValue<Fields[T]['type']> {
-        return this._data[field] as unknown as GetFormFieldValue<Fields[T]['type']>;
-    }
-
     public getFieldRules<T extends keyof Fields>(field: T): string[] {
         return this._fields[field]?.rules ?? [];
+    }
+
+    public setFieldRules<T extends keyof Fields>(field: T, rules: string[]): void {
+        if (!this._fields[field]) {
+            return;
+        }
+
+        this._fields[field].rules = rules;
+    }
+
+    public getFieldErrors<T extends keyof Fields>(field: T): string[] | null {
+        return this._errors[field] ?? null;
     }
 
     public setFieldErrors<T extends keyof Fields>(field: T, errors: string[] | null): void {
@@ -116,6 +128,14 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         return this._fields[field]?.type ?? null;
     }
 
+    public setFieldType<T extends keyof Fields>(field: T, type: FormFieldType): void {
+        if (!this._fields[field]) {
+            return;
+        }
+
+        this._fields[field].type = type;
+    }
+
     public data(): FormData<Fields> {
         return { ...this._data };
     }
@@ -123,7 +143,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
     public validate(): boolean {
         const errors = Object.entries(this._fields).reduce(
             (formErrors, [name, definition]) => {
-                formErrors[name] = this.getFieldErrors(name, definition);
+                formErrors[name] = this.computeFieldErrors(name, definition);
 
                 return formErrors;
             },
@@ -204,7 +224,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         this.setFieldValue(property, value as FormData<Fields>[string]);
     }
 
-    private getFieldErrors(name: keyof Fields, definition: FormFieldDefinition): string[] | null {
+    private computeFieldErrors(name: keyof Fields, definition: FormFieldDefinition): string[] | null {
         const errors = [];
         const value = this._data[name];
         const rules = definition.rules ?? [];
