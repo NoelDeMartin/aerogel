@@ -32,6 +32,7 @@
 import { computed } from 'vue';
 import { useFilter } from 'reka-ui';
 import type { AcceptableValue } from 'reka-ui';
+import type { HTMLAttributes } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
@@ -45,7 +46,10 @@ import HeadlessComboboxGroup from '../headless/HeadlessComboboxGroup.vue';
 
 defineEmits<{ select: [] }>();
 
-const { newInputValue } = defineProps<{ newInputValue?: (value: string) => Nullable<FormFieldValue> }>();
+const { newInputValue, class: rootClasses } = defineProps<{
+    newInputValue?: (value: string) => Nullable<FormFieldValue>;
+    class?: HTMLAttributes['class'];
+}>();
 const { contains } = useFilter({ sensitivity: 'base' });
 const combobox = injectReactiveOrFail<ComboboxExpose>('combobox', '<ComboboxOptions> must be a child of a <Combobox>');
 
@@ -55,8 +59,10 @@ const filteredOptions = computed(
 const showInputOption = computed(
     () => combobox.input && !filteredOptions.value.some((option) => option.label === combobox.input),
 );
-const renderedClasses = classes(
-    'max-h-(--reka-combobox-content-available-height) min-w-(--reka-combobox-trigger-width)',
-    'z-50 overflow-auto rounded-lg bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden',
-);
+const renderedClasses = computed(() =>
+    classes(
+        'z-50 overflow-auto rounded-lg bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden',
+        combobox.optionsClass,
+        rootClasses,
+    ));
 </script>

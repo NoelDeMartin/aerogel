@@ -6,12 +6,11 @@
             :align="align ?? combobox.align"
             :side="side ?? combobox.side"
             :side-offset="sideOffset"
+            v-bind="$attrs"
         >
-            <div v-bind="$attrs" :class="rootClass">
-                <ComboboxViewport :class="innerClass">
-                    <slot />
-                </ComboboxViewport>
-            </div>
+            <ComboboxViewport :class="innerClass">
+                <slot />
+            </ComboboxViewport>
         </ComboboxContent>
     </ComboboxPortal>
     <ComboboxContent
@@ -21,12 +20,11 @@
         :align="align ?? combobox.align"
         :side="side ?? combobox.side"
         :side-offset="sideOffset"
+        v-bind="$attrs"
     >
-        <div v-bind="$attrs" :class="rootClass">
-            <ComboboxViewport :class="innerClass">
-                <slot />
-            </ComboboxViewport>
-        </div>
+        <ComboboxViewport :class="innerClass">
+            <slot />
+        </ComboboxViewport>
     </ComboboxContent>
 </template>
 
@@ -69,5 +67,6 @@ const renderedClasses = computed(() =>
         position.value === 'popper'
             ? 'min-w-(--reka-combobox-trigger-width) max-h-(--reka-combobox-content-available-height)'
             : '',
+        rootClass,
     ));
 </script>
