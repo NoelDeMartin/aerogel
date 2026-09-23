@@ -108,7 +108,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         return this._fields[field]?.rules ?? [];
     }
 
-    public setFieldRules<T extends keyof Fields>(field: T, rules: string[]): void {
+    public setFieldRules<T extends keyof Fields>(field: T, rules: string[] | undefined): void {
         if (!this._fields[field]) {
             return;
         }
