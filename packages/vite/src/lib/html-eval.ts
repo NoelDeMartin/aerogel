@@ -1,6 +1,7 @@
 import imageSize from 'image-size';
 import { readFileSync } from 'node:fs';
 
+import { ICONS } from '@aerogel/vite/lib/icons';
 import type { AppInfo } from '@aerogel/vite/lib/options';
 
 function imageMeta(path: string): string {
@@ -25,10 +26,10 @@ export function css(this: HTMLEvalScope, path: string): string {
 
 export function favicons(this: HTMLEvalScope): string {
     return `
-        <link rel="apple-touch-icon" sizes="180x180" href="${this.app.basePath}apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="96x96" href="${this.app.basePath}favicon-96x96.png"  />
-        <link rel="icon" type="image/svg+xml" href="${this.app.basePath}favicon.svg" />
-        <link rel="shortcut icon" href="${this.app.basePath}favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="${this.app.basePath}${ICONS.appleTouch.fileName}" />
+        <link rel="icon" type="image/png" sizes="96x96" href="${this.app.basePath}${ICONS.faviconPNG.fileName}"  />
+        <link rel="icon" type="image/svg+xml" sizes="any" href="${this.app.basePath}${ICONS.faviconSVG.fileName}" />
+        <link rel="shortcut icon" href="${this.app.basePath}${ICONS.favicon.fileName}" />
     `;
 }
 

@@ -6,13 +6,14 @@ import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
 import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
 import { VitePWA } from 'vite-plugin-pwa';
+import type { ManifestOptions } from 'vite-plugin-pwa';
 import type { Plugin } from 'vite';
 import type { RolldownOptions } from 'rolldown';
 
 import { generate404Assets } from '@aerogel/vite/lib/404';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
 import { getSourceHash } from '@aerogel/vite/lib/git';
-import { guessMediaType } from '@aerogel/vite/lib/media-types';
+import { generateIconAssets, getManifestIcons, iconsMiddleware, resolveIconSource } from '@aerogel/vite/lib/icons';
 import { loadLocales } from '@aerogel/vite/lib/lang';
 import { loadPackageInfo } from '@aerogel/vite/lib/package-parser';
 import { renderHTML } from '@aerogel/vite/lib/html';
@@ -30,11 +31,18 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         sourceHash: getSourceHash(),
         description: options.description,
         basePath: '/',
+        cacheDir: 'node_modules/.vite',
         baseUrl: process.env.AEROGEL_BASE_URL ?? options.baseUrl,
         developmentHost: options.developmentHost,
         themeColor: options.themeColor ?? '#ffffff',
-        additionalManifestEntries: options.pwa ? options.pwa.additionalManifestEntries ?? [] : [],
+        additionalManifestEntries: options.pwa ? (options.pwa.additionalManifestEntries ?? []) : [],
     };
+    const manifest: Partial<ManifestOptions> = objectWithoutEmpty({
+        name: app.name,
+        short_name: app.name,
+        description: app.description,
+        theme_color: options.themeColor,
+    });
     const virtualHandlers: Record<string, () => string> = {
         'virtual:aerogel'() {
             const virtual: VirtualAerogel = {
@@ -69,7 +77,8 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                     : (server.resolvedUrls?.network?.[0] ?? server.resolvedUrls?.local?.[0] ?? app.baseUrl);
             });
 
-            server.middlewares.use(solidMiddleware(app, options));
+            server.middlewares.use(iconsMiddleware(app));
+            server.middlewares.use(solidMiddleware(app));
 
             loadPackageInfo(app, `${server.config.root}/package.json`);
             loadLocales(app, `${server.config.root}/src/lang/locales.json`);
@@ -78,6 +87,15 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             const testInlineDeps = config.test?.server?.deps?.inline;
 
             app.basePath = config.base ?? app.basePath;
+
+            if (!options.lib && options.generateIcons !== false) {
+                resolveIconSource(app, resolve(config.root ?? process.cwd()));
+            }
+
+            if (app.baseIconPath) {
+                manifest.icons = getManifestIcons();
+            }
+
             config.optimizeDeps = config.optimizeDeps ?? {};
             config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), ...Object.keys(virtualHandlers)];
             config.optimizeDeps.include = [...(config.optimizeDeps.include ?? []), 'soukai-bis/patch-zod'];
@@ -140,9 +158,14 @@ export default function Aerogel(options: Options = {}): Plugin[] {
 
             return config;
         },
-        generateBundle() {
+        configResolved(config) {
+            app.cacheDir = config.cacheDir;
+        },
+        async generateBundle() {
+            await generateIconAssets(this, app);
+
             generate404Assets(this, app, options);
-            generateSolidAssets(this, app, options);
+            generateSolidAssets(this, app);
         },
         load(id) {
             if (id in virtualHandlers) {
@@ -187,42 +210,18 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         VueJsx(),
         TailwindCSS(),
         !options.lib &&
-            options.pwa !== false && VitePWA({
-            // FIXME include default icon in order to have PWA
-            registerType: 'autoUpdate',
-            devOptions: { enabled: options.pwa?.development ?? false },
-            includeAssets: [
-                'apple-touch-icon.png',
-                'favicon-32x32.png',
-                'favicon-16x16.png',
-                'safari-pinned-tab.svg',
-                ...(options.pwa?.includeAssets ?? []),
-            ],
-            manifest: objectWithoutEmpty({
-                name: app.name,
-                short_name: app.name,
-                description: app.description,
-                theme_color: options.themeColor,
-                icons:
-                        options.icons &&
-                        (Array.isArray(options.icons)
-                            ? options.icons.map((icon) => ({
-                                ...icon,
-                                type: icon.type ?? guessMediaType(icon.src) ?? undefined,
-                            }))
-                            : Object.entries(options.icons).map(([sizes, src]) =>
-                                objectWithoutEmpty({
-                                    src,
-                                    sizes,
-                                    type: guessMediaType(src) ?? undefined,
-                                }))),
+            options.pwa !== false &&
+            VitePWA({
+                registerType: 'autoUpdate',
+                devOptions: { enabled: options.pwa?.development ?? false },
+                includeAssets: options.pwa?.includeAssets,
+                manifest,
+                workbox: {
+                    mode: ['production', 'staging'].includes(process.env.NODE_ENV ?? '') ? 'production' : 'development',
+                    maximumFileSizeToCacheInBytes: 10000000,
+                    additionalManifestEntries: app.additionalManifestEntries,
+                },
             }),
-            workbox: {
-                mode: ['production', 'staging'].includes(process.env.NODE_ENV ?? '') ? 'production' : 'development',
-                maximumFileSizeToCacheInBytes: 10000000,
-                additionalManifestEntries: app.additionalManifestEntries,
-            },
-        }),
         AerogelPlugin,
     ]).flat();
 }

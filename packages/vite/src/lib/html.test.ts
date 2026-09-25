@@ -11,6 +11,7 @@ describe('HTML helpers', () => {
         name: 'My App',
         version: '0.1.0',
         basePath: '/site/',
+        cacheDir: 'node_modules/.vite',
         themeColor: '#654321',
         sourceHash: '123456',
         additionalManifestEntries: [],
@@ -59,9 +60,9 @@ describe('HTML helpers', () => {
             {{ socialMeta({ image: './src/assets/banner.png' }) }}
         `;
         const expected = formatCodeBlock(`
-            <link rel="apple-touch-icon" sizes="180x180" href="/site/apple-touch-icon.png" />
+            <link rel="apple-touch-icon" sizes="180x180" href="/site/apple-touch-icon-180x180.png" />
             <link rel="icon" type="image/png" sizes="96x96" href="/site/favicon-96x96.png"  />
-            <link rel="icon" type="image/svg+xml" href="/site/favicon.svg" />
+            <link rel="icon" type="image/svg+xml" sizes="any" href="/site/favicon.svg" />
             <link rel="shortcut icon" href="/site/favicon.ico" />
 
 

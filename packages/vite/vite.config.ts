@@ -23,6 +23,7 @@ export default defineConfig({
                 'node:fs',
                 'node:path',
                 'rollup',
+                'sharp',
                 'unplugin-vue-components',
                 'vite-plugin-pwa',
                 'workbox-build',

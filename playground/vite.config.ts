@@ -18,10 +18,6 @@ export default defineConfig({
             name: 'Aerogel Playground',
             description: 'Explore this playground to see what Aerogel can do',
             baseUrl: 'https://aerogel.js.org/playground/',
-            icons: {
-                '192x192': 'android-chrome-192x192.png',
-                '512x512': 'android-chrome-512x512.png',
-            },
         }),
         Components({
             dts: 'src/types/components.d.ts',

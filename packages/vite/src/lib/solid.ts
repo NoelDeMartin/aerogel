@@ -2,11 +2,12 @@ import { md5 } from '@noeldemartin/utils';
 import type { Connect } from 'vite';
 import type { PluginContext } from 'rollup';
 
+import { ICONS } from '@aerogel/vite/lib/icons';
 import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 
 import type { VirtualAerogelSolid } from 'virtual:aerogel-solid';
 
-function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocument | null {
+function createClientIDDocument(app: AppInfo): ClientIDDocument | null {
     if (!app.baseUrl) {
         // eslint-disable-next-line no-console
         console.warn(
@@ -18,11 +19,6 @@ function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocumen
     }
 
     const baseUrl = app.baseUrl.endsWith('/') ? app.baseUrl : `${app.baseUrl}/`;
-    const logoPublicPath =
-        options.icons &&
-        (Array.isArray(options.icons)
-            ? options.icons[0]?.src
-            : (options.icons['512x512'] ?? Object.values(options.icons).pop()));
     const clientID: ClientIDDocument = {
         '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld',
         'client_id': `${baseUrl}clientid.jsonld`,
@@ -34,8 +30,8 @@ function createClientIDDocument(app: AppInfo, options: Options): ClientIDDocumen
         'response_types': ['code'],
     };
 
-    if (logoPublicPath) {
-        clientID.logo_uri = baseUrl + logoPublicPath;
+    if (app.baseIconPath) {
+        clientID.logo_uri = baseUrl + ICONS.pwa512.fileName;
     }
 
     return clientID;
@@ -53,12 +49,12 @@ export interface ClientIDDocument {
     response_types: string[];
 }
 
-export function generateSolidAssets(context: PluginContext, app: AppInfo, options: Options): void {
+export function generateSolidAssets(context: PluginContext, app: AppInfo): void {
     if (!app.plugins?.includes('solid')) {
         return;
     }
 
-    const clientID = createClientIDDocument(app, options);
+    const clientID = createClientIDDocument(app);
 
     if (!clientID) {
         return;
@@ -80,7 +76,7 @@ export function generateSolidAssets(context: PluginContext, app: AppInfo, option
 
 export function generateSolidVirtualModule(app: AppInfo, options: Options): string {
     const clientId = options.solidClientId ?? true;
-    const clientIdDocument = typeof clientId !== 'boolean' ? clientId : createClientIDDocument(app, options);
+    const clientIdDocument = typeof clientId !== 'boolean' ? clientId : createClientIDDocument(app);
     const virtual: VirtualAerogelSolid = {};
 
     if (clientId && clientIdDocument) {
@@ -90,7 +86,7 @@ export function generateSolidVirtualModule(app: AppInfo, options: Options): stri
     return `export default ${JSON.stringify(virtual)};`;
 }
 
-export function solidMiddleware(app: AppInfo, options: Options): Connect.NextHandleFunction {
+export function solidMiddleware(app: AppInfo): Connect.NextHandleFunction {
     return (request, response, next) => {
         if (!request.url?.endsWith('/clientid.jsonld')) {
             next();
@@ -98,7 +94,7 @@ export function solidMiddleware(app: AppInfo, options: Options): Connect.NextHan
             return;
         }
 
-        const clientID = createClientIDDocument(app, options);
+        const clientID = createClientIDDocument(app);
 
         if (!clientID) {
             next();
