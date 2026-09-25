@@ -1,122 +1,125 @@
 <template>
     <div class="flex flex-col gap-2">
-        <table
-            :id
-            class="border-(--border-color) w-full border-collapse border [--border-color:var(--color-slate-300)]"
-        >
-            <thead>
-                <tr>
-                    <th
-                        v-for="(column, columnIndex) of columns"
-                        :key="columnIndex"
-                        class="border-(--border-color) border"
-                        :class="{ 'px-4 py-2.5': !column.sortable }"
-                        :aria-sort="
-                            column.sortable && column.field
-                                ? sortingColumns[column.field]
-                                    ? ARIA_SORT[sortingColumns[column.field] as ArraySortDirection]
-                                    : 'none'
-                                : undefined
-                        "
-                    >
-                        <Button
-                            v-if="column.sortable"
-                            variant="ghost"
-                            class="w-full justify-start rounded-none px-4 py-2.5"
-                            :title="
-                                !(column.field && column.field in sortingColumns)
-                                    ? translateWithDefault('pagination.sortAscending', 'Sort ascending')
-                                    : sortingColumns[column.field] === 'asc'
-                                        ? translateWithDefault('pagination.sortDescending', 'Sort descending')
-                                        : translateWithDefault('pagination.unsort', 'Reset sort')
+        <template v-if="items.length > 0">
+            <table
+                :id
+                class="border-(--border-color) w-full border-collapse border [--border-color:var(--color-slate-300)]"
+            >
+                <thead>
+                    <tr>
+                        <th
+                            v-for="(column, columnIndex) of columns"
+                            :key="columnIndex"
+                            class="border-(--border-color) border"
+                            :class="{ 'px-4 py-2.5': !column.sortable }"
+                            :aria-sort="
+                                column.sortable && column.field
+                                    ? sortingColumns[column.field]
+                                        ? ARIA_SORT[sortingColumns[column.field] as ArraySortDirection]
+                                        : 'none'
+                                    : undefined
                             "
-                            @click="toggleSort(column.field, $event)"
                         >
-                            <template v-if="!(column.field && column.field in sortingColumns)">
-                                <IconListBold class="size-4" />
-                                <span class="sr-only">
-                                    {{ translateWithDefault('pagination.sortAscending', 'Sort ascending') }}
-                                </span>
-                            </template>
-                            <template v-else-if="column.field && sortingColumns[column.field] === 'asc'">
-                                <IconSortAscendingBold class="size-4" />
-                                <span class="sr-only">
-                                    {{ translateWithDefault('pagination.sortDescending', 'Sort descending') }}
-                                </span>
-                            </template>
-                            <template v-else>
-                                <IconSortDescendingBold class="size-4" />
-                                <span class="sr-only">
-                                    {{ translateWithDefault('pagination.unsort', 'Reset sort') }}
-                                </span>
-                            </template>
-                            <span class="text-base font-semibold">{{ column.header }}</span>
-                        </Button>
-                        <span v-else class="text-base font-semibold">
-                            {{ column.header }}
-                        </span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item, rowIndex) of filteredItems" :key="getItemKey(item, rowIndex)">
-                    <td
-                        v-for="(column, columnIndex) of columns"
-                        :key="columnIndex"
-                        class="border-(--border-color) border px-4 py-2.5"
-                    >
-                        <CellContent :content="column.content" :item />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div v-if="pagination" class="flex items-center justify-between">
-            <span>
-                {{
-                    translateWithDefault('pagination.summary', 'Showing {start} to {end} of {total} {items}', {
-                        start: pagination.start,
-                        end: pagination.end,
-                        total: items.length,
-                        items: itemsLabel,
-                    })
-                }}
-            </span>
-            <nav class="flex items-center gap-1" :aria-label="translateWithDefault('pagination.label', 'Pagination')">
-                <Button
-                    variant="ghost"
-                    :disabled="currentPage === 1"
-                    :aria-controls="id"
-                    :title="translateWithDefault('pagination.previous', 'Previous')"
-                    @click="currentPage = currentPage - 1"
-                >
-                    <IconCheveronLeft class="size-4" />
-                    <span class="sr-only">{{ translateWithDefault('pagination.previous', 'Previous') }}</span>
-                </Button>
-                <template v-for="(page, pageIndex) of pagination.pages" :key="pageIndex">
+                            <Button
+                                v-if="column.sortable"
+                                variant="ghost"
+                                class="w-full justify-start rounded-none px-4 py-2.5"
+                                :title="
+                                    !(column.field && column.field in sortingColumns)
+                                        ? translateWithDefault('pagination.sortAscending', 'Sort ascending')
+                                        : sortingColumns[column.field] === 'asc'
+                                            ? translateWithDefault('pagination.sortDescending', 'Sort descending')
+                                            : translateWithDefault('pagination.unsort', 'Reset sort')
+                                "
+                                @click="toggleSort(column.field, $event)"
+                            >
+                                <template v-if="!(column.field && column.field in sortingColumns)">
+                                    <IconListBold class="size-4" />
+                                    <span class="sr-only">
+                                        {{ translateWithDefault('pagination.sortAscending', 'Sort ascending') }}
+                                    </span>
+                                </template>
+                                <template v-else-if="column.field && sortingColumns[column.field] === 'asc'">
+                                    <IconSortAscendingBold class="size-4" />
+                                    <span class="sr-only">
+                                        {{ translateWithDefault('pagination.sortDescending', 'Sort descending') }}
+                                    </span>
+                                </template>
+                                <template v-else>
+                                    <IconSortDescendingBold class="size-4" />
+                                    <span class="sr-only">
+                                        {{ translateWithDefault('pagination.unsort', 'Reset sort') }}
+                                    </span>
+                                </template>
+                                <span class="text-base font-semibold">{{ column.header }}</span>
+                            </Button>
+                            <span v-else class="text-base font-semibold">
+                                {{ column.header }}
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, rowIndex) of filteredItems" :key="getItemKey(item, rowIndex)">
+                        <td
+                            v-for="(column, columnIndex) of columns"
+                            :key="columnIndex"
+                            class="border-(--border-color) border px-4 py-2.5"
+                        >
+                            <CellContent :content="column.content" :item />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-if="pagination" class="flex items-center justify-between">
+                <span>
+                    {{
+                        translateWithDefault('pagination.summary', 'Showing {start} to {end} of {total} {items}', {
+                            start: pagination.start,
+                            end: pagination.end,
+                            total: items.length,
+                            items: itemsLabel,
+                        })
+                    }}
+                </span>
+                <nav class="flex items-center gap-1" :aria-label="translateWithDefault('pagination.label', 'Pagination')">
                     <Button
-                        v-if="typeof page === 'number'"
+                        variant="ghost"
+                        :disabled="currentPage === 1"
+                        :aria-controls="id"
+                        :title="translateWithDefault('pagination.previous', 'Previous')"
+                        @click="currentPage = currentPage - 1"
+                    >
+                        <IconCheveronLeft class="size-4" />
+                        <span class="sr-only">{{ translateWithDefault('pagination.previous', 'Previous') }}</span>
+                    </Button>
+                    <template v-for="(page, pageIndex) of pagination.pages" :key="pageIndex">
+                        <Button
+                            v-if="typeof page === 'number'"
+                            variant="ghost"
+                            :aria-controls="id"
+                            :class="{ 'font-bold': currentPage === page }"
+                            :aria-current="currentPage === page ? 'page' : undefined"
+                            @click="currentPage = page"
+                        >
+                            {{ page }}
+                        </Button>
+                        <span v-else class="px-2" aria-hidden="true">{{ page }}</span>
+                    </template>
+                    <Button
                         variant="ghost"
                         :aria-controls="id"
-                        :class="{ 'font-bold': currentPage === page }"
-                        :aria-current="currentPage === page ? 'page' : undefined"
-                        @click="currentPage = page"
+                        :disabled="currentPage === pagination.totalPages"
+                        :title="translateWithDefault('pagination.next', 'Next')"
+                        @click="currentPage = currentPage + 1"
                     >
-                        {{ page }}
+                        <IconCheveronRight class="size-4" />
+                        <span class="sr-only">{{ translateWithDefault('pagination.next', 'Next') }}</span>
                     </Button>
-                    <span v-else class="px-2" aria-hidden="true">{{ page }}</span>
-                </template>
-                <Button
-                    variant="ghost"
-                    :aria-controls="id"
-                    :disabled="currentPage === pagination.totalPages"
-                    :title="translateWithDefault('pagination.next', 'Next')"
-                    @click="currentPage = currentPage + 1"
-                >
-                    <IconCheveronRight class="size-4" />
-                    <span class="sr-only">{{ translateWithDefault('pagination.next', 'Next') }}</span>
-                </Button>
-            </nav>
-        </div>
+                </nav>
+            </div>
+        </template>
+        <slot v-else name="empty" />
     </div>
 </template>
 
@@ -150,7 +153,7 @@ const {
     itemsLabel = 'items',
     itemsPerPage = 10,
 } = defineProps<{ items: T[]; itemsLabel?: string; itemKey?: DeepKeyOf<T>; itemsPerPage?: number }>();
-const slots = defineSlots<{ default?(): VNode[] }>();
+const slots = defineSlots<{ default?(): VNode[]; empty?(): VNode[] }>();
 const id = `data-table-${uuid()}`;
 const currentPage = ref(1);
 const sorting = shallowRef<SortedColumn[]>([]);
