@@ -17,9 +17,9 @@ export interface ComboboxProps<T = unknown> extends SelectProps<T> {
     newInputValue?: (value: string) => T;
 }
 
-export type ComboboxEmits<T = unknown> = SelectEmits<T> & {
+export interface ComboboxEmits<T = unknown> extends SelectEmits<T> {
     'update:open': [value: boolean];
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement>(
@@ -31,6 +31,7 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
         acceptableValue,
         update: baseUpdate,
         renderOption,
+        isMultiple,
     } = useSelect<T, TControlElement>(
         computed(() => ({
             as: props.value.as ?? 'div',
@@ -45,12 +46,21 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
 
     const expose = {
         ...selectExpose,
-        input: ref(acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
+        input: ref(
+            !isMultiple.value && acceptableValue.value ? renderOption(acceptableValue.value as T) : '',
+        ),
         preventChange: ref(false),
         $group: ref(null),
     } satisfies AcceptRefs<ComboboxExpose<T, TControlElement>>;
 
     function update(value: AcceptableValue) {
+        if (isMultiple.value) {
+            expose.input.value = '';
+            baseUpdate(value);
+
+            return;
+        }
+
         if (props.value.options || props.value.newInputValue) {
             expose.input.value = renderOption(value as T);
         }
@@ -59,7 +69,7 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
     }
 
     watch(expose.value, (value) => {
-        if (!props.value.options && !props.value.newInputValue) {
+        if (isMultiple.value || (!props.value.options && !props.value.newInputValue)) {
             return;
         }
 
@@ -74,7 +84,7 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
     });
 
     watch(expose.input, (value) => {
-        if (!props.value.options && !props.value.newInputValue) {
+        if (isMultiple.value || (!props.value.options && !props.value.newInputValue)) {
             return;
         }
 

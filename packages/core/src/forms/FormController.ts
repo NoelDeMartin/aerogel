@@ -3,7 +3,14 @@ import { MagicObject, arrayRemove } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 import type { z } from 'zod';
 
-import { getDefaultValue, getFinalSchema, isBooleanSchema, isSchemaRequired, validateSchema } from './internals/zod';
+import {
+    getDefaultValue,
+    getFinalSchema,
+    isArraySchema,
+    isBooleanSchema,
+    isSchemaRequired,
+    validateSchema,
+} from './internals/zod';
 
 const validForms: WeakMap<FormController, ComputedRef<boolean>> = new WeakMap();
 
@@ -91,6 +98,12 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         const schema = this._fields[field];
 
         return schema ? isSchemaRequired(schema) : false;
+    }
+
+    public isArrayField<T extends keyof Fields>(field: T): boolean {
+        const schema = this._fields[field];
+
+        return schema ? isArraySchema(schema) : false;
     }
 
     public getFieldErrors<T extends keyof Fields>(field: T): string[] | null {

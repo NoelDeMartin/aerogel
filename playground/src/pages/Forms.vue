@@ -3,38 +3,50 @@
         {{ $t('forms.title') }}
     </PageTitle>
     <Form :form class="flex grow flex-col items-center" @submit="submit()">
-        <div class="mt-8 flex flex-col items-center rounded-lg bg-gray-100 p-8 pb-4 shadow-2xs">
-            <div class="flex">
-                <Input
-                    autofocus
-                    name="name"
-                    class="h-full"
-                    input-class="h-full"
-                    wrapper-class="h-full"
-                    :aria-label="$t('forms.name_label')"
-                    :placeholder="$t('forms.name_placeholder')"
-                />
-                <Button submit class="ml-2 shrink-0">
-                    {{ $t('forms.submit') }}
-                </Button>
-            </div>
+        <div class="mt-8 flex w-full max-w-sm flex-col gap-3 rounded-lg bg-gray-100 p-8 shadow-2xs">
+            <Input
+                autofocus
+                name="name"
+                :label="$t('forms.name_label')"
+                :placeholder="$t('forms.name_placeholder')"
+            />
 
-            <Checkbox name="accept" class="mt-4">
+            <Combobox
+                name="roles"
+                :label="$t('forms.roles_label')"
+                :placeholder="$t('forms.roles_placeholder')"
+                :options="ROLES"
+                :render-option="renderRole"
+            />
+
+            <Checkbox name="accept">
                 {{ $t('forms.conditions') }}
             </Checkbox>
+
+            <Button submit>
+                {{ $t('forms.submit') }}
+            </Button>
         </div>
     </Form>
 </template>
 
 <script setup lang="ts">
-import { UI, translate, useForm } from '@aerogel/core';
+import { UI, translate, translateWithDefault, useForm } from '@aerogel/core';
 import { stringToSlug } from '@noeldemartin/utils';
 import { z } from 'zod';
 
+const ROLES = ['cook', 'chemistry_teacher', 'kingpin', 'father', 'meth_manufacturer', 'pizza_thrower'] as const;
+type Role = (typeof ROLES)[number];
+
 const form = useForm({
     name: z.string(),
-    accept: z.literal(true).default(true),
+    roles: z.array(z.enum(ROLES, { message: 'invalid_role' })).min(1, 'required').max(3, 'too_many_roles').default([]),
+    accept: z.literal(true),
 });
+
+function renderRole(role: Role): string {
+    return translateWithDefault(`forms.roles.${role}`, role);
+}
 
 function submit() {
     if (stringToSlug(form.name) === 'heisenberg') {
@@ -43,7 +55,12 @@ function submit() {
         return;
     }
 
-    UI.alert(translate('forms.greeting', { name: form.name }));
+    UI.alert(
+        translate('forms.greeting', {
+            name: form.name,
+            roles: form.roles.map(renderRole).join(', '),
+        }),
+    );
 
     form.reset();
 }

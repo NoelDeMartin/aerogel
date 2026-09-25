@@ -176,6 +176,7 @@ describe('FormController', () => {
             age: z.number().default(42),
             accept: z.literal(true),
             subscribe: z.boolean().default(false),
+            roles: z.array(z.string()),
         });
 
         expect(form.isFieldRequired('name')).toBe(true);
@@ -183,12 +184,30 @@ describe('FormController', () => {
         expect(form.isFieldRequired('age')).toBe(true);
         expect(form.isFieldRequired('accept')).toBe(true);
         expect(form.isFieldRequired('subscribe')).toBe(false);
+        expect(form.isArrayField('roles')).toBe(true);
+        expect(form.isArrayField('name')).toBe(false);
         expect(form.getFieldNativeInputType('name')).toEqual('text');
         expect(form.getFieldNativeInputType('email')).toEqual('email');
         expect(form.getFieldNativeInputType('age')).toEqual('number');
         expect(form.getFieldNativeInputType('accept')).toEqual('checkbox');
         expect(form.getFieldNativeInputType('subscribe')).toEqual('checkbox');
         expect(form.age).toEqual(42);
+    });
+
+    it('introspects array fields', () => {
+        const form = useForm({
+            tags: z.array(z.string()).min(1).max(3).default([]),
+            ids: z.array(z.number()).optional().nullable(),
+            slugs: z.array(z.string()).transform((values) => values.map((value) => value.toLowerCase())),
+            objects: z.array(z.object({ id: z.string() })).default([]),
+            csv: z.string().transform((value) => value.split(',')),
+        });
+
+        expect(form.isArrayField('tags')).toBe(true);
+        expect(form.isArrayField('ids')).toBe(true);
+        expect(form.isArrayField('slugs')).toBe(true);
+        expect(form.isArrayField('objects')).toBe(true);
+        expect(form.isArrayField('csv')).toBe(false);
     });
 
     it('infers field types', () => {

@@ -1,4 +1,4 @@
-import { dontSee, matchImageSnapshot, press, see, test } from '@aerogel/playwright';
+import { dontSee, input, matchImageSnapshot, press, see, test } from '@aerogel/playwright';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/components');
@@ -55,6 +55,18 @@ test('Modals', async ({ page }) => {
     await matchImageSnapshot(page, 'Custom');
     await press(page, 'Nice!');
     await dontSee(page, 'You can also create your own modals');
+});
+
+test('Multi Combobox', async ({ page }) => {
+    await see(page, 'Remove One');
+    await see(page, 'Remove Three');
+
+    await press(page, 'Remove Three');
+    await dontSee(page, 'Remove Three');
+    await see(page, 'Remove One');
+
+    await input(page, 'Multi Combobox').press('Backspace');
+    await dontSee(page, 'Remove One');
 });
 
 test('Toasts', async ({ page }) => {

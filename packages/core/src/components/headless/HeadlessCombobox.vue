@@ -7,13 +7,14 @@
         :reset-search-term-on-blur
         :reset-search-term-on-select
         :model-value="acceptableValue"
+        :multiple="expose.multiple.value"
         :by="compareOptions"
         :class="wrapperClass"
         @update:open="emit('update:open', $event)"
         @update:model-value="update($event)"
     >
         <component :is="as" v-bind="$attrs">
-            <slot :model-value :open />
+            <slot :model-value="acceptableValue" :open />
         </component>
     </ComboboxRoot>
 </template>

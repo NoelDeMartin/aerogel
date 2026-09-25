@@ -9,9 +9,11 @@
         @update:model-value="emit('update:modelValue', $event)"
     >
         <ComboboxLabel />
-        <ComboboxTrigger @focus="open = true" @change="open = true" @blur="open = false" />
-        <HeadlessSelectError class="mt-2 text-sm text-red-600" />
-        <ComboboxOptions :new-input-value="newInputValue" @select="open = false" />
+        <slot>
+            <ComboboxTrigger @focus="open = true" @change="open = true" @blur="open = false" />
+            <HeadlessSelectError class="mt-2 text-sm text-red-600" />
+            <ComboboxOptions :new-input-value="newInputValue" @select="open = false" />
+        </slot>
     </HeadlessCombobox>
 </template>
 

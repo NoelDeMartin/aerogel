@@ -1,12 +1,13 @@
 <template>
     <SelectRoot
         v-slot="{ open }"
+        :multiple="expose.multiple.value"
         :model-value="acceptableValue"
         :by="compareOptions"
         @update:model-value="update($event)"
     >
         <component :is="as" v-bind="$attrs">
-            <slot :model-value :open>
+            <slot :model-value="acceptableValue" :open>
                 <HeadlessSelectTrigger />
                 <HeadlessSelectOptions />
             </slot>

@@ -59,6 +59,10 @@ export function isBooleanSchema(schema: z.ZodType): boolean {
     }
 }
 
+export function isArraySchema(schema: z.ZodType): boolean {
+    return getFinalSchema(schema).def.type === 'array';
+}
+
 export function getDefaultValue(schema: z.ZodType): unknown {
     let current: z.ZodType | null = schema;
 

@@ -2,6 +2,7 @@ export * from './app';
 export * from './classes';
 export * from './composition';
 export * from './datatables';
+export * from './dom';
 export * from './env';
 export * from './markdown';
 export * from './time';

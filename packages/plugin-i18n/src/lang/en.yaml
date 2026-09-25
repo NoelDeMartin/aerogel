@@ -14,6 +14,8 @@ ui:
     select: Select an option
     selectEmpty: No options available
     comboboxEmpty: No options found
+    remove: Remove
+    removeItem: Remove {item}
 
 pagination:
     sortAscending: 'Sort ascending'

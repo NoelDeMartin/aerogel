@@ -12,7 +12,7 @@
             <ComboboxOption
                 v-if="showInputOption"
                 :value="newInputValue?.(combobox.input) ?? (combobox.input as AcceptableValue)"
-                @select="$emit('select')"
+                @select="onSelect"
             >
                 {{ combobox.input }}
             </ComboboxOption>
@@ -20,7 +20,7 @@
                 v-for="option in filteredOptions"
                 :key="option.key"
                 :value="option.value"
-                @select="$emit('select')"
+                @select="onSelect"
             >
                 {{ option.label }}
             </ComboboxOption>
@@ -42,8 +42,7 @@ import HeadlessComboboxContent from '../headless/HeadlessComboboxContent.vue';
 import HeadlessComboboxEmpty from '../headless/HeadlessComboboxEmpty.vue';
 import HeadlessComboboxGroup from '../headless/HeadlessComboboxGroup.vue';
 
-defineEmits<{ select: [] }>();
-
+const emit = defineEmits<{ select: [] }>();
 const { newInputValue, class: rootClasses } = defineProps<{
     newInputValue?: (value: string) => unknown;
     class?: HTMLAttributes['class'];
@@ -55,7 +54,7 @@ const filteredOptions = computed(
     () => combobox.options?.filter((option) => contains(option.label, combobox.input)) ?? [],
 );
 const showInputOption = computed(
-    () => combobox.input && !filteredOptions.value.some((option) => option.label === combobox.input),
+    () => combobox.input.trim() !== '' && !filteredOptions.value.some((option) => option.label === combobox.input),
 );
 const renderedClasses = computed(() =>
     classes(
@@ -63,4 +62,12 @@ const renderedClasses = computed(() =>
         combobox.optionsClass,
         rootClasses,
     ));
+
+function onSelect() {
+    if (combobox.multiple) {
+        return;
+    }
+
+    emit('select');
+}
 </script>

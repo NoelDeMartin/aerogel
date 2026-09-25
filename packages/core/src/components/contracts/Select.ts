@@ -21,8 +21,9 @@ export interface HasSelectOptionLabel {
     label: string | (() => string);
 }
 
-export interface SelectProps<T = unknown> extends FormControlProps<T> {
+export interface SelectProps<T = unknown> extends FormControlProps<T | T[]> {
     as?: AsTag | Component;
+    multiple?: boolean;
     options?: readonly T[];
     placeholder?: string;
     renderOption?: (option: T) => string;
@@ -33,18 +34,22 @@ export interface SelectProps<T = unknown> extends FormControlProps<T> {
     side?: SelectContentProps['side'];
 }
 
-export interface SelectEmits<T = unknown> extends FormControlEmits<T> {}
+export interface SelectEmits<T = unknown> extends FormControlEmits<T | T[]> {}
 
 export interface SelectExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement>
-    extends FormControlExpose<T, TControlElement> {
+    extends FormControlExpose<T | T[], TControlElement> {
     options: ComputedRef<Nullable<readonly SelectOptionData[]>>;
     selectedOption: ComputedRef<Nullable<SelectOptionData>>;
+    selectedOptions: ComputedRef<readonly SelectOptionData[]>;
+    selectedItems: ComputedRef<T[]>;
+    multiple: ComputedRef<boolean>;
     placeholder: ComputedRef<string>;
     labelClass: ComputedRef<HTMLAttributes['class']>;
     optionsClass: ComputedRef<HTMLAttributes['class']>;
     align?: SelectContentProps['align'];
     side?: SelectContentProps['side'];
     renderOption: (option: T) => string;
+    remove(item: T): void;
 }
 
 export function hasSelectOptionLabel(option: unknown): option is HasSelectOptionLabel {
@@ -58,6 +63,16 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
 ) {
     const $control = ref<TControlElement | null>(null) as Ref<TControlElement | null>;
     const form = inject<FormController | null>('form', null);
+
+    const isMultiple = computed(() => {
+        const { multiple, name } = props.value;
+
+        return !!multiple || !!(form && name && form.isArrayField(name));
+    });
+
+    const compareOptions = (a: T, b: T): boolean =>
+        (props.value.compareOptions ? props.value.compareOptions(a, b) : a === b);
+
     const renderOption = (option: T): string => {
         if (option === undefined || option === null) {
             return '';
@@ -69,16 +84,24 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
                 ? evaluate(option.label as string)
                 : toString(option);
     };
-    const computedValue = computed(() => {
+
+    const rawValue = computed(() => {
         const { name, modelValue } = props.value;
 
-        if (form && name) {
-            return form.getFieldValue(name) as T;
+        return form && name ? (form.getFieldValue(name) as T | T[] | undefined) : modelValue;
+    });
+
+    const selectedItems = computed<T[]>(() => {
+        if (!isMultiple.value) {
+            return [];
         }
 
-        return modelValue as T;
+        return Array.isArray(rawValue.value) ? rawValue.value : [];
     });
+
+    const computedValue = computed<T | T[]>(() => (isMultiple.value ? selectedItems.value : (rawValue.value as T)));
     const acceptableValue = computed(() => computedValue.value as AcceptableValue);
+
     const errors = computed(() => {
         if (!form || !props.value.name) {
             return null;
@@ -86,6 +109,7 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
 
         return form.errors[props.value.name] ?? null;
     });
+
     const computedOptions = computed(() => {
         if (!props.value.options) {
             return null;
@@ -97,6 +121,48 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
             value: option as AcceptableValue,
         }));
     });
+
+    const selectedOptions = computed(() => {
+        if (!computedOptions.value) {
+            return [];
+        }
+
+        if (isMultiple.value) {
+            return computedOptions.value.filter((option) => {
+                return selectedItems.value.some((item) => compareOptions(option.value as T, item));
+            });
+        }
+
+        const match = computedOptions.value.find((option) => {
+            return compareOptions(option.value as T, computedValue.value as T);
+        });
+
+        return match ? [match] : [];
+    });
+
+    const selectedOption = computed(() => selectedOptions.value[0] ?? null);
+
+    function update(value: AcceptableValue) {
+        const newValue = isMultiple.value ? (Array.isArray(value) ? (value as T[]) : []) : (value as T);
+
+        if (form && props.value.name) {
+            form.setFieldValue(props.value.name, newValue);
+
+            return;
+        }
+
+        emit('update:modelValue', newValue);
+    }
+
+    function remove(item: T) {
+        if (!isMultiple.value) {
+            return;
+        }
+
+        const newValue = selectedItems.value.filter((val) => !compareOptions(val, item));
+
+        update(newValue as unknown as AcceptableValue);
+    }
 
     const expose = {
         renderOption,
@@ -112,11 +178,11 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
         description: computed(() => props.value.description),
         placeholder: computed(() => props.value.placeholder ?? translateWithDefault('ui.select', 'Select an option')),
         options: computedOptions,
-        selectedOption: computed(() =>
-            computedOptions.value?.find((option) =>
-                props.value.compareOptions
-                    ? props.value.compareOptions(option.value as T, props.value.modelValue as T)
-                    : option.value === props.value.modelValue)),
+        selectedOption,
+        selectedOptions,
+        selectedItems,
+        multiple: isMultiple,
+        remove,
         errors: readonly(errors),
         required: computed(() => {
             if (!props.value.name || !form) {
@@ -125,23 +191,18 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
 
             return form.isFieldRequired(props.value.name);
         }),
-        update(value) {
-            if (form && props.value.name) {
-                form.setFieldValue(props.value.name, value);
-
-                return;
-            }
-
-            emit('update:modelValue', value);
-        },
+        update: value => update(value as AcceptableValue),
         ...exposeElementMethods(() => $control.value),
     } satisfies AcceptRefs<SelectExpose<T, TControlElement>>;
 
-    function update(value: AcceptableValue) {
-        expose.update(value as T);
-    }
-
     provide('select', expose);
 
-    return { expose, acceptableValue, update, renderOption };
+    return {
+        expose,
+        acceptableValue,
+        update,
+        renderOption,
+        isMultiple,
+        selectedItems,
+    };
 }

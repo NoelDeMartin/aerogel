@@ -87,8 +87,32 @@
                 />
             </div>
             <div class="mt-4">
+                <Select
+                    v-model="multiSelectValue"
+                    multiple
+                    :label="$t('components.inputs_select_multi')"
+                    :options="
+                        $t('components.inputs_select_options')
+                            .split(',')
+                            .map((o) => o.trim())
+                    "
+                />
+            </div>
+            <div class="mt-4">
                 <Combobox
                     :label="$t('components.inputs_combobox')"
+                    :options="
+                        $t('components.inputs_combobox_options')
+                            .split(',')
+                            .map((o) => o.trim())
+                    "
+                />
+            </div>
+            <div class="mt-4">
+                <Combobox
+                    v-model="multiComboboxValue"
+                    multiple
+                    :label="$t('components.inputs_combobox_multi')"
                     :options="
                         $t('components.inputs_combobox_options')
                             .split(',')
@@ -254,6 +278,8 @@ import FullscreenModal from './components/FullscreenModal.vue';
 import NestedModal from './components/NestedModal.vue';
 
 const switchValue = ref(false);
+const multiSelectValue = ref(['One', 'Two']);
+const multiComboboxValue = ref(['One', 'Three']);
 
 async function showLoadingWithProgress() {
     const progress = ref(0);
