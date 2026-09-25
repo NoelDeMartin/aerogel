@@ -1,25 +1,21 @@
 import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
-import type { FormFieldValue } from '@aerogel/core/forms';
-
 import type { ElementMethods } from './helpers';
 
-export interface FormControlProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
+export interface FormControlProps<T = unknown> {
     name?: string;
     label?: string;
     description?: string;
     modelValue?: T;
 }
 
-export interface FormControlEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> {
+export interface FormControlEmits<T = unknown> {
     'update:modelValue': [value: T];
 }
 
-export interface FormControlExpose<
-    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
-    TControlElement extends HTMLElement = HTMLElement,
-> extends ElementMethods {
+export interface FormControlExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement>
+    extends ElementMethods {
     $control: Ref<TControlElement | null>;
     id: string;
     name: ComputedRef<Nullable<string>>;

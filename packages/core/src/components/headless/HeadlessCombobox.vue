@@ -18,15 +18,13 @@
     </ComboboxRoot>
 </template>
 
-<script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
+<script setup lang="ts" generic="T">
 import { ComboboxRoot } from 'reka-ui';
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
 
 import { useCombobox } from '@aerogel/core/components/contracts/Combobox';
 import type { ComboboxEmits, ComboboxProps } from '@aerogel/core/components/contracts/Combobox';
-import type { FormFieldValue } from '@aerogel/core/forms';
 
 defineOptions({ inheritAttrs: false });
 

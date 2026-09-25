@@ -10,7 +10,6 @@ import lang from '@aerogel/core/lang';
 import services from '@aerogel/core/services';
 import testing from '@aerogel/core/testing';
 import ui from '@aerogel/core/ui';
-import forms from '@aerogel/core/forms';
 import { setupEnv } from '@aerogel/core/utils/env';
 import { installPlugins } from '@aerogel/core/plugins';
 import { queueStartupError } from '@aerogel/core/errors/internal';
@@ -24,7 +23,7 @@ export interface AerogelApp {
 }
 
 export async function bootstrapApplication(app: AppInstance, options: AerogelOptions = {}): Promise<void> {
-    const plugins = [testing, directives, errors, lang, services, ui, forms, ...(options.plugins ?? [])];
+    const plugins = [testing, directives, errors, lang, services, ui, ...(options.plugins ?? [])];
 
     App.instance = app;
 

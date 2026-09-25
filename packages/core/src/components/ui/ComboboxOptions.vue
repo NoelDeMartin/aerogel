@@ -33,10 +33,8 @@ import { computed } from 'vue';
 import { useFilter } from 'reka-ui';
 import type { AcceptableValue } from 'reka-ui';
 import type { HTMLAttributes } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
 
 import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
-import type { FormFieldValue } from '@aerogel/core/forms';
 import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
 
 import ComboboxOption from './ComboboxOption.vue';
@@ -47,7 +45,7 @@ import HeadlessComboboxGroup from '../headless/HeadlessComboboxGroup.vue';
 defineEmits<{ select: [] }>();
 
 const { newInputValue, class: rootClasses } = defineProps<{
-    newInputValue?: (value: string) => Nullable<FormFieldValue>;
+    newInputValue?: (value: string) => unknown;
     class?: HTMLAttributes['class'];
 }>();
 const { contains } = useFilter({ sensitivity: 'base' });

@@ -7,11 +7,9 @@
 <script setup lang="ts">
 import { computed, inject, provide, readonly, ref } from 'vue';
 import { uuid } from '@noeldemartin/utils';
-import type { Nullable } from '@noeldemartin/utils';
 
 import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
 import type FormController from '@aerogel/core/forms/FormController';
-import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type {
     FormControlEmits,
     FormControlExpose,
@@ -50,11 +48,11 @@ const expose = {
             return;
         }
 
-        return form.getFieldRules(name).includes('required');
+        return form.isFieldRequired(name);
     }),
     update(value) {
         if (form && name) {
-            form.setFieldValue(name, value as FormFieldValue);
+            form.setFieldValue(name, value);
 
             return;
         }
@@ -62,7 +60,7 @@ const expose = {
         emit('update:modelValue', value);
     },
     ...exposeElementMethods(() => $control.value),
-} satisfies FormControlExpose<Nullable<FormFieldValue>, HTMLElement>;
+} satisfies FormControlExpose<unknown, HTMLElement>;
 
 provide('form-control', expose);
 defineExpose(expose);

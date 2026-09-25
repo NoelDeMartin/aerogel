@@ -27,12 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { UI, requiredBooleanInput, requiredStringInput, translate, useForm } from '@aerogel/core';
+import { UI, translate, useForm } from '@aerogel/core';
 import { stringToSlug } from '@noeldemartin/utils';
+import { z } from 'zod';
 
 const form = useForm({
-    name: requiredStringInput(),
-    accept: requiredBooleanInput(true),
+    name: z.string(),
+    accept: z.literal(true).default(true),
 });
 
 function submit() {

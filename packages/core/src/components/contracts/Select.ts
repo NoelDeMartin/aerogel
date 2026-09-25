@@ -6,7 +6,7 @@ import type { Component, ComputedRef, EmitFn, HTMLAttributes, Ref } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
 
 import { translateWithDefault } from '@aerogel/core/lang';
-import type { FormController, FormFieldValue } from '@aerogel/core/forms';
+import type { FormController } from '@aerogel/core/forms';
 
 import { exposeElementMethods } from './helpers';
 import type { FormControlEmits, FormControlExpose, FormControlProps } from './FormControl';
@@ -21,9 +21,7 @@ export interface HasSelectOptionLabel {
     label: string | (() => string);
 }
 
-export interface SelectProps<
-    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
-> extends FormControlProps<T> {
+export interface SelectProps<T = unknown> extends FormControlProps<T> {
     as?: AsTag | Component;
     options?: readonly T[];
     placeholder?: string;
@@ -35,14 +33,10 @@ export interface SelectProps<
     side?: SelectContentProps['side'];
 }
 
-export interface SelectEmits<
-    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
-> extends FormControlEmits<T> {}
+export interface SelectEmits<T = unknown> extends FormControlEmits<T> {}
 
-export interface SelectExpose<
-    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
-    TControlElement extends HTMLElement = HTMLElement,
-> extends FormControlExpose<T, TControlElement> {
+export interface SelectExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement>
+    extends FormControlExpose<T, TControlElement> {
     options: ComputedRef<Nullable<readonly SelectOptionData[]>>;
     selectedOption: ComputedRef<Nullable<SelectOptionData>>;
     placeholder: ComputedRef<string>;
@@ -58,7 +52,7 @@ export function hasSelectOptionLabel(option: unknown): option is HasSelectOption
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function useSelect<T extends Nullable<FormFieldValue>, TControlElement extends HTMLElement = HTMLElement>(
+export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
     props: Ref<SelectProps<T>>,
     emit: EmitFn<SelectEmits<T>>,
 ) {
@@ -129,11 +123,11 @@ export function useSelect<T extends Nullable<FormFieldValue>, TControlElement ex
                 return;
             }
 
-            return form.getFieldRules(props.value.name).includes('required');
+            return form.isFieldRequired(props.value.name);
         }),
         update(value) {
             if (form && props.value.name) {
-                form.setFieldValue(props.value.name, value as FormFieldValue);
+                form.setFieldValue(props.value.name, value);
 
                 return;
             }

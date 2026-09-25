@@ -15,13 +15,11 @@
     </HeadlessCombobox>
 </template>
 
-<script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
+<script setup lang="ts" generic="T">
 import { ref } from 'vue';
 import { useForwardExpose } from 'reka-ui';
-import type { Nullable } from '@noeldemartin/utils';
 
 import type { ComboboxEmits, ComboboxProps } from '@aerogel/core/components/contracts/Combobox';
-import type { FormFieldValue } from '@aerogel/core/forms';
 
 import ComboboxLabel from './ComboboxLabel.vue';
 import ComboboxOptions from './ComboboxOptions.vue';

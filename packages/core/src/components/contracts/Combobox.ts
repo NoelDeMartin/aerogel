@@ -1,33 +1,28 @@
 import { computed, provide, ref, watch } from 'vue';
 import type { AcceptableValue } from 'reka-ui';
 import type { EmitFn, Ref } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
-
-import type { FormFieldValue } from '@aerogel/core/forms';
 
 import { useSelect } from './Select';
 import type { SelectEmits, SelectExpose, SelectProps } from './Select';
 import type { AcceptRefs } from '@aerogel/core/utils';
 
-export interface ComboboxExpose<
-    T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>,
-    TControlElement extends HTMLElement = HTMLElement,
-> extends SelectExpose<T, TControlElement> {
+export interface ComboboxExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement>
+    extends SelectExpose<T, TControlElement> {
     input: Ref<string>;
     preventChange: Ref<boolean>;
     $group: Ref<HTMLDivElement | null>;
 }
 
-export interface ComboboxProps<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> extends SelectProps<T> {
+export interface ComboboxProps<T = unknown> extends SelectProps<T> {
     newInputValue?: (value: string) => T;
 }
 
-export type ComboboxEmits<T extends Nullable<FormFieldValue> = Nullable<FormFieldValue>> = SelectEmits<T> & {
+export type ComboboxEmits<T = unknown> = SelectEmits<T> & {
     'update:open': [value: boolean];
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function useCombobox<T extends Nullable<FormFieldValue>, TControlElement extends HTMLElement = HTMLElement>(
+export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement>(
     props: Ref<ComboboxProps<T>>,
     emit: EmitFn<ComboboxEmits<T>>,
 ) {

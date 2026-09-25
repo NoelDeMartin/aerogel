@@ -14,14 +14,12 @@
     </SelectRoot>
 </template>
 
-<script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
+<script setup lang="ts" generic="T">
 import { SelectRoot } from 'reka-ui';
 import { computed } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
 
 import { useSelect } from '@aerogel/core/components/contracts/Select';
 import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
-import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 
 import HeadlessSelectTrigger from './HeadlessSelectTrigger.vue';
 import HeadlessSelectOptions from './HeadlessSelectOptions.vue';

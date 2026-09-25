@@ -1,7 +1,7 @@
 import { computed } from 'vue';
+import { z } from 'zod';
 
 import { useForm } from '@aerogel/core/utils/composition/forms';
-import { requiredStringInput } from '@aerogel/core/forms/utils';
 import { translateWithDefault } from '@aerogel/core/lang';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
 import type { ModalEmits, ModalExpose } from '@aerogel/core/components/contracts/Modal';
@@ -27,7 +27,7 @@ export interface PromptModalEmits extends ModalEmits<PromptModalResult> {}
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function usePromptModal(props: PromptModalProps) {
     const form = useForm({
-        draft: requiredStringInput(props.defaultValue ?? ''),
+        draft: z.string().default(props.defaultValue ?? ''),
     });
     const renderedTitle = computed(() => props.title ?? props.message);
     const renderedMessage = computed(() => (props.title ? props.message : null));

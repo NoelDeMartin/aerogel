@@ -4,8 +4,8 @@ import type { Plugin } from '@aerogel/core';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 import Solid from '@aerogel/plugin-solid/services/Solid';
+import { services } from '@aerogel/plugin-solid/services';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
-import { registerFormValidationRules } from '@aerogel/plugin-solid/forms/validation';
 import {
     authenticators as baseAuthenticators,
     getAuthenticator,
@@ -18,8 +18,6 @@ import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
 
 import { testingRuntime } from './testing';
 
-const services = { $solid: Solid };
-
 function setupTestingRuntime(): void {
     if (!globalThis.testingRuntime) {
         return;
@@ -31,11 +29,10 @@ function setupTestingRuntime(): void {
 export * from './auth';
 export * from './components';
 export * from './errors';
-export * from './services/Solid';
+export * from './forms';
+export * from './services';
 export * from './testing';
 export * from './utils';
-
-export { Solid };
 
 export interface Options {
     autoReconnect?: boolean;
@@ -44,8 +41,6 @@ export interface Options {
     models?: Record<string, Record<string, unknown>>;
     onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): Promise<unknown> | unknown;
 }
-
-export type SolidServices = typeof services;
 
 export default function solid(options: Options = {}): Plugin {
     return {
@@ -58,12 +53,11 @@ export default function solid(options: Options = {}): Plugin {
             bootCoreModels({ reset: true });
             bootModelsFromViteGlob(options.models ?? {}, { reset: true });
             registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });
-            registerFormValidationRules();
             setDefaultAuthenticator(
                 getAuthenticator(
                     typeof options.defaultAuthenticator === 'function'
                         ? options.defaultAuthenticator()
-                        : options.defaultAuthenticator ?? 'inrupt',
+                        : (options.defaultAuthenticator ?? 'inrupt'),
                 ),
             );
             registerErrorHandler((error) => {
@@ -89,8 +83,4 @@ export default function solid(options: Options = {}): Plugin {
             await bootServices(app, services);
         },
     };
-}
-
-declare module '@aerogel/core' {
-    interface Services extends SolidServices {}
 }

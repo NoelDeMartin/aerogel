@@ -78,12 +78,11 @@ import {
     Select,
     UI,
     classes,
-    requiredStringInput,
-    stringInput,
     translateWithDefault,
     useForm,
 } from '@aerogel/core';
 import { computed, ref } from 'vue';
+import { z } from 'zod';
 import type { HTMLAttributes } from 'vue';
 
 import Solid from '@aerogel/plugin-solid/services/Solid';
@@ -108,8 +107,8 @@ const {
     allowLegacyAuthenticator?: boolean;
 }>();
 const form = useForm({
-    url: requiredStringInput(),
-    authenticator: stringInput(),
+    url: z.string(),
+    authenticator: z.string().optional(),
 });
 const authenticatorOptions = Object.keys(AUTHENTICATOR_LABELS) as (keyof typeof AUTHENTICATOR_LABELS)[];
 const measured = ref(false);

@@ -25,7 +25,6 @@ import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
 
 import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
 import type FormController from '@aerogel/core/forms/FormController';
-import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type {
     FormControlEmits,
     FormControlExpose,
@@ -79,11 +78,11 @@ const expose = {
             return;
         }
 
-        return form.getFieldRules(name).includes('required');
+        return form.isFieldRequired(name);
     }),
     update(value) {
         if (form && name) {
-            form.setFieldValue(name, value as FormFieldValue);
+            form.setFieldValue(name, value);
 
             return;
         }

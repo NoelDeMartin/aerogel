@@ -1,57 +1,28 @@
 import { computed, nextTick, reactive, readonly, ref } from 'vue';
-import { MagicObject, arrayRemove, fail } from '@noeldemartin/utils';
+import { MagicObject, arrayRemove } from '@noeldemartin/utils';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
+import type { z } from 'zod';
 
-import { validate, validateType } from './validation';
+import { getDefaultValue, getFinalSchema, isBooleanSchema, isSchemaRequired, validateSchema } from './internals/zod';
 
-export const __valueType: unique symbol = Symbol();
+const validForms: WeakMap<FormController, ComputedRef<boolean>> = new WeakMap();
 
-export interface FormFieldDefinition<
-    TType extends FormFieldType = FormFieldType,
-    TRules extends string = string,
-    TValueType = unknown,
-> {
-    type: TType;
-    trim?: boolean;
-    default?: GetFormFieldValue<TType>;
-    rules?: TRules[];
-    values?: readonly TValueType[];
-    [__valueType]?: TValueType;
-}
+type WidenBooleanLiterals<T> = T extends boolean ? boolean : T;
 
-export type FormFieldType = 'string' | 'enum' | 'number' | 'boolean' | 'object' | 'date';
-export type FormFieldValue = GetFormFieldValue<FormFieldType>;
+export type FormFieldDefinition<T = unknown> = z.ZodType<T>;
 export type FormFieldDefinitions = Record<string, FormFieldDefinition>;
 
+export type GetFormFieldValue<T extends FormFieldDefinition> = [Extract<z.output<T>, null | undefined>] extends [never]
+    ? WidenBooleanLiterals<z.output<T>>
+    : WidenBooleanLiterals<NonNullable<z.output<T>>> | null;
+
 export type FormData<T> = {
-    -readonly [k in keyof T]: T[k] extends FormFieldDefinition<infer TType, infer TRules, infer TValueType>
-        ? TRules extends 'required'
-            ? GetFormFieldValue<TType, TValueType>
-            : GetFormFieldValue<TType, TValueType> | null
-        : never;
+    -readonly [k in keyof T]: T[k] extends FormFieldDefinition ? GetFormFieldValue<T[k]> : never;
 };
 
 export type FormErrors<T> = {
     [k in keyof T]: string[] | null;
 };
-
-export type GetFormFieldValue<TType, TValueType = unknown> = TType extends 'string'
-    ? string
-    : TType extends 'number'
-      ? number
-      : TType extends 'boolean'
-        ? boolean
-        : TType extends 'enum'
-          ? TValueType
-          : TType extends 'object'
-            ? TValueType extends object
-                ? TValueType
-                : object
-            : TType extends 'date'
-              ? Date
-              : never;
-
-const validForms: WeakMap<FormController, ComputedRef<boolean>> = new WeakMap();
 
 export type SubmitFormListener = () => unknown;
 export type FocusFormListener = (input: string) => unknown;
@@ -90,8 +61,8 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         return this._submitted.value;
     }
 
-    public getFieldValue<T extends keyof Fields>(field: T): GetFormFieldValue<Fields[T]['type']> {
-        return this._data[field] as unknown as GetFormFieldValue<Fields[T]['type']>;
+    public getFieldValue<T extends keyof Fields>(field: T): FormData<Fields>[T] {
+        return this._data[field];
     }
 
     public setFieldValue<T extends keyof Fields>(field: T, value: FormData<Fields>[T]): void {
@@ -104,16 +75,22 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         this.validate();
     }
 
-    public getFieldRules<T extends keyof Fields>(field: T): string[] {
-        return this._fields[field]?.rules ?? [];
+    public getFieldSchema<T extends keyof Fields>(field: T): Fields[T] | null {
+        return this._fields[field] ?? null;
     }
 
-    public setFieldRules<T extends keyof Fields>(field: T, rules: string[] | undefined): void {
+    public setFieldSchema<T extends keyof Fields>(field: T, schema: Fields[T]): void {
         if (!this._fields[field]) {
             return;
         }
 
-        this._fields[field].rules = rules;
+        this._fields[field] = schema;
+    }
+
+    public isFieldRequired<T extends keyof Fields>(field: T): boolean {
+        const schema = this._fields[field];
+
+        return schema ? isSchemaRequired(schema) : false;
     }
 
     public getFieldErrors<T extends keyof Fields>(field: T): string[] | null {
@@ -124,16 +101,34 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         this._errors[field] = errors;
     }
 
-    public getFieldType<T extends keyof Fields>(field: T): FormFieldType | null {
-        return this._fields[field]?.type ?? null;
-    }
+    public getFieldNativeInputType<T extends keyof Fields>(field: T): string | null {
+        const schema = this.getFieldSchema(field);
 
-    public setFieldType<T extends keyof Fields>(field: T, type: FormFieldType): void {
-        if (!this._fields[field]) {
-            return;
+        if (!schema) {
+            return null;
         }
 
-        this._fields[field].type = type;
+        const finalSchema = getFinalSchema(schema);
+
+        if (isBooleanSchema(finalSchema)) {
+            return 'checkbox';
+        }
+
+        switch (finalSchema.def.type) {
+            case 'string': {
+                const stringSchema = finalSchema as z.ZodString;
+                const format = stringSchema.format;
+
+                return format === 'email' || format === 'url' ? format : 'text';
+            }
+            case 'number':
+            case 'date':
+                return finalSchema.def.type;
+            case 'literal':
+                return 'text';
+            default:
+                return null;
+        }
     }
 
     public data(): FormData<Fields> {
@@ -166,13 +161,11 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         this._submitted.value = true;
 
         for (const [field, value] of Object.entries(this._data)) {
-            const definition = this._fields[field] ?? fail<FormFieldDefinition>();
-
-            if (typeof value !== 'string' || !(definition.trim ?? true)) {
+            if (typeof value !== 'string') {
                 continue;
             }
 
-            this._data[field as keyof Fields] = value.trim() as FormData<Fields>[string];
+            this._data[field as keyof Fields] = (value.trim() || null) as FormData<Fields>[string];
         }
 
         const valid = this.validate();
@@ -225,19 +218,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
     }
 
     private computeFieldErrors(name: keyof Fields, definition: FormFieldDefinition): string[] | null {
-        const errors = [];
-        const value = this._data[name];
-        const rules = definition.rules ?? [];
-
-        errors.push(...validateType(value, definition));
-
-        for (const rule of rules) {
-            if (rule !== 'required' && (value === null || value === undefined)) {
-                continue;
-            }
-
-            errors.push(...validate(value, rule));
-        }
+        const errors = validateSchema(definition, this._data[name]);
 
         return errors.length > 0 ? errors : null;
     }
@@ -248,7 +229,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
         }
 
         const data = Object.entries(fields).reduce((initialData, [name, definition]) => {
-            initialData[name as keyof Fields] = (definition.default ?? null) as FormData<Fields>[keyof Fields];
+            initialData[name as keyof Fields] = getDefaultValue(definition) as FormData<Fields>[keyof Fields];
 
             return initialData;
         }, {} as FormData<Fields>);
@@ -272,7 +253,7 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
 
     private resetData(): void {
         for (const [name, field] of Object.entries(this._fields)) {
-            this._data[name as keyof Fields] = (field.default ?? null) as FormData<Fields>[keyof Fields];
+            this._data[name as keyof Fields] = getDefaultValue(field) as FormData<Fields>[keyof Fields];
         }
     }
 

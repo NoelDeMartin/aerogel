@@ -33,7 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { requiredStringInput, useForm } from '@aerogel/core';
+import { useForm } from '@aerogel/core';
+import { z } from 'zod';
 
 import type SolidTask from '@/models/SolidTask';
 
@@ -43,5 +44,5 @@ defineEmits<{
     delete: [task: SolidTask];
 }>();
 
-const form = useForm({ draft: requiredStringInput() });
+const form = useForm({ draft: z.string() });
 </script>

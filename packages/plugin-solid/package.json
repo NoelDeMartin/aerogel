@@ -25,7 +25,8 @@
     "peerDependencies": {
         "@aerogel/core": "*",
         "@aerogel/vite": "*",
-        "soukai-bis": "*"
+        "soukai-bis": "*",
+        "zod": "catalog:"
     },
     "dependencies": {
         "@inrupt/solid-client-authn-browser": "^3.1.1",

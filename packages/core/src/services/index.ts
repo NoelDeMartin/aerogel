@@ -11,7 +11,6 @@ import Service from './Service';
 import Storage from './Storage';
 import { getPiniaStore } from './store';
 import type { AppSetting } from './App.state';
-import type { FormFieldValidator } from '@aerogel/core/forms';
 
 export * from './App';
 export * from './Browser';
@@ -72,7 +71,6 @@ declare module '@aerogel/core/bootstrap/options' {
     export interface AerogelOptions {
         services?: Record<string, Service>;
         settings?: AppSetting[];
-        formValidationRules?: Record<string, FormFieldValidator>;
         settingsFullscreenOnMobile?: boolean;
     }
 }

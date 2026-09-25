@@ -17,13 +17,11 @@
     </ComboboxAnchor>
 </template>
 
-<script setup lang="ts" generic="T extends Nullable<FormFieldValue>">
+<script setup lang="ts" generic="T">
 import { ComboboxAnchor, ComboboxInput } from 'reka-ui';
 import { useTemplateRef, watch, watchEffect } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils';
-import type { FormFieldValue } from '@aerogel/core/forms';
 import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
 
 defineOptions({ inheritAttrs: false });

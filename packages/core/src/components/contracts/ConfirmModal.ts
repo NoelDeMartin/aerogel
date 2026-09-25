@@ -1,4 +1,5 @@
 import { computed } from 'vue';
+import { z } from 'zod';
 
 import { translateWithDefault } from '@aerogel/core/lang';
 import { useForm } from '@aerogel/core/utils/composition/forms';
@@ -31,14 +32,14 @@ export function useConfirmModal(props: ConfirmModalProps) {
     const form = useForm(
         Object.entries(props.checkboxes ?? {}).reduce(
             (values, [name, checkbox]) => ({
-                [name]: {
-                    type: 'boolean',
-                    default: checkbox.default,
-                    required: checkbox.required ? 'required' : undefined,
-                },
+                [name]: checkbox.required
+                    ? checkbox.default
+                        ? z.literal(true).default(true)
+                        : z.literal(true)
+                    : z.boolean().default(checkbox.default ?? false),
                 ...values,
             }),
-            {} as Record<string, FormFieldDefinition<'boolean'>>,
+            {} as Record<string, FormFieldDefinition<boolean>>,
         ),
     );
 

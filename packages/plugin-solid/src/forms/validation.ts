@@ -1,11 +1,5 @@
-import { registerFormValidationRule } from '@aerogel/core';
+import { z } from 'zod';
 
-export function registerFormValidationRules(): void {
-    registerFormValidationRule<string>('container_url', (value) => {
-        if (value.endsWith('/')) {
-            return;
-        }
-
-        return 'containerEndingSlashMissing';
-    });
+export function solidContainerUrl(): z.ZodString {
+    return z.string().refine((value) => value.endsWith('/'), 'containerEndingSlashMissing');
 }

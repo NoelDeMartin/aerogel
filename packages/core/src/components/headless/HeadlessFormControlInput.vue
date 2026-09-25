@@ -23,10 +23,9 @@ import { computed, inject, useTemplateRef, watchEffect } from 'vue';
 
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
-import { getLocalTimezoneOffset } from '@aerogel/core/utils';
 import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
+import { getLocalTimezoneOffset } from '@aerogel/core/utils';
 import type FormController from '@aerogel/core/forms/FormController';
-import type { FormFieldValue } from '@aerogel/core/forms/FormController';
 import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 
 const { type } = defineProps<{ type?: string }>();
@@ -43,9 +42,9 @@ const renderedType = computed(() => {
         return type;
     }
 
-    const fieldType = (name.value && form?.getFieldType(name.value)) ?? '';
+    const inputType = name.value && form?.getFieldNativeInputType(name.value);
 
-    return ['text', 'email', 'number', 'tel', 'url'].includes(fieldType) ? fieldType : 'text';
+    return inputType || 'text';
 });
 const checked = computed(() => {
     if (renderedType.value !== 'checkbox') {
@@ -63,7 +62,7 @@ function update() {
     formControl.update(getValue());
 }
 
-function getValue(): FormFieldValue | null {
+function getValue(): string | number | boolean | Date | null {
     if (!$control.value) {
         return null;
     }
