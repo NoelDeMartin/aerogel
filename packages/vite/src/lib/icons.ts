@@ -22,7 +22,7 @@ interface IconDefinition {
     manifest?: Pick<IconResource, 'purpose'>;
 }
 
-export const ICON_SOURCE_PATH = 'src/assets/icon.svg';
+export const ICON_SOURCE_PATH = 'src/assets/img/icon.svg';
 
 export const ICONS = {
     favicon: { fileName: 'favicon.ico', size: 48, format: 'ico' },
