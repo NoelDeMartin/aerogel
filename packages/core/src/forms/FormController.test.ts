@@ -120,11 +120,13 @@ describe('FormController', () => {
             name: z.string().prefault('Foo'),
             subscribe: z.boolean(),
             accept: z.literal(true),
+            range: z.tuple([z.number().nullable(), z.number().nullable()]).default([null, null]),
         });
 
         expect(form.name).toEqual('Foo');
         expect(form.subscribe).toBe(false);
         expect(form.accept).toBeNull();
+        expect(form.range).toEqual([null, null]);
     });
 
     it('resets form', () => {

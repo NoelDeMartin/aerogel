@@ -51,6 +51,7 @@ components:
     inputs_combobox: Combobox
     inputs_combobox_multi: Multi Combobox
     inputs_combobox_options: One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
+    inputs_range_slider: Range slider
     modals: Modals
     modals_alert: Alert
     modals_alertTitle: Hi there!

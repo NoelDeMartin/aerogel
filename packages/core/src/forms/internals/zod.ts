@@ -84,6 +84,10 @@ export function isSchemaRequired(schema: z.ZodType): boolean {
         return !baseSchema.safeParse(false).success;
     }
 
+    if (getFinalSchema(baseSchema).def.type === 'tuple' && isDefaultSchema(schema)) {
+        return !baseSchema.safeParse(getDefaultValue(schema)).success;
+    }
+
     return !baseSchema.safeParse(null).success && !baseSchema.safeParse(undefined).success;
 }
 

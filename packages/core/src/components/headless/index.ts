@@ -17,6 +17,7 @@ export { default as HeadlessModalContent } from './HeadlessModalContent.vue';
 export { default as HeadlessModalDescription } from './HeadlessModalDescription.vue';
 export { default as HeadlessModalOverlay } from './HeadlessModalOverlay.vue';
 export { default as HeadlessModalTitle } from './HeadlessModalTitle.vue';
+export { default as HeadlessRangeSliderInput } from './HeadlessRangeSliderInput.vue';
 export { default as HeadlessSelect } from './HeadlessSelect.vue';
 export { default as HeadlessSelectLabel } from './HeadlessSelectLabel.vue';
 export { default as HeadlessSelectOption } from './HeadlessSelectOption.vue';

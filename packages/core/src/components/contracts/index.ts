@@ -9,5 +9,6 @@ export * from './FormControl';
 export * from './LoadingModal';
 export * from './Modal';
 export * from './PromptModal';
+export * from './RangeSlider';
 export * from './Select';
 export * from './Toast';

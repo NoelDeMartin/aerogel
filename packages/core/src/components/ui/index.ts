@@ -30,6 +30,7 @@ export { default as Markdown } from './Markdown.vue';
 export { default as Modal } from './Modal.vue';
 export { default as ProgressBar } from './ProgressBar.vue';
 export { default as PromptModal } from './PromptModal.vue';
+export { default as RangeSlider } from './RangeSlider.vue';
 export { default as Select } from './Select.vue';
 export { default as SelectLabel } from './SelectLabel.vue';
 export { default as SelectOption } from './SelectOption.vue';

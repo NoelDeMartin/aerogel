@@ -126,6 +126,9 @@
             <div class="mt-4">
                 <Switch v-model="switchValue" :label="$t('components.inputs_switch')" />
             </div>
+            <div class="mt-4">
+                <RangeSlider v-model="rangeSliderValue" :label="$t('components.inputs_range_slider')" />
+            </div>
         </section>
 
         <section aria-labelledby="modals-title">
@@ -276,8 +279,10 @@ import { ref } from 'vue';
 import CustomModal from './components/CustomModal.vue';
 import FullscreenModal from './components/FullscreenModal.vue';
 import NestedModal from './components/NestedModal.vue';
+import type { RangeSliderValue } from '@aerogel/core';
 
 const switchValue = ref(false);
+const rangeSliderValue = ref<RangeSliderValue>([20, null]);
 const multiSelectValue = ref(['One', 'Two']);
 const multiComboboxValue = ref(['One', 'Three']);
 
