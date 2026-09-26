@@ -28,7 +28,7 @@ const { layout = 'horizontal', class: rootClass, titleHeadingLevel = 3 } = defin
     class?: HTMLAttributes['class'];
     layout?: 'vertical' | 'horizontal';
 }>();
-const renderedRootClass = computed(() => classes(rootClass, 'flex flex-col justify-center gap-1'));
+const renderedRootClass = computed(() => classes('flex flex-col justify-center gap-1', rootClass));
 const titleTag = computed(() => `h${titleHeadingLevel}`);
 const titleClasses = computed(() => {
     return titleHeadingLevel === 4 ? 'text-sm font-semibold text-gray-700' : 'text-base font-semibold';
