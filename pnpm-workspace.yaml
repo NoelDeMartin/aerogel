@@ -16,6 +16,7 @@ catalog:
     soukai-bis: next
     unplugin-icons: ^22.1.0
     unplugin-vue-components: ^28.4.1
+    vite: ^6.2.2
     vue: ^3.5.0
     zod: ^4.3.4
 

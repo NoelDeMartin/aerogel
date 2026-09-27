@@ -35,7 +35,8 @@
     "eslint": "catalog:",
     "prettier-eslint-cli": "^8.0.1",
     "publint": "catalog:",
-    "soukai-bis": "catalog:"
+    "soukai-bis": "catalog:",
+    "vite": "catalog:"
   },
   "eslintConfig": {
     "extends": [

@@ -40,7 +40,8 @@
         "eslint": "catalog:",
         "publint": "catalog:",
         "soukai-bis": "catalog:",
-        "unplugin-icons": "catalog:"
+        "unplugin-icons": "catalog:",
+        "vite": "catalog:"
     },
     "eslintConfig": {
         "extends": [

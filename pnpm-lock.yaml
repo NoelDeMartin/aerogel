@@ -216,6 +216,9 @@ catalogs:
     unplugin-vue-components:
       specifier: ^28.4.1
       version: 28.8.0
+    vite:
+      specifier: ^6.2.2
+      version: 6.4.3
 
 overrides:
   '@aerogel/cli': workspace:*
@@ -294,7 +297,7 @@ importers:
         specifier: ^5.8.2
         version: 5.9.3
       vite:
-        specifier: ^6.2.2
+        specifier: 'catalog:'
         version: 6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1)
       vite-plugin-dts:
         specifier: 4.5.0
@@ -603,6 +606,9 @@ importers:
       unplugin-icons:
         specifier: 'catalog:'
         version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
+      vite:
+        specifier: 'catalog:'
+        version: 6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1)
 
   packages/plugin-solid:
     dependencies:
@@ -680,6 +686,9 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.24
+      vite:
+        specifier: 'catalog:'
+        version: 6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1)
 
   packages/vite:
     dependencies:
