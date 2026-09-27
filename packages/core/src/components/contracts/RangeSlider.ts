@@ -1,9 +1,10 @@
 import type { HTMLAttributes } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
+
+import type { NumberRange } from '@aerogel/core/forms/schemas';
 
 import type { FormControlProps } from './FormControl';
 
-export type RangeSliderValue = [Nullable<number>, Nullable<number>];
+export type RangeSliderValue = NumberRange;
 export type RangeSliderBound = 'min' | 'max';
 
 export interface RangeSliderInputProps {
