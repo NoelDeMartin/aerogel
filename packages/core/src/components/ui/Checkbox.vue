@@ -1,6 +1,6 @@
 <template>
     <HeadlessFormControl
-        ref="$controlRef"
+        :ref="forwardRef"
         :class="renderedClasses"
         v-bind="props"
         @update:model-value="$emit('update:modelValue', $event)"
@@ -22,25 +22,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue';
+import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
 import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
 import HeadlessFormControlInput from '@aerogel/core/components/headless/HeadlessFormControlInput.vue';
 import HeadlessFormControlLabel from '@aerogel/core/components/headless/HeadlessFormControlLabel.vue';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import { classes } from '@aerogel/core/utils/classes';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
-import type { FormControlEmits, FormControlProps } from '@aerogel/core/components/contracts/FormControl';
+import type {
+    FormControlEmits,
+    FormControlExpose,
+    FormControlProps,
+} from '@aerogel/core/components/contracts/FormControl';
 
 defineOptions({ inheritAttrs: false });
+defineExpose<FormControlExpose<unknown, HTMLInputElement>>();
 defineEmits<FormControlEmits>();
 
 const { inputClass, labelClass, ...props } = defineProps<
     FormControlProps & { inputClass?: HTMLAttributes['class']; labelClass?: HTMLAttributes['class'] }
 >();
 
-const $control = useTemplateRef('$controlRef');
+const { forwardRef, currentRef: $control } = useForwardExpose<InstanceType<typeof HeadlessFormControl>>();
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedClasses = computed(() => classes('relative flex items-start', rootClasses.value));
 const renderedInputClasses = computed(() =>

@@ -1,6 +1,6 @@
 <template>
     <HeadlessFormControl
-        ref="$controlRef"
+        :ref="forwardRef"
         :label="label"
         :class="rootClasses"
         v-bind="props"
@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
 
-import { computed, useTemplateRef } from 'vue';
+import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
@@ -29,11 +29,17 @@ import HeadlessFormControlLabel from '@aerogel/core/components/headless/Headless
 import HeadlessFormControlInput from '@aerogel/core/components/headless/HeadlessFormControlInput.vue';
 import HeadlessFormControlDescription from '@aerogel/core/components/headless/HeadlessFormControlDescription.vue';
 import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import { classes } from '@aerogel/core/utils/classes';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
-import type { FormControlEmits, FormControlProps } from '@aerogel/core/components/contracts/FormControl';
+import type {
+    FormControlEmits,
+    FormControlExpose,
+    FormControlProps,
+} from '@aerogel/core/components/contracts/FormControl';
 
 defineOptions({ inheritAttrs: false });
+defineExpose<FormControlExpose<unknown, HTMLInputElement>>();
 defineEmits<FormControlEmits>();
 
 const { label, inputClass, wrapperClass, labelClass, descriptionClass, errorClass, ...props } = defineProps<
@@ -45,7 +51,7 @@ const { label, inputClass, wrapperClass, labelClass, descriptionClass, errorClas
         errorClass?: HTMLAttributes['class'];
     }
 >();
-const $control = useTemplateRef('$controlRef');
+const { forwardRef, currentRef: $control } = useForwardExpose<InstanceType<typeof HeadlessFormControl>>();
 const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedWrapperClasses = computed(() =>
     classes('relative rounded-md shadow-2xs', { 'mt-1': label }, wrapperClass));

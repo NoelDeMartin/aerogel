@@ -1,4 +1,5 @@
 export * from './events';
+export * from './expose';
 export * from './forms';
 export * from './hooks';
 export * from './loading';

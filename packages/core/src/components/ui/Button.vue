@@ -16,10 +16,13 @@ import IconSpinner from '~icons/svg-spinners/90-ring-with-bg';
 import { computed } from 'vue';
 
 import HeadlessButton from '@aerogel/core/components/headless/HeadlessButton.vue';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import { variantClasses } from '@aerogel/core/utils/classes';
 import type { ButtonEmits, ButtonProps } from '@aerogel/core/components/contracts/Button';
+import type { ElementMethods } from '@aerogel/core/components/contracts/helpers';
 import type { Variants } from '@aerogel/core/utils/classes';
-import { useForwardExpose } from 'reka-ui';
+
+defineExpose<ElementMethods>();
 
 const { class: baseClasses, size, variant, disabled, loading, ...props } = defineProps<ButtonProps>();
 const { forwardRef } = useForwardExpose();

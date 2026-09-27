@@ -3,7 +3,7 @@
     <HeadlessModal
         v-slot="{ close }"
         v-bind="props"
-        :ref="($modal) => forwardRef($modal as HeadlessModalInstance)"
+        :ref="forwardRef"
         :persistent
     >
         <HeadlessModalOverlay
@@ -61,12 +61,12 @@
 <script lang="ts">
 import IconClose from '~icons/zondicons/close';
 
-import { useForwardExpose } from 'reka-ui';
 import { computed, onMounted } from 'vue';
-import type { ComponentPublicInstance, HTMLAttributes, Ref } from 'vue';
-import { type Nullable, after } from '@noeldemartin/utils';
+import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
+import { after } from '@noeldemartin/utils';
 
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import HeadlessModal from '@aerogel/core/components/headless/HeadlessModal.vue';
 import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModalContent.vue';
 import HeadlessModalDescription from '@aerogel/core/components/headless/HeadlessModalDescription.vue';
@@ -110,9 +110,8 @@ defineExpose<AcceptRefs<ModalExpose>>({
     $content: computed(() => $modal.value?.$content),
 });
 
-const { forwardRef, currentRef } = useForwardExpose<HeadlessModalInstance>();
+const { forwardRef, currentRef: $modal } = useForwardExpose<HeadlessModalInstance>();
 const { id, visible } = useModal();
-const $modal = currentRef as Ref<Nullable<HeadlessModalInstance>>;
 const modal = injectModal();
 const inForeground = computed(
     () =>

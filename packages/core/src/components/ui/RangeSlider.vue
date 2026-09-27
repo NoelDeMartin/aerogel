@@ -1,6 +1,6 @@
 <template>
     <HeadlessFormControl
-        ref="$controlRef"
+        :ref="forwardRef"
         :class="renderedClasses"
         :name="name"
         :label="label"
@@ -37,16 +37,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue';
+import { computed } from 'vue';
 
 import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
 import HeadlessFormControlLabel from '@aerogel/core/components/headless/HeadlessFormControlLabel.vue';
 import HeadlessFormControlDescription from '@aerogel/core/components/headless/HeadlessFormControlDescription.vue';
 import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
 import HeadlessRangeSliderInput from '@aerogel/core/components/headless/HeadlessRangeSliderInput.vue';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import { classes } from '@aerogel/core/utils/classes';
 import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
-import type { FormControlEmits } from '@aerogel/core/components/contracts/FormControl';
+import type { FormControlEmits, FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 import type {
     RangeSliderBound,
     RangeSliderProps,
@@ -54,6 +55,7 @@ import type {
 } from '@aerogel/core/components/contracts/RangeSlider';
 
 defineOptions({ inheritAttrs: false });
+defineExpose<FormControlExpose<RangeSliderValue, HTMLSpanElement>>();
 defineEmits<FormControlEmits<RangeSliderValue>>();
 
 const {
@@ -74,7 +76,7 @@ const {
     disabled,
 } = defineProps<RangeSliderProps>();
 
-const $control = useTemplateRef('$controlRef');
+const { forwardRef, currentRef: $control } = useForwardExpose<InstanceType<typeof HeadlessFormControl>>();
 const [inputAttrs, rootClasses] = useInputAttrs();
 
 const renderedClasses = computed(() =>

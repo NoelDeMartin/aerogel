@@ -10,10 +10,9 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import { useForwardExpose } from 'reka-ui';
-
 import HeadlessSelect from '@aerogel/core/components/headless/HeadlessSelect.vue';
-import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
+import type { SelectEmits, SelectExpose, SelectProps } from '@aerogel/core/components/contracts/Select';
 
 import SelectLabel from './SelectLabel.vue';
 import SelectOptions from './SelectOptions.vue';
@@ -22,6 +21,7 @@ import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 
 defineProps<SelectProps<T>>();
 defineEmits<SelectEmits<T>>();
+defineExpose<SelectExpose<T, HTMLButtonElement>>();
 
 const { forwardRef } = useForwardExpose();
 </script>
