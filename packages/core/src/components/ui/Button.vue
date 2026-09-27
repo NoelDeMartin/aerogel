@@ -29,7 +29,7 @@ const { forwardRef } = useForwardExpose();
 const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps, 'size' | 'variant' | 'disabled'>>>(
     { baseClasses, variant, size, disabled: disabled || loading },
     {
-        baseClasses: 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+        baseClasses: 'clickable focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         variants: {
             variant: {
                 default: 'bg-primary-600 text-white focus-visible:outline-primary-600',
