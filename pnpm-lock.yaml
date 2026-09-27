@@ -218,6 +218,7 @@ catalogs:
       version: 28.8.0
 
 overrides:
+  '@aerogel/cli': workspace:*
   '@noeldemartin/solid-utils': next
   '@noeldemartin/utils': next
   '@types/node': ^24.10.4
@@ -436,8 +437,8 @@ importers:
   packages/create-aerogel:
     dependencies:
       '@aerogel/cli':
-        specifier: next
-        version: 0.1.2-next.7549906ad59826e1baff12cfa27149476ab58850(supports-color@8.1.1)
+        specifier: workspace:*
+        version: link:../cli
     devDependencies:
       '@noeldemartin/scripts':
         specifier: 'catalog:'
@@ -824,10 +825,6 @@ packages:
 
   '@adobe/css-tools@4.5.0':
     resolution: {integrity: sha512-6OzddxPio9UiWTCemp4N8cYLV2ZN1ncRnV1cVGtve7dhPOtRkleRyx32GQCYSwDYgaHU3USMm84tNsvKzRCa1Q==}
-
-  '@aerogel/cli@0.1.2-next.7549906ad59826e1baff12cfa27149476ab58850':
-    resolution: {integrity: sha512-WQitm1ZjQBxtJQb0A0QiBBvPStUevFS/7u11wlCdC1Y9JDL9HeftPuawz8Nd0CIK93NkaepY+5TNSxzKrv/K5g==}
-    hasBin: true
 
   '@aerogel/vite@0.1.2':
     resolution: {integrity: sha512-/XbQBvqxEK+R2eNVfVZw5UdnvPaxXTdgNeTFYO8BqfwJzL0JRUvK46Z/1/rCdsNK0rsfhK24jD+eVSANKT2L4g==}
@@ -8403,17 +8400,6 @@ packages:
 snapshots:
 
   '@adobe/css-tools@4.5.0': {}
-
-  '@aerogel/cli@0.1.2-next.7549906ad59826e1baff12cfa27149476ab58850(supports-color@8.1.1)':
-    dependencies:
-      '@noeldemartin/utils': 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
-      chalk: 5.6.2
-      commander: 11.1.0
-      mustache: 4.2.0
-      simple-git: 3.36.0(supports-color@8.1.1)
-      ts-morph: 20.0.0
-    transitivePeerDependencies:
-      - supports-color
 
   '@aerogel/vite@0.1.2(@babel/parser@7.29.9)(supports-color@8.1.1)(vite@6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)':
     dependencies:

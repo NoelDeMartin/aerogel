@@ -20,6 +20,7 @@ catalog:
     zod: ^4.3.4
 
 overrides:
+    '@aerogel/cli': 'workspace:*'
     '@noeldemartin/solid-utils': 'catalog:'
     '@noeldemartin/utils': 'catalog:'
     '@types/node': 'catalog:'
