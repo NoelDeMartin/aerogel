@@ -74,6 +74,7 @@ export default class App {
             dependencies['@aerogel/plugin-local-first'] = 'next';
             dependencies['@aerogel/plugin-routing'] = 'next';
             dependencies['@aerogel/plugin-solid'] = 'next';
+            dependencies['@aerogel/storybook'] = 'next';
             dependencies['@aerogel/vite'] = 'next';
             dependencies['@noeldemartin/solid-utils'] = 'next';
             dependencies['@noeldemartin/utils'] = 'next';
@@ -91,6 +92,7 @@ export default class App {
                     '@aerogel/plugin-routing': packagePath('plugin-routing'),
                     '@aerogel/plugin-solid': packagePath('plugin-solid'),
                     '@aerogel/plugin-local-first': packagePath('plugin-local-first'),
+                    '@aerogel/storybook': packagePath('storybook'),
                     '@aerogel/vite': packagePath('vite'),
                 }),
             );
@@ -100,11 +102,13 @@ export default class App {
                 withFilePrefix({
                     '@aerogel/cli': packagePackPath('cli') ?? packNotFound('cli'),
                     '@aerogel/core': packagePackPath('core') ?? packNotFound('core'),
+                    '@aerogel/playwright': packagePackPath('playwright') ?? packNotFound('playwright'),
                     '@aerogel/plugin-i18n': packagePackPath('plugin-i18n') ?? packNotFound('plugin-i18n'),
                     '@aerogel/plugin-routing': packagePackPath('plugin-routing') ?? packNotFound('plugin-routing'),
                     '@aerogel/plugin-solid': packagePackPath('plugin-solid') ?? packNotFound('plugin-solid'),
                     '@aerogel/plugin-local-first':
                         packagePackPath('plugin-local-first') ?? packNotFound('plugin-local-first'),
+                    '@aerogel/storybook': packagePackPath('storybook') ?? packNotFound('storybook'),
                     '@aerogel/vite': packagePackPath('vite') ?? packNotFound('vite'),
                 }),
             );

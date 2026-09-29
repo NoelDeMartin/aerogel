@@ -35,9 +35,8 @@ export async function bootstrapApplication(app: AppInstance, options: AerogelOpt
 export async function bootstrap(rootComponent: Component, options: AerogelOptions = {}): Promise<AerogelApp> {
     const app = createApp(rootComponent);
 
-    if (isDevelopment()) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).$aerogel = app;
+    if (isDevelopment() && !globalThis.__aerogelStorybook__) {
+        globalThis.$aerogel = app;
     }
 
     if (options.env) {
@@ -50,12 +49,21 @@ export async function bootstrap(rootComponent: Component, options: AerogelOption
 
     await bootstrapApplication(app, options);
 
+    if (globalThis.__aerogelStorybook__) {
+        return { app, options };
+    }
+
     app.mount('#app');
     app._container?.classList.remove('loading');
 
     await Events.emit('application-mounted');
 
     return { app, options };
+}
+
+declare global {
+    var $aerogel: AppInstance | undefined; // eslint-disable-line no-var
+    var __aerogelStorybook__: boolean | undefined; // eslint-disable-line no-var
 }
 
 declare module '@aerogel/core/services/Events' {

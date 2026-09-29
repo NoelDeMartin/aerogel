@@ -3,6 +3,8 @@ import { bootCoreModels } from 'soukai-bis';
 import { setup as setupStorybook } from '@storybook/vue3-vite';
 import type { AerogelApp } from '@aerogel/core';
 
+globalThis.__aerogelStorybook__ = true;
+
 export const decorators = [
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     () => ({

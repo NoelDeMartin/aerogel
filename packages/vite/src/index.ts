@@ -211,6 +211,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         TailwindCSS(),
         !options.lib &&
             options.pwa !== false &&
+            process.env.STORYBOOK !== 'true' &&
             VitePWA({
                 registerType: 'autoUpdate',
                 devOptions: { enabled: options.pwa?.development ?? false },

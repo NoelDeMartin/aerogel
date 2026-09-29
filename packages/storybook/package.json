@@ -2,7 +2,7 @@
   "name": "@aerogel/storybook",
   "version": "0.1.2",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": true,
   "exports": {
     ".": {
       "types": "./dist/aerogel-storybook.d.ts",

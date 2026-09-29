@@ -10,51 +10,20 @@ jobs:
     create-aerogel:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6
-            - uses: pnpm/action-setup@v5
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
               with:
                   run_install: false
-            - uses: voidzero-dev/setup-vp@v1
+            - uses: voidzero-dev/setup-vp@v1.21.1
               with:
                   node-version-file: '.nvmrc'
                   cache: true
             - run: pnpm install
             - name: Build packages
               run: |
-                  cd packages/cli
-                  pnpm build
-                  pnpm pack
-                  cd ../../
-
-                  cd packages/vite
-                  pnpm build
-                  pnpm pack
-                  cd ../../
-
-                  cd packages/core
-                  pnpm build
-                  pnpm pack
-                  cd ../../
-
-                  cd packages/plugin-i18n
-                  pnpm build
-                  pnpm pack
-                  cd ../../
-
-                  cd packages/plugin-routing
-                  pnpm build
-                  pnpm pack
-                  cd ../../
-
-                  cd packages/plugin-solid
-                  pnpm build
-                  pnpm pack
-                  cd ../../
-
-                  cd packages/plugin-local-first
-                  pnpm build
-                  pnpm pack
-                  cd ../../
+                  for package in cli vite core plugin-i18n plugin-routing plugin-solid plugin-local-first playwright storybook; do
+                      (cd packages/$package && pnpm build && pnpm pack)
+                  done
             - name: Create app
               run: |
                   git config --global user.email "john@example.com"
@@ -70,6 +39,8 @@ jobs:
             - run: vp run type-check
               working-directory: app
             - run: vp test
+              working-directory: app
+            - run: vp run build:storybook
               working-directory: app
             - run: vp run e2e:test:chromium
               working-directory: app
