@@ -250,13 +250,13 @@ importers:
         version: 0.4.0-next.c4947cf24d83e9a211c2705b97f764039d7863ab
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
       '@noeldemartin/testing':
         specifier: next
         version: 0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.63.0
@@ -292,7 +292,7 @@ importers:
         version: 0.6.14(prettier@3.9.9)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
       typescript:
         specifier: ^5.8.2
         version: 5.9.3
@@ -325,7 +325,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       chalk:
         specifier: ^5.4.1
         version: 5.6.2
@@ -362,7 +362,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       '@noeldemartin/vue-modals':
         specifier: 0.1.1
         version: 0.1.1(vue@3.5.43(typescript@5.9.3))
@@ -398,7 +398,7 @@ importers:
         version: 2.10.5(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.7.0
@@ -451,13 +451,13 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       playwright-solid:
         specifier: next
-        version: 0.0.0-next.804b11ba7798034706c3e533476cfdd891065272(web-streams-polyfill@3.3.3)
+        version: 0.0.0-next.804b11ba7798034706c3e533476cfdd891065272(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -488,13 +488,13 @@ importers:
         version: 0.3.24
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
 
   packages/plugin-i18n:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -525,16 +525,16 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       idb:
         specifier: 'catalog:'
         version: 8.0.3
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -577,10 +577,10 @@ importers:
         version: 0.1.2(@babel/parser@7.29.9)(supports-color@8.1.1)(vite@6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.43(typescript@5.9.3))
@@ -617,16 +617,16 @@ importers:
         version: 3.1.1
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       solid-auth-client:
         specifier: 2.4.1
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -660,7 +660,7 @@ importers:
     dependencies:
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -694,7 +694,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.3.3(vite@6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1))
@@ -761,10 +761,10 @@ importers:
         version: link:../packages/plugin-solid
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+        version: 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.11(tailwindcss@4.3.3)
@@ -773,7 +773,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.3.3
@@ -2997,16 +2997,21 @@ packages:
     resolution: {integrity: sha512-uwN63R+u/ef5UxUHmNobTCvbTjg1aOvj3t9w/DsKkrJlNilmAwbFxWf/XuK5qmtJVlQV7MyOtLy2XLbwYVRh1A==}
     hasBin: true
 
-  '@noeldemartin/solid-utils@0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0':
-    resolution: {integrity: sha512-zDMxwBSA3GX2Sax+9WXrVe+8LX1MtIrhy508v5QMLhecBuEo8bBi7hbudSqUlQjY00FrITMHqW3rl33/7M2v7Q==}
+  '@noeldemartin/solid-utils@0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4':
+    resolution: {integrity: sha512-Ehub2wgtavvB6KfBxAz+C5Cj+ry0I7thSNPQEm5uQTF8QefPHiAIxjBzjkWc9eIVW3KpT/VbTbo+R0eD2lDLhg==}
+    peerDependencies:
+      vitest: '>=5.0.0'
+    peerDependenciesMeta:
+      vitest:
+        optional: true
 
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19':
     resolution: {integrity: sha512-5moMGAYgqCnHWfbxgkgNjoaYhc6nvtqN7etPP+B76fyZVWWRLK+BOKKcwCXUd2ctD2N7lu9baa7M9qoN8oHEKg==}
     peerDependencies:
       vitest: '*'
 
-  '@noeldemartin/utils@0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066':
-    resolution: {integrity: sha512-49D5IZBJfIl9wmr7FK+7ftCN+3yN6IJjE05JnzTKy4ASWTJS+xGfT1VDMIIdsCPhZ32hX5zA79uyD2mDchgACw==}
+  '@noeldemartin/utils@0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063':
+    resolution: {integrity: sha512-I1vIbX1qeUOXERyJaJtbAXmVruQZ67a9HIdcCWV3zXkvFhcI1HXo0u0FspqW1rV/iWNWrmk8JrtedHxXJvtUQQ==}
 
   '@noeldemartin/vue-modals@0.1.1':
     resolution: {integrity: sha512-iQc3AKYRCsOdycAXAyPiy2xrE/kyXoBS3z7zk24Ptziksoxbt8kR8oEtPcR97GAkUibakOW6AqrIJE3LWkMtsg==}
@@ -8412,7 +8417,7 @@ snapshots:
 
   '@aerogel/vite@0.1.2(@babel/parser@7.29.9)(supports-color@8.1.1)(vite@6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+      '@noeldemartin/utils': 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       '@tailwindcss/vite': 4.3.3(vite@6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1))
       '@vitejs/plugin-vue': 5.2.4(vite@6.4.3(@types/node@24.19.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))
       image-size: 2.0.4
@@ -11800,29 +11805,31 @@ snapshots:
 
   '@noeldemartin/scripts@0.4.0-next.c4947cf24d83e9a211c2705b97f764039d7863ab': {}
 
-  '@noeldemartin/solid-utils@0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)':
+  '@noeldemartin/solid-utils@0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+      '@noeldemartin/utils': 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       '@rdfjs/types': 2.0.1
       jsonld: 8.3.3(web-streams-polyfill@3.3.3)
       md5: 2.3.0
       n3: 1.26.0
+    optionalDependencies:
+      vitest: 3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1)
     transitivePeerDependencies:
       - web-streams-polyfill
 
   '@noeldemartin/testing@0.0.0-next.2d44364d125aabe764d3cf01d20b66e0923a7a19(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))':
     dependencies:
       '@noeldemartin/faker': 7.6.0
-      '@noeldemartin/utils': 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+      '@noeldemartin/utils': 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       vitest: 3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1)
 
-  '@noeldemartin/utils@0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066':
+  '@noeldemartin/utils@0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063':
     dependencies:
       idb: 8.0.3
 
   '@noeldemartin/vue-modals@0.1.1(vue@3.5.43(typescript@5.9.3))':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+      '@noeldemartin/utils': 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       vue: 3.5.43(typescript@5.9.3)
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
@@ -15882,16 +15889,17 @@ snapshots:
 
   playwright-core@1.63.0: {}
 
-  playwright-solid@0.0.0-next.804b11ba7798034706c3e533476cfdd891065272(web-streams-polyfill@3.3.3):
+  playwright-solid@0.0.0-next.804b11ba7798034706c3e533476cfdd891065272(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3):
     dependencies:
       '@inrupt/solid-client-authn-core': 3.1.1
-      '@noeldemartin/solid-utils': 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+      '@noeldemartin/solid-utils': 0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
+      '@noeldemartin/utils': 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       '@playwright/test': 1.63.0
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5)
+      soukai-bis: 0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5)
       zod: 4.6.5
     transitivePeerDependencies:
+      - vitest
       - web-streams-polyfill
 
   playwright@1.63.0:
@@ -16739,13 +16747,14 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(web-streams-polyfill@3.3.3)(zod@4.6.5):
+  soukai-bis@0.0.0-next.8084c9222458428ddf89e67d7ba9298b2908f275(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)(zod@4.6.5):
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1-next.578b41be4a53c59db770a55bf505f58574afd7e0(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3-next.9b27cd7a7cb7b19a570093ac5a656ad6cf197066
+      '@noeldemartin/solid-utils': 0.6.1-next.112753d1b22566d5c7660cf0238f82dc825a4fb4(vitest@3.2.7(@types/node@24.19.0)(happy-dom@20.14.5)(jiti@2.7.0)(lightningcss@1.32.0)(supports-color@8.1.1)(terser@5.51.2)(yaml@2.9.1))(web-streams-polyfill@3.3.3)
+      '@noeldemartin/utils': 0.7.3-next.6ceabe8c2aa83cbcc440ec95d71c770a39e58063
       idb: 8.0.3
       zod: 4.6.5
     transitivePeerDependencies:
+      - vitest
       - web-streams-polyfill
 
   source-map-js@1.2.1: {}
