@@ -107,7 +107,7 @@
                                     :aria-label="
                                         $td('cloud.advanced.pollingMinutes', 'Synchronization interval (in minutes)')
                                     "
-                                    class="focus-within:border-primary-600 mx-1 -mb-px border-b"
+                                    class="focus-within:border-focus mx-1 -mb-px border-b"
                                     @update="$cloud.pollingMinutes = $event as number"
                                 >
                                     {{ $cloud.pollingMinutes }}

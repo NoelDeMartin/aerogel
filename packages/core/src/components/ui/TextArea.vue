@@ -59,7 +59,7 @@ const renderedInputClasses = computed(() =>
         // eslint-disable-next-line vue/max-len
         'block w-full rounded-md border-0 py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
         {
-            'focus:ring-primary-600': !$control.value?.errors,
+            'focus:ring-focus': !$control.value?.errors,
             'text-gray-900 shadow-2xs ring-gray-900/10 placeholder:text-gray-400': !$control.value?.errors,
             'pr-10 text-red-900 ring-red-900/10 placeholder:text-red-300 focus:ring-red-500': $control.value?.errors,
         },

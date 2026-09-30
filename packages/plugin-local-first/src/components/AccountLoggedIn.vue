@@ -1,7 +1,7 @@
 <template>
     <div class="relative size-12">
         <button
-            class="clickable focus-visible:outline-primary-600 flex size-full rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            class="clickable focus-visible:outline-focus flex size-full rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             type="button"
             :title="$td('account.open', 'Open account')"
             @click="$ui.modal(AccountModal)"

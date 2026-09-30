@@ -16,7 +16,7 @@
                             v-model="form[name]"
                             type="checkbox"
                             :required="checkbox.required"
-                            class="border-primary-600 text-primary-600 hover:bg-primary-50 hover:checked:bg-primary-500 focus:ring-primary-600 focus-visible:ring-primary-600 rounded border-2"
+                            class="border-primary-600 text-primary-600 hover:bg-primary-50 hover:checked:bg-primary-500 focus:ring-focus focus-visible:ring-focus rounded border-2"
                         >
                         <span class="ml-1.5">{{ checkbox.label }}</span>
                     </label>

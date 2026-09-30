@@ -35,7 +35,7 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
         baseClasses: 'clickable focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         variants: {
             variant: {
-                default: 'bg-primary-600 text-white focus-visible:outline-primary-600',
+                default: 'bg-primary-600 text-white focus-visible:outline-focus',
                 secondary: 'bg-background text-gray-900 ring-gray-300',
                 danger: 'bg-red-600 text-white focus-visible:outline-red-600',
                 warning: 'bg-yellow-600 text-white focus-visible:outline-yellow-600',

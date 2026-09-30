@@ -52,7 +52,7 @@ const renderedSingleClasses = computed(() =>
         'block w-full rounded-md border-0 bg-white py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
         {
             'mt-1': combobox.label,
-            'focus:ring-primary-600': !combobox.errors,
+            'focus:ring-focus': !combobox.errors,
             'text-gray-900 shadow-2xs ring-gray-900/10 placeholder:text-gray-400': !combobox.errors,
             'pr-10 text-red-900 ring-red-900/10 placeholder:text-red-300 focus:ring-red-500': combobox.errors,
         },
@@ -64,7 +64,7 @@ const renderedMultiClasses = computed(() =>
         'relative flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-md border-0 bg-white px-2.5 py-1 ring-1 ring-inset focus-within:ring-2 focus-within:ring-inset sm:text-sm sm:leading-6 cursor-text',
         {
             'mt-1': combobox.label,
-            'focus-within:ring-primary-600': !combobox.errors,
+            'focus-within:ring-focus': !combobox.errors,
             'text-gray-900 shadow-2xs ring-gray-900/10': !combobox.errors,
             'pr-10 text-red-900 ring-red-900/10 focus-within:ring-red-500': combobox.errors,
         },

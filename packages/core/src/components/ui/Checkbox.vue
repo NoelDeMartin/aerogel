@@ -53,7 +53,7 @@ const renderedInputClasses = computed(() =>
     classes(
         'size-4 rounded text-primary-600 not-checked:hover:bg-gray-200 checked:hover:text-primary-500 checked:border-0',
         {
-            'border-gray-300 focus:ring-primary-600': !$control.value?.errors,
+            'border-gray-300 focus:ring-focus': !$control.value?.errors,
             'border-red-400 border-2 focus:ring-red-600': $control.value?.errors,
         },
         inputClass,

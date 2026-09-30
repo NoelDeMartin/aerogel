@@ -30,7 +30,7 @@ const renderedClasses = computed(() =>
         'focus:outline-2 focus:-outline-offset-2 sm:text-sm/6',
         {
             'mt-1': select.label,
-            'outline-gray-300 focus:outline-primary-600 data-[state=open]:outline-primary-600': !select.errors,
+            'outline-gray-300 focus:outline-focus data-[state=open]:outline-focus': !select.errors,
             'text-gray-900 shadow-2xs ring-gray-900/10 placeholder:text-gray-400': !select.errors,
             'outline-red-900/10 pr-10 text-red-900 placeholder:text-red-300': select.errors,
             'focus:outline-red-500 data-[state=open]:outline-red-500': select.errors,

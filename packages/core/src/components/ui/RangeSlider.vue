@@ -98,7 +98,7 @@ const renderedRangeClasses = computed(() =>
 const renderedThumbClasses = computed(() =>
     classes(
         'block size-5 cursor-pointer rounded-full border-2 border-primary-600 bg-white shadow-md transition-colors',
-        'focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 focus-visible:outline-hidden',
+        'focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:outline-hidden',
         thumbClass,
     ));
 
