@@ -1,18 +1,16 @@
-import { formatCodeBlock, stringToCamelCase } from '@noeldemartin/utils';
-
 import Command from '@aerogel/cli/commands/Command';
+import type { CommandOptions } from '@aerogel/cli/commands/Command';
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Template from '@aerogel/cli/lib/Template';
 import { templatePath } from '@aerogel/cli/lib/utils/paths';
-import type { CommandOptions } from '@aerogel/cli/commands/Command';
+import { formatCodeBlock, stringToCamelCase } from '@noeldemartin/utils';
 
 interface Options {
     fields?: string;
 }
 
 export class GenerateModelCommand extends Command {
-
     protected static override command: string = 'generate:model';
     protected static override description: string = 'Generate an AerogelJS Model';
     protected static override parameters: [string, string][] = [['name', 'Model name']];
@@ -77,5 +75,4 @@ export class GenerateModelCommand extends Command {
 
         return formatCodeBlock(code, { indent: 8 });
     }
-
 }

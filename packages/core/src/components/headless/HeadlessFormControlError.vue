@@ -5,11 +5,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import { translateWithDefault } from '@aerogel/core/lang/utils';
 import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { computed } from 'vue';
 
 const formControl = injectReactiveOrFail<FormControlExpose>(
     'form-control',

@@ -1,8 +1,7 @@
-import { computed, ref } from 'vue';
-
-import { translateWithDefault } from '@aerogel/core/lang';
-import type { ErrorReport } from '@aerogel/core/errors';
 import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
+import type { ErrorReport } from '@aerogel/core/errors';
+import { translateWithDefault } from '@aerogel/core/lang';
+import { computed, ref } from 'vue';
 
 export interface ErrorReportModalProps {
     report: ErrorReport;
@@ -11,7 +10,7 @@ export interface ErrorReportModalProps {
 
 export interface ErrorReportModalExpose extends ModalExpose {}
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export function useErrorReportModal(props: ErrorReportModalProps) {
     const activeReportIndex = ref(props.reports.includes(props.report) ? props.reports.indexOf(props.report) : 0);
     const activeReport = computed(() => props.reports[activeReportIndex.value] as ErrorReport);

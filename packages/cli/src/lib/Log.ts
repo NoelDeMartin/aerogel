@@ -1,9 +1,9 @@
-import chalk from 'chalk';
 import { clearLine, cursorTo } from 'node:readline';
+
 import { facade, stringMatchAll } from '@noeldemartin/utils';
+import chalk from 'chalk';
 
 export class LogService {
-
     protected renderInfo = chalk.hex('#00ffff');
     protected renderSuccess = chalk.hex('#00ff00');
     protected renderError = chalk.hex('#ff0000');
@@ -37,7 +37,7 @@ export class LogService {
         this.log(this.renderMarkdown(message), this.renderError);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     public fail<T = any>(message: string): T {
         this.error(message);
 
@@ -79,7 +79,7 @@ export class LogService {
     }
 
     protected logLine(line: string): void {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.log(line);
     }
 
@@ -89,7 +89,6 @@ export class LogService {
 
         process.stdout.write(message);
     }
-
 }
 
 export default facade(LogService);

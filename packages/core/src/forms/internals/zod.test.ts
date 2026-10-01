@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { z } from 'zod';
 
 import {
@@ -11,7 +11,6 @@ import {
 } from './zod';
 
 describe('Zod helpers', () => {
-
     it('gets the final schema', () => {
         const schema = z.string();
 
@@ -107,5 +106,4 @@ describe('Zod helpers', () => {
         expect(validateSchema(rangeRefine, [80, 20])).toEqual(['invalid_range']);
         expect(validateSchema(rangeRefine, [20, 80])).toEqual([]);
     });
-
 });

@@ -1,8 +1,7 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["vite/client"],
-        "baseUrl": ".",
+        "types": ["node"],
         "paths": {
             "@aerogel/vite/*": ["./src/*"]
         }

@@ -1,7 +1,6 @@
+import type { Falsifiable } from '@aerogel/core/utils/types';
 import type { DropdownMenuContentProps } from 'reka-ui';
 import type { Component } from 'vue';
-
-import type { Falsifiable } from '@aerogel/core/utils/types';
 
 export type DropdownMenuOptionData = {
     label: string;

@@ -1,12 +1,10 @@
-import { describe, expect, it } from 'vitest';
-
-import ShellMock from '@aerogel/cli/lib/Shell.mock';
 import FileMock from '@aerogel/cli/lib/File.mock';
+import ShellMock from '@aerogel/cli/lib/Shell.mock';
+import { describe, expect, it } from 'vite-plus/test';
 
 import { InstallCommand } from './install';
 
 describe('Install plugin command', () => {
-
     it('installs solid', async () => {
         // Arrange
         stubPackageJson();
@@ -23,7 +21,7 @@ describe('Install plugin command', () => {
                 '@aerogel/plugin-solid': 'next',
                 '@noeldemartin/solid-utils': 'next',
                 'soukai-bis': 'next',
-                'vue': '^3.5.13',
+                vue: '^3.5.13',
             },
         });
     });
@@ -42,11 +40,10 @@ describe('Install plugin command', () => {
             dependencies: {
                 '@aerogel/core': 'next',
                 '@aerogel/plugin-local-first': 'next',
-                'vue': '^3.5.13',
+                vue: '^3.5.13',
             },
         });
     });
-
 });
 
 function stubPackageJson(): void {
@@ -56,7 +53,7 @@ function stubPackageJson(): void {
             {
                 dependencies: {
                     '@aerogel/core': 'next',
-                    'vue': '^3.5.13',
+                    vue: '^3.5.13',
                 },
             },
             null,

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { createApp, defineComponent, h, nextTick, ref } from 'vue';
 
 import { useForwardExpose } from './expose';
@@ -30,7 +30,6 @@ const Outer = defineComponent({
 });
 
 describe('Vue expose helpers', () => {
-
     it('forwards exposed API', async () => {
         // Arrange
         const label = ref('foo');
@@ -55,5 +54,4 @@ describe('Vue expose helpers', () => {
         expect($outer.value.leafMethod()).toBe('leaf');
         expect($outer.value.label).toBe('bar');
     });
-
 });

@@ -1,12 +1,12 @@
 import { resolve } from 'node:path';
-import { simpleGit } from 'simple-git';
-import { stringToSlug } from '@noeldemartin/utils';
 
+import { Editor } from '@aerogel/cli/lib/Editor';
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Template from '@aerogel/cli/lib/Template';
 import { packNotFound, packagePackPath, packagePath, templatePath } from '@aerogel/cli/lib/utils/paths';
-import { Editor } from '@aerogel/cli/lib/Editor';
+import { stringToSlug } from '@noeldemartin/utils';
+import { simpleGit } from 'simple-git';
 
 export interface Options {
     next?: boolean;
@@ -15,7 +15,6 @@ export interface Options {
 }
 
 export default class App {
-
     constructor(
         protected name: string,
         protected options: Options = {},
@@ -38,12 +37,12 @@ export default class App {
 
         File.replace(
             resolve(path, 'vite.config.ts'),
-            'Aerogel({ name: \'Aerogel\' })',
+            "Aerogel({ name: 'Aerogel' })",
             `Aerogel({ name: '${this.name}' })`,
         );
 
         File.replace(resolve(path, 'vite.config.ts'), 'hello-aerogel', `${stringToSlug(this.name)}`);
-        File.replace(resolve(path, 'src/lang/en.yaml'), 'title: \'App\'', `title: '${this.name}'`);
+        File.replace(resolve(path, 'src/lang/en.yaml'), "title: 'App'", `title: '${this.name}'`);
 
         for (const [name, version] of Object.entries(dependencies)) {
             File.replace(resolve(path, 'package.json'), new RegExp(`"${name}": ".*?"`, 'g'), `"${name}": "${version}"`);
@@ -116,5 +115,4 @@ export default class App {
 
         return dependencies;
     }
-
 }

@@ -6,10 +6,10 @@
 
 <script setup lang="ts">
 import { classes } from '@aerogel/core/utils';
-import { computed } from 'vue';
 import { DropdownMenuItem } from 'reka-ui';
-import type { HTMLAttributes } from 'vue';
 import type { PrimitiveProps } from 'reka-ui';
+import { computed } from 'vue';
+import type { HTMLAttributes } from 'vue';
 
 defineEmits<{ select: [] }>();
 
@@ -18,5 +18,6 @@ const renderedClasses = computed(() =>
     classes(
         'flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-gray-900 data-[highlighted]:bg-gray-100',
         rootClass,
-    ));
+    ),
+);
 </script>

@@ -9,12 +9,7 @@
             "
         />
 
-        <Button
-            small
-            color="clear"
-            class="mt-1"
-            @click="$solid.logout()"
-        >
+        <Button small color="clear" class="mt-1" @click="$solid.logout()">
             {{ $t('solid.logout') }}
             <i-mdi-logout class="size-4" />
         </Button>

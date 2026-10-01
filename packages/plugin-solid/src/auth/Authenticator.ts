@@ -1,11 +1,10 @@
-import { PromisedValue, arr, fail } from '@noeldemartin/utils';
-import { SolidEngine } from 'soukai-bis';
-import type { Closure, FluentArray, Nullable } from '@noeldemartin/utils';
-import type { Engine } from 'soukai-bis';
-import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 import type { ErrorSource } from '@aerogel/core';
-
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
+import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
+import { PromisedValue, arr, fail } from '@noeldemartin/utils';
+import type { Closure, FluentArray, Nullable } from '@noeldemartin/utils';
+import { SolidEngine } from 'soukai-bis';
+import type { Engine } from 'soukai-bis';
 
 type ListenerEvent = keyof AuthenticatorListener;
 type ListenerEventPayload<
@@ -31,7 +30,6 @@ export interface AuthenticatorListener {
 }
 
 export default abstract class Authenticator {
-
     public name!: AuthenticatorName;
 
     protected authenticatedFetch?: Fetch;
@@ -122,5 +120,4 @@ export default abstract class Authenticator {
             }),
         );
     }
-
 }

@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { classes } from '@aerogel/core';
+import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class'] }>();

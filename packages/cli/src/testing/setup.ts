@@ -1,13 +1,12 @@
-import { beforeAll, beforeEach, vi } from 'vitest';
 import { resolve } from 'node:path';
-import { setupFacadeMocks } from '@noeldemartin/testing';
 
-import ShellMock from '@aerogel/cli/lib/Shell.mock';
 import File from '@aerogel/cli/lib/File';
 import FileMock from '@aerogel/cli/lib/File.mock';
 import Log from '@aerogel/cli/lib/Log';
 import LogMock from '@aerogel/cli/lib/Log.mock';
 import Shell from '@aerogel/cli/lib/Shell';
+import ShellMock from '@aerogel/cli/lib/Shell.mock';
+import { beforeAll, beforeEach, vi } from 'vite-plus/test';
 
 beforeAll(() => {
     File.setMockFacade(FileMock);
@@ -22,6 +21,7 @@ beforeEach(() => {
 });
 
 vi.mock('@noeldemartin/utils', async () => {
+    const { setupFacadeMocks } = await import('@noeldemartin/testing');
     const original = (await vi.importActual('@noeldemartin/utils')) as object;
 
     setupFacadeMocks();

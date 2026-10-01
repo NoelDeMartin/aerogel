@@ -5,11 +5,10 @@
 </template>
 
 <script setup lang="ts">
+import Modal from '@aerogel/core/components/ui/Modal.vue';
+import App from '@aerogel/core/services/App';
 import { arraySorted } from '@noeldemartin/utils';
 import { computed } from 'vue';
-
-import App from '@aerogel/core/services/App';
-import Modal from '@aerogel/core/components/ui/Modal.vue';
 
 const settings = computed(() => {
     return arraySorted(App.settings, 'priority', 'desc').filter((setting) => !setting.development || App.devMode);

@@ -1,12 +1,10 @@
-import { describe, it } from 'vitest';
-import { formatCodeBlock } from '@noeldemartin/utils';
-
 import FileMock from '@aerogel/cli/lib/File.mock';
+import { formatCodeBlock } from '@noeldemartin/utils';
+import { describe, it } from 'vite-plus/test';
 
 import { GenerateModelCommand } from './generate-model';
 
 describe('Generate Model command', () => {
-
     it('generates models', async () => {
         // Arrange
         FileMock.stub(
@@ -25,7 +23,7 @@ describe('Generate Model command', () => {
         });
 
         // Assert
-        FileMock.expectCreated('src/models/FooBar.ts').toContain('import Model from \'./FooBar.schema\'');
+        FileMock.expectCreated('src/models/FooBar.ts').toContain("import Model from './FooBar.schema'");
         FileMock.expectCreated('src/models/FooBar.schema.ts').toContain(
             formatCodeBlock(`
                 defineSchema({
@@ -38,5 +36,4 @@ describe('Generate Model command', () => {
             `),
         );
     });
-
 });

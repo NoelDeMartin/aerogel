@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { classes } from '@aerogel/core';
+import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 const { class: rootClasses, fullbleed } = defineProps<{
@@ -19,5 +19,6 @@ const { class: rootClasses, fullbleed } = defineProps<{
 }>();
 
 const renderedRootClasses = computed(() =>
-    classes('mx-auto flex w-full grow flex-col px-edge py-8', fullbleed || 'max-w-screen-content', rootClasses));
+    classes('mx-auto flex w-full grow flex-col px-edge py-8', fullbleed || 'max-w-screen-content', rootClasses),
+);
 </script>

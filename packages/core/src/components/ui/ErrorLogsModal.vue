@@ -26,7 +26,7 @@
                     @click="
                         $errors.inspect(
                             log.report,
-                            $errors.logs.map(({ report }) => report)
+                            $errors.logs.map(({ report }) => report),
                         )
                     "
                 >
@@ -39,10 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import IconViewShow from '~icons/zondicons/view-show';
-
 import Button from '@aerogel/core/components/ui/Button.vue';
-import Modal from '@aerogel/core/components/ui/Modal.vue';
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
+import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { getErrorMessage } from '@aerogel/core/errors';
+import IconViewShow from '~icons/zondicons/view-show';
 </script>

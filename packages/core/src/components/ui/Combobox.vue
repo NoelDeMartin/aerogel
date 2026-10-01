@@ -18,16 +18,15 @@
 </template>
 
 <script setup lang="ts" generic="T">
+import type { ComboboxEmits, ComboboxExpose, ComboboxProps } from '@aerogel/core/components/contracts/Combobox';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import { ref } from 'vue';
 
-import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
-import type { ComboboxEmits, ComboboxExpose, ComboboxProps } from '@aerogel/core/components/contracts/Combobox';
-
+import HeadlessCombobox from '../headless/HeadlessCombobox.vue';
+import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 import ComboboxLabel from './ComboboxLabel.vue';
 import ComboboxOptions from './ComboboxOptions.vue';
 import ComboboxTrigger from './ComboboxTrigger.vue';
-import HeadlessCombobox from '../headless/HeadlessCombobox.vue';
-import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 
 defineOptions({ inheritAttrs: false });
 defineProps<ComboboxProps<T>>();

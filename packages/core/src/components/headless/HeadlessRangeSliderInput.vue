@@ -1,12 +1,5 @@
 <template>
-    <SliderRoot
-        :model-value="sliderValue"
-        :min
-        :max
-        :step
-        :disabled
-        @update:model-value="update($event)"
-    >
+    <SliderRoot :model-value="sliderValue" :min :max :step :disabled @update:model-value="update($event)">
         <SliderTrack :class="trackClass">
             <SliderRange :class="rangeClass" />
         </SliderTrack>
@@ -28,15 +21,14 @@
 </template>
 
 <script setup lang="ts">
+import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
+import type { RangeSliderInputProps, RangeSliderValue } from '@aerogel/core/components/contracts/RangeSlider';
+import { translateWithDefault } from '@aerogel/core/lang';
+import { onFormFocus } from '@aerogel/core/utils/composition/forms';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui';
 import { computed, useTemplateRef, watchEffect } from 'vue';
 import type { ComponentPublicInstance } from 'vue';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import { onFormFocus } from '@aerogel/core/utils/composition/forms';
-import { translateWithDefault } from '@aerogel/core/lang';
-import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
-import type { RangeSliderInputProps, RangeSliderValue } from '@aerogel/core/components/contracts/RangeSlider';
 
 const { min = 0, max = 100, step = 1 } = defineProps<RangeSliderInputProps>();
 const $thumb = useTemplateRef<ComponentPublicInstance>('$thumbRef');

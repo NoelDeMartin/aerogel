@@ -1,12 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
-import { formatCodeBlock } from '@noeldemartin/utils';
-
 import type { AppInfo } from '@aerogel/vite/lib/options';
+import { formatCodeBlock } from '@noeldemartin/utils';
+import { describe, expect, it, vi } from 'vite-plus/test';
 
 import { renderHTML } from './html';
 
-describe('HTML helpers', () => {
+vi.mock('image-size', async () => ({
+    default: vi.fn(() => ({ width: 42, height: 23 })),
+}));
 
+describe('HTML helpers', () => {
     const app: AppInfo = {
         name: 'My App',
         version: '0.1.0',
@@ -51,10 +53,6 @@ describe('HTML helpers', () => {
 
     it('Evaluates meta helpers', () => {
         // Arrange
-        vi.mock('image-size', async () => ({
-            default: vi.fn(() => ({ width: 42, height: 23 })),
-        }));
-
         const html = `
             {{ favicons() }}
             {{ socialMeta({ image: './src/assets/banner.png' }) }}
@@ -86,5 +84,4 @@ describe('HTML helpers', () => {
         // Assert
         expect(formatCodeBlock(actual)).toEqual(expected);
     });
-
 });

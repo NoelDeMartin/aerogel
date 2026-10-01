@@ -14,9 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import IconCheveronRight from '~icons/zondicons/cheveron-right';
 import { classes } from '@aerogel/core/utils';
 import { type HTMLAttributes, computed } from 'vue';
+import IconCheveronRight from '~icons/zondicons/cheveron-right';
 
 const {
     label = undefined,
@@ -29,5 +29,6 @@ const renderedSummaryClasses = computed(() =>
         '-ml-2 flex w-[max-content] items-center rounded-lg py-2 pr-3 pl-1 max-w-full',
         'hover:bg-gray-100 focus-visible:outline focus-visible:outline-focus',
         summaryClass,
-    ));
+    ),
+);
 </script>

@@ -1,10 +1,9 @@
-import { expect } from 'vitest';
 import { facade } from '@noeldemartin/utils';
+import { expect } from 'vite-plus/test';
 
 import { ShellService } from './Shell';
 
 export class ShellServiceMock extends ShellService {
-
     private history: string[] = [];
 
     public override async run(command: string): Promise<void> {
@@ -18,7 +17,6 @@ export class ShellServiceMock extends ShellService {
     public expectNotRan(command: string): void {
         expect(this.history, `expected '${command}' command to not have been executed`).not.toContain(command);
     }
-
 }
 
 export default facade(ShellServiceMock);

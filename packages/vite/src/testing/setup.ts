@@ -1,7 +1,7 @@
-import { vi } from 'vitest';
+import { vi } from 'vite-plus/test';
 
 vi.mock('fs', async () => {
-    const fs = (await vi.importActual('fs')) as Object;
+    const fs = (await vi.importActual('fs')) as Record<string, unknown>;
 
     return {
         ...fs,

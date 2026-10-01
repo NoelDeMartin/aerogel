@@ -1,6 +1,17 @@
 {
     "name": "@aerogel/vite",
     "version": "0.1.2",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/vite"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
     "type": "module",
     "sideEffects": false,
     "exports": {
@@ -15,43 +26,29 @@
             "types": "./dist/virtual.d.ts"
         }
     },
-    "files": [
-        "src",
-        "dist"
-    ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "vite build && cp src/types/shims.d.ts dist/shims.d.ts && cp src/types/virtual.d.ts dist/virtual.d.ts",
-        "lint": "noeldemartin-lint src",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose",
-        "verify": "noeldemartin-verify"
+        "build": "vp pack",
+        "test": "vp test"
     },
     "dependencies": {
         "@noeldemartin/utils": "catalog:",
         "@tailwindcss/vite": "^4.1.4",
-        "@vitejs/plugin-vue": "^5.2.3",
+        "@vitejs/plugin-vue": "^6.0.9",
         "@vitejs/plugin-vue-jsx": "^5.1.6",
         "image-size": "^2.0.2",
         "mustache": "^4.2.0",
-        "rollup": "^4.54.0",
         "sharp": "^0.35.4",
         "unplugin-vue-components": "catalog:",
         "vite-plugin-pwa": "^1.3.0",
         "workbox-build": "^7.4.0"
     },
     "devDependencies": {
-        "@arethetypeswrong/cli": "catalog:",
+        "@arethetypeswrong/core": "catalog:",
         "@noeldemartin/scripts": "catalog:",
-        "eslint": "catalog:",
-        "publint": "catalog:",
-        "rolldown": "1.0.0-rc.9"
+        "@types/node": "catalog:",
+        "publint": "catalog:"
     },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-typescript"
-        ]
+    "peerDependencies": {
+        "vite": "*"
     }
 }

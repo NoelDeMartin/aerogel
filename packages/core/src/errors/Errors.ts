@@ -1,20 +1,18 @@
-import { JSError, facade, isDevelopment, isObject, isTesting, objectWithoutEmpty, toString } from '@noeldemartin/utils';
-import { watchEffect } from 'vue';
-import type Eruda from 'eruda';
-import type ErudaIndexedDB from 'eruda-indexeddb';
-
-import App from '@aerogel/core/services/App';
 import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
-import UI from '@aerogel/core/ui/UI';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
 import { Events } from '@aerogel/core/services';
+import App from '@aerogel/core/services/App';
+import UI from '@aerogel/core/ui/UI';
+import { JSError, facade, isDevelopment, isObject, isTesting, objectWithoutEmpty, toString } from '@noeldemartin/utils';
+import type Eruda from 'eruda';
+import type ErudaIndexedDB from 'eruda-indexeddb';
+import { watchEffect } from 'vue';
 
 import Service from './Errors.state';
-import { consumeStartupErrors } from './internal';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
+import { consumeStartupErrors } from './internal';
 
 export class ErrorsService extends Service {
-
     public forceReporting: boolean = false;
     private enabled: boolean = true;
     private eruda: typeof Eruda | null = null;
@@ -28,8 +26,10 @@ export class ErrorsService extends Service {
         this.enabled = false;
     }
 
+    // oxlint-disable-next-line typescript/no-redundant-type-constituents
     public async inspect(error: ErrorSource | ErrorReport, reports?: ErrorReport[]): Promise<void>;
     public async inspect(reports: ErrorReport[]): Promise<void>;
+    // oxlint-disable-next-line typescript/no-redundant-type-constituents
     public async inspect(errorOrReports: ErrorSource | ErrorReport[], _reports?: ErrorReport[]): Promise<void> {
         if (Array.isArray(errorOrReports) && errorOrReports.length === 0) {
             UI.alert(translateWithDefault('errors.inspectEmpty', 'Nothing to inspect!'));
@@ -40,11 +40,11 @@ export class ErrorsService extends Service {
         const report = Array.isArray(errorOrReports)
             ? (errorOrReports[0] as ErrorReport)
             : this.isErrorReport(errorOrReports)
-                ? errorOrReports
-                : await this.createErrorReport(errorOrReports);
+              ? errorOrReports
+              : await this.createErrorReport(errorOrReports);
         const reports = Array.isArray(errorOrReports) ? (errorOrReports as ErrorReport[]) : (_reports ?? [report]);
 
-        UI.modal(UI.requireComponent('error-report-modal'), { report, reports });
+        void UI.modal(UI.requireComponent('error-report-modal'), { report, reports });
     }
 
     public async report(error: ErrorSource, message?: string): Promise<void> {
@@ -81,7 +81,7 @@ export class ErrorsService extends Service {
 
         UI.toast(
             message ??
-                translateWithDefault('errors.notice', 'Something went wrong, but it\'s not your fault. Try again!'),
+                translateWithDefault('errors.notice', "Something went wrong, but it's not your fault. Try again!"),
             {
                 variant: 'danger',
                 actions: [
@@ -103,7 +103,7 @@ export class ErrorsService extends Service {
         }
 
         if (message) {
-            // eslint-disable-next-line no-console
+            // oxlint-disable-next-line no-console
             console.warn(message);
         }
 
@@ -150,7 +150,7 @@ export class ErrorsService extends Service {
     }
 
     private logError(error: unknown): void {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error(error);
 
         if (isObject(error) && error.cause) {
@@ -209,7 +209,6 @@ export class ErrorsService extends Service {
             ...defaults,
         };
     }
-
 }
 
 export default facade(ErrorsService);

@@ -1,6 +1,17 @@
 {
     "name": "@aerogel/plugin-solid",
     "version": "0.1.2",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/plugin-solid"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
     "type": "module",
     "sideEffects": false,
     "exports": {
@@ -8,25 +19,11 @@
         "style": "./src/index.css",
         "default": "./dist/aerogel-plugin-solid.js"
     },
-    "files": [
-        "src",
-        "dist"
-    ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "vite build",
-        "lint": "noeldemartin-lint src",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose",
+        "build": "vp build",
+        "test": "vp test",
+        "type-check": "vue-tsc --noEmit",
         "verify": "noeldemartin-verify"
-    },
-    "peerDependencies": {
-        "@aerogel/core": "*",
-        "@aerogel/vite": "*",
-        "soukai-bis": "*",
-        "zod": "catalog:"
     },
     "dependencies": {
         "@inrupt/solid-client-authn-browser": "^3.1.1",
@@ -41,14 +38,14 @@
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
-        "eslint": "catalog:",
         "publint": "catalog:",
         "unplugin-icons": "catalog:",
         "zod": "catalog:"
     },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-vue"
-        ]
+    "peerDependencies": {
+        "@aerogel/core": "*",
+        "@aerogel/vite": "*",
+        "soukai-bis": "*",
+        "zod": "catalog:"
     }
 }

@@ -12,16 +12,12 @@ jobs:
             contents: write
         steps:
             - uses: actions/checkout@v7
-            - uses: pnpm/action-setup@v6
+            - uses: voidzero-dev/setup-vp@v1.21.1
               with:
-                  run_install: false
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: '.nvmrc'
-                  cache: 'pnpm'
-            - run: pnpm install
-            - run: pnpm build
-            - run: pnpm docs:build
+                  node-version-file: '.node-version'
+                  cache: true
+            - run: vp run build
+            - run: vp run docs:build
             - name: Push to gh-pages branch
               run: |
                   cd docs/.vitepress/dist

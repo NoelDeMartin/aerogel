@@ -1,6 +1,17 @@
 {
     "name": "@aerogel/core",
     "version": "0.1.2",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/core"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
     "type": "module",
     "sideEffects": false,
     "exports": {
@@ -8,26 +19,11 @@
         "style": "./src/index.css",
         "default": "./dist/aerogel-core.js"
     },
-    "files": [
-        "src",
-        "dist"
-    ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "vite build && ./scripts/fix-types.sh",
-        "lint": "noeldemartin-lint src",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose",
+        "build": "vp build && ./scripts/fix-types.sh",
+        "test": "vp test",
+        "type-check": "vue-tsc --noEmit",
         "verify": "noeldemartin-verify"
-    },
-    "peerDependencies": {
-        "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/typography": "^0.5.16",
-        "tailwindcss": "^4.1.4",
-        "vue": "catalog:",
-        "zod": "catalog:"
     },
     "dependencies": {
         "@noeldemartin/utils": "catalog:",
@@ -48,15 +44,16 @@
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
-        "eslint": "catalog:",
         "happy-dom": "^20.10.1",
         "publint": "catalog:",
         "unplugin-icons": "catalog:",
         "zod": "catalog:"
     },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-vue"
-        ]
+    "peerDependencies": {
+        "@tailwindcss/forms": "^0.5.10",
+        "@tailwindcss/typography": "^0.5.16",
+        "tailwindcss": "^4.1.4",
+        "vue": "catalog:",
+        "zod": "catalog:"
     }
 }

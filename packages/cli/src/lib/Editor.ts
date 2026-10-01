@@ -1,13 +1,11 @@
+import File from '@aerogel/cli/lib/File';
+import Log from '@aerogel/cli/lib/Log';
+import Shell from '@aerogel/cli/lib/Shell';
 import { arrayFrom } from '@noeldemartin/utils';
 import { Project } from 'ts-morph';
 import type { SourceFile } from 'ts-morph';
 
-import File from '@aerogel/cli/lib/File';
-import Log from '@aerogel/cli/lib/Log';
-import Shell from '@aerogel/cli/lib/Shell';
-
 export class Editor {
-
     private project: Project;
     private modifiedFiles: Set<string>;
 
@@ -36,9 +34,9 @@ export class Editor {
             const formatFile = usingPrettierESLint
                 ? (file: string) => Shell.run(`npx prettier-eslint ${file} --write`)
                 : async (file: string) => {
-                    usingPrettier && (await Shell.run(`npx prettier ${file} --write`));
-                    file.match(/\.(ts|js|vue)$/) && usingESLint && (await Shell.run(`npx eslint ${file} --fix`));
-                };
+                      usingPrettier && (await Shell.run(`npx prettier ${file} --write`));
+                      file.match(/\.(ts|js|vue)$/) && usingESLint && (await Shell.run(`npx eslint ${file} --fix`));
+                  };
 
             await Promise.all(arrayFrom(this.modifiedFiles).map(async (file) => formatFile(file)));
         });
@@ -53,5 +51,4 @@ export class Editor {
     public addModifiedFile(path: string): void {
         this.modifiedFiles.add(path);
     }
-
 }

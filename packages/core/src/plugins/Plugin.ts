@@ -1,6 +1,5 @@
-import type { App } from 'vue';
-
 import type { AerogelOptions } from '@aerogel/core/bootstrap/options';
+import type { App } from 'vue';
 
 export interface Plugin {
     name?: string;

@@ -1,6 +1,17 @@
 {
     "name": "@aerogel/plugin-local-first",
     "version": "0.1.2",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/plugin-local-first"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
     "type": "module",
     "sideEffects": false,
     "exports": {
@@ -8,24 +19,11 @@
         "style": "./src/index.css",
         "default": "./dist/aerogel-plugin-local-first.js"
     },
-    "files": [
-        "src",
-        "dist"
-    ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "vite build",
-        "lint": "noeldemartin-lint src",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose",
+        "build": "vp build",
+        "test": "vp test",
+        "type-check": "vue-tsc --noEmit",
         "verify": "noeldemartin-verify"
-    },
-    "peerDependencies": {
-        "@aerogel/core": "*",
-        "@aerogel/plugin-solid": "*",
-        "soukai-bis": "*"
     },
     "dependencies": {
         "@noeldemartin/solid-utils": "catalog:",
@@ -39,16 +37,15 @@
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "@types/node": "catalog:",
-        "eslint": "catalog:",
         "fake-indexeddb": "^6.0.0",
         "publint": "catalog:",
         "soukai-bis": "catalog:",
         "unplugin-icons": "catalog:",
         "zod": "catalog:"
     },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-vue"
-        ]
+    "peerDependencies": {
+        "@aerogel/core": "*",
+        "@aerogel/plugin-solid": "*",
+        "soukai-bis": "*"
     }
 }

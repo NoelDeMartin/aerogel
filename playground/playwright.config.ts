@@ -12,26 +12,28 @@ export default defineConfig({
         baseURL: 'http://localhost:5001',
         trace: 'on-first-retry',
     },
-    projects: process.env.CI ? [
-        {
-            name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
-            name: 'firefox',
-            use: { ...devices['Desktop Firefox'] },
-        },
-        {
-            name: 'webkit',
-            use: { ...devices['Desktop Safari'] },
-        },
-    ] : [
-        {
-            name: 'chromium',
-            use: {
-                headless: !process.env.UI,
-                ...devices['Desktop Chrome'],
-            },
-        },
-    ],
+    projects: process.env.CI
+        ? [
+              {
+                  name: 'chromium',
+                  use: { ...devices['Desktop Chrome'] },
+              },
+              {
+                  name: 'firefox',
+                  use: { ...devices['Desktop Firefox'] },
+              },
+              {
+                  name: 'webkit',
+                  use: { ...devices['Desktop Safari'] },
+              },
+          ]
+        : [
+              {
+                  name: 'chromium',
+                  use: {
+                      headless: !process.env.UI,
+                      ...devices['Desktop Chrome'],
+                  },
+              },
+          ],
 });

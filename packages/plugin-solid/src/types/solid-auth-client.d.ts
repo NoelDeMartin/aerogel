@@ -4,7 +4,6 @@ declare module 'solid-auth-client' {
     };
 
     export class SolidAuthClient {
-
         public fetch(...args: any[]): Promise<Response>;
 
         public login(loginUrl: string): Promise<Session | void>;
@@ -12,7 +11,6 @@ declare module 'solid-auth-client' {
         public currentSession(): Promise<Session | void>;
 
         public logout(): Promise<void>;
-    
     }
 
     const auth: SolidAuthClient;

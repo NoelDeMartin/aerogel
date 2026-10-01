@@ -9,8 +9,8 @@
 <script setup lang="ts">
 import type { ComboboxItemProps, SelectItemSelectEvent } from 'reka-ui';
 
-import ComboboxOptionContent from './ComboboxOptionContent.vue';
 import HeadlessComboboxOption from '../headless/HeadlessComboboxOption.vue';
+import ComboboxOptionContent from './ComboboxOptionContent.vue';
 
 defineProps<ComboboxItemProps>();
 defineEmits<{ select: [event: SelectItemSelectEvent<unknown>] }>();

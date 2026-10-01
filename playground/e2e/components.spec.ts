@@ -10,13 +10,13 @@ test('All', async ({ page }) => {
 
 test('Modals', async ({ page }) => {
     await press(page, 'Alert');
-    await see(page, 'How\'s your day going?');
+    await see(page, "How's your day going?");
     await matchImageSnapshot(page, 'Alert');
     await page.keyboard.press('Escape');
-    await dontSee(page, 'How\'s your day going?');
+    await dontSee(page, "How's your day going?");
 
     await press(page, 'Confirm');
-    await see(page, 'You\'re about to do something dangerous');
+    await see(page, "You're about to do something dangerous");
     await see(page, 'Are you sure you want to continue?');
     await matchImageSnapshot(page, 'Confirm');
     await press(page, 'Of course!');

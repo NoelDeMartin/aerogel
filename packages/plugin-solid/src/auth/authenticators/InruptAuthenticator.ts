@@ -1,7 +1,7 @@
-import AerogelSolid from 'virtual:aerogel-solid';
-
-import { Storage, after, fail } from '@noeldemartin/utils';
-import type { Fetch } from '@noeldemartin/solid-utils';
+import Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import AuthenticationFailedError from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
+import Solid from '@aerogel/plugin-solid/services/Solid';
 import type {
     ILoginInputOptions,
     events,
@@ -9,16 +9,13 @@ import type {
     login,
     logout,
 } from '@inrupt/solid-client-authn-browser';
-
-import AuthenticationFailedError from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
-import Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
-import Solid from '@aerogel/plugin-solid/services/Solid';
-import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import type { Fetch } from '@noeldemartin/solid-utils';
+import { Storage, after, fail } from '@noeldemartin/utils';
+import AerogelSolid from 'virtual:aerogel-solid';
 
 const STORAGE_KEY = 'inrupt-authenticator';
 
 export default class InruptAuthenticator extends Authenticator {
-
     private _events!: typeof events;
     private _fetch!: Fetch;
     private _login!: typeof login;
@@ -43,7 +40,7 @@ export default class InruptAuthenticator extends Authenticator {
         // Browser should redirect, so just make it wait for a while.
         await after({ seconds: 60 });
 
-        return fail('Browser should have redirected, but it didn\'t');
+        return fail("Browser should have redirected, but it didn't");
     }
 
     public async logout(): Promise<void> {
@@ -69,13 +66,16 @@ export default class InruptAuthenticator extends Authenticator {
             return;
         }
 
-        this._events().on('error', (error: string | null, errorDescription?: string | Error | null) => {
+        this._events().on('error', async (error: string | null, errorDescription?: string | Error | null) => {
             error ??= 'Error using Inrupt Authenticator method';
 
             if (typeof errorDescription === 'object') {
-                this.failSession(loginUrl, new AuthenticationFailedError(error, null, { cause: errorDescription }));
+                await this.failSession(
+                    loginUrl,
+                    new AuthenticationFailedError(error, null, { cause: errorDescription }),
+                );
             } else {
-                this.failSession(loginUrl, new AuthenticationFailedError(error, errorDescription));
+                await this.failSession(loginUrl, new AuthenticationFailedError(error, errorDescription));
             }
         });
 
@@ -99,5 +99,4 @@ export default class InruptAuthenticator extends Authenticator {
             await this.failSession(webId, error);
         }
     }
-
 }

@@ -7,7 +7,6 @@ type MessagesLoader = () => Promise<Messages>;
 export type Listener = (locale: string, messages: Messages) => unknown;
 
 export default class I18nMessages {
-
     private listeners: Listener[] = [];
     private messages: Record<string, Messages> = {};
     private loaders: Record<string, MessagesLoader>;
@@ -53,5 +52,4 @@ export default class I18nMessages {
 
         return localeMessages;
     }
-
 }

@@ -1,12 +1,12 @@
-import App from '@aerogel/core/services/App';
-import { bootServices } from '@aerogel/core/services';
 import { definePlugin } from '@aerogel/core/plugins';
+import { bootServices } from '@aerogel/core/services';
+import App from '@aerogel/core/services/App';
 
+import { SYSTEM_LOCALE } from './constants';
 import Lang from './Lang';
+import type { LangProvider } from './Lang';
 import settings from './settings';
 import { getBrowserLocale, translate, translateWithDefault } from './utils';
-import { SYSTEM_LOCALE } from './constants';
-import type { LangProvider } from './Lang';
 
 export { Lang, SYSTEM_LOCALE, getBrowserLocale, translate, translateWithDefault };
 export type { LangProvider };

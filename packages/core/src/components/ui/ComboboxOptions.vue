@@ -2,14 +2,14 @@
     <HeadlessComboboxContent :class="renderedClasses" inner-class="flex min-h-0 flex-1 flex-col">
         <HeadlessComboboxEmpty class="group p-1 outline-none">
             <div
-                class="relative flex max-w-[calc(100vw-2rem)] select-none items-center gap-2 truncate rounded-md px-2 py-1 text-sm *:truncate"
+                class="relative flex max-w-[calc(100vw-2rem)] items-center gap-2 truncate rounded-md px-2 py-1 text-sm select-none *:truncate"
             >
                 {{ $td('ui.comboboxEmpty', 'No options found') }}
             </div>
         </HeadlessComboboxEmpty>
 
         <div
-            v-measure.watch="({ height }: ElementSize) => optionHeight = height"
+            v-measure.watch="({ height }: ElementSize) => (optionHeight = height)"
             aria-hidden="true"
             class="pointer-events-none invisible absolute inset-x-0 top-0"
         >
@@ -35,20 +35,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { ComboboxVirtualizer, useFilter } from 'reka-ui';
-import type { AcceptableValue } from 'reka-ui';
-import type { HTMLAttributes } from 'vue';
-
-import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
 import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
 import type { ElementSize } from '@aerogel/core/directives/measure';
+import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
+import { ComboboxVirtualizer, useFilter } from 'reka-ui';
+import type { AcceptableValue } from 'reka-ui';
+import { computed, ref } from 'vue';
+import type { HTMLAttributes } from 'vue';
 
-import ComboboxOption from './ComboboxOption.vue';
-import ComboboxOptionContent from './ComboboxOptionContent.vue';
 import HeadlessComboboxContent from '../headless/HeadlessComboboxContent.vue';
 import HeadlessComboboxEmpty from '../headless/HeadlessComboboxEmpty.vue';
 import HeadlessComboboxGroup from '../headless/HeadlessComboboxGroup.vue';
+import ComboboxOption from './ComboboxOption.vue';
+import ComboboxOptionContent from './ComboboxOptionContent.vue';
 
 const emit = defineEmits<{ select: [] }>();
 const { newInputValue, class: rootClasses } = defineProps<{
@@ -80,7 +79,8 @@ const renderedClasses = computed(() =>
         'z-50 overflow-hidden rounded-lg bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden',
         combobox.optionsClass,
         rootClasses,
-    ));
+    ),
+);
 
 function onSelect() {
     if (combobox.multiple) {

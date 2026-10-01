@@ -1,5 +1,7 @@
-import Aerogel from 'virtual:aerogel';
-
+import type { Plugin } from '@aerogel/core/plugins';
+import type { AppSetting, Services } from '@aerogel/core/services';
+import Events, { EventListenerPriorities } from '@aerogel/core/services/Events';
+import BaseService from '@aerogel/core/services/Service';
 import {
     PromisedValue,
     facade,
@@ -8,12 +10,8 @@ import {
     isInstanceOf,
     updateLocationQueryParameters,
 } from '@noeldemartin/utils';
+import Aerogel from 'virtual:aerogel';
 import { markRaw } from 'vue';
-
-import BaseService from '@aerogel/core/services/Service';
-import Events, { EventListenerPriorities } from '@aerogel/core/services/Events';
-import type { Plugin } from '@aerogel/core/plugins';
-import type { AppSetting, Services } from '@aerogel/core/services';
 
 import Service from './App.state';
 
@@ -21,7 +19,6 @@ export { defineSettings } from './App.state';
 export type { AppSetting } from './App.state';
 
 export class AppService extends Service {
-
     public readonly name = Aerogel.name;
     public readonly ready = new PromisedValue<void>();
     public readonly mounted = new PromisedValue<void>();
@@ -49,7 +46,7 @@ export class AppService extends Service {
     }
 
     public async reload(queryParameters?: Record<string, string | undefined>): Promise<void> {
-        queryParameters && updateLocationQueryParameters(queryParameters);
+        queryParameters && void updateLocationQueryParameters(queryParameters);
 
         location.reload();
 
@@ -82,7 +79,6 @@ export class AppService extends Service {
             instance.clearPersistedState();
         }
     }
-
 }
 
 export default facade(AppService);

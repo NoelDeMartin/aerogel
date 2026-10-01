@@ -1,14 +1,12 @@
-import { arrayGroupBy } from '@noeldemartin/utils';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { InMemoryEngine, bootCoreModels, bootModels, setEngine } from 'soukai-bis';
-import { nextTick, ref, toRaw, watchEffect } from 'vue';
-
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
+import { arrayGroupBy } from '@noeldemartin/utils';
+import { InMemoryEngine, bootCoreModels, bootModels, setEngine } from 'soukai-bis';
+import { beforeEach, describe, expect, it } from 'vite-plus/test';
+import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 import { computedModel, computedModels } from './composition';
 
 describe('Composition helpers', () => {
-
     beforeEach(() => {
         bootModels({ User }, { reset: true });
         bootCoreModels({ reset: true });
@@ -86,5 +84,4 @@ describe('Composition helpers', () => {
         // FIXME This should be 1
         expect(aliceUpdated).toEqual(2);
     });
-
 });

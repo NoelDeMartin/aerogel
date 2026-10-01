@@ -1,11 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { nextTick } from 'vue';
 import { Storage } from '@noeldemartin/utils';
+import { describe, expect, it } from 'vite-plus/test';
+import { nextTick } from 'vue';
 
 import { persistent } from './persistent';
 
 describe('Vue persistent helper', () => {
-
     it('serializes to localStorage', async () => {
         // Arrange
         const store = persistent<{ foo?: string }>('foobar', {});
@@ -29,5 +28,4 @@ describe('Vue persistent helper', () => {
         // Assert
         expect(store.foo).toEqual('bar');
     });
-
 });

@@ -121,12 +121,7 @@
         </div>
 
         <div v-if="!$solid.loginOngoing" class="mt-4 flex flex-row-reverse justify-start gap-2">
-            <Button
-                v-if="$cloud.syncing"
-                variant="secondary"
-                :disabled="cancellingSync"
-                @click="cancelSync()"
-            >
+            <Button v-if="$cloud.syncing" variant="secondary" :disabled="cancellingSync" @click="cancelSync()">
                 <IconStop class="size-5" />
                 <span>{{
                     cancellingSync ? $td('cloud.stopping', 'Stopping...') : $td('cloud.stop', 'Stop synchronization')
@@ -157,14 +152,6 @@
 </template>
 
 <script setup lang="ts">
-import IconCheckmarkOutline from '~icons/zondicons/checkmark-outline';
-import IconCloudUpload from '~icons/ic/sharp-cloud-upload';
-import IconCog from '~icons/zondicons/cog';
-import IconLogout from '~icons/material-symbols/logout-rounded';
-import IconRefresh from '~icons/zondicons/refresh';
-import IconStop from '~icons/ic/baseline-stop';
-import IconWarning from '~icons/ion/warning';
-
 import {
     AdvancedOptions,
     Button,
@@ -179,10 +166,16 @@ import {
     useEvent,
     useModal,
 } from '@aerogel/core';
-import { computed, ref } from 'vue';
-import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
-
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
+import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
+import { computed, ref } from 'vue';
+import IconStop from '~icons/ic/baseline-stop';
+import IconCloudUpload from '~icons/ic/sharp-cloud-upload';
+import IconWarning from '~icons/ion/warning';
+import IconLogout from '~icons/material-symbols/logout-rounded';
+import IconCheckmarkOutline from '~icons/zondicons/checkmark-outline';
+import IconCog from '~icons/zondicons/cog';
+import IconRefresh from '~icons/zondicons/refresh';
 
 const { close } = useModal();
 const cancellingSync = ref(false);

@@ -1,14 +1,14 @@
-import { dirname, resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
-
-import { stringMatchAll, toString } from '@noeldemartin/utils';
+import { dirname, resolve } from 'node:path';
 
 import type { AppInfo } from '@aerogel/vite/lib/options';
+import { stringMatchAll, toString } from '@noeldemartin/utils';
 
 import * as globalScope from './html-eval';
 import type { HTMLEvalScope } from './html-eval';
 
 function evalScript(script: string, scope: HTMLEvalScope): unknown {
+    // oxlint-disable-next-line typescript/no-implied-eval
     return Function(`with (this) { return ${script} }`).bind({
         ...globalScope,
         ...scope,

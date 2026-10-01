@@ -4,19 +4,20 @@ packages:
 
 catalog:
     '@arethetypeswrong/cli': ^0.18.3
+    '@arethetypeswrong/core': ^0.18.5
     '@intlify/unplugin-vue-i18n': ^6.0.5
     '@noeldemartin/scripts': next
     '@noeldemartin/solid-utils': next
     '@noeldemartin/utils': next
-    '@types/node': ^24.10.4
-    eslint: ^8.57.1
-    eslint-plugin-vue: ^9.33.0
+    '@types/node': ^26.6.3
+    '@rdfjs/types': ^2.0.1
     idb: ^8.0.2
-    publint: ^0.3.12
+    publint: ^0.3.24
     soukai-bis: next
     unplugin-icons: ^22.1.0
     unplugin-vue-components: ^28.4.1
-    vite: ^6.2.2
+    vite: npm:@voidzero-dev/vite-plus-core@^1.0.0
+    vite-plus: ^1.0.0
     vue: ^3.5.0
     zod: ^4.3.4
 
@@ -26,8 +27,16 @@ overrides:
     '@noeldemartin/utils': 'catalog:'
     '@types/node': 'catalog:'
     soukai-bis: 'catalog:'
+    vite: 'catalog:'
+    'vitepress@1>vite': ^5.4.14
     vue: 'catalog:'
     zod: 'catalog:'
+
+peerDependencyRules:
+    allowAny:
+        - vite
+    allowedVersions:
+        vite: '*'
 
 allowBuilds:
     core-js: true

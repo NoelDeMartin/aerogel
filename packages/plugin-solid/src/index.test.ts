@@ -1,14 +1,12 @@
-import { createApp } from 'vue';
-import { describe, expect, it } from 'vitest';
 import { Errors, bootServices } from '@aerogel/core';
-import { IndexedDBEngine, Metadata, requireBootedModel, requireEngine } from 'soukai-bis';
-
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
+import { IndexedDBEngine, Metadata, requireBootedModel, requireEngine } from 'soukai-bis';
+import { describe, expect, it } from 'vite-plus/test';
+import { createApp } from 'vue';
 
 import solid from './index';
 
 describe('Solid plugin', () => {
-
     it('Initializes models', async () => {
         // Arrange
         const app = createApp({});
@@ -36,5 +34,4 @@ describe('Solid plugin', () => {
         expect(requireBootedModel('User')).toEqual(User);
         expect(requireEngine()).toBeInstanceOf(IndexedDBEngine);
     });
-
 });

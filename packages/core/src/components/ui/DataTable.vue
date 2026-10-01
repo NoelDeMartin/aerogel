@@ -3,14 +3,14 @@
         <template v-if="items.length > 0">
             <table
                 :id
-                class="border-(--border-color) w-full border-collapse border [--border-color:var(--color-slate-300)]"
+                class="w-full border-collapse border border-(--border-color) [--border-color:var(--color-slate-300)]"
             >
                 <thead>
                     <tr>
                         <th
                             v-for="(column, columnIndex) of columns"
                             :key="columnIndex"
-                            class="border-(--border-color) border"
+                            class="border border-(--border-color)"
                             :class="{ 'px-4 py-2.5': !column.sortable }"
                             :aria-sort="
                                 column.sortable && column.field
@@ -28,8 +28,8 @@
                                     !(column.field && column.field in sortingColumns)
                                         ? translateWithDefault('pagination.sortAscending', 'Sort ascending')
                                         : sortingColumns[column.field] === 'asc'
-                                            ? translateWithDefault('pagination.sortDescending', 'Sort descending')
-                                            : translateWithDefault('pagination.unsort', 'Reset sort')
+                                          ? translateWithDefault('pagination.sortDescending', 'Sort descending')
+                                          : translateWithDefault('pagination.unsort', 'Reset sort')
                                 "
                                 @click="toggleSort(column.field, $event)"
                             >
@@ -64,7 +64,7 @@
                         <td
                             v-for="(column, columnIndex) of columns"
                             :key="columnIndex"
-                            class="border-(--border-color) border px-4 py-2.5"
+                            class="border border-(--border-color) px-4 py-2.5"
                         >
                             <CellContent :content="column.content" :item />
                         </td>
@@ -82,7 +82,10 @@
                         })
                     }}
                 </span>
-                <nav class="flex items-center gap-1" :aria-label="translateWithDefault('pagination.label', 'Pagination')">
+                <nav
+                    class="flex items-center gap-1"
+                    :aria-label="translateWithDefault('pagination.label', 'Pagination')"
+                >
                     <Button
                         variant="ghost"
                         :disabled="currentPage === 1"
@@ -124,19 +127,17 @@
 </template>
 
 <script setup lang="ts" generic="T extends object">
-import IconSortAscendingBold from '~icons/ph/sort-ascending-bold';
-import IconSortDescendingBold from '~icons/ph/sort-descending-bold';
-import IconListBold from '~icons/ph/list-bold';
-import IconCheveronLeft from '~icons/zondicons/cheveron-left';
-import IconCheveronRight from '~icons/zondicons/cheveron-right';
-
-import { arraySorted, arrayWithout, deepGet, isEmpty, isTruthy, range, uuid } from '@noeldemartin/utils';
-import { Fragment, computed, ref, shallowRef, watch } from 'vue';
-import type { ArraySortDirection, DeepKeyOf } from '@noeldemartin/utils';
-import type { VNode, VNodeChild, VNodeNormalizedChildren } from 'vue';
-
 import Button from '@aerogel/core/components/ui/Button.vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
+import { arraySorted, arrayWithout, deepGet, isEmpty, isTruthy, range, uuid } from '@noeldemartin/utils';
+import type { ArraySortDirection, DeepKeyOf } from '@noeldemartin/utils';
+import { Fragment, computed, ref, shallowRef, watch } from 'vue';
+import type { VNode, VNodeChild, VNodeNormalizedChildren } from 'vue';
+import IconListBold from '~icons/ph/list-bold';
+import IconSortAscendingBold from '~icons/ph/sort-ascending-bold';
+import IconSortDescendingBold from '~icons/ph/sort-descending-bold';
+import IconCheveronLeft from '~icons/zondicons/cheveron-left';
+import IconCheveronRight from '~icons/zondicons/cheveron-right';
 
 type SortedColumn = { field: DeepKeyOf<T>; direction: ArraySortDirection };
 
@@ -210,17 +211,18 @@ const columns = computed(() =>
                 content: hasDefaultSlot(children)
                     ? (item: T) => children.default({ item })
                     : (item: T) => {
-                        if (!field) {
-                            return '-';
-                        }
+                          if (!field) {
+                              return '-';
+                          }
 
-                        const value = deepGet(item, field);
+                          const value = deepGet(item, field);
 
-                        return isEmpty(value) ? '-' : String(value);
-                    },
+                          return isEmpty(value) ? '-' : String(value);
+                      },
             };
         })
-        .filter(isTruthy));
+        .filter(isTruthy),
+);
 
 function hasDefaultSlot(
     children: VNodeNormalizedChildren,
@@ -283,7 +285,8 @@ function toggleSort(field?: DeepKeyOf<T>, event?: MouseEvent) {
     } else if (existingSort.direction === 'asc') {
         if (event?.shiftKey) {
             sorting.value = sorting.value.map((fieldSort) =>
-                fieldSort.field === field ? { ...fieldSort, direction: 'desc' } : fieldSort);
+                fieldSort.field === field ? { ...fieldSort, direction: 'desc' } : fieldSort,
+            );
         } else {
             sorting.value = [{ field, direction: 'desc' }];
         }

@@ -1,8 +1,8 @@
-import clsx from 'clsx';
-import { unref } from 'vue';
 import { cva } from 'class-variance-authority';
-import { extendTailwindMerge } from 'tailwind-merge';
+import clsx from 'clsx';
 import type { ClassValue } from 'clsx';
+import { extendTailwindMerge } from 'tailwind-merge';
+import { unref } from 'vue';
 import type { HTMLAttributes, PropType } from 'vue';
 
 const twMerge = extendTailwindMerge({

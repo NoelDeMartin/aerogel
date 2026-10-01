@@ -29,14 +29,13 @@
 </template>
 
 <script setup lang="ts">
-import { ComboboxContent, ComboboxPortal, ComboboxViewport } from 'reka-ui';
-import { computed } from 'vue';
-import type { ComboboxContentProps } from 'reka-ui';
-import type { HTMLAttributes } from 'vue';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import { classes } from '@aerogel/core/utils/classes';
 import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
+import { classes } from '@aerogel/core/utils/classes';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { ComboboxContent, ComboboxPortal, ComboboxViewport } from 'reka-ui';
+import type { ComboboxContentProps } from 'reka-ui';
+import { computed } from 'vue';
+import type { HTMLAttributes } from 'vue';
 
 defineOptions({ inheritAttrs: false });
 
@@ -68,5 +67,6 @@ const renderedClasses = computed(() =>
             ? 'min-w-(--reka-combobox-trigger-width) max-h-(--reka-combobox-content-available-height)'
             : '',
         rootClass,
-    ));
+    ),
+);
 </script>

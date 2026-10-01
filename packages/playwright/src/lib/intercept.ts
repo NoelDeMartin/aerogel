@@ -37,6 +37,7 @@ function matchesRequest(request: Request, glob: UrlMatcher, method?: string): bo
 
 export function interceptRequests(page: Page, url: UrlMatcher): InterceptHandle;
 export function interceptRequests(page: Page, method: string, url: UrlMatcher): InterceptHandle;
+// oxlint-disable-next-line typescript/no-duplicate-type-constituents
 export function interceptRequests(page: Page, methodOrUrl: string | UrlMatcher, url?: UrlMatcher): InterceptHandle {
     const method = url === undefined ? undefined : methodOrUrl;
     const glob = url ?? methodOrUrl;

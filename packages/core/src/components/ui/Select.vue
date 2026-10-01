@@ -10,14 +10,14 @@
 </template>
 
 <script setup lang="ts" generic="T">
+import type { SelectEmits, SelectExpose, SelectProps } from '@aerogel/core/components/contracts/Select';
 import HeadlessSelect from '@aerogel/core/components/headless/HeadlessSelect.vue';
 import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
-import type { SelectEmits, SelectExpose, SelectProps } from '@aerogel/core/components/contracts/Select';
 
+import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 import SelectLabel from './SelectLabel.vue';
 import SelectOptions from './SelectOptions.vue';
 import SelectTrigger from './SelectTrigger.vue';
-import HeadlessSelectError from '../headless/HeadlessSelectError.vue';
 
 defineProps<SelectProps<T>>();
 defineEmits<SelectEmits<T>>();

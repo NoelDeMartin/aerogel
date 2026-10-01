@@ -1,11 +1,10 @@
-import { expect } from 'vitest';
 import { facade } from '@noeldemartin/utils';
-import type { Assertion } from 'vitest';
+import { expect } from 'vite-plus/test';
+import type { Assertion } from 'vite-plus/test';
 
 import { FileService } from './File';
 
 export class FileMockService extends FileService {
-
     private virtualFilesystem: Record<string, string | { directory: true }> = {};
 
     public override delete(path: string): void {
@@ -47,7 +46,7 @@ export class FileMockService extends FileService {
         this.virtualFilesystem[path] = contents;
     }
 
-    public expectCreated(path: string, expectContent?: (contents: string) => void): Assertion<string> {
+    public expectCreated(path: string, expectContent?: (contents: string) => void): Assertion<void, string> {
         expect(typeof this.virtualFilesystem[path] === 'string', `expected '${path}' file to have been created`).toBe(
             true,
         );
@@ -62,7 +61,6 @@ export class FileMockService extends FileService {
     public stub(path: string, contents: string = ''): void {
         this.virtualFilesystem[path] = contents;
     }
-
 }
 
 export default facade(FileMockService);

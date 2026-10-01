@@ -1,6 +1,6 @@
-import { watchEffect } from 'vue';
-import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import { App, type Service } from '@aerogel/core';
+import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
+import { watchEffect } from 'vue';
 
 import { _getTrackedModels, _getTrackedModelsData, _setTrackedModels, isSoftDeleted } from './internal';
 

@@ -7,13 +7,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { toString } from '@noeldemartin/utils';
 import { ComboboxItem, injectComboboxRootContext } from 'reka-ui';
 import type { ComboboxItemProps, SelectItemSelectEvent } from 'reka-ui';
-import { toString } from '@noeldemartin/utils';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
+import { computed } from 'vue';
 
 const props = defineProps<ComboboxItemProps>();
 const emit = defineEmits<{ select: [event: SelectItemSelectEvent<unknown>] }>();

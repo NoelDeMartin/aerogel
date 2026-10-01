@@ -14,7 +14,7 @@
             <span class="sr-only">{{ $td('account.open', 'Open account') }}</span>
         </button>
         <div
-            class="pointer-events-none absolute bottom-0 right-0 size-3 rounded-full border-2 border-white"
+            class="pointer-events-none absolute right-0 bottom-0 size-3 rounded-full border-2 border-white"
             :class="accountStatus.classes"
         >
             <span class="sr-only">{{ accountStatus.message }}</span>
@@ -23,12 +23,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
 import { translateWithDefault } from '@aerogel/core';
-
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
+import { Solid, SolidAvatar } from '@aerogel/plugin-solid';
+import { computed } from 'vue';
 
 import AccountModal from './AccountModal.vue';
 
@@ -59,7 +58,7 @@ const accountStatus = computed((): AccountStatus => {
             classes: 'bg-yellow-500',
             message: translateWithDefault(
                 'account.dirty',
-                'There are local changes that haven\'t been synchronized yet.',
+                "There are local changes that haven't been synchronized yet.",
             ),
         };
     }

@@ -1,6 +1,7 @@
 import { defineServiceState } from '@aerogel/core/services/utils';
-import { getBrowserLocale } from './utils';
+
 import { SYSTEM_LOCALE } from './constants';
+import { getBrowserLocale } from './utils';
 
 export default defineServiceState({
     name: 'lang',
@@ -12,8 +13,6 @@ export default defineServiceState({
     },
     computed: {
         locale: ({ selectedLocale, locales, fallbackLocale }) =>
-            selectedLocale === SYSTEM_LOCALE
-                ? getBrowserLocale(locales) ?? fallbackLocale
-                : selectedLocale,
+            selectedLocale === SYSTEM_LOCALE ? (getBrowserLocale(locales) ?? fallbackLocale) : selectedLocale,
     },
 });

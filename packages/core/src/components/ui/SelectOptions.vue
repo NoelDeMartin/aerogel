@@ -14,12 +14,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { HTMLAttributes } from 'vue';
-
+import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 import HeadlessSelectOptions from '@aerogel/core/components/headless/HeadlessSelectOptions.vue';
 import { classes, injectReactiveOrFail } from '@aerogel/core/utils';
-import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
+import { computed } from 'vue';
+import type { HTMLAttributes } from 'vue';
 
 import SelectOption from './SelectOption.vue';
 
@@ -31,5 +30,6 @@ const renderedClasses = computed(() =>
         'z-50 overflow-auto rounded-lg bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden',
         select.optionsClass,
         rootClasses,
-    ));
+    ),
+);
 </script>

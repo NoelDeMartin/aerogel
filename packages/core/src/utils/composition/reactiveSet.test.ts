@@ -1,10 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { nextTick, watchEffect } from 'vue';
 
 import { reactiveSet } from './reactiveSet';
 
 describe('Vue reactiveSet', () => {
-
     it('watches updates', async () => {
         // Arrange
         const set = reactiveSet();
@@ -28,5 +27,4 @@ describe('Vue reactiveSet', () => {
         // Assert
         expect(updates).toEqual(5);
     });
-
 });

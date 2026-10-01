@@ -1,9 +1,7 @@
+import Service from '@aerogel/core/services/Service';
 import { PromisedValue, facade, tap } from '@noeldemartin/utils';
 
-import Service from '@aerogel/core/services/Service';
-
 export class CacheService extends Service {
-
     private cache?: PromisedValue<Cache> = undefined;
 
     public async get(url: string): Promise<Response | null> {
@@ -34,10 +32,9 @@ export class CacheService extends Service {
         return (this.cache =
             this.cache ??
             tap(new PromisedValue<Cache>(), (cache) => {
-                caches.open('app').then((instance) => cache.resolve(instance));
+                void caches.open('app').then((instance) => cache.resolve(instance));
             }));
     }
-
 }
 
 export default facade(CacheService);

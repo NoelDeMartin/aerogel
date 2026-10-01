@@ -1,13 +1,15 @@
-import { computed, provide, ref, watch } from 'vue';
+import type { AcceptRefs } from '@aerogel/core/utils';
 import type { AcceptableValue } from 'reka-ui';
+import { computed, provide, ref, watch } from 'vue';
 import type { EmitFn, Ref } from 'vue';
 
 import { useSelect } from './Select';
 import type { SelectEmits, SelectExpose, SelectProps } from './Select';
-import type { AcceptRefs } from '@aerogel/core/utils';
 
-export interface ComboboxExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement>
-    extends SelectExpose<T, TControlElement> {
+export interface ComboboxExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement> extends SelectExpose<
+    T,
+    TControlElement
+> {
     input: Ref<string>;
     preventChange: Ref<boolean>;
     $group: Ref<HTMLDivElement | null>;
@@ -21,7 +23,7 @@ export interface ComboboxEmits<T = unknown> extends SelectEmits<T> {
     'update:open': [value: boolean];
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement>(
     props: Ref<ComboboxProps<T>>,
     emit: EmitFn<ComboboxEmits<T>>,
@@ -42,13 +44,12 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
     );
 
     const optionsByLabel = computed(() =>
-        Object.fromEntries(expose.options.value?.map((option) => [option.label, option.value]) ?? []));
+        Object.fromEntries(expose.options.value?.map((option) => [option.label, option.value]) ?? []),
+    );
 
     const expose = {
         ...selectExpose,
-        input: ref(
-            !isMultiple.value && acceptableValue.value ? renderOption(acceptableValue.value as T) : '',
-        ),
+        input: ref(!isMultiple.value && acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
         preventChange: ref(false),
         $group: ref(null),
     } satisfies AcceptRefs<ComboboxExpose<T, TControlElement>>;

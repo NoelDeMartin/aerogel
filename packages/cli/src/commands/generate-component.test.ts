@@ -1,11 +1,9 @@
-import { describe, it } from 'vitest';
-
 import FileMock from '@aerogel/cli/lib/File.mock';
+import { describe, it } from 'vite-plus/test';
 
 import { GenerateComponentCommand } from './generate-component';
 
 describe('Generate Component command', () => {
-
     it('generates components', async () => {
         // Arrange
         FileMock.stub('package.json', '@aerogel/core');
@@ -27,5 +25,4 @@ describe('Generate Component command', () => {
         // Assert
         FileMock.expectCreated('src/components/module/FooBar.vue').toContain('<div>FooBar</div>');
     });
-
 });

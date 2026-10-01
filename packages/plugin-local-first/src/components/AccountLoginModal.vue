@@ -19,8 +19,8 @@
                             'In any case, Focus works 100% offline and you can connect your Solid POD later on. ' +
                             'If you\'ve never heard of Solid and you\'re just trying things out, ' +
                             'you can keep using it without an account.\n\n' +
-                            '[Learn more](https://solidproject.org)'
-                    )
+                            '[Learn more](https://solidproject.org)',
+                    ),
                 )
             "
         >

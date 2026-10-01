@@ -1,23 +1,16 @@
 <template>
-    <Primitive
-        v-bind="props"
-        ref="$rootRef"
-        :class="classes"
-        :as-child
-        :disabled
-    >
+    <Primitive v-bind="props" ref="$rootRef" :class="classes" :as-child :disabled>
         <slot />
     </Primitive>
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue';
-import { Primitive } from 'reka-ui';
-import { objectWithoutEmpty } from '@noeldemartin/utils';
-
-import UI from '@aerogel/core/ui/UI';
-import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
 import type { ButtonProps } from '@aerogel/core/components/contracts/Button';
+import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
+import UI from '@aerogel/core/ui/UI';
+import { objectWithoutEmpty } from '@noeldemartin/utils';
+import { Primitive } from 'reka-ui';
+import { computed, useTemplateRef } from 'vue';
 
 const $root = useTemplateRef('$rootRef');
 const { as, href, route, routeParams, routeQuery, submit, disabled, class: classes } = defineProps<ButtonProps>();

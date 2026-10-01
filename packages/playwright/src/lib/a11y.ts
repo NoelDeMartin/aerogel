@@ -45,7 +45,7 @@ export async function press(page: Page, label: string, options: PressOptions = {
         const locator = options.role
             ? scope.getByRole(options.role)
             : scope.locator(
-                options.selector ??
+                  options.selector ??
                       [
                           'button:visible',
                           'a:visible',
@@ -54,7 +54,7 @@ export async function press(page: Page, label: string, options: PressOptions = {
                           '[role="menuitem"]:visible',
                           '[role="option"]:visible',
                       ].join(', '),
-            );
+              );
 
         return locator
             .filter({ hasText: label })

@@ -1,7 +1,6 @@
+import InvalidEnvError from '@aerogel/core/errors/InvalidEnvError';
 import { fail, isInstanceOf } from '@noeldemartin/utils';
 import z from 'zod';
-
-import InvalidEnvError from '@aerogel/core/errors/InvalidEnvError';
 
 const DefaultSchema = z.object({});
 

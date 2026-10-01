@@ -7,7 +7,6 @@ export type CommandConstructor<T extends Command = Command> = Constructor<T>;
 export type CommandOptions = Record<string, string | { description: string; type?: string }>;
 
 export default class Command {
-
     protected static command: string = '';
     protected static description: string = '';
     protected static parameters: [string, string][] = [];
@@ -60,5 +59,4 @@ export default class Command {
 
         Log.fail(`${message} Are you sure this is an Aerogel app?`);
     }
-
 }

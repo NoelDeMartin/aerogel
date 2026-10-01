@@ -16,14 +16,13 @@
 </template>
 
 <script setup lang="ts" generic="T">
+import { useSelect } from '@aerogel/core/components/contracts/Select';
+import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
 import { SelectRoot } from 'reka-ui';
 import { computed } from 'vue';
 
-import { useSelect } from '@aerogel/core/components/contracts/Select';
-import type { SelectEmits, SelectProps } from '@aerogel/core/components/contracts/Select';
-
-import HeadlessSelectTrigger from './HeadlessSelectTrigger.vue';
 import HeadlessSelectOptions from './HeadlessSelectOptions.vue';
+import HeadlessSelectTrigger from './HeadlessSelectTrigger.vue';
 
 defineOptions({ inheritAttrs: false });
 

@@ -1,6 +1,6 @@
+import type Authenticator from './Authenticator';
 import InruptAuthenticator from './authenticators/InruptAuthenticator';
 import LegacyAuthenticator from './authenticators/LegacyAuthenticator';
-import type Authenticator from './Authenticator';
 
 const _authenticators = {} as Authenticators;
 
@@ -24,7 +24,8 @@ export function getAuthenticator<T extends AuthenticatorName>(name: T): Authenti
 
 export function registerAuthenticators(customAuthenticators: Record<string, Authenticator>): void {
     Object.entries(customAuthenticators).forEach(([name, authenticator]) =>
-        registerAuthenticator(name as AuthenticatorName, authenticator));
+        registerAuthenticator(name as AuthenticatorName, authenticator),
+    );
 }
 
 export function registerAuthenticator<T extends AuthenticatorName>(name: T, authenticator: Authenticators[T]): void {

@@ -1,12 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import type { AppInfo } from '@aerogel/vite/lib/options';
 import { md5 } from '@noeldemartin/utils';
 import type { Connect } from 'vite';
+import type { Rollup } from 'vite';
 import type { IconResource } from 'vite-plugin-pwa';
-import type { PluginContext } from 'rollup';
-
-import type { AppInfo } from '@aerogel/vite/lib/options';
 
 const ICON_BACKGROUND = '#ffffff';
 const CACHE_DIRECTORY = 'aerogel-icons';
@@ -165,7 +164,7 @@ export function resolveIconSource(app: AppInfo, root: string): void {
     const iconPath = resolve(root, ICON_SOURCE_PATH);
 
     if (!existsSync(iconPath)) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.warn(
             `It was not possible to generate the app icons because \`${ICON_SOURCE_PATH}\` is missing, ` +
                 'to remove this warning add an svg icon in that path or disable the `generateIcons` option ' +
@@ -187,7 +186,7 @@ export function getManifestIcons(): IconResource[] {
     }));
 }
 
-export async function generateIconAssets(context: PluginContext, app: AppInfo): Promise<void> {
+export async function generateIconAssets(context: Rollup.PluginContext, app: AppInfo): Promise<void> {
     const icons = await generateIcons(app);
 
     if (!icons) {

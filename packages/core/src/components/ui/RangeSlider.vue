@@ -21,7 +21,7 @@
                 :max="max"
                 :step="step"
                 :disabled="disabled"
-                class="relative flex w-full touch-none select-none items-center"
+                class="relative flex w-full touch-none items-center select-none"
                 :track-class="renderedTrackClasses"
                 :range-class="renderedRangeClasses"
                 :thumb-class="renderedThumbClasses"
@@ -37,22 +37,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
-import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
-import HeadlessFormControlLabel from '@aerogel/core/components/headless/HeadlessFormControlLabel.vue';
-import HeadlessFormControlDescription from '@aerogel/core/components/headless/HeadlessFormControlDescription.vue';
-import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
-import HeadlessRangeSliderInput from '@aerogel/core/components/headless/HeadlessRangeSliderInput.vue';
-import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
-import { classes } from '@aerogel/core/utils/classes';
-import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
 import type { FormControlEmits, FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 import type {
     RangeSliderBound,
     RangeSliderProps,
     RangeSliderValue,
 } from '@aerogel/core/components/contracts/RangeSlider';
+import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
+import HeadlessFormControlDescription from '@aerogel/core/components/headless/HeadlessFormControlDescription.vue';
+import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
+import HeadlessFormControlLabel from '@aerogel/core/components/headless/HeadlessFormControlLabel.vue';
+import HeadlessRangeSliderInput from '@aerogel/core/components/headless/HeadlessRangeSliderInput.vue';
+import { classes } from '@aerogel/core/utils/classes';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
+import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
+import { computed } from 'vue';
 
 defineOptions({ inheritAttrs: false });
 defineExpose<FormControlExpose<RangeSliderValue, HTMLSpanElement>>();
@@ -80,12 +79,14 @@ const { forwardRef, currentRef: $control } = useForwardExpose<InstanceType<typeo
 const [inputAttrs, rootClasses] = useInputAttrs();
 
 const renderedClasses = computed(() =>
-    classes('space-y-1', { 'pointer-events-none opacity-50': disabled }, rootClasses.value));
+    classes('space-y-1', { 'pointer-events-none opacity-50': disabled }, rootClasses.value),
+);
 const renderedLabelClasses = computed(() => classes('block text-sm font-medium leading-6 text-gray-900', labelClass));
 const renderedDescriptionClasses = computed(() => classes('mt-2 text-sm text-gray-600', descriptionClass));
 const renderedErrorClasses = computed(() => classes('mt-2 text-sm text-red-600', errorClass));
 const renderedTrackClasses = computed(() =>
-    classes('relative h-2 w-full grow overflow-hidden rounded-full bg-gray-100 shadow-inner', trackClass));
+    classes('relative h-2 w-full grow overflow-hidden rounded-full bg-gray-100 shadow-inner', trackClass),
+);
 const renderedRangeClasses = computed(() =>
     classes(
         'absolute h-full',
@@ -94,13 +95,15 @@ const renderedRangeClasses = computed(() =>
             'bg-red-600': !!$control.value?.errors,
         },
         rangeClass,
-    ));
+    ),
+);
 const renderedThumbClasses = computed(() =>
     classes(
         'block size-5 cursor-pointer rounded-full border-2 border-primary-600 bg-white shadow-md transition-colors',
         'focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:outline-hidden',
         thumbClass,
-    ));
+    ),
+);
 
 const readout = computed(() => {
     const value = $control.value?.value as RangeSliderValue | null | undefined;

@@ -1,18 +1,5 @@
-import { after, facade, fail, isDevelopment, uuid } from '@noeldemartin/utils';
-import { markRaw, unref } from 'vue';
-import type { Constructor } from '@noeldemartin/utils';
-import type { Component, ComputedOptions, MethodOptions } from 'vue';
-import type { Job } from 'soukai-bis';
-
-import App from '@aerogel/core/services/App';
-import Events from '@aerogel/core/services/Events';
-import { closeModal, createModal, modals, showModal } from '@aerogel/core/ui/modals';
-import type { GetModalProps, GetModalResponse } from '@aerogel/core/ui/modals';
-import type { AcceptRefs } from '@aerogel/core/utils';
 import type { AlertModalExpose, AlertModalProps } from '@aerogel/core/components/contracts/AlertModal';
 import type { ButtonVariant } from '@aerogel/core/components/contracts/Button';
-import type { LoadingModalExpose, LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
-import type { ToastAction, ToastExpose, ToastProps, ToastVariant } from '@aerogel/core/components/contracts/Toast';
 import type {
     ConfirmModalCheckboxes,
     ConfirmModalEmits,
@@ -27,15 +14,27 @@ import type {
     JobProgressModalExpose,
     JobProgressModalProps,
 } from '@aerogel/core/components/contracts/JobProgressModal';
+import type { LoadingModalExpose, LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
 import type {
     PromptModalEmits,
     PromptModalExpose,
     PromptModalProps,
 } from '@aerogel/core/components/contracts/PromptModal';
+import type { ToastAction, ToastExpose, ToastProps, ToastVariant } from '@aerogel/core/components/contracts/Toast';
+import App from '@aerogel/core/services/App';
+import Events from '@aerogel/core/services/Events';
+import { closeModal, createModal, modals, showModal } from '@aerogel/core/ui/modals';
+import type { GetModalProps, GetModalResponse } from '@aerogel/core/ui/modals';
+import type { AcceptRefs } from '@aerogel/core/utils';
+import { after, facade, fail, isDevelopment, uuid } from '@noeldemartin/utils';
+import type { Constructor } from '@noeldemartin/utils';
+import type { Job } from 'soukai-bis';
+import { markRaw, unref } from 'vue';
+import type { Component, ComputedOptions, MethodOptions } from 'vue';
 
 import Service from './UI.state';
-import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
 import type { UIToast } from './UI.state';
+import { MOBILE_BREAKPOINT, getCurrentLayout } from './utils';
 
 export type UIComponent<Props = {}, Exposed = {}, Emits = {}> = Constructor<{ $emit?: Emits } & Exposed> &
     Component<Props, {}, {}, ComputedOptions, MethodOptions, {}, {}>;
@@ -92,7 +91,6 @@ export interface ToastOptions {
 }
 
 export class UIService extends Service {
-
     private components: Partial<UIComponents> = {};
 
     public registerComponent<T extends keyof UIComponents>(name: T, component: UIComponents[T]): void {
@@ -121,15 +119,13 @@ export class UIService extends Service {
             };
         };
 
-        this.modal(this.requireComponent('alert-modal'), getProperties());
+        void this.modal(this.requireComponent('alert-modal'), getProperties());
     }
 
-    /* eslint-disable max-len */
     public async confirm(message: string, options?: ConfirmOptions): Promise<boolean>;
     public async confirm(title: string, message: string, options?: ConfirmOptions): Promise<boolean>;
     public async confirm<T extends ConfirmModalCheckboxes>(message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
     public async confirm<T extends ConfirmModalCheckboxes>(title: string, message: string, options?: ConfirmOptionsWithCheckboxes<T>): Promise<[boolean, Record<keyof T, boolean>]>; // prettier-ignore
-    /* eslint-enable max-len */
 
     public async confirm(
         messageOrTitle: string,
@@ -160,12 +156,12 @@ export class UIService extends Service {
             typeof response === 'object'
                 ? response[1]
                 : Object.entries(properties.checkboxes ?? {}).reduce(
-                    (values, [checkbox, { default: defaultValue }]) => ({
-                        [checkbox]: defaultValue ?? false,
-                        ...values,
-                    }),
+                      (values, [checkbox, { default: defaultValue }]) => ({
+                          [checkbox]: defaultValue ?? false,
+                          ...values,
+                      }),
                       {} as Record<string, boolean>,
-                );
+                  );
 
         for (const [name, checkbox] of Object.entries(properties.checkboxes ?? {})) {
             if (!checkbox.required || checkboxes[name]) {
@@ -173,7 +169,7 @@ export class UIService extends Service {
             }
 
             if (confirmed && isDevelopment()) {
-                // eslint-disable-next-line no-console
+                // oxlint-disable-next-line no-console
                 console.warn(`Confirmed confirm modal was suppressed because required '${name}' checkbox was missing`);
             }
 
@@ -256,7 +252,7 @@ export class UIService extends Service {
 
         const modal = createModal(this.requireComponent('loading-modal'), props);
 
-        showModal(modal);
+        void showModal(modal);
 
         try {
             const result = await operationPromise;
@@ -282,16 +278,16 @@ export class UIService extends Service {
 
     public modal<T extends Component>(
         component: T & object extends GetModalProps<T> ? T : never,
-        props?: GetModalProps<T>
+        props?: GetModalProps<T>,
     ): Promise<GetModalResponse<T>>;
 
     public modal<T extends Component>(
         component: T & object extends GetModalProps<T> ? never : T,
-        props: GetModalProps<T>
+        props: GetModalProps<T>,
     ): Promise<GetModalResponse<T>>;
 
     public modal<T extends Component>(component: T, componentProps?: GetModalProps<T>): Promise<GetModalResponse<T>> {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         return showModal(component as any, componentProps ?? {}) as Promise<GetModalResponse<T>>;
     }
 
@@ -311,7 +307,7 @@ export class UIService extends Service {
             onFailed: (error) => (this.closeModal(modal.id), App.service('$errors')?.report(error)),
         });
 
-        showModal(modal);
+        void showModal(modal);
 
         return job.process();
     }
@@ -356,7 +352,6 @@ export class UIService extends Service {
     private async closeModal(id: string): Promise<void> {
         await closeModal(id, { removeAfter: 1000 });
     }
-
 }
 
 export default facade(UIService);

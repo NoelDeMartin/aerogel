@@ -3,13 +3,13 @@
     "configurations": [
         {
             "type": "node",
-            "runtimeVersion": "22.14.0",
+            "runtimeExecutable": "vp",
             "request": "launch",
             "name": "Debug Current Test File",
             "autoAttachChildProcesses": true,
             "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
-            "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
-            "args": ["run", "${fileBasenameNoExtension}"],
+            "program": "test",
+            "args": ["${fileBasenameNoExtension}"],
             "smartStep": true,
             "console": "integratedTerminal"
         }

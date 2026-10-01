@@ -1,8 +1,8 @@
 import { exec } from 'node:child_process';
+
 import { facade } from '@noeldemartin/utils';
 
 export class ShellService {
-
     private cwd: string | null = null;
 
     public setWorkingDirectory(cwd: string): void {
@@ -22,7 +22,6 @@ export class ShellService {
             });
         });
     }
-
 }
 
 export default facade(ShellService);

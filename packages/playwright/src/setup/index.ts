@@ -1,8 +1,8 @@
 import baseTest from '@playwright/test';
 
-import { expect } from './matchers';
 import { setupEnv } from './env';
 import { setupErrorListener } from './errors';
+import { expect } from './matchers';
 
 export const test = baseTest.extend({
     page: async ({ page }, use) => {

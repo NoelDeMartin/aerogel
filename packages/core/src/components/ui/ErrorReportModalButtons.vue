@@ -17,19 +17,17 @@
 </template>
 
 <script setup lang="ts">
-import IconConsole from '~icons/mdi/console';
-import IconCopy from '~icons/zondicons/copy';
-import IconGitHub from '~icons/mdi/github';
-
-import { computed } from 'vue';
-import { stringExcerpt, tap } from '@noeldemartin/utils';
-import type { Component } from 'vue';
-
-import App from '@aerogel/core/services/App';
 import Button from '@aerogel/core/components/ui/Button.vue';
-import UI from '@aerogel/core/ui/UI';
-import { translateWithDefault } from '@aerogel/core/lang/utils';
 import type { ErrorReport } from '@aerogel/core/errors';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
+import App from '@aerogel/core/services/App';
+import UI from '@aerogel/core/ui/UI';
+import { stringExcerpt, tap } from '@noeldemartin/utils';
+import { computed } from 'vue';
+import type { Component } from 'vue';
+import IconConsole from '~icons/mdi/console';
+import IconGitHub from '~icons/mdi/github';
+import IconCopy from '~icons/zondicons/copy';
 
 interface ErrorReportModalButtonsDefaultSlotProps {
     id: string;
@@ -45,7 +43,8 @@ defineSlots<{
 
 const props = defineProps<{ report: ErrorReport }>();
 const summary = computed(() =>
-    props.report.description ? `${props.report.title}: ${props.report.description}` : props.report.title);
+    props.report.description ? `${props.report.title}: ${props.report.description}` : props.report.title,
+);
 const githubReportUrl = computed(() => {
     if (!App.sourceUrl) {
         return false;
@@ -90,7 +89,7 @@ const buttons = computed(() =>
 
                     (window as { error?: unknown }).error = error;
 
-                    // eslint-disable-next-line no-console
+                    // oxlint-disable-next-line no-console
                     console.error(error);
 
                     UI.toast(
@@ -114,5 +113,6 @@ const buttons = computed(() =>
                 url: githubReportUrl.value,
             });
         },
-    ));
+    ),
+);
 </script>

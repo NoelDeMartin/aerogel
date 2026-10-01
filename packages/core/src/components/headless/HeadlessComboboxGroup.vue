@@ -5,11 +5,10 @@
 </template>
 
 <script setup lang="ts">
+import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { ComboboxGroup } from 'reka-ui';
 import { useTemplateRef, watch } from 'vue';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
 
 const $group = useTemplateRef('$groupRef');
 const combobox = injectReactiveOrFail<ComboboxExpose>(

@@ -1,8 +1,8 @@
-import { computed, toRaw } from 'vue';
 import { Events, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
-import type { ComputedRef } from 'vue';
 import type { Model, ModelConstructor } from 'soukai-bis';
+import { computed, toRaw } from 'vue';
+import type { ComputedRef } from 'vue';
 
 interface TrackedModelData<T extends object = Model> {
     fetch: boolean;
@@ -47,7 +47,8 @@ function initializedTrackedModelsData<T extends Model>(
     modelClass.on('updated', (model) => modelsSet.add(toRaw(model)));
     Events.on('purge-storage', () => modelsSet.clear());
     Events.on('cloud:backup-completed', () => data.refresh());
-    Events.emit('solid:track-models', modelClass);
+
+    void Events.emit('solid:track-models', modelClass);
 
     return data;
 }

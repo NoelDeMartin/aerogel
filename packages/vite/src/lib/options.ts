@@ -1,5 +1,5 @@
-import type { ManifestEntry } from 'workbox-build';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
+import type { ManifestEntry } from 'workbox-build';
 
 export interface Options {
     lib?: boolean;
@@ -11,11 +11,13 @@ export interface Options {
     developmentHost?: string;
     static404Redirect?: boolean | string;
     solidClientId?: boolean | ClientIDDocument;
-    pwa?: {
-        development?: boolean;
-        includeAssets?: string[];
-        additionalManifestEntries?: ManifestEntry[];
-    } | false;
+    pwa?:
+        | {
+              development?: boolean;
+              includeAssets?: string[];
+              additionalManifestEntries?: ManifestEntry[];
+          }
+        | false;
 }
 
 export interface AppInfo {

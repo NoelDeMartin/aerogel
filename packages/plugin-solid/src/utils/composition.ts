@@ -1,3 +1,9 @@
+import { onCleanMounted } from '@aerogel/core';
+import { throttle } from '@aerogel/plugin-solid/utils/timing';
+import { fail, isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
+import type { Nullable } from '@noeldemartin/utils';
+import { Model, getRelatedClasses } from 'soukai-bis';
+import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import {
     computed,
     customRef,
@@ -9,16 +15,10 @@ import {
     toValue,
     watchEffect,
 } from 'vue';
-import { onCleanMounted } from '@aerogel/core';
-import { fail, isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
-import { Model, getRelatedClasses } from 'soukai-bis';
-import { throttle } from '@aerogel/plugin-solid/utils/timing';
-import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
 
-import { _getTrackedModelsData, isSoftDeleted } from './internal';
 import { IS_REACTIVE, RAW } from './flags';
+import { _getTrackedModelsData, isSoftDeleted } from './internal';
 
 function mapModels<T extends Model>(
     models: unknown,
@@ -105,7 +105,7 @@ function shallowComputedModels<T>(
         return {
             get: () => tap(value, () => track()),
 
-            // eslint-disable-next-line no-console
+            // oxlint-disable-next-line no-console
             set: () => console.warn('Computed models ref was not set (it is immutable).'),
         };
     }) as ComputedRef<T>;
@@ -240,7 +240,7 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
         return {
             get: () => tap(value, () => track()),
 
-            // eslint-disable-next-line no-console
+            // oxlint-disable-next-line no-console
             set: () => console.warn('Computed model ref was not set (it is immutable).'),
         };
     });

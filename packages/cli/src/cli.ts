@@ -1,6 +1,4 @@
-import { Command } from 'commander';
 import { existsSync, readFileSync } from 'node:fs';
-import { facade, fail } from '@noeldemartin/utils';
 import { URL, fileURLToPath } from 'node:url';
 
 import { CreateCommand } from '@aerogel/cli/commands/create';
@@ -9,9 +7,10 @@ import { GenerateModelCommand } from '@aerogel/cli/commands/generate-model';
 import { GenerateServiceCommand } from '@aerogel/cli/commands/generate-service';
 import { InfoCommand } from '@aerogel/cli/commands/info';
 import { InstallCommand } from '@aerogel/cli/commands/install';
+import { facade, fail } from '@noeldemartin/utils';
+import { Command } from 'commander';
 
 export class CLIService {
-
     public run(argv?: string[]): void {
         const program = new Command();
 
@@ -28,7 +27,7 @@ export class CLIService {
     }
 
     public getVersion(): string {
-        const errorMessage = 'Could not find CLI\'s version, please report this bug.';
+        const errorMessage = "Could not find CLI's version, please report this bug.";
         const packageJsonPath = fileURLToPath(new URL(/* @vite-ignore */ '../package.json', import.meta.url));
 
         if (!existsSync(packageJsonPath)) {
@@ -39,7 +38,6 @@ export class CLIService {
 
         return packageJson.version ?? fail(errorMessage);
     }
-
 }
 
 export default facade(CLIService);

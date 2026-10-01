@@ -3,7 +3,7 @@ import { URL, fileURLToPath } from 'node:url';
 import Aerogel from '@aerogel/vite';
 import Icons from 'unplugin-icons/vite';
 import dts from 'vite-plugin-dts';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, lazyPlugins } from 'vite-plus';
 
 export default defineConfig({
     build: {
@@ -33,7 +33,7 @@ export default defineConfig({
             ],
         },
     },
-    plugins: [
+    plugins: lazyPlugins(() => [
         dts({
             rollupTypes: true,
             tsconfigPath: './tsconfig.json',
@@ -41,14 +41,13 @@ export default defineConfig({
         }),
         Aerogel({ lib: true }),
         Icons(),
-    ],
+    ]),
     resolve: {
         alias: {
             '@aerogel/core': fileURLToPath(new URL('./src/', import.meta.url)),
         },
     },
     test: {
-        clearMocks: true,
         environment: 'happy-dom',
         setupFiles: ['./src/testing/setup.ts'],
     },

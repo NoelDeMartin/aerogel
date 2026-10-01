@@ -1,9 +1,9 @@
-import { URL, fileURLToPath } from 'node:url';
-import { stringMatch } from '@noeldemartin/utils';
 import { resolve } from 'node:path';
+import { URL, fileURLToPath } from 'node:url';
 
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
+import { stringMatch } from '@noeldemartin/utils';
 
 export function basePath(path: string = ''): string {
     if (process.env.AEROGEL_BASE_PATH) {
@@ -28,7 +28,7 @@ export function basePath(path: string = ''): string {
     return resolve(cliPath, path);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export function packNotFound(packageName: string): any {
     return Log.fail(`Could not find ${packageName} pack file, did you run 'npm pack'?`);
 }

@@ -21,6 +21,6 @@ test('Deletes tasks', async ({ page }) => {
     await input(page, 'Task name').press('Enter');
     await see(page, 'Hello World!');
 
-    await press(page, 'Delete \'Hello World!\'');
+    await press(page, "Delete 'Hello World!'");
     await dontSee(page, 'Hello World!');
 });

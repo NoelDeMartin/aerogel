@@ -12,8 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import IconWarning from '~icons/ion/warning';
-
 import Button from '@aerogel/core/components/ui/Button.vue';
 import ErrorLogsModal from '@aerogel/core/components/ui/ErrorLogsModal.vue';
+import IconWarning from '~icons/ion/warning';
 </script>

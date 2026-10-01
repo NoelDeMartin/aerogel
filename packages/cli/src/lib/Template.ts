@@ -1,11 +1,10 @@
-import Mustache from 'mustache';
 import { readFileSync } from 'node:fs';
-import { toString } from '@noeldemartin/utils';
 
 import File from '@aerogel/cli/lib/File';
+import { toString } from '@noeldemartin/utils';
+import Mustache from 'mustache';
 
 export default class Template {
-
     public static instantiate(
         path: string,
         destination: string = './',
@@ -59,5 +58,4 @@ export default class Template {
             {} as Record<string, string>,
         );
     }
-
 }

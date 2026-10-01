@@ -1,11 +1,10 @@
+import type { LangProvider } from '@aerogel/core';
 import { toString } from '@noeldemartin/utils';
 import type { Composer } from 'vue-i18n';
-import type { LangProvider } from '@aerogel/core';
 
 import type I18nMessages from './I18nMessages';
 
 export default class I18nLangProvider implements LangProvider {
-
     constructor(
         private i18n: Composer,
         private messages: I18nMessages,
@@ -44,7 +43,7 @@ export default class I18nLangProvider implements LangProvider {
     }
 
     public translate(key: string, parameters?: Record<string, unknown> | number): string {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         return this.i18n.t(key, (parameters as any) ?? {});
     }
 
@@ -53,7 +52,7 @@ export default class I18nLangProvider implements LangProvider {
         defaultMessage: string,
         parameters?: Record<string, unknown> | number,
     ): string {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         const message = this.i18n.t(key, (parameters as any) ?? {}, { missingWarn: false });
 
         return message === key ? this.replaceParameters(defaultMessage, parameters) : message;
@@ -71,5 +70,4 @@ export default class I18nLangProvider implements LangProvider {
             return text.replace(new RegExp(`\\{.*${name}[^}]*\\}`), toString(value));
         }, message);
     }
-
 }

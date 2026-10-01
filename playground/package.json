@@ -1,20 +1,24 @@
 {
     "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "playground"
+    },
     "type": "module",
-    "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite",
+        "build": "vp build",
+        "dev": "vp dev",
         "dev:serve-pod": "community-solid-server -c @css:config/file.json -f ./solid",
-        "e2e:dev": "concurrently --kill-others \"pnpm e2e:serve-app\" \"pnpm e2e:serve-pod\" \"pnpm e2e:open\"",
+        "e2e:dev": "concurrently --kill-others \"vp run e2e:serve-app\" \"vp run e2e:serve-pod\" \"vp run e2e:open\"",
         "e2e:open": "UI=true playwright test --ui",
         "e2e:run": "playwright test",
-        "e2e:serve-app": "vite --port 5001 --mode testing",
+        "e2e:serve-app": "vp dev --port 5001 --mode testing",
         "e2e:serve-pod": "community-solid-server -l warn",
-        "e2e:test:chromium": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'pnpm run e2e:run --project=chromium'",
-        "e2e:test:firefox": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'pnpm run e2e:run --project=firefox'",
-        "e2e:test:webkit": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'pnpm run e2e:run --project=webkit'",
-        "lint": "noeldemartin-lint src e2e"
+        "e2e:test:chromium": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'vp run e2e:run --project=chromium'",
+        "e2e:test:firefox": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'vp run e2e:run --project=firefox'",
+        "e2e:test:webkit": "start-server-and-test e2e:serve-app http-get://localhost:5001 e2e:serve-pod http-get://localhost:3000 'vp run e2e:run --project=webkit'",
+        "type-check": "vue-tsc --build --force"
     },
     "dependencies": {
         "@aerogel/core": "workspace:*",
@@ -41,16 +45,9 @@
         "@types/node": "catalog:",
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
-        "eslint": "catalog:",
-        "eslint-plugin-vue": "catalog:",
         "publint": "catalog:",
         "start-server-and-test": "^2.0.0",
         "unplugin-icons": "catalog:",
         "unplugin-vue-components": "catalog:"
-    },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-vue"
-        ]
     }
 }

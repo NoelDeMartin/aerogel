@@ -14,11 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import IconAnonymous from '~icons/ooui/user-anonymous';
-
-import { computed } from 'vue';
-
 import Solid from '@aerogel/plugin-solid/services/Solid';
+import { computed } from 'vue';
+import IconAnonymous from '~icons/ooui/user-anonymous';
 
 import SolidImage from './SolidImage.vue';
 

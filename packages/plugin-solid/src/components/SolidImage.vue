@@ -1,10 +1,9 @@
 <template>
-    <img :src="sourceUrl">
+    <img :src="sourceUrl" />
 </template>
 
 <script setup lang="ts">
 import { Cache, computedAsync } from '@aerogel/core';
-
 import Solid from '@aerogel/plugin-solid/services/Solid';
 
 const { src } = defineProps<{ src: string }>();

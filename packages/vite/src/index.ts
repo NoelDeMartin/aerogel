@@ -1,24 +1,22 @@
 import { resolve } from 'node:path';
-import type { VirtualAerogel } from 'virtual:aerogel';
 
+import { generate404Assets } from '@aerogel/vite/lib/404';
+import { getSourceHash } from '@aerogel/vite/lib/git';
+import { renderHTML } from '@aerogel/vite/lib/html';
+import { generateIconAssets, getManifestIcons, iconsMiddleware, resolveIconSource } from '@aerogel/vite/lib/icons';
+import { loadLocales } from '@aerogel/vite/lib/lang';
+import type { AppInfo, Options } from '@aerogel/vite/lib/options';
+import { loadPackageInfo } from '@aerogel/vite/lib/package-parser';
+import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
+import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
+import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
 import TailwindCSS from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
-import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
+import type { VirtualAerogel } from 'virtual:aerogel';
+import type { Plugin, Rolldown } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import type { ManifestOptions } from 'vite-plugin-pwa';
-import type { Plugin } from 'vite';
-import type { RolldownOptions } from 'rolldown';
-
-import { generate404Assets } from '@aerogel/vite/lib/404';
-import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
-import { getSourceHash } from '@aerogel/vite/lib/git';
-import { generateIconAssets, getManifestIcons, iconsMiddleware, resolveIconSource } from '@aerogel/vite/lib/icons';
-import { loadLocales } from '@aerogel/vite/lib/lang';
-import { loadPackageInfo } from '@aerogel/vite/lib/package-parser';
-import { renderHTML } from '@aerogel/vite/lib/html';
-import type { AppInfo, Options } from '@aerogel/vite/lib/options';
-import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
 
 export type { Options, AppInfo, ClientIDDocument };
 
@@ -137,7 +135,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             }
 
             if ('rolldownOptions' in config.build) {
-                const rolldownOptions = config.build.rollupOptions as RolldownOptions;
+                const rolldownOptions = config.build.rollupOptions as Rolldown.RolldownOptions;
 
                 if (!Array.isArray(rolldownOptions.output)) {
                     rolldownOptions.output ??= {};
@@ -173,7 +171,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             }
 
             if (id === 'virtual:soukai-bis/patch-zod') {
-                return 'import \'soukai-bis/patch-zod\';';
+                return "import 'soukai-bis/patch-zod';";
             }
         },
         resolveId(id) {

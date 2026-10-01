@@ -17,11 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from 'vue';
-import type { Job } from 'soukai-bis';
-
-import { classes } from '@aerogel/core/utils/classes';
 import type { Falsifiable } from '@aerogel/core/utils';
+import { classes } from '@aerogel/core/utils/classes';
+import type { Job } from 'soukai-bis';
+import { computed, onUnmounted, ref, watch } from 'vue';
 
 const { filledClass, overflowClass, progress, job } = defineProps<{
     filledClass?: string;
@@ -33,13 +32,15 @@ const { filledClass, overflowClass, progress, job } = defineProps<{
 let cleanup: Falsifiable<Function>;
 const jobProgress = ref(0);
 const filledClasses = computed(() =>
-    classes('size-full transition-transform duration-500 rounded-r-full ease-linear bg-primary-600', filledClass));
+    classes('size-full transition-transform duration-500 rounded-r-full ease-linear bg-primary-600', filledClass),
+);
 const overflowClasses = computed(() =>
     classes(
         'absolute inset-y-0 right-0 size-full rounded-r-full',
         'bg-primary-900 transition-[width] duration-500 ease-linear',
         overflowClass,
-    ));
+    ),
+);
 const renderedProgress = computed(() => {
     if (typeof progress === 'number') {
         return progress;
@@ -48,7 +49,8 @@ const renderedProgress = computed(() => {
     return jobProgress.value;
 });
 const overflowWidthPercentage = computed(() =>
-    renderedProgress.value > 1 ? 100 * ((renderedProgress.value - 1) / renderedProgress.value) : null);
+    renderedProgress.value > 1 ? 100 * ((renderedProgress.value - 1) / renderedProgress.value) : null,
+);
 
 watch(
     () => job,

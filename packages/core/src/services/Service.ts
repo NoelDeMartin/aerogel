@@ -1,3 +1,7 @@
+import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
+import { defineServiceStore } from '@aerogel/core/services/store';
+import { appNamespace } from '@aerogel/core/utils/app';
+import type { Unref } from '@aerogel/core/utils/vue';
 import {
     MagicObject,
     PromisedValue,
@@ -11,13 +15,8 @@ import {
 import type { Constructor, Nullable } from '@noeldemartin/utils';
 import type { Store } from 'pinia';
 
-import ServiceBootError from '@aerogel/core/errors/ServiceBootError';
-import { appNamespace } from '@aerogel/core/utils/app';
-import { defineServiceStore } from '@aerogel/core/services/store';
-import type { Unref } from '@aerogel/core/utils/vue';
-
-export type ServiceState = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-export type DefaultServiceState = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type ServiceState = Record<string, any>; // oxlint-disable-line typescript/no-explicit-any
+export type DefaultServiceState = any; // oxlint-disable-line typescript/no-explicit-any
 export type ServiceConstructor<T extends Service = Service> = Constructor<T> & typeof Service;
 
 export type ComputedStateDefinition<TState extends ServiceState, TComputedState extends ServiceState> = {
@@ -43,7 +42,6 @@ export default class Service<
     ComputedState extends ServiceState = {},
     ServiceStorage = Partial<State>,
 > extends MagicObject {
-
     public static persist: string[] = [];
 
     protected _name: string;
@@ -66,7 +64,7 @@ export default class Service<
             defineServiceStore(this._name, {
                 state: () => this.getInitialState(),
 
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // oxlint-disable-next-line typescript/no-explicit-any
                 getters: getters as any,
             });
     }
@@ -111,7 +109,7 @@ export default class Service<
     public getState(): State;
     public getState<P extends keyof State>(property: P): State[P];
     public getState<P extends keyof State>(property?: P): State | State[P] {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         const store = this._store as any;
 
         if (property) {
@@ -265,5 +263,4 @@ export default class Service<
 
         return this._store;
     }
-
 }

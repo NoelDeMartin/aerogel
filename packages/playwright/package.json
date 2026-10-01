@@ -1,52 +1,46 @@
 {
-  "name": "@aerogel/playwright",
-  "version": "0.1.2",
-  "type": "module",
-  "sideEffects": false,
-  "exports": {
-    ".": {
-      "types": "./dist/aerogel-playwright.d.ts",
-      "default": "./dist/aerogel-playwright.js"
+    "name": "@aerogel/playwright",
+    "version": "0.1.2",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/playwright"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
+    "type": "module",
+    "sideEffects": false,
+    "exports": {
+        ".": {
+            "types": "./dist/aerogel-playwright.d.ts",
+            "default": "./dist/aerogel-playwright.js"
+        }
+    },
+    "scripts": {
+        "build": "vp pack"
+    },
+    "dependencies": {
+        "@noeldemartin/solid-utils": "catalog:",
+        "@noeldemartin/utils": "catalog:",
+        "playwright-solid": "next"
+    },
+    "devDependencies": {
+        "@aerogel/core": "workspace:*",
+        "@aerogel/plugin-solid": "workspace:*",
+        "@arethetypeswrong/core": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "@playwright/test": "^1.60.0",
+        "@rdfjs/types": "catalog:",
+        "@types/node": "catalog:",
+        "publint": "catalog:",
+        "soukai-bis": "catalog:"
+    },
+    "peerDependencies": {
+        "@playwright/test": "^1.60.0",
+        "soukai-bis": "*"
     }
-  },
-  "files": [
-    "src",
-    "dist"
-  ],
-  "license": "MIT",
-  "author": "Noel De Martin",
-  "repository": "github:NoelDeMartin/aerogel",
-  "scripts": {
-    "build": "vite build",
-    "lint": "noeldemartin-lint src",
-    "verify": "noeldemartin-verify"
-  },
-  "peerDependencies": {
-    "@playwright/test": "^1.60.0"
-  },
-  "dependencies": {
-    "@noeldemartin/solid-utils": "catalog:",
-    "@noeldemartin/utils": "catalog:",
-    "playwright-solid": "next"
-  },
-  "devDependencies": {
-    "@aerogel/core": "workspace:*",
-    "@aerogel/plugin-solid": "workspace:*",
-    "@arethetypeswrong/cli": "catalog:",
-    "@noeldemartin/scripts": "catalog:",
-    "@playwright/test": "^1.60.0",
-    "@types/node": "catalog:",
-    "eslint": "catalog:",
-    "prettier-eslint-cli": "^8.0.1",
-    "publint": "catalog:",
-    "soukai-bis": "catalog:"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@noeldemartin/eslint-config-typescript"
-    ]
-  },
-  "prettier": {
-    "printWidth": 120
-  }
 }

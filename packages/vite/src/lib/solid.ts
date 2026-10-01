@@ -1,15 +1,13 @@
-import { md5 } from '@noeldemartin/utils';
-import type { Connect } from 'vite';
-import type { PluginContext } from 'rollup';
-
 import { ICONS } from '@aerogel/vite/lib/icons';
 import type { AppInfo, Options } from '@aerogel/vite/lib/options';
-
+import { md5 } from '@noeldemartin/utils';
 import type { VirtualAerogelSolid } from 'virtual:aerogel-solid';
+import type { Connect } from 'vite';
+import type { Rollup } from 'vite';
 
 function createClientIDDocument(app: AppInfo): ClientIDDocument | null {
     if (!app.baseUrl) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.warn(
             'It was not possible to create a Solid ClientID document because the baseUrl ' +
                 'was not provided, to remove this warning add a `baseUrl` option in the Aerogel vite plugin options.',
@@ -21,13 +19,13 @@ function createClientIDDocument(app: AppInfo): ClientIDDocument | null {
     const baseUrl = app.baseUrl.endsWith('/') ? app.baseUrl : `${app.baseUrl}/`;
     const clientID: ClientIDDocument = {
         '@context': 'https://www.w3.org/ns/solid/oidc-context.jsonld',
-        'client_id': `${baseUrl}clientid.jsonld`,
-        'client_name': app.name,
-        'redirect_uris': [baseUrl],
-        'client_uri': baseUrl,
-        'scope': 'openid profile offline_access webid',
-        'grant_types': ['refresh_token', 'authorization_code'],
-        'response_types': ['code'],
+        client_id: `${baseUrl}clientid.jsonld`,
+        client_name: app.name,
+        redirect_uris: [baseUrl],
+        client_uri: baseUrl,
+        scope: 'openid profile offline_access webid',
+        grant_types: ['refresh_token', 'authorization_code'],
+        response_types: ['code'],
     };
 
     if (app.baseIconPath) {
@@ -49,7 +47,7 @@ export interface ClientIDDocument {
     response_types: string[];
 }
 
-export function generateSolidAssets(context: PluginContext, app: AppInfo): void {
+export function generateSolidAssets(context: Rollup.PluginContext, app: AppInfo): void {
     if (!app.plugins?.includes('solid')) {
         return;
     }

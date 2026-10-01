@@ -20,12 +20,11 @@
 </template>
 
 <script setup lang="ts" generic="T">
+import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
+import { classes, injectReactiveOrFail, isHovered } from '@aerogel/core/utils';
 import { ComboboxAnchor, ComboboxInput } from 'reka-ui';
 import { computed, useTemplateRef, watch, watchEffect } from 'vue';
 import type { HTMLAttributes } from 'vue';
-
-import { classes, injectReactiveOrFail, isHovered } from '@aerogel/core/utils';
-import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
 
 defineOptions({ inheritAttrs: false });
 

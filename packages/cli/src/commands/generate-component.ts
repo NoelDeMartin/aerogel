@@ -1,7 +1,3 @@
-import { arrayFrom, stringToSlug } from '@noeldemartin/utils';
-import { Node, SyntaxKind } from 'ts-morph';
-import type { ArrayLiteralExpression, CallExpression, SourceFile } from 'ts-morph';
-
 import Command from '@aerogel/cli/commands/Command';
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
@@ -9,6 +5,9 @@ import Template from '@aerogel/cli/lib/Template';
 import { app } from '@aerogel/cli/lib/utils/app';
 import { editFiles, findDescendant } from '@aerogel/cli/lib/utils/edit';
 import { templatePath } from '@aerogel/cli/lib/utils/paths';
+import { arrayFrom, stringToSlug } from '@noeldemartin/utils';
+import { Node, SyntaxKind } from 'ts-morph';
+import type { ArrayLiteralExpression, CallExpression, SourceFile } from 'ts-morph';
 
 export interface Options {
     button?: boolean;
@@ -18,7 +17,6 @@ export interface Options {
 }
 
 export class GenerateComponentCommand extends Command {
-
     protected static override command: string = 'generate:component';
     protected static override description: string = 'Generate an AerogelJS Component';
     protected static override parameters: [string, string][] = [
@@ -82,13 +80,13 @@ export class GenerateComponentCommand extends Command {
         if (
             componentDirsArray
                 .getDescendantsOfKind(SyntaxKind.StringLiteral)
-                .some((literal) => literal.getText() === '\'src/components\'')
+                .some((literal) => literal.getText() === "'src/components'")
         ) {
             return;
         }
 
         await Log.animate('Updating vite config', async () => {
-            componentDirsArray.addElement('\'src/components\'');
+            componentDirsArray.addElement("'src/components'");
 
             await editor.save(viteConfig);
         });
@@ -138,5 +136,4 @@ export class GenerateComponentCommand extends Command {
             ? ['', this.path]
             : [this.path.substring(0, lastSlashIndex), this.path.substring(lastSlashIndex + 1)];
     }
-
 }

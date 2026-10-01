@@ -1,5 +1,5 @@
-import { computed, nextTick, reactive, readonly, ref } from 'vue';
 import { MagicObject, arrayRemove } from '@noeldemartin/utils';
+import { computed, nextTick, reactive, readonly, ref } from 'vue';
 import type { ComputedRef, DeepReadonly, Ref, UnwrapNestedRefs } from 'vue';
 import type { z } from 'zod';
 
@@ -35,7 +35,6 @@ export type SubmitFormListener = () => unknown;
 export type FocusFormListener = (input: string) => unknown;
 
 export default class FormController<Fields extends FormFieldDefinitions = FormFieldDefinitions> extends MagicObject {
-
     public errors: DeepReadonly<UnwrapNestedRefs<FormErrors<Fields>>>;
 
     private _fields: Fields;
@@ -193,10 +192,10 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
     public on(event: 'focus' | 'submit', listener: FocusFormListener | SubmitFormListener): () => void {
         this._listeners[event] ??= [];
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         this._listeners[event]?.push(listener as any);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         return () => this.off(event as any, listener);
     }
 
@@ -275,5 +274,4 @@ export default class FormController<Fields extends FormFieldDefinitions = FormFi
 
         errors && Object.assign(this._errors, errors);
     }
-
 }

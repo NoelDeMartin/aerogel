@@ -6,25 +6,19 @@
         :title-hidden
         :class="{ 'flex-col-reverse': showProgress, 'flex-row items-center justify-center gap-2': !showProgress }"
     >
-        <ProgressBar
-            v-if="showProgress"
-            :progress
-            :job
-            class="min-w-[min(400px,80vw)]"
-        />
+        <ProgressBar v-if="showProgress" :progress :job class="min-w-[min(400px,80vw)]" />
         <IconSpinner v-else class="text-primary-600 mr-1 size-6" />
         <Markdown :text="renderedMessage" />
     </Modal>
 </template>
 
 <script setup lang="ts">
-import IconSpinner from '~icons/svg-spinners/90-ring-with-bg';
-
+import { useLoadingModal } from '@aerogel/core/components/contracts/LoadingModal';
+import type { LoadingModalExpose, LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Modal from '@aerogel/core/components/ui/Modal.vue';
 import ProgressBar from '@aerogel/core/components/ui/ProgressBar.vue';
-import { useLoadingModal } from '@aerogel/core/components/contracts/LoadingModal';
-import type { LoadingModalExpose, LoadingModalProps } from '@aerogel/core/components/contracts/LoadingModal';
+import IconSpinner from '~icons/svg-spinners/90-ring-with-bg';
 
 const props = defineProps<LoadingModalProps>();
 const { renderedTitle, renderedMessage, titleHidden, showProgress } = useLoadingModal(props);

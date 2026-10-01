@@ -1,6 +1,5 @@
 import { App, bootServices } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
-
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
 import { DEFAULT_STATE } from '@aerogel/plugin-local-first/services/Cloud.state';
 

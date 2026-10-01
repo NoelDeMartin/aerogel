@@ -1,14 +1,13 @@
 import { App } from '@aerogel/core';
-import { computed, defineComponent, h, watchEffect } from 'vue';
-import { memo } from '@noeldemartin/utils';
-import { useRoute } from 'vue-router';
-import type { Component, ConcreteComponent } from 'vue';
-import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
-
 import NotFound from '@aerogel/plugin-routing/pages/NotFound.vue';
 import Router from '@aerogel/plugin-routing/services/Router';
-import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
 import type { RouteBindings } from '@aerogel/plugin-routing/services/Router';
+import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
+import { memo } from '@noeldemartin/utils';
+import { computed, defineComponent, h, watchEffect } from 'vue';
+import type { Component, ConcreteComponent } from 'vue';
+import { useRoute } from 'vue-router';
+import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
 
 export type AerogelRoute = RouteRecordRaw & {
     title?: string | ((params: Record<string, unknown>) => string | undefined | null);
@@ -64,7 +63,7 @@ function enhanceRouteComponent(route: AerogelRoute): void {
 }
 
 function enhanceRouteNavigationGuard(guard: NavigationGuardWithThis<undefined>): NavigationGuardWithThis<undefined> {
-    return async function(this, ...args) {
+    return async function (this, ...args) {
         await App.ready;
 
         return guard.call(this, ...args);

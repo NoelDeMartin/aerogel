@@ -1,6 +1,5 @@
-import { arraySorted } from '@noeldemartin/utils';
-
 import File from '@aerogel/cli/lib/File';
+import { arraySorted } from '@noeldemartin/utils';
 
 export function addNpmDependency(name: string, version: string, development: boolean = false): void {
     const packageJson = (JSON.parse(File.read('package.json') ?? '{}') ?? {}) as {

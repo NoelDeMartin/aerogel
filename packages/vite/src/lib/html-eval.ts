@@ -1,8 +1,8 @@
-import imageSize from 'image-size';
 import { readFileSync } from 'node:fs';
 
 import { ICONS } from '@aerogel/vite/lib/icons';
 import type { AppInfo } from '@aerogel/vite/lib/options';
+import imageSize from 'image-size';
 
 function imageMeta(path: string): string {
     const image = readFileSync(path);

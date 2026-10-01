@@ -1,16 +1,23 @@
 {
     "name": "create-aerogel",
     "version": "0.1.2",
-    "type": "module",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/create-aerogel"
+    },
     "bin": {
         "create-aerogel": "index.js"
     },
     "files": [
         "index.js"
     ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
+    "type": "module",
+    "scripts": {
+        "build": "echo 'Nothing to build'"
+    },
     "dependencies": {
         "@aerogel/cli": "next"
     },

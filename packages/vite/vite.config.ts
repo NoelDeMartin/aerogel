@@ -1,55 +1,18 @@
 import { URL, fileURLToPath } from 'node:url';
 
-import dts from 'vite-plugin-dts';
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
-    build: {
+    pack: {
+        entry: { 'aerogel-vite': 'src/index.ts' },
+        loader: { '.html': 'text' },
+        copy: [{ from: ['src/types/shims.d.ts', 'src/types/virtual.d.ts'], flatten: true }],
         sourcemap: true,
-        lib: {
-            entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
-            formats: ['es'],
-            fileName: 'aerogel-vite',
-        },
-        rollupOptions: {
-            external: [
-                '@noeldemartin/utils',
-                '@tailwindcss/vite',
-                '@vitejs/plugin-vue',
-                '@vitejs/plugin-vue-jsx',
-                'image-size',
-                'mustache',
-                'node:child_process',
-                'node:fs',
-                'node:path',
-                'rollup',
-                'sharp',
-                'unplugin-vue-components',
-                'vite-plugin-pwa',
-                'workbox-build',
-            ],
-        },
+        dts: true,
+        fixedExtension: false,
+        publint: true,
+        attw: { profile: 'esm-only' },
     },
-    optimizeDeps: {
-        exclude: ['node:child_process', 'node:fs', 'node:path'],
-    },
-    plugins: [
-        {
-            name: 'ignore',
-            load(id) {
-                if (id.endsWith('?ignore')) {
-                    return { code: '', map: null };
-                }
-
-                return null;
-            },
-        },
-        dts({
-            rollupTypes: true,
-            tsconfigPath: './tsconfig.json',
-            insertTypesEntry: true,
-        }),
-    ],
     resolve: {
         alias: {
             '@aerogel/vite': fileURLToPath(new URL('./src/', import.meta.url)),

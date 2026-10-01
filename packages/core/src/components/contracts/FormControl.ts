@@ -1,5 +1,5 @@
-import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 import type { Nullable } from '@noeldemartin/utils';
+import type { ComputedRef, DeepReadonly, Ref } from 'vue';
 
 import type { ElementMethods } from './helpers';
 
@@ -14,8 +14,10 @@ export interface FormControlEmits<T = unknown> {
     'update:modelValue': [value: T];
 }
 
-export interface FormControlExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement>
-    extends ElementMethods {
+export interface FormControlExpose<
+    T = unknown,
+    TControlElement extends HTMLElement = HTMLElement,
+> extends ElementMethods {
     $control: Ref<TControlElement | null>;
     id: string;
     name: ComputedRef<Nullable<string>>;

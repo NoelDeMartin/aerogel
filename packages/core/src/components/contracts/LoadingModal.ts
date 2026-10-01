@@ -1,8 +1,7 @@
-import { computed } from 'vue';
-import type { Job } from 'soukai-bis';
-
-import { translateWithDefault } from '@aerogel/core/lang';
 import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
+import { translateWithDefault } from '@aerogel/core/lang';
+import type { Job } from 'soukai-bis';
+import { computed } from 'vue';
 
 export interface LoadingModalProps {
     title?: string;
@@ -13,7 +12,7 @@ export interface LoadingModalProps {
 
 export interface LoadingModalExpose extends ModalExpose {}
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export function useLoadingModal(props: LoadingModalProps) {
     const renderedTitle = computed(() => props.title ?? translateWithDefault('ui.loading', 'Loading'));
     const renderedMessage = computed(

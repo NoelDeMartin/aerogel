@@ -1,6 +1,10 @@
 name: Create Aerogel
 
-on: [push, pull_request]
+on:
+    pull_request:
+    push:
+        branches:
+            - main
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,18 +15,15 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v7
-            - uses: pnpm/action-setup@v6
-              with:
-                  run_install: false
             - uses: voidzero-dev/setup-vp@v1.21.1
               with:
-                  node-version-file: '.nvmrc'
+                  node-version-file: '.node-version'
                   cache: true
-            - run: pnpm install
             - name: Build packages
               run: |
+                  vp run build
                   for package in cli vite core plugin-i18n plugin-routing plugin-solid plugin-local-first playwright storybook; do
-                      (cd packages/$package && pnpm build && pnpm pack)
+                      (cd packages/$package && vp pm pack)
                   done
             - name: Create app
               run: |

@@ -9,13 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { SelectItem, SelectItemText } from 'reka-ui';
-import { toString } from '@noeldemartin/utils';
-import type { SelectItemProps } from 'reka-ui';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { toString } from '@noeldemartin/utils';
+import { SelectItem, SelectItemText } from 'reka-ui';
+import type { SelectItemProps } from 'reka-ui';
+import { computed } from 'vue';
 
 const { value } = defineProps<SelectItemProps>();
 const select = injectReactiveOrFail<SelectExpose>(

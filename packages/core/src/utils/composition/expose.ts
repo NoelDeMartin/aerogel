@@ -1,8 +1,8 @@
-import { getCurrentInstance } from 'vue';
-import { useForwardExpose as useRekaForwardExpose } from 'reka-ui';
-import type { ComponentPublicInstance, ComputedRef, Ref } from 'vue';
 import { required } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
+import { useForwardExpose as useRekaForwardExpose } from 'reka-ui';
+import { getCurrentInstance } from 'vue';
+import type { ComponentPublicInstance, ComputedRef, Ref } from 'vue';
 
 export interface ForwardExpose<T extends object> {
     forwardRef: (ref: Element | ComponentPublicInstance | null) => void;
@@ -41,9 +41,7 @@ export interface ForwardExpose<T extends object> {
  * The declared `defineExpose` type isn't checked against what the child actually exposes. Headless components
  * enforce their contracts with `satisfies` instead.
  */
-export function useForwardExpose<
-    T extends object = ComponentPublicInstance,
->(): ForwardExpose<T> {
+export function useForwardExpose<T extends object = ComponentPublicInstance>(): ForwardExpose<T> {
     const instance = required(getCurrentInstance(), 'useForwardExpose must be called inside setup()');
     const { forwardRef: rekaForwardRef, currentRef, currentElement } = useRekaForwardExpose();
     const localExposed = instance.exposed;

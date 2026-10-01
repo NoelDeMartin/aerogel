@@ -1,9 +1,8 @@
-import { serverUrl, solidLogin } from 'playwright-solid';
-import { urlClean } from '@noeldemartin/utils';
-import type { Page } from '@playwright/test';
-
 import { input, press } from '@aerogel/playwright/lib/a11y';
 import { waitSync } from '@aerogel/playwright/lib/sync';
+import { urlClean } from '@noeldemartin/utils';
+import type { Page } from '@playwright/test';
+import { serverUrl, solidLogin } from 'playwright-solid';
 
 export async function localFirstLogin(page: Page): Promise<void> {
     await press(page, 'Configuration');

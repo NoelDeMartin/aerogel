@@ -1,11 +1,6 @@
 <template>
     <!-- @vue-generic {import('@aerogel/core/components/contracts/ConfirmModal').ConfirmModalResult} -->
-    <Modal
-        v-slot="{ close }"
-        :title="renderedTitle"
-        :title-hidden="titleHidden"
-        persistent
-    >
+    <Modal v-slot="{ close }" :title="renderedTitle" :title-hidden="titleHidden" persistent>
         <Form :form @submit="close([true, form.data()])">
             <Markdown :text="message" :actions />
 
@@ -17,7 +12,7 @@
                             type="checkbox"
                             :required="checkbox.required"
                             class="border-primary-600 text-primary-600 hover:bg-primary-50 hover:checked:bg-primary-500 focus:ring-focus focus-visible:ring-focus rounded border-2"
-                        >
+                        />
                         <span class="ml-1.5">{{ checkbox.label }}</span>
                     </label>
                 </li>
@@ -36,16 +31,16 @@
 </template>
 
 <script setup lang="ts">
-import Form from '@aerogel/core/components/ui/Form.vue';
-import Markdown from '@aerogel/core/components/ui/Markdown.vue';
-import Button from '@aerogel/core/components/ui/Button.vue';
-import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { useConfirmModal } from '@aerogel/core/components/contracts/ConfirmModal';
 import type {
     ConfirmModalEmits,
     ConfirmModalExpose,
     ConfirmModalProps,
 } from '@aerogel/core/components/contracts/ConfirmModal';
+import Button from '@aerogel/core/components/ui/Button.vue';
+import Form from '@aerogel/core/components/ui/Form.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
+import Modal from '@aerogel/core/components/ui/Modal.vue';
 
 const { cancelVariant = 'secondary', ...props } = defineProps<ConfirmModalProps>();
 const { form, renderedTitle, titleHidden, renderedAcceptText, renderedCancelText } = useConfirmModal(props);

@@ -12,11 +12,11 @@ function renderVNodeAttrs(node: VNode): string {
     }, '');
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export function defineDirective<TValue = any, TModifiers extends string = string>(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     directive: Directive<any, TValue, TModifiers>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
 ): Directive<any, TValue, TModifiers> {
     return directive;
 }

@@ -1,11 +1,9 @@
+import DataTable from '@aerogel/core/components/ui/DataTable.vue';
+import DataTableColumn from '@aerogel/core/components/ui/DataTableColumn.vue';
+import type { DeepKeyOf } from '@noeldemartin/utils';
 import type { MaybeRefOrGetter, VNodeChild } from 'vue';
 import { defineComponent, h, toValue } from 'vue';
 import type { ComponentProps } from 'vue-component-type-helpers';
-
-import DataTable from '@aerogel/core/components/ui/DataTable.vue';
-import DataTableColumn from '@aerogel/core/components/ui/DataTableColumn.vue';
-
-import type { DeepKeyOf } from '@noeldemartin/utils';
 
 type TableComponent<T extends object> = typeof DataTable &
     (new () => {

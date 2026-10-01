@@ -14,13 +14,16 @@
 </template>
 
 <script setup lang="ts">
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
+import { classes } from '@aerogel/core/utils';
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
-import Markdown from '@aerogel/core/components/ui/Markdown.vue';
-import { classes } from '@aerogel/core/utils';
-
-const { layout = 'horizontal', class: rootClass, titleHeadingLevel = 3 } = defineProps<{
+const {
+    layout = 'horizontal',
+    class: rootClass,
+    titleHeadingLevel = 3,
+} = defineProps<{
     title: string;
     titleId?: string;
     titleHeadingLevel?: 3 | 4;

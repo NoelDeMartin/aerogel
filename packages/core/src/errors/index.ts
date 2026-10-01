@@ -1,13 +1,12 @@
+import { getErrorMessage } from '@aerogel/core/errors/utils';
+import { definePlugin } from '@aerogel/core/plugins';
+import { bootServices } from '@aerogel/core/services';
+import App from '@aerogel/core/services/App';
 import type { App as AppInstance } from 'vue';
 
-import App from '@aerogel/core/services/App';
-import { bootServices } from '@aerogel/core/services';
-import { definePlugin } from '@aerogel/core/plugins';
-import { getErrorMessage } from '@aerogel/core/errors/utils';
-
 import Errors from './Errors';
-import settings from './settings';
 import type { ErrorReport, ErrorReportLog, ErrorSource } from './Errors.state';
+import settings from './settings';
 
 export * from './utils';
 export { Errors };
@@ -22,7 +21,7 @@ const frameworkHandler: ErrorHandler = (error) => {
         return true;
     }
 
-    Errors.report(error);
+    void Errors.report(error);
 
     return true;
 };
@@ -46,6 +45,7 @@ export type ErrorsServices = typeof services;
 
 export default definePlugin({
     async install(app, options) {
+        // oxlint-disable-next-line typescript/unbound-method
         setUpErrorHandler(app, options.handleError);
 
         settings.forEach((setting) => App.addSetting(setting));

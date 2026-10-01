@@ -1,13 +1,12 @@
+import { describe, expect, it, vi } from 'vite-plus/test';
 import { createI18n } from 'vue-i18n';
-import { describe, expect, it, vi } from 'vitest';
 
-import I18nMessages from './I18nMessages';
 import { createAppI18n, loadAppLocales } from './i18n';
+import I18nMessages from './I18nMessages';
 
 vi.mock('vue-i18n', () => ({ createI18n: vi.fn(() => ({})) }));
 
 describe('i18n', () => {
-
     it('Creates i18n before loading messages', () => {
         // Arrange
         const messages = new I18nMessages(import.meta.glob('@aerogel/plugin-i18n/testing/stubs/lang/*'));
@@ -38,5 +37,4 @@ describe('i18n', () => {
         expect(messages.getMessages()['en']).key('foo').to.exist;
         expect(listener).toHaveBeenCalledWith('en', expect.objectContaining({ foo: expect.anything() }));
     });
-
 });

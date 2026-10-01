@@ -5,9 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { ToastClose } from 'reka-ui';
-
 import type { ToastAction as IToastAction } from '@aerogel/core/components/contracts/Toast';
+import { ToastClose } from 'reka-ui';
 
 defineProps<{ action: IToastAction }>();
 </script>

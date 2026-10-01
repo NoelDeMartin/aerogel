@@ -5,16 +5,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, provide, readonly, ref } from 'vue';
-import { uuid } from '@noeldemartin/utils';
-
-import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
-import type FormController from '@aerogel/core/forms/FormController';
 import type {
     FormControlEmits,
     FormControlExpose,
     FormControlProps,
 } from '@aerogel/core/components/contracts/FormControl';
+import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
+import type FormController from '@aerogel/core/forms/FormController';
+import { uuid } from '@noeldemartin/utils';
+import { computed, inject, provide, readonly, ref } from 'vue';
 
 const { as = 'div', name, label, description, modelValue } = defineProps<FormControlProps & { as?: string }>();
 const emit = defineEmits<FormControlEmits>();

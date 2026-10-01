@@ -1,15 +1,14 @@
 import { Events } from '@aerogel/core';
-import { facade, required, stringToSlug, tap, urlResolveDirectory } from '@noeldemartin/utils';
 import { Solid } from '@aerogel/plugin-solid';
-import { Container, type ModelWithUrl, defineSchema } from 'soukai-bis';
 import type { AuthSession } from '@aerogel/plugin-solid';
+import { facade, required, stringToSlug, tap, urlResolveDirectory } from '@noeldemartin/utils';
+import { Container, type ModelWithUrl, defineSchema } from 'soukai-bis';
 
 import SolidTask from '@/models/SolidTask';
 
 import Service from './SolidTasks.state';
 
 export class SolidTasksService extends Service {
-
     protected override async boot(): Promise<void> {
         Events.on('auth:login', async (session) => {
             const container = await this.findOrCreateTasksContainer(session);
@@ -47,7 +46,6 @@ export class SolidTasksService extends Service {
             reuseExisting: true,
         });
     }
-
 }
 
 export default facade(SolidTasksService);

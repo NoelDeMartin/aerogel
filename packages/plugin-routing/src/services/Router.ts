@@ -1,14 +1,13 @@
-import { computed, ref, shallowRef, unref, watch } from 'vue';
-import { computedModel } from '@aerogel/plugin-solid';
 import { App, Events, computedAsync } from '@aerogel/core';
+import { computedRouteParams } from '@aerogel/plugin-routing/utils/internal';
+import { resolveModelBinding } from '@aerogel/plugin-routing/utils/soukai';
+import { computedModel } from '@aerogel/plugin-solid';
 import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
 import { isModelClass } from 'soukai-bis';
 import type { ModelConstructor } from 'soukai-bis';
+import { computed, ref, shallowRef, unref, watch } from 'vue';
 import type { ComputedRef, Ref, WatchStopHandle } from 'vue';
 import type { RouteLocationNormalizedLoaded, RouteLocationRaw, RouteParamValue, RouteParams, Router } from 'vue-router';
-
-import { computedRouteParams } from '@aerogel/plugin-routing/utils/internal';
-import { resolveModelBinding } from '@aerogel/plugin-routing/utils/soukai';
 
 import Service from './Router.state';
 
@@ -16,13 +15,10 @@ export type LoadedRoute = Omit<RouteLocationNormalizedLoaded, 'params'> & {
     rawParams: RouteParams;
     params?: Record<string, unknown>;
 };
-export type RouteBinding =
-    | ModelConstructor
-    | ((slug: string, params: Record<string, unknown>) => unknown | Promise<unknown>);
+export type RouteBinding = ModelConstructor | ((slug: string, params: Record<string, unknown>) => unknown);
 export type RouteBindings = Record<string, RouteBinding>;
 
 export class RouterService extends Service {
-
     public readonly currentRoute: ComputedRef<LoadedRoute | null>;
     public readonly routesParams: Ref<Record<string, Record<string, unknown>>>;
     protected router: Ref<Router | null>;
@@ -108,7 +104,7 @@ export class RouterService extends Service {
             ...this.routesParams.value,
             [path]: {
                 ...resolvedParams,
-                ...(this.routesParams.value[path] ?? {}),
+                ...this.routesParams.value[path],
             },
         };
 
@@ -127,7 +123,7 @@ export class RouterService extends Service {
     protected handleStatic404Redirect(): void {
         const route = Storage.pull<RouteLocationRaw>('static-404-redirect');
 
-        route && this.replace(route);
+        route && void this.replace(route);
     }
 
     protected storeFlashRoute(): void {
@@ -145,7 +141,7 @@ export class RouterService extends Service {
 
         const flashRoute = this.flashRoute;
 
-        App.whenReady(() => this.replace(flashRoute));
+        void App.whenReady(() => this.replace(flashRoute));
 
         this.flashRoute = null;
     }
@@ -170,7 +166,6 @@ export class RouterService extends Service {
 
         return computedModel(() => computedBinding.value);
     }
-
 }
 
 export interface RouterService extends Omit<Router, 'currentRoute'> {}

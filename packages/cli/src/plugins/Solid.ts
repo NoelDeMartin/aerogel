@@ -1,11 +1,10 @@
+import type { Editor } from '@aerogel/cli/lib/Editor';
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Plugin from '@aerogel/cli/plugins/Plugin';
 import { addNpmDependency } from '@aerogel/cli/utils/package';
-import type { Editor } from '@aerogel/cli/lib/Editor';
 
 export default class Solid extends Plugin {
-
     constructor() {
         super('solid');
     }
@@ -25,7 +24,7 @@ export default class Solid extends Plugin {
     }
 
     protected override getBootstrapConfig(): string {
-        return 'solid({ models: import.meta.glob(\'@/models/*\', { eager: true }) })';
+        return "solid({ models: import.meta.glob('@/models/*', { eager: true }) })";
     }
 
     protected async updateNpmScripts(editor: Editor): Promise<void> {
@@ -72,5 +71,4 @@ export default class Solid extends Plugin {
 
         File.write('.gitignore', `${gitignore}/solid\n`);
     }
-
 }

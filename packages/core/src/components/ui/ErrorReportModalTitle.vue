@@ -3,10 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import type { ErrorReport } from '@aerogel/core/errors';
+import { computed } from 'vue';
 
 const { totalReports, currentReport, report } = defineProps<{
     report: ErrorReport;

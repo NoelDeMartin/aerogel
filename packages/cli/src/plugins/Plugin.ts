@@ -1,18 +1,16 @@
-import { Node, SyntaxKind } from 'ts-morph';
-import { stringToCamelCase } from '@noeldemartin/utils';
-import type { ArrayLiteralExpression, ImportDeclarationStructure, OptionalKind, SourceFile } from 'ts-morph';
-
+import type { Editor } from '@aerogel/cli/lib/Editor';
+import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Shell from '@aerogel/cli/lib/Shell';
-import File from '@aerogel/cli/lib/File';
 import { app, isLinkedLocalApp, isLocalApp } from '@aerogel/cli/lib/utils/app';
-import { addNpmDependency } from '@aerogel/cli/utils/package';
 import { editFiles, findDescendant, when } from '@aerogel/cli/lib/utils/edit';
 import { packNotFound, packagePackPath, packagePath } from '@aerogel/cli/lib/utils/paths';
-import type { Editor } from '@aerogel/cli/lib/Editor';
+import { addNpmDependency } from '@aerogel/cli/utils/package';
+import { stringToCamelCase } from '@noeldemartin/utils';
+import { Node, SyntaxKind } from 'ts-morph';
+import type { ArrayLiteralExpression, ImportDeclarationStructure, OptionalKind, SourceFile } from 'ts-morph';
 
 export default abstract class Plugin {
-
     public readonly name: string;
 
     constructor(name: string) {
@@ -172,5 +170,4 @@ export default abstract class Plugin {
     protected getBootstrapConfig(): string {
         return `${stringToCamelCase(this.name)}()`;
     }
-
 }

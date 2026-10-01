@@ -13,7 +13,6 @@ import { dirname, resolve } from 'node:path';
 import { facade } from '@noeldemartin/utils';
 
 export class FileService {
-
     public contains(path: string, contents: string): boolean {
         return !!this.read(path)?.includes(contents);
     }
@@ -100,7 +99,6 @@ export class FileService {
 
         writeFileSync(path, contents);
     }
-
 }
 
 export default facade(FileService);

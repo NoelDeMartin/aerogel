@@ -3,22 +3,16 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "pnpm run -r --workspace-concurrency 0 build",
-        "docs:build": "pnpm docs:build:vitepress && pnpm docs:build:playground",
-        "docs:build:playground": "pnpm build -w playground && cp playground/dist docs/.vitepress/dist/playground -r",
+        "build": "vp run --filter @aerogel/vite --filter @aerogel/cli build && vp run --filter @aerogel/core build && vp run --filter @aerogel/plugin-solid build && vp run --filter @aerogel/plugin-i18n --filter @aerogel/plugin-local-first --filter @aerogel/plugin-routing build && vp run --filter @aerogel/playwright --filter @aerogel/storybook --filter create-aerogel --filter ./playground build",
+        "docs:build": "vp run docs:build:vitepress && vp run docs:build:playground",
+        "docs:build:playground": "vp run --filter ./playground build && cp -r playground/dist docs/.vitepress/dist/playground",
         "docs:build:vitepress": "vitepress build docs",
         "docs:dev": "vitepress dev docs",
-        "lint": "pnpm run -r --parallel lint",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose",
-        "verify": "pnpm run -r --parallel verify"
+        "type-check": "vp run -r --parallel type-check",
+        "verify": "vp run -r --parallel verify"
     },
-    "packageManager": "pnpm@12.6.0",
     "devDependencies": {
         "@iconify/json": "2.2.341",
-        "@noeldemartin/eslint-config-typescript": "next",
-        "@noeldemartin/eslint-config-vue": "next",
-        "@noeldemartin/eslint-plugin": "^0.1.0",
         "@noeldemartin/scripts": "catalog:",
         "@noeldemartin/solid-utils": "^0.6.1",
         "@noeldemartin/testing": "next",
@@ -27,33 +21,17 @@
         "@total-typescript/ts-reset": "^0.4.2",
         "@tsconfig/node24": "^24.0.3",
         "@types/mustache": "^4.2.2",
-        "@typescript-eslint/eslint-plugin": "^5.0.0",
-        "@vue/tsconfig": "^0.7.0",
-        "eslint": "catalog:",
-        "eslint-plugin-vue": "catalog:",
-        "prettier": "^3.6.2",
-        "prettier-eslint-cli": "^8.0.1",
-        "prettier-plugin-tailwindcss": "^0.6.11",
+        "@vue/tsconfig": "^0.9.1",
         "soukai-bis": "catalog:",
-        "typescript": "^5.8.2",
+        "typescript": "~5.9.3",
         "vite": "catalog:",
         "vite-plugin-dts": "4.5.0",
+        "vite-plus": "catalog:",
         "vitepress": "^1.6.3",
-        "vitest": "^3.0.9",
         "vue": "catalog:",
         "vue-i18n": "^11.1.2",
         "vue-router": "^4.5.0",
-        "vue-tsc": "^2.2.8"
+        "vue-tsc": "^3.3.11"
     },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-typescript"
-        ]
-    },
-    "prettier": {
-        "printWidth": 120,
-        "plugins": [
-            "prettier-plugin-tailwindcss"
-        ]
-    }
+    "packageManager": "pnpm@12.6.0"
 }

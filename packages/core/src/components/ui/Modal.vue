@@ -1,11 +1,6 @@
 <template>
     <!-- @vue-generic {T} -->
-    <HeadlessModal
-        v-slot="{ close }"
-        v-bind="props"
-        :ref="forwardRef"
-        :persistent
-    >
+    <HeadlessModal v-slot="{ close }" v-bind="props" :ref="forwardRef" :persistent>
         <HeadlessModalOverlay
             class="fixed inset-0 transition-opacity duration-300 will-change-[opacity]"
             :class="{
@@ -18,7 +13,7 @@
         <HeadlessModalContent v-bind="contentProps" :class="renderedWrapperClass">
             <div
                 v-if="!persistent && !closeHidden"
-                class="absolute right-0 top-0 pr-2.5 pt-3.5"
+                class="absolute top-0 right-0 pt-3.5 pr-2.5"
                 :class="{ 'hidden sm:block': !renderFullscreen }"
             >
                 <button
@@ -45,7 +40,7 @@
 
             <HeadlessModalDescription
                 v-if="description"
-                class="px-4 pb-2 pt-1"
+                class="px-4 pt-1 pb-2"
                 :class="{ 'sr-only': descriptionHidden }"
             >
                 <Markdown :text="description" class="text-sm leading-6 text-gray-500" />
@@ -59,26 +54,24 @@
 </template>
 
 <script lang="ts">
-import IconClose from '~icons/zondicons/close';
-
-import { computed, onMounted } from 'vue';
-import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
-import { after } from '@noeldemartin/utils';
-
-import Markdown from '@aerogel/core/components/ui/Markdown.vue';
-import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
+import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
 import HeadlessModal from '@aerogel/core/components/headless/HeadlessModal.vue';
 import HeadlessModalContent from '@aerogel/core/components/headless/HeadlessModalContent.vue';
 import HeadlessModalDescription from '@aerogel/core/components/headless/HeadlessModalDescription.vue';
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
-import UI from '@aerogel/core/ui/UI';
-import { classes } from '@aerogel/core/utils/classes';
-import { reactiveSet } from '@aerogel/core/utils';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import { injectModal, modals, useModal } from '@aerogel/core/ui/modals';
 import type { ModalController } from '@aerogel/core/ui/modals';
+import UI from '@aerogel/core/ui/UI';
+import { reactiveSet } from '@aerogel/core/utils';
+import { classes } from '@aerogel/core/utils/classes';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import type { AcceptRefs } from '@aerogel/core/utils/vue';
-import type { ModalExpose, ModalProps, ModalSlots } from '@aerogel/core/components/contracts/Modal';
+import { after } from '@noeldemartin/utils';
+import { computed, onMounted } from 'vue';
+import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
+import IconClose from '~icons/zondicons/close';
 
 const renderedModals = reactiveSet<ModalController>();
 </script>
@@ -129,27 +122,29 @@ const renderedContentClass = computed(() =>
         'overflow-auto px-4 pb-4 flex flex-col flex-1',
         { 'pt-4': !title || titleHidden, 'max-h-[90vh]': !renderFullscreen.value },
         contentClass,
-    ));
+    ),
+);
 const renderFullscreen = computed(() => fullscreen || (fullscreenOnMobile && UI.mobile));
 const renderedWrapperClass = computed(() =>
     classes(
         'isolate fixed z-50 flex flex-col overflow-hidden bg-white text-left duration-300',
         renderFullscreen.value
             ? [
-                'inset-0 transition-[transform,translate] will-change-[transform,translate]',
-                renderedModals.has(modal.value) || 'animate-[slide-in_var(--tw-duration)_ease-in-out]',
-                inForeground.value ? 'translate-y-0' : 'translate-y-full',
-            ]
+                  'inset-0 transition-[transform,translate] will-change-[transform,translate]',
+                  renderedModals.has(modal.value) || 'animate-[slide-in_var(--tw-duration)_ease-in-out]',
+                  inForeground.value ? 'translate-y-0' : 'translate-y-full',
+              ]
             : [
-                'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full',
-                'max-w-[calc(100%-2rem)] rounded-lg shadow-xl sm:max-w-lg',
-                'transition-[scale,opacity] will-change-[scale,opacity]',
-                renderedModals.has(modal.value) ||
+                  'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full',
+                  'max-w-[calc(100%-2rem)] rounded-lg shadow-xl sm:max-w-lg',
+                  'transition-[scale,opacity] will-change-[scale,opacity]',
+                  renderedModals.has(modal.value) ||
                       'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
-                inForeground.value ? 'scale-100 opacity-100' : 'scale-50 opacity-0',
-            ],
+                  inForeground.value ? 'scale-100 opacity-100' : 'scale-50 opacity-0',
+              ],
         wrapperClass,
-    ));
+    ),
+);
 
 onMounted(() => after(500).then(() => renderedModals.add(modal.value)));
 </script>

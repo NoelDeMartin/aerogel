@@ -1,9 +1,8 @@
-import { isTesting } from '@noeldemartin/utils';
-
-import Events from '@aerogel/core/services/Events';
-import { App } from '@aerogel/core/services';
 import { definePlugin } from '@aerogel/core/plugins';
+import { App } from '@aerogel/core/services';
 import type { Services } from '@aerogel/core/services';
+import Events from '@aerogel/core/services/Events';
+import { isTesting } from '@noeldemartin/utils';
 
 export interface AerogelTestingRuntime {
     on: (typeof Events)['on'];
@@ -24,6 +23,6 @@ export default definePlugin({
 });
 
 declare global {
-    // eslint-disable-next-line no-var
+    // oxlint-disable-next-line no-var
     var testingRuntime: AerogelTestingRuntime | undefined;
 }

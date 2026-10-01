@@ -1,10 +1,8 @@
-import Aerogel from 'virtual:aerogel';
-
-import { getEnv } from '@noeldemartin/utils';
-import type { App, Component } from 'vue';
-
-import { defineServiceState } from '@aerogel/core/services/utils';
 import type { Plugin } from '@aerogel/core/plugins/Plugin';
+import { defineServiceState } from '@aerogel/core/services/utils';
+import { getEnv } from '@noeldemartin/utils';
+import Aerogel from 'virtual:aerogel';
+import type { App, Component } from 'vue';
 
 export interface AppSetting {
     component: Component;

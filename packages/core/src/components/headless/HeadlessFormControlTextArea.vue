@@ -10,20 +10,19 @@
             formControl.errors
                 ? `${formControl.id}-error`
                 : formControl.description
-                    ? `${formControl.id}-description`
-                    : undefined
+                  ? `${formControl.id}-description`
+                  : undefined
         "
         @input="update"
     />
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef, watchEffect } from 'vue';
-
+import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
 import { onFormFocus } from '@aerogel/core/utils/composition/forms';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
+import { computed, useTemplateRef, watchEffect } from 'vue';
 
 const $textArea = useTemplateRef('$textAreaRef');
 const formControl = injectReactiveOrFail<FormControlExpose>(

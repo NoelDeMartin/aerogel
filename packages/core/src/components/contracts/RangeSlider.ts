@@ -1,6 +1,5 @@
-import type { HTMLAttributes } from 'vue';
-
 import type { NumberRange } from '@aerogel/core/forms/schemas';
+import type { HTMLAttributes } from 'vue';
 
 import type { FormControlProps } from './FormControl';
 

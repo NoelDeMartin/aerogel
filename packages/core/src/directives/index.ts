@@ -1,12 +1,11 @@
-import type { Directive } from 'vue';
-
 import { definePlugin } from '@aerogel/core/plugins';
+import type { Directive } from 'vue';
 
 import measure from './measure';
 import safeHtml from './safe-html';
 
 export const aerogelDirectives = {
-    'measure': measure,
+    measure: measure,
     'safe-html': safeHtml,
 } as const satisfies Record<string, Directive>;
 

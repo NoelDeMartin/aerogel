@@ -3,13 +3,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, useAttrs } from 'vue';
-import { isInstanceOf } from '@noeldemartin/utils';
-import type { VNode } from 'vue';
-
-import { getMarkdownRouter, renderMarkdown } from '@aerogel/core/utils/markdown';
 import { translate, translateWithDefault } from '@aerogel/core/lang';
+import { getMarkdownRouter, renderMarkdown } from '@aerogel/core/utils/markdown';
 import { renderVNode } from '@aerogel/core/utils/vue';
+import { isInstanceOf } from '@noeldemartin/utils';
+import { computed, h, useAttrs } from 'vue';
+import type { VNode } from 'vue';
 
 const { as, inline, langKey, langParams, langDefault, text, actions } = defineProps<{
     as?: string;

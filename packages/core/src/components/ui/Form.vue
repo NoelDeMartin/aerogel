@@ -5,9 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { provide, watchEffect } from 'vue';
-
 import type FormController from '@aerogel/core/forms/FormController';
+import { provide, watchEffect } from 'vue';
 
 let offSubmit: (() => void) | undefined;
 const { form } = defineProps<{ form?: FormController }>();

@@ -22,17 +22,15 @@
 </template>
 
 <script setup lang="ts">
-import Aerogel from 'virtual:aerogel';
-
-import { computed } from 'vue';
-
-import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Button from '@aerogel/core/components/ui/Button.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import Select from '@aerogel/core/components/ui/Select.vue';
 import SelectLabel from '@aerogel/core/components/ui/SelectLabel.vue';
-import SelectTrigger from '@aerogel/core/components/ui/SelectTrigger.vue';
 import SelectOptions from '@aerogel/core/components/ui/SelectOptions.vue';
+import SelectTrigger from '@aerogel/core/components/ui/SelectTrigger.vue';
 import { Lang, SYSTEM_LOCALE, getBrowserLocale, translateWithDefault } from '@aerogel/core/lang';
+import Aerogel from 'virtual:aerogel';
+import { computed } from 'vue';
 
 const browserLocale = computed(() => getBrowserLocale(Lang.locales) ?? Lang.fallbackLocale);
 const options = computed(() => [SYSTEM_LOCALE, ...Lang.locales]);

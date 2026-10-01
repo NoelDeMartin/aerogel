@@ -1,14 +1,12 @@
-import chalk from 'chalk';
-import { describe, it } from 'vitest';
-
 import LogMock from '@aerogel/cli/lib/Log.mock';
+import chalk from 'chalk';
+import { describe, it } from 'vite-plus/test';
 
 import Log from './Log';
 
 const info = chalk.hex('#00ffff');
 
 describe('Log', () => {
-
     it('renders markdown bold', () => {
         // Act
         Log.info('Foo **bar**');
@@ -33,5 +31,4 @@ describe('Log', () => {
         LogMock.expectLogged(info(''));
         LogMock.expectLogged(info('As well as the new lines.'));
     });
-
 });

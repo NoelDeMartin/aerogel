@@ -8,12 +8,7 @@
             $td('settings.purgeDataDescription', 'Wipe all database records and local storage from this device.')
         "
     >
-        <Button
-            variant="secondary"
-            class="whitespace-nowrap"
-            :loading
-            @click="purgeData()"
-        >
+        <Button variant="secondary" class="whitespace-nowrap" :loading @click="purgeData()">
             {{ loading ? $td('settings.purgingData', 'Purging data...') : $td('settings.purgeData', 'Purge Data') }}
         </Button>
     </Setting>
@@ -21,7 +16,6 @@
 
 <script setup lang="ts">
 import { Button, Setting, Storage, UI, translateWithDefault, useLoading } from '@aerogel/core';
-
 import AccountLoginModal from '@aerogel/plugin-local-first/components/AccountLoginModal.vue';
 
 const { loading, run } = useLoading();

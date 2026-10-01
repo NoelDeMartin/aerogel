@@ -6,11 +6,7 @@
             { label: $td('user.settings', 'Settings'), click: () => $ui.modal(SettingsModal) },
         ]"
     >
-        <Button
-            size="icon"
-            variant="ghost"
-            :title="$td('user.menu', 'Configuration')"
-        >
+        <Button size="icon" variant="ghost" :title="$td('user.menu', 'Configuration')">
             <IconCog class="size-5" />
             <span class="sr-only">{{ $td('user.menu', 'Configuration') }}</span>
         </Button>
@@ -18,9 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import IconCog from '~icons/zondicons/cog';
-
 import { Button, DropdownMenu, SettingsModal } from '@aerogel/core';
+import IconCog from '~icons/zondicons/cog';
 
 import AccountLoginModal from './AccountLoginModal.vue';
 </script>

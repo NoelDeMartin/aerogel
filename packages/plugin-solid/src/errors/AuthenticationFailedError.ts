@@ -10,7 +10,6 @@ function getErrorMessage(message: string, description?: string | null): string {
 }
 
 export default class AuthenticationFailedError extends JSError {
-
     public readonly description?: string | null;
 
     constructor(message: string, description?: string | null, options?: JSErrorOptions) {
@@ -18,5 +17,4 @@ export default class AuthenticationFailedError extends JSError {
 
         this.description = description;
     }
-
 }

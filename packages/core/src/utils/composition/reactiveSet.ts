@@ -1,7 +1,7 @@
 import { fail } from '@noeldemartin/utils';
 import { customRef } from 'vue';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export function reactiveSet<T>(initial?: T[] | Set<T>, options: { equals?: (a: T, b: T) => boolean } = {}) {
     let set: Set<T> = new Set(initial);
     let trigger: () => void;
@@ -21,17 +21,17 @@ export function reactiveSet<T>(initial?: T[] | Set<T>, options: { equals?: (a: T
     });
 
     return {
-        values() {
+        values(): T[] {
             track();
 
             return Array.from(ref.value.values());
         },
-        has(item: T) {
+        has(item: T): boolean {
             track();
 
             return ref.value.has(item) || hasEqual(item);
         },
-        add(item: T) {
+        add(item: T): void {
             trigger();
 
             if (hasEqual(item)) {
@@ -40,17 +40,17 @@ export function reactiveSet<T>(initial?: T[] | Set<T>, options: { equals?: (a: T
 
             ref.value.add(item);
         },
-        delete(item: T) {
+        delete(item: T): void {
             trigger();
 
             ref.value.delete(item);
         },
-        clear() {
+        clear(): void {
             trigger();
 
             ref.value.clear();
         },
-        reset(items?: T[] | Set<T>) {
+        reset(items?: T[] | Set<T>): void {
             trigger();
 
             set = new Set(items);

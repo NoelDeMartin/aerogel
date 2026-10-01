@@ -1,5 +1,6 @@
-import { matchImageSnapshot, see, seeImage, test } from '@aerogel/playwright';
 import { resolve } from 'path';
+
+import { matchImageSnapshot, see, seeImage, test } from '@aerogel/playwright';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/content');

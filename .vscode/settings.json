@@ -1,14 +1,18 @@
 {
-    "emeraldwalk.runonsave": {
-        "commands": [
-            {
-                "match": ".*",
-                "cmd": "npx prettier-eslint ${file} --write"
-            }
-        ]
+    "npm.scriptRunner": "vp",
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "oxc.fmt.configPath": "./vite.config.ts",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.oxc": "explicit"
     },
     "tailwindCSS.experimental.classRegex": [
         ["cva\\(((?:[^()]|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
         ["cx\\(((?:[^()]|\\([^()]*\\))*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-    ]
+    ],
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "package.json": "vite.config.*, vitest.config.*, tsconfig*.json, playwright.config.*, pnpm-*.yaml, .node-version, .editorconfig, .gitignore, .env*, LICENSE"
+    }
 }

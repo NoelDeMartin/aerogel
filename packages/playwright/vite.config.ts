@@ -1,34 +1,16 @@
 import { URL, fileURLToPath } from 'node:url';
 
-import dts from 'vite-plugin-dts';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
-    build: {
+    pack: {
+        entry: { 'aerogel-playwright': 'src/index.ts' },
         sourcemap: true,
-        lib: {
-            entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
-            formats: ['es'],
-            fileName: 'aerogel-playwright',
-        },
-        rollupOptions: {
-            external: [
-                '@noeldemartin/solid-utils',
-                '@noeldemartin/solid-utils/testing',
-                '@noeldemartin/utils',
-                '@playwright/test',
-                'playwright-solid',
-                'soukai-bis',
-            ],
-        },
+        dts: true,
+        fixedExtension: false,
+        publint: true,
+        attw: { profile: 'esm-only' },
     },
-    plugins: [
-        dts({
-            rollupTypes: true,
-            tsconfigPath: './tsconfig.json',
-            insertTypesEntry: true,
-        }),
-    ],
     resolve: {
         alias: {
             '@aerogel/playwright': fileURLToPath(new URL('./src/', import.meta.url)),

@@ -1,11 +1,11 @@
 import { URL, fileURLToPath } from 'node:url';
 
 import Aerogel, { AerogelResolver } from '@aerogel/vite';
-import Components from 'unplugin-vue-components/vite';
 import I18n from '@intlify/unplugin-vue-i18n/vite';
-import Icons from 'unplugin-icons/vite';
 import IconsResolver from 'unplugin-icons/resolver';
-import { defineConfig } from 'vitest/config';
+import Icons from 'unplugin-icons/vite';
+import Components from 'unplugin-vue-components/vite';
+import { defineConfig } from 'vite-plus';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const basePath = isProduction ? '/playground/' : undefined;

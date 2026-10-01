@@ -1,15 +1,14 @@
-import { computed, inject, provide, readonly, ref } from 'vue';
-import { evaluate, toString, uuid } from '@noeldemartin/utils';
-import type { AcceptRefs } from '@aerogel/core/utils';
-import type { AcceptableValue, AsTag, SelectContentProps } from 'reka-ui';
-import type { Component, ComputedRef, EmitFn, HTMLAttributes, Ref } from 'vue';
-import type { Nullable } from '@noeldemartin/utils';
-
-import { translateWithDefault } from '@aerogel/core/lang';
 import type { FormController } from '@aerogel/core/forms';
+import { translateWithDefault } from '@aerogel/core/lang';
+import type { AcceptRefs } from '@aerogel/core/utils';
+import { evaluate, toString, uuid } from '@noeldemartin/utils';
+import type { Nullable } from '@noeldemartin/utils';
+import type { AcceptableValue, AsTag, SelectContentProps } from 'reka-ui';
+import { computed, inject, provide, readonly, ref } from 'vue';
+import type { Component, ComputedRef, EmitFn, HTMLAttributes, Ref } from 'vue';
 
-import { exposeElementMethods } from './helpers';
 import type { FormControlEmits, FormControlExpose, FormControlProps } from './FormControl';
+import { exposeElementMethods } from './helpers';
 
 export type SelectOptionData = {
     key: string;
@@ -36,8 +35,10 @@ export interface SelectProps<T = unknown> extends FormControlProps<T | T[]> {
 
 export interface SelectEmits<T = unknown> extends FormControlEmits<T | T[]> {}
 
-export interface SelectExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement>
-    extends FormControlExpose<T | T[], TControlElement> {
+export interface SelectExpose<T = unknown, TControlElement extends HTMLElement = HTMLElement> extends FormControlExpose<
+    T | T[],
+    TControlElement
+> {
     options: ComputedRef<Nullable<readonly SelectOptionData[]>>;
     selectedOption: ComputedRef<Nullable<SelectOptionData>>;
     selectedOptions: ComputedRef<readonly SelectOptionData[]>;
@@ -56,7 +57,7 @@ export function hasSelectOptionLabel(option: unknown): option is HasSelectOption
     return typeof option === 'object' && option !== null && 'label' in option;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
     props: Ref<SelectProps<T>>,
     emit: EmitFn<SelectEmits<T>>,
@@ -71,7 +72,7 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
     });
 
     const compareOptions = (a: T, b: T): boolean =>
-        (props.value.compareOptions ? props.value.compareOptions(a, b) : a === b);
+        props.value.compareOptions ? props.value.compareOptions(a, b) : a === b;
 
     const renderOption = (option: T): string => {
         if (option === undefined || option === null) {
@@ -81,8 +82,8 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
         return props.value.renderOption
             ? props.value.renderOption(option)
             : hasSelectOptionLabel(option)
-                ? evaluate(option.label as string)
-                : toString(option);
+              ? evaluate(option.label as string)
+              : toString(option);
     };
 
     const rawValue = computed(() => {
@@ -191,7 +192,7 @@ export function useSelect<T, TControlElement extends HTMLElement = HTMLElement>(
 
             return form.isFieldRequired(props.value.name);
         }),
-        update: value => update(value as AcceptableValue),
+        update: (value) => update(value as AcceptableValue),
         ...exposeElementMethods(() => $control.value),
     } satisfies AcceptRefs<SelectExpose<T, TControlElement>>;
 

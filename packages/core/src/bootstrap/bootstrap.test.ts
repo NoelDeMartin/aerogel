@@ -1,34 +1,30 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createApp } from 'vue';
-import { mock } from '@noeldemartin/testing';
-import { z } from 'zod';
-import type { Component } from 'vue';
-
-import Events from '@aerogel/core/services/Events';
 import measure from '@aerogel/core/directives/measure';
+import Events from '@aerogel/core/services/Events';
 import { env } from '@aerogel/core/utils/env';
 import type { Env } from '@aerogel/core/utils/env';
+import { mock } from '@noeldemartin/testing';
+import { describe, expect, it, vi } from 'vite-plus/test';
+import { createApp } from 'vue';
+import type { Component } from 'vue';
+import { z } from 'zod';
 
 import { bootstrap } from './index';
 
+vi.mock('vue', async () => {
+    const vue = (await vi.importActual('vue')) as object;
+
+    return {
+        ...vue,
+        createApp: vi.fn(() => ({
+            mount: vi.fn(),
+            use: vi.fn(),
+            directive: vi.fn(),
+            config: { globalProperties: {} },
+        })),
+    };
+});
+
 describe('Aerogel', () => {
-
-    beforeEach(() => {
-        vi.mock('vue', async () => {
-            const vue = (await vi.importActual('vue')) as object;
-
-            return {
-                ...vue,
-                createApp: vi.fn(() => ({
-                    mount: vi.fn(),
-                    use: vi.fn(),
-                    directive: vi.fn(),
-                    config: { globalProperties: {} },
-                })),
-            };
-        });
-    });
-
     it('Boots services', async () => {
         // Arrange
         const rootComponent = mock<Component>();
@@ -71,5 +67,4 @@ describe('Aerogel', () => {
         // Assert
         expect(vi.mocked(createApp).mock.results[0]?.value.directive).toHaveBeenCalledWith('measure', measure);
     });
-
 });

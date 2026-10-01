@@ -23,5 +23,6 @@ export async function installPlugins(plugins: Plugin[], ...args: Parameters<Plug
         ),
     );
 
+    // oxlint-disable-next-line typescript/await-thenable
     await Promise.all(plugins.map((plugin) => plugin.install(...args)) ?? []);
 }

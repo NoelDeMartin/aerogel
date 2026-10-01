@@ -8,9 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { ToastRoot } from 'reka-ui';
-
 import type { ToastProps } from '@aerogel/core/components/contracts/Toast';
+import { ToastRoot } from 'reka-ui';
 
 import HeadlessToastAction from './HeadlessToastAction.vue';
 

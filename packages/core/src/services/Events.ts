@@ -1,6 +1,5 @@
-import { arrayRemove, facade, fail, tap } from '@noeldemartin/utils';
-
 import Service from '@aerogel/core/services/Service';
+import { arrayRemove, facade, fail, tap } from '@noeldemartin/utils';
 
 export interface EventsPayload {}
 export interface EventListenerOptions {
@@ -28,13 +27,13 @@ export const EventListenerPriorities = {
 export type EventListenerPriority = (typeof EventListenerPriorities)[keyof typeof EventListenerPriorities];
 
 export class EventsService extends Service {
-
     private listeners: Record<string, { priorities: number[]; handlers: Record<number, EventListener[]> }> = {};
 
     protected override async boot(): Promise<void> {
         Object.entries(globalThis.__aerogelEvents__ ?? {}).forEach(([event, listener]) =>
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            this.on(event as any, listener as EventListener));
+            // oxlint-disable-next-line typescript/no-explicit-any
+            this.on(event as any, listener as EventListener),
+        );
     }
 
     public emit<Event extends EventWithoutPayload>(event: Event): Promise<void>;
@@ -47,14 +46,12 @@ export class EventsService extends Service {
         }
     }
 
-    /* eslint-disable max-len */
     public on<Event extends EventWithoutPayload>(event: Event, listener: () => unknown): () => void;
     public on<Event extends EventWithoutPayload>(event: Event, priority: EventListenerPriority, listener: () => unknown): () => void; // prettier-ignore
     public on<Event extends EventWithoutPayload>(event: Event, options: Partial<EventListenerOptions>, listener: () => unknown): () => void; // prettier-ignore
-    public on<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
-    public on<Event extends EventWithPayload>(event: Event, priority: EventListenerPriority, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
-    public on<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
-    /* eslint-enable max-len */
+    public on<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void; // prettier-ignore
+    public on<Event extends EventWithPayload>(event: Event, priority: EventListenerPriority, listener: EventListener<EventsPayload[Event]>): () => void; // prettier-ignore
+    public on<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void; // prettier-ignore
 
     public on(
         event: string,
@@ -65,8 +62,8 @@ export class EventsService extends Service {
             typeof optionsOrListener === 'function'
                 ? {}
                 : typeof optionsOrListener === 'number'
-                    ? { priority: optionsOrListener }
-                    : optionsOrListener;
+                  ? { priority: optionsOrListener }
+                  : optionsOrListener;
         const handler = typeof optionsOrListener === 'function' ? optionsOrListener : (listener as EventListener);
 
         this.registerListener(event, options, handler);
@@ -74,12 +71,10 @@ export class EventsService extends Service {
         return () => this.off(event, handler);
     }
 
-    /* eslint-disable max-len */
     public once<Event extends EventWithoutPayload>(event: Event, listener: () => unknown): () => void;
     public once<Event extends EventWithoutPayload>(event: Event, options: Partial<EventListenerOptions>, listener: () => unknown): () => void; // prettier-ignore
-    public once<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
-    public once<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void | void; // prettier-ignore
-    /* eslint-enable max-len */
+    public once<Event extends EventWithPayload>(event: Event, listener: EventListener<EventsPayload[Event]>): () => void; // prettier-ignore
+    public once<Event extends EventWithPayload>(event: Event, options: Partial<EventListenerOptions>, listener: EventListener<EventsPayload[Event]>): () => void; // prettier-ignore
 
     public once(
         event: string,
@@ -148,13 +143,12 @@ export class EventsService extends Service {
 
         handlers[priority]?.push(handler);
     }
-
 }
 
 export default facade(EventsService);
 
 declare global {
-    var __aerogelEvents__: AerogelGlobalEvents | undefined; // eslint-disable-line no-var
+    var __aerogelEvents__: AerogelGlobalEvents | undefined; // oxlint-disable-line no-var
 
     interface Window {
         __aerogelEvents__: AerogelGlobalEvents | undefined;

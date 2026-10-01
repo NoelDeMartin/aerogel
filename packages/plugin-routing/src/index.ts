@@ -1,8 +1,7 @@
-import Aerogel from 'virtual:aerogel';
-
 import { UI, bootServices, setMarkdownRouter } from '@aerogel/core';
-import { RouterLink, createRouter, createWebHistory } from 'vue-router';
 import type { Plugin } from '@aerogel/core';
+import Aerogel from 'virtual:aerogel';
+import { RouterLink, createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
 import Router from './services/Router';

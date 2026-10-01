@@ -8,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
+import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 import HeadlessSwitch from '@aerogel/core/components/headless/HeadlessSwitch.vue';
 import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
-import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 
 defineExpose<FormControlExpose<boolean, HTMLButtonElement>>();
 

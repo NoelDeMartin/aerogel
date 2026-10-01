@@ -1,13 +1,11 @@
-import { debounce, facade, isInstanceOf, required } from '@noeldemartin/utils';
 import { App } from '@aerogel/core';
-import { Container, type Model } from 'soukai-bis';
-
 import { getContainedModels } from '@aerogel/plugin-local-first/lib/models';
+import { debounce, facade, isInstanceOf, required } from '@noeldemartin/utils';
+import { Container, type Model } from 'soukai-bis';
 
 const Cloud = required(() => App.service('$cloud'));
 
 class SyncQueue {
-
     private models: Set<Model> = new Set();
     private debouncedSync = debounce(() => this.sync(), 1000);
 
@@ -33,14 +31,14 @@ class SyncQueue {
         }
     }
 
-    private sync(): void {
+    private async sync(): Promise<void> {
         const models = this.consume();
 
         if (models.length === 0) {
             return;
         }
 
-        Cloud.syncIfOnline(models);
+        await Cloud.syncIfOnline(models);
     }
 
     private consume(): Model[] {
@@ -69,7 +67,6 @@ class SyncQueue {
 
         return models;
     }
-
 }
 
 export default facade(SyncQueue);

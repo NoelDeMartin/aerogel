@@ -1,18 +1,16 @@
-import { arrayFrom, formatCodeBlock, stringToCamelCase } from '@noeldemartin/utils';
-import { Node, SyntaxKind } from 'ts-morph';
-import type { ObjectLiteralExpression, SourceFile } from 'ts-morph';
-
 import Command from '@aerogel/cli/commands/Command';
+import type { Editor } from '@aerogel/cli/lib/Editor';
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Template from '@aerogel/cli/lib/Template';
 import { app } from '@aerogel/cli/lib/utils/app';
-import { templatePath } from '@aerogel/cli/lib/utils/paths';
 import { editFiles, findDescendant } from '@aerogel/cli/lib/utils/edit';
-import type { Editor } from '@aerogel/cli/lib/Editor';
+import { templatePath } from '@aerogel/cli/lib/utils/paths';
+import { arrayFrom, formatCodeBlock, stringToCamelCase } from '@noeldemartin/utils';
+import { Node, SyntaxKind } from 'ts-morph';
+import type { ObjectLiteralExpression, SourceFile } from 'ts-morph';
 
 export class GenerateServiceCommand extends Command {
-
     protected static override command: string = 'generate:service';
     protected static override description: string = 'Generate an AerogelJS Service';
     protected static override parameters: [string, string][] = [['name', 'Service name']];
@@ -147,5 +145,4 @@ export class GenerateServiceCommand extends Command {
 
         return servicesObject;
     }
-
 }

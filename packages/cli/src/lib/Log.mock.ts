@@ -1,10 +1,9 @@
-import { expect } from 'vitest';
 import { facade } from '@noeldemartin/utils';
+import { expect } from 'vite-plus/test';
 
 import { LogService } from './Log';
 
 export class LogServiceMock extends LogService {
-
     private logs: string[] = [];
 
     public expectLogged(message: string): void {
@@ -19,7 +18,7 @@ export class LogServiceMock extends LogService {
         this.logs.push(message);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     public override fail<T = any>(message: string): T {
         throw new Error(`Fail: ${message}`);
     }
@@ -27,7 +26,6 @@ export class LogServiceMock extends LogService {
     protected override stdout(): void {
         //
     }
-
 }
 
 export default facade(LogServiceMock);

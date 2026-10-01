@@ -19,10 +19,7 @@
                 :title-heading-level="4"
                 :title="$td('settings.debug', 'Debugging')"
                 :description="
-                    $td(
-                        'settings.debugDescription',
-                        'Enable debugging with [Eruda](https://eruda.liriliri.io/).',
-                    )
+                    $td('settings.debugDescription', 'Enable debugging with [Eruda](https://eruda.liriliri.io/).')
                 "
             >
                 <Switch v-model="$errors.debug" aria-labelledby="debug-setting" />

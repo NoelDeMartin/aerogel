@@ -21,7 +21,7 @@ test('Handles runtime errors', async ({ page }) => {
     await press(page, 'View error logs');
     await see(page, 'Errors (1)');
     await press(page, 'Close');
-    await see(page, 'Something went wrong, but it\'s not your fault.');
+    await see(page, "Something went wrong, but it's not your fault.");
     await press(page, 'View details');
     await see(page, 'Copy to clipboard');
     await see(page, 'Log to console');
@@ -30,7 +30,7 @@ test('Handles runtime errors', async ({ page }) => {
     await see(page, 'throwError');
     await see(page, 'Errors.vue');
     await page.keyboard.press('Escape');
-    await dontSee(page, 'Something went wrong, but it\'s not your fault.');
+    await dontSee(page, "Something went wrong, but it's not your fault.");
 
     // Error with no trace
     await press(page, 'Throw error (no trace)');
@@ -47,7 +47,7 @@ test('Handles runtime errors', async ({ page }) => {
     await see(page, 'Errors.vue');
 
     // Normalize stacktrace
-    await page.locator('[role="dialog"] pre').evaluate((el) => el.textContent = '[stacktrace]');
+    await page.locator('[role="dialog"] pre').evaluate((el) => (el.textContent = '[stacktrace]'));
     await matchImageSnapshot(page);
 });
 
@@ -63,7 +63,7 @@ test('Handles startup crashes', async ({ page }) => {
 });
 
 test('Purges devices', async ({ page }) => {
-    await createModel(page, 'LocalTask', { name: 'For my next trick, I\'ll make you disappear' });
+    await createModel(page, 'LocalTask', { name: "For my next trick, I'll make you disappear" });
 
     expect(await countModels(page, 'LocalTask')).toBe(1);
 

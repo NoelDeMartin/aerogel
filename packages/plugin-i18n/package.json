@@ -1,28 +1,27 @@
 {
     "name": "@aerogel/plugin-i18n",
     "version": "0.1.2",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/plugin-i18n"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
     "type": "module",
     "sideEffects": false,
     "exports": {
         "types": "./dist/aerogel-plugin-i18n.d.ts",
         "default": "./dist/aerogel-plugin-i18n.js"
     },
-    "files": [
-        "src",
-        "dist"
-    ],
-    "license": "MIT",
-    "author": "Noel De Martin",
-    "repository": "github:NoelDeMartin/aerogel",
     "scripts": {
-        "build": "vite build",
-        "lint": "noeldemartin-lint src",
-        "test": "vitest --run",
-        "test:ci": "vitest --run --reporter verbose",
+        "build": "vp build",
+        "test": "vp test",
         "verify": "noeldemartin-verify"
-    },
-    "peerDependencies": {
-        "@aerogel/core": "*"
     },
     "dependencies": {
         "@noeldemartin/utils": "catalog:"
@@ -33,13 +32,10 @@
         "@arethetypeswrong/cli": "catalog:",
         "@intlify/unplugin-vue-i18n": "catalog:",
         "@noeldemartin/scripts": "catalog:",
-        "eslint": "catalog:",
         "publint": "catalog:",
         "unplugin-icons": "catalog:"
     },
-    "eslintConfig": {
-        "extends": [
-            "@noeldemartin/eslint-config-vue"
-        ]
+    "peerDependencies": {
+        "@aerogel/core": "*"
     }
 }

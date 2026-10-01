@@ -1,5 +1,5 @@
-import { reactive, toRaw, watch } from 'vue';
 import { Storage } from '@noeldemartin/utils';
+import { reactive, toRaw, watch } from 'vue';
 import type { UnwrapNestedRefs } from 'vue';
 
 export function persistent<T extends object>(name: string, defaults: T): UnwrapNestedRefs<T> {

@@ -50,20 +50,19 @@
 </template>
 
 <script setup lang="ts">
-import IconCheveronLeft from '~icons/zondicons/cheveron-left';
-import IconCheveronRight from '~icons/zondicons/cheveron-right';
-import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
-
-import Markdown from '@aerogel/core/components/ui/Markdown.vue';
-import Button from '@aerogel/core/components/ui/Button.vue';
-import ErrorReportModalButtons from '@aerogel/core/components/ui/ErrorReportModalButtons.vue';
-import ErrorReportModalTitle from '@aerogel/core/components/ui/ErrorReportModalTitle.vue';
-import Modal from '@aerogel/core/components/ui/Modal.vue';
 import { useErrorReportModal } from '@aerogel/core/components/contracts/ErrorReportModal';
 import type {
     ErrorReportModalExpose,
     ErrorReportModalProps,
 } from '@aerogel/core/components/contracts/ErrorReportModal';
+import Button from '@aerogel/core/components/ui/Button.vue';
+import ErrorReportModalButtons from '@aerogel/core/components/ui/ErrorReportModalButtons.vue';
+import ErrorReportModalTitle from '@aerogel/core/components/ui/ErrorReportModalTitle.vue';
+import Markdown from '@aerogel/core/components/ui/Markdown.vue';
+import Modal from '@aerogel/core/components/ui/Modal.vue';
+import IconCheveronLeft from '~icons/zondicons/cheveron-left';
+import IconCheveronRight from '~icons/zondicons/cheveron-right';
+import IconExclamationSolid from '~icons/zondicons/exclamation-solid';
 
 const props = defineProps<ErrorReportModalProps>();
 

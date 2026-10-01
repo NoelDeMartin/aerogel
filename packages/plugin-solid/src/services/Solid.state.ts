@@ -1,9 +1,8 @@
 import { defineServiceState } from '@aerogel/core';
 import type { ErrorSource } from '@aerogel/core';
-import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
-
-import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
+import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
 
 export const DEFAULT_STATE = { autoReconnect: true };
 
@@ -14,14 +13,14 @@ export default defineServiceState({
         autoReconnect: DEFAULT_STATE.autoReconnect,
         dismissed: false,
         ignorePreviousSessionError: false,
-        loginStartupError: null as ErrorSource | null,
+        loginStartupError: null as ErrorSource,
         loginOngoing: false,
         preferredAuthenticator: null as AuthenticatorName | null,
         previousSession: null as {
             profile?: SolidUserProfile;
             authenticator: AuthenticatorName;
             loginUrl: string;
-            error: ErrorSource | null;
+            error: ErrorSource;
         } | null,
         profiles: {} as Record<string, SolidUserProfile>,
         session: null as AuthSession | null,
@@ -41,7 +40,7 @@ export default defineServiceState({
         fetch(): Fetch {
             return this.authenticator?.getAuthenticatedFetch() ?? globalThis.fetch.bind(globalThis);
         },
-        error(state): ErrorSource | null {
+        error(state): ErrorSource {
             if (state.loginStartupError) {
                 return state.loginStartupError ?? null;
             }

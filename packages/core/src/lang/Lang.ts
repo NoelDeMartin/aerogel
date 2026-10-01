@@ -14,16 +14,12 @@ export interface LangProvider {
 }
 
 export class LangService extends Service {
-
     private provider: LangProvider;
 
     constructor() {
         super();
 
-        this.provider = new DefaultLangProvider(
-            this.locale,
-            this.fallbackLocale,
-        );
+        this.provider = new DefaultLangProvider(this.locale, this.fallbackLocale);
     }
 
     public async setProvider(provider: LangProvider): Promise<void> {
@@ -61,7 +57,6 @@ export class LangService extends Service {
             { immediate: true },
         );
     }
-
 }
 
 export default facade(LangService);

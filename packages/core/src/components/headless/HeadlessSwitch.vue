@@ -18,18 +18,17 @@
 </template>
 
 <script setup lang="ts" generic="T extends boolean = boolean">
-import { SwitchRoot, SwitchThumb } from 'reka-ui';
-import { computed, inject, readonly, ref, useTemplateRef, watchEffect } from 'vue';
-import { uuid } from '@noeldemartin/utils';
-import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
-
-import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
-import type FormController from '@aerogel/core/forms/FormController';
 import type {
     FormControlEmits,
     FormControlExpose,
     FormControlProps,
 } from '@aerogel/core/components/contracts/FormControl';
+import { exposeElementMethods } from '@aerogel/core/components/contracts/helpers';
+import type FormController from '@aerogel/core/forms/FormController';
+import { uuid } from '@noeldemartin/utils';
+import { SwitchRoot, SwitchThumb } from 'reka-ui';
+import { computed, inject, readonly, ref, useTemplateRef, watchEffect } from 'vue';
+import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
 
 defineOptions({ inheritAttrs: false });
 
@@ -100,7 +99,7 @@ watchEffect(() => {
         return;
     }
 
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.warn('Errors and description not implemented in <HeadlessSwitch>');
 });
 </script>

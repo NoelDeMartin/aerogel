@@ -22,21 +22,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { HTMLAttributes } from 'vue';
-
-import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
-import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
-import HeadlessFormControlInput from '@aerogel/core/components/headless/HeadlessFormControlInput.vue';
-import HeadlessFormControlLabel from '@aerogel/core/components/headless/HeadlessFormControlLabel.vue';
-import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
-import { classes } from '@aerogel/core/utils/classes';
-import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
 import type {
     FormControlEmits,
     FormControlExpose,
     FormControlProps,
 } from '@aerogel/core/components/contracts/FormControl';
+import HeadlessFormControl from '@aerogel/core/components/headless/HeadlessFormControl.vue';
+import HeadlessFormControlError from '@aerogel/core/components/headless/HeadlessFormControlError.vue';
+import HeadlessFormControlInput from '@aerogel/core/components/headless/HeadlessFormControlInput.vue';
+import HeadlessFormControlLabel from '@aerogel/core/components/headless/HeadlessFormControlLabel.vue';
+import { classes } from '@aerogel/core/utils/classes';
+import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
+import { useInputAttrs } from '@aerogel/core/utils/composition/forms';
+import { computed } from 'vue';
+import type { HTMLAttributes } from 'vue';
 
 defineOptions({ inheritAttrs: false });
 defineExpose<FormControlExpose<unknown, HTMLInputElement>>();
@@ -57,6 +56,7 @@ const renderedInputClasses = computed(() =>
             'border-red-400 border-2 focus:ring-red-600': $control.value?.errors,
         },
         inputClass,
-    ));
+    ),
+);
 const renderedLabelClasses = computed(() => classes('ml-2 text-sm leading-6', labelClass));
 </script>

@@ -6,12 +6,12 @@ import LoadingModal from '@aerogel/core/components/ui/LoadingModal.vue';
 import PromptModal from '@aerogel/core/components/ui/PromptModal.vue';
 import StartupCrash from '@aerogel/core/components/ui/StartupCrash.vue';
 import Toast from '@aerogel/core/components/ui/Toast.vue';
-import { bootServices } from '@aerogel/core/services';
 import { definePlugin } from '@aerogel/core/plugins';
+import { bootServices } from '@aerogel/core/services';
+import type { Component } from 'vue';
 
 import UI from './UI';
 import type { UIComponents } from './UI';
-import type { Component } from 'vue';
 
 const services = { $ui: UI };
 
@@ -32,7 +32,7 @@ export default definePlugin({
             'loading-modal': LoadingModal,
             'prompt-modal': PromptModal,
             'startup-crash': StartupCrash,
-            'toast': Toast,
+            toast: Toast,
             ...options.components,
         };
 

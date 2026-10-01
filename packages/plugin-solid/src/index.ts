@@ -1,20 +1,19 @@
-import { IndexedDBEngine, bootCoreModels, bootModelsFromViteGlob, setEngine, setNamespace } from 'soukai-bis';
 import { Events, appNamespace, bootServices, registerErrorHandler } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
-import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
-
-import Solid from '@aerogel/plugin-solid/services/Solid';
-import { services } from '@aerogel/plugin-solid/services';
-import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
 import {
     authenticators as baseAuthenticators,
     getAuthenticator,
     registerAuthenticators,
     setDefaultAuthenticator,
 } from '@aerogel/plugin-solid/auth';
-import { AuthenticationFailedError } from '@aerogel/plugin-solid/errors';
-import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
+import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
+import { AuthenticationFailedError } from '@aerogel/plugin-solid/errors';
+import { services } from '@aerogel/plugin-solid/services';
+import Solid from '@aerogel/plugin-solid/services/Solid';
+import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
+import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
+import { IndexedDBEngine, bootCoreModels, bootModelsFromViteGlob, setEngine, setNamespace } from 'soukai-bis';
 
 import { testingRuntime } from './testing';
 
@@ -39,7 +38,7 @@ export interface Options {
     authenticators?: Record<string, Authenticator>;
     defaultAuthenticator?: AuthenticatorName | (() => AuthenticatorName);
     models?: Record<string, Record<string, unknown>>;
-    onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): Promise<unknown> | unknown;
+    onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): unknown;
 }
 
 export default function solid(options: Options = {}): Plugin {

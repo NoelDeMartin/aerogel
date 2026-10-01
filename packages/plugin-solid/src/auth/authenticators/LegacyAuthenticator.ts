@@ -1,11 +1,10 @@
-import { after, required } from '@noeldemartin/utils';
 import { persistent } from '@aerogel/core';
-import type { UnwrapNestedRefs } from 'vue';
-
 import Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthSession, AuthenticatorLoginOptions } from '@aerogel/plugin-solid/auth/Authenticator';
 import AuthenticationFailedError from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
 import Solid from '@aerogel/plugin-solid/services/Solid';
-import type { AuthSession, AuthenticatorLoginOptions } from '@aerogel/plugin-solid/auth/Authenticator';
+import { after, required } from '@noeldemartin/utils';
+import type { UnwrapNestedRefs } from 'vue';
 
 interface Data {
     webId?: string;
@@ -13,7 +12,6 @@ interface Data {
 }
 
 export default class LegacyAuthenticator extends Authenticator {
-
     private store: UnwrapNestedRefs<Data>;
 
     constructor() {
@@ -40,7 +38,7 @@ export default class LegacyAuthenticator extends Authenticator {
         // Browser should redirect, so just make it wait for a while.
         await after({ seconds: 60 });
 
-        throw new Error('Browser should have redirected, but it didn\'t');
+        throw new Error("Browser should have redirected, but it didn't");
     }
 
     public async logout(): Promise<void> {
@@ -75,5 +73,4 @@ export default class LegacyAuthenticator extends Authenticator {
             await this.failSession(loginUrl, error);
         }
     }
-
 }

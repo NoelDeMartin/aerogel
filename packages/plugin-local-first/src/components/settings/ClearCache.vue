@@ -5,16 +5,11 @@
         :description="
             $td(
                 'settings.clearCacheDescription',
-                'Clear caches to force re-downloading all data (does not delete user data).'
+                'Clear caches to force re-downloading all data (does not delete user data).',
             )
         "
     >
-        <Button
-            variant="secondary"
-            class="whitespace-nowrap"
-            :loading
-            @click="clearCache()"
-        >
+        <Button variant="secondary" class="whitespace-nowrap" :loading @click="clearCache()">
             {{
                 loading ? $td('settings.clearingCache', 'Clearing cache...') : $td('settings.clearCache', 'Clear Cache')
             }}
@@ -35,7 +30,7 @@ async function clearCache(): Promise<void> {
         UI.toast(
             translateWithDefault(
                 'settings.metadataCannotBePurged',
-                'The current engine doesn\'t support purging metadata.',
+                "The current engine doesn't support purging metadata.",
             ),
         );
 

@@ -1,8 +1,7 @@
+import type { LoadedRoute } from '@aerogel/plugin-routing/services/Router';
+import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
 import { getTrackedModels } from '@aerogel/plugin-solid';
 import type { Model, ModelConstructor } from 'soukai-bis';
-
-import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
-import type { LoadedRoute } from '@aerogel/plugin-routing/services/Router';
 
 export function resolveModelBinding<T extends Model>(
     modelClass: ModelConstructor<T>,

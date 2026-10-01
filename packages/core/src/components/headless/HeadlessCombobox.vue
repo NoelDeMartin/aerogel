@@ -20,12 +20,11 @@
 </template>
 
 <script setup lang="ts" generic="T">
+import { useCombobox } from '@aerogel/core/components/contracts/Combobox';
+import type { ComboboxEmits, ComboboxProps } from '@aerogel/core/components/contracts/Combobox';
 import { ComboboxRoot } from 'reka-ui';
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
-
-import { useCombobox } from '@aerogel/core/components/contracts/Combobox';
-import type { ComboboxEmits, ComboboxProps } from '@aerogel/core/components/contracts/Combobox';
 
 defineOptions({ inheritAttrs: false });
 

@@ -21,16 +21,15 @@
                 @keyup="$emit('update', draft)"
                 @focus="startEditing()"
                 @blur="stopEditing()"
-            >
+            />
         </form>
     </div>
 </template>
 
 <script setup lang="ts">
+import { classes } from '@aerogel/core/utils/classes';
 import { computed, ref, useTemplateRef, watchEffect } from 'vue';
 import type { HTMLAttributes } from 'vue';
-
-import { classes } from '@aerogel/core/utils/classes';
 
 const emit = defineEmits<{ update: [value: string | number]; save: [] }>();
 const {
@@ -56,7 +55,8 @@ const draft = ref(text);
 const renderedContentClass = computed(() => classes('inline whitespace-pre', contentClass));
 const renderedFillerClass = computed(() => classes('invisible whitespace-pre', contentClass));
 const renderedInputClass = computed(() =>
-    classes('absolute inset-0 h-full w-full resize-none border-0 bg-transparent p-0 focus:ring-0', contentClass));
+    classes('absolute inset-0 h-full w-full resize-none border-0 bg-transparent p-0 focus:ring-0', contentClass),
+);
 
 function startEditing() {
     editing.value = text;

@@ -1,3 +1,8 @@
+import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
+import { getContainedModels, getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
+import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
+import { Solid, getTrackedModels, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
+import type { Authenticator } from '@aerogel/plugin-solid';
 import {
     Semaphore,
     after,
@@ -21,14 +26,8 @@ import {
     isCoreModel,
     requireEngine,
 } from 'soukai-bis';
-import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
-import { Solid, getTrackedModels, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
-import { watchEffect } from 'vue';
-import type { Authenticator } from '@aerogel/plugin-solid';
 import type { Engine, IndexedDBEngine, JobListener, ModelConstructor } from 'soukai-bis';
-
-import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
-import { getContainedModels, getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
+import { watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
 
@@ -47,7 +46,6 @@ export interface SyncOptions extends JobListener {
 export type CloudRegistration = boolean | RegisterOptions | undefined;
 
 export class CloudService extends Service {
-
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
     protected pollingInterval: ReturnType<typeof setInterval> | null = null;
@@ -403,7 +401,7 @@ export class CloudService extends Service {
             return;
         }
 
-        this.whenReady(() => {
+        void this.whenReady(() => {
             const remoteContainerUrl = getRemoteContainerUrl(modelClass, path);
 
             modelClass.defaultContainerUrl = remoteContainerUrl;
@@ -489,7 +487,6 @@ export class CloudService extends Service {
             SyncQueue.push(model);
         }
     }
-
 }
 
 export default facade(CloudService);
@@ -505,7 +502,7 @@ declare module '@aerogel/core' {
 }
 
 declare module 'soukai-bis' {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
+    // oxlint-disable-next-line typescript/no-shadow
     namespace Model {
         export const cloud: CloudRegistration;
     }

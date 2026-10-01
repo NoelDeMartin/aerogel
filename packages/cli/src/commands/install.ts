@@ -1,9 +1,9 @@
 import Command from '@aerogel/cli/commands/Command';
-import LocalFirst from '@aerogel/cli/plugins/LocalFirst';
-import Log from '@aerogel/cli/lib/Log';
-import Solid from '@aerogel/cli/plugins/Solid';
-import type Plugin from '@aerogel/cli/plugins/Plugin';
 import type { CommandOptions } from '@aerogel/cli/commands/Command';
+import Log from '@aerogel/cli/lib/Log';
+import LocalFirst from '@aerogel/cli/plugins/LocalFirst';
+import type Plugin from '@aerogel/cli/plugins/Plugin';
+import Solid from '@aerogel/cli/plugins/Solid';
 
 const plugins = [new Solid(), new LocalFirst()].reduce(
     (pluginsObject, plugin) => Object.assign(pluginsObject, { [plugin.name]: plugin }),
@@ -14,7 +14,6 @@ export interface Options {
 }
 
 export class InstallCommand extends Command {
-
     protected static override command: string = 'install';
     protected static override description: string = 'Install an AerogelJS plugin';
     protected static override parameters: [string, string][] = [['plugin', 'Plugin to install']];
@@ -42,5 +41,4 @@ export class InstallCommand extends Command {
             skipInstall: this.options.skipInstall,
         });
     }
-
 }

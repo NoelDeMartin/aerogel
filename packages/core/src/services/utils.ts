@@ -1,6 +1,5 @@
-import { objectOnly } from '@noeldemartin/utils';
-
 import type { Unref } from '@aerogel/core/utils';
+import { objectOnly } from '@noeldemartin/utils';
 
 import Service from './Service';
 import type { ComputedStateDefinition, ServiceState, ServiceWithState, StateWatchers } from './Service';
@@ -26,7 +25,6 @@ export function defineServiceState<
     restore?: (state: ServiceStorage) => Partial<State>;
 }): ServiceWithState<State, ComputedState, ServiceStorage> {
     return class extends Service<Unref<State>, ComputedState, ServiceStorage> {
-
         public static override persist = (options.persist as string[]) ?? [];
 
         protected override usesStore(): boolean {
@@ -46,10 +44,10 @@ export function defineServiceState<
                 try {
                     value = structuredClone(value);
                 } catch {
-                    // eslint-disable-next-line no-console
+                    // oxlint-disable-next-line no-console
                     console.warn(
                         `Could not clone '${key}' state from ${this.getName()} service, ` +
-                            'this may cause problems if you\'re using multiple instances of the service ' +
+                            "this may cause problems if you're using multiple instances of the service " +
                             '(for example, in unit tests).\n' +
                             'To fix this problem, declare your initialState as a function instead.',
                     );
@@ -76,10 +74,8 @@ export function defineServiceState<
         protected override deserializePersistedState(state: ServiceStorage): Partial<State> {
             return options.restore?.(state) ?? (state as Partial<State>);
         }
-
     } as unknown as ServiceWithState<State, ComputedState, ServiceStorage>;
 }
-
 
 export function replaceExisting<
     TOriginal extends Record<string, unknown>,

@@ -1,10 +1,8 @@
-/* eslint-disable max-len */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 
 import { renderMarkdown } from './markdown';
 
 describe('Markdown utils', () => {
-
     it('renders basic markdown', () => {
         // Arrange
         const expectedHTML = `
@@ -38,7 +36,6 @@ describe('Markdown utils', () => {
         // Assert
         expect(normalizeHTML(html)).toMatch(new RegExp(normalizeHTML(expectedHTML)));
     });
-
 });
 
 function normalizeHTML(html: string): string {

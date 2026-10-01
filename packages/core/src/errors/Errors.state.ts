@@ -1,14 +1,12 @@
-import type { JSError } from '@noeldemartin/utils';
-
 import { defineServiceState } from '@aerogel/core/services/utils';
 
-export type ErrorSource = string | Error | JSError | unknown;
+export type ErrorSource = unknown;
 
 export interface ErrorReport {
     title: string;
     description?: string;
     details?: string;
-    error?: Error | JSError | unknown;
+    error?: unknown;
 }
 
 export interface ErrorReportLog {

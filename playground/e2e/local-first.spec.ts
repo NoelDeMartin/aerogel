@@ -52,7 +52,7 @@ test('Manipulates Tasks', async ({ page }) => {
     await matchImageSnapshot(page);
 
     // Deletes local tasks
-    await press(page, 'Delete \'It works!\'');
+    await press(page, "Delete 'It works!'");
     await dontSee(page, 'It works!');
 
     // Sync tasks

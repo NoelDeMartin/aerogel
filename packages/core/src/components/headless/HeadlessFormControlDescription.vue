@@ -1,20 +1,14 @@
 <template>
     <slot :id="`${formControl.id}-description`">
-        <Markdown
-            v-if="show"
-            v-bind="$attrs"
-            :id="`${formControl.id}-description`"
-            :text
-        />
+        <Markdown v-if="show" v-bind="$attrs" :id="`${formControl.id}-description`" :text />
     </slot>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
+import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
+import { computed } from 'vue';
 
 defineOptions({ inheritAttrs: false });
 

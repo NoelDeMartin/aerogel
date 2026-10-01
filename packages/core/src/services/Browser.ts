@@ -1,6 +1,5 @@
-import { facade } from '@noeldemartin/utils';
-
 import Errors from '@aerogel/core/errors/Errors';
+import { facade } from '@noeldemartin/utils';
 
 import Service from './Browser.state';
 
@@ -19,7 +18,6 @@ function getBrowserName(): 'chrome' | 'edge' | 'other' {
 }
 
 export class BrowserService extends Service {
-
     public readonly name: 'chrome' | 'edge' | 'other' = getBrowserName();
     private wakeLock: Promise<void | { release(): Promise<void> }> | null = null;
     private wakeLockRequested: 'screen' | null = null;
@@ -83,10 +81,10 @@ export class BrowserService extends Service {
             return;
         }
 
-        this.wakeLock.then((lock) => lock?.release());
+        void this.wakeLock.then((lock) => lock?.release());
+
         this.wakeLock = null;
     }
-
 }
 
 export default facade(BrowserService);

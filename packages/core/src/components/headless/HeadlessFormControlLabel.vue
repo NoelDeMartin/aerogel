@@ -7,10 +7,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { FormControlExpose } from '@aerogel/core/components/contracts/FormControl';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { computed, useSlots } from 'vue';
 
 const formControl = injectReactiveOrFail<FormControlExpose>(
     'form-control',

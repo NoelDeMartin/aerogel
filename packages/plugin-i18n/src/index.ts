@@ -1,9 +1,9 @@
 import { Lang } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
 
+import { createAppI18n, loadAppLocales } from './i18n';
 import I18nLangProvider from './I18nLangProvider';
 import I18nMessages from './I18nMessages';
-import { createAppI18n, loadAppLocales } from './i18n';
 import type { Options } from './options';
 
 export default function i18n(options: Options): Plugin {
@@ -14,7 +14,7 @@ export default function i18n(options: Options): Plugin {
 
             app.use(plugin);
 
-            Lang.setProvider(new I18nLangProvider(plugin.global, messages));
+            void Lang.setProvider(new I18nLangProvider(plugin.global, messages));
 
             await loadAppLocales({ ...options, messages });
         },

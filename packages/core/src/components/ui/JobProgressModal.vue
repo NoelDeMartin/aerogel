@@ -23,18 +23,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
-import IconLoading from '~icons/mdi/loading';
-
-import Button from '@aerogel/core/components/ui/Button.vue';
-import Modal from '@aerogel/core/components/ui/Modal.vue';
-import ProgressBar from '@aerogel/core/components/ui/ProgressBar.vue';
-
 import type {
     JobProgressModalExpose,
     JobProgressModalProps,
 } from '@aerogel/core/components/contracts/JobProgressModal';
+import Button from '@aerogel/core/components/ui/Button.vue';
+import Modal from '@aerogel/core/components/ui/Modal.vue';
+import ProgressBar from '@aerogel/core/components/ui/ProgressBar.vue';
+import { ref } from 'vue';
+import IconLoading from '~icons/mdi/loading';
 
 defineProps<JobProgressModalProps>();
 defineExpose<JobProgressModalExpose>();

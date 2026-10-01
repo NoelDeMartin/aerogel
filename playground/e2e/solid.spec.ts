@@ -48,7 +48,7 @@ test('Manipulates Tasks', async ({ page }) => {
     await matchImageSnapshot(page);
 
     // Deletes tasks
-    await press(page, 'Delete \'It works!\'');
+    await press(page, "Delete 'It works!'");
     await dontSee(page, 'It works!');
 
     expect(deleteTask.all).toHaveLength(1);

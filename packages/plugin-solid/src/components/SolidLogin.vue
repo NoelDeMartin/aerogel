@@ -36,7 +36,9 @@
                             'opacity-0': !measured,
                             'w-0 transition-[width] md:group-hover:w-(--width)': measured,
                         }"
-                    >{{ $td('solid.logIn.manualUrl', 'Enter url') }}</span>
+                    >
+                        {{ $td('solid.logIn.manualUrl', 'Enter url') }}
+                    </span>
                 </Button>
                 <Button
                     :disabled="noLoading && $solid.loginOngoing"
@@ -47,12 +49,7 @@
                     {{ $td('solid.logIn.dev', 'Log in to dev server') }}
                 </Button>
             </div>
-            <Button
-                v-else
-                :disabled="noLoading && $solid.loginOngoing"
-                submit
-                :class="renderedButtonClasses"
-            >
+            <Button v-else :disabled="noLoading && $solid.loginOngoing" submit :class="renderedButtonClasses">
                 {{ $td('solid.logIn.submit', 'Log in') }}
             </Button>
         </div>
@@ -67,29 +64,16 @@
 </template>
 
 <script setup lang="ts">
+import { App, Button, Form, Input, Link, Select, UI, classes, translateWithDefault, useForm } from '@aerogel/core';
+import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
+import Solid from '@aerogel/plugin-solid/services/Solid';
+import { computed, ref } from 'vue';
+import type { HTMLAttributes } from 'vue';
+import { z } from 'zod';
 import IconLogin from '~icons/ic/baseline-log-in';
 
-import {
-    App,
-    Button,
-    Form,
-    Input,
-    Link,
-    Select,
-    UI,
-    classes,
-    translateWithDefault,
-    useForm,
-} from '@aerogel/core';
-import { computed, ref } from 'vue';
-import { z } from 'zod';
-import type { HTMLAttributes } from 'vue';
-
-import Solid from '@aerogel/plugin-solid/services/Solid';
-import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
-
 const AUTHENTICATOR_LABELS = {
-    inrupt: 'Log in using Inrupt\'s authentication library',
+    inrupt: "Log in using Inrupt's authentication library",
     legacy: 'Log in using the legacy authentication library',
 } satisfies Partial<Record<AuthenticatorName, string>>;
 
@@ -119,7 +103,8 @@ const showDevLogin = computed(
 );
 const renderedClasses = computed(() => classes('flex flex-col items-center gap-2 w-full md:w-auto', rootClasses));
 const renderedButtonClasses = computed(() =>
-    classes('w-full whitespace-nowrap', { 'md:w-auto': layout === 'horizontal' && !form.authenticator }, buttonClass));
+    classes('w-full whitespace-nowrap', { 'md:w-auto': layout === 'horizontal' && !form.authenticator }, buttonClass),
+);
 
 function renderAuthenticator(option: keyof typeof AUTHENTICATOR_LABELS) {
     return translateWithDefault(

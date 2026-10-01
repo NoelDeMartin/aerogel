@@ -152,7 +152,7 @@
                                 $ui.alert(
                                     confirmed
                                         ? $t('components.modals_confirmConfirmed')
-                                        : $t('components.modals_confirmCancelled')
+                                        : $t('components.modals_confirmCancelled'),
                                 );
                             })
                     "
@@ -176,7 +176,7 @@
                                 $ui.alert(
                                     confirmed
                                         ? $t('components.modals_confirmConfirmed')
-                                        : $t('components.modals_confirmCancelled')
+                                        : $t('components.modals_confirmCancelled'),
                                 );
                             })
                     "
@@ -272,14 +272,14 @@
 </template>
 
 <script setup lang="ts">
-import { after } from '@noeldemartin/utils';
 import { UI, translate, useEvent } from '@aerogel/core';
+import type { RangeSliderValue } from '@aerogel/core';
+import { after } from '@noeldemartin/utils';
 import { ref } from 'vue';
 
 import CustomModal from './components/CustomModal.vue';
 import FullscreenModal from './components/FullscreenModal.vue';
 import NestedModal from './components/NestedModal.vue';
-import type { RangeSliderValue } from '@aerogel/core';
 
 const switchValue = ref(false);
 const rangeSliderValue = ref<RangeSliderValue>([20, null]);

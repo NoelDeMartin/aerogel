@@ -7,12 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
+import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import { Label } from 'reka-ui';
 import type { LabelProps } from 'reka-ui';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import type { ComboboxExpose } from '@aerogel/core/components/contracts/Combobox';
+import { computed, useSlots } from 'vue';
 
 defineProps<Omit<LabelProps, 'for'>>();
 

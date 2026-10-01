@@ -1,11 +1,11 @@
 import { basename } from 'node:path';
-import { stringToTitleCase } from '@noeldemartin/utils';
 
-import App from '@aerogel/cli/lib/App';
 import Command from '@aerogel/cli/commands/Command';
+import type { CommandOptions } from '@aerogel/cli/commands/Command';
+import App from '@aerogel/cli/lib/App';
 import Log from '@aerogel/cli/lib/Log';
 import Shell from '@aerogel/cli/lib/Shell';
-import type { CommandOptions } from '@aerogel/cli/commands/Command';
+import { stringToTitleCase } from '@noeldemartin/utils';
 
 export interface Options {
     name?: string;
@@ -15,7 +15,6 @@ export interface Options {
 }
 
 export class CreateCommand extends Command {
-
     protected static override command: string = 'create';
     protected static override description: string = 'Create AerogelJS app';
     protected static override parameters: [string, string][] = [['path', 'Application path']];
@@ -85,5 +84,4 @@ export class CreateCommand extends Command {
             await Shell.run('git commit -m "Start"');
         });
     }
-
 }

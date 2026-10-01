@@ -1,11 +1,10 @@
 import { after } from '@noeldemartin/utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { ref } from 'vue';
 
 import { computedDebounce } from './state';
 
 describe('Vue state helpers', () => {
-
     it('computes debounced state', async () => {
         // Initial
         const state = ref(0);
@@ -43,5 +42,4 @@ describe('Vue state helpers', () => {
 
         expect(value.value).toBe(32);
     });
-
 });

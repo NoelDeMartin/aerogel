@@ -1,13 +1,11 @@
-import { describe, expect, expectTypeOf, it } from 'vitest';
-import { tt } from '@noeldemartin/testing';
-import { z } from 'zod';
-import type { Equals } from '@noeldemartin/utils';
-import type { Expect } from '@noeldemartin/testing';
-
 import { useForm } from '@aerogel/core/utils/composition/forms';
+import { tt } from '@noeldemartin/testing';
+import type { Expect } from '@noeldemartin/testing';
+import type { Equals } from '@noeldemartin/utils';
+import { describe, expect, expectTypeOf, it } from 'vite-plus/test';
+import { z } from 'zod';
 
 describe('FormController', () => {
-
     it('defines magic fields', () => {
         const form = useForm({
             name: z.string(),
@@ -239,5 +237,4 @@ describe('FormController', () => {
             | Expect<Equals<typeof form.ten, boolean | null>>
         >();
     });
-
 });

@@ -5,11 +5,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
-import { translateWithDefault } from '@aerogel/core/lang/utils';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { computed } from 'vue';
 
 const select = injectReactiveOrFail<SelectExpose>(
     'select',

@@ -6,10 +6,9 @@
 </template>
 
 <script setup lang="ts">
-import { SelectValue } from 'reka-ui';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
 import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
+import { injectReactiveOrFail } from '@aerogel/core/utils/vue';
+import { SelectValue } from 'reka-ui';
 
 const select = injectReactiveOrFail<SelectExpose>(
     'select',

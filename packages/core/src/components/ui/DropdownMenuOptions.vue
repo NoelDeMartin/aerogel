@@ -13,11 +13,11 @@
                 v-bind="
                     option.route || option.href
                         ? {
-                            href: option.href,
-                            route: option.route,
-                            routeParams: option.routeParams,
-                            routeQuery: option.routeQuery,
-                        }
+                              href: option.href,
+                              route: option.route,
+                              routeParams: option.routeParams,
+                              routeQuery: option.routeQuery,
+                          }
                         : {}
                 "
                 @select="option.click?.()"
@@ -30,13 +30,12 @@
 </template>
 
 <script setup lang="ts">
+import type { DropdownMenuExpose } from '@aerogel/core/components/contracts/DropdownMenu';
+import { injectReactiveOrFail } from '@aerogel/core/utils';
 import { DropdownMenuContent } from 'reka-ui';
 
-import { injectReactiveOrFail } from '@aerogel/core/utils';
-import type { DropdownMenuExpose } from '@aerogel/core/components/contracts/DropdownMenu';
-
-import DropdownMenuOption from './DropdownMenuOption.vue';
 import HeadlessButton from '../headless/HeadlessButton.vue';
+import DropdownMenuOption from './DropdownMenuOption.vue';
 
 const dropdownMenu = injectReactiveOrFail<DropdownMenuExpose>(
     'dropdown-menu',

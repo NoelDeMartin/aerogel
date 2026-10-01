@@ -16,7 +16,7 @@ export {
 
 const instances = new WeakSet();
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export function useModal<T = never>() {
     const instance = injectModal<T>();
     const { close, remove, ...modal } = useModalBase<T>(instances.has(instance) ? {} : { removeOnClose: false });
@@ -25,8 +25,8 @@ export function useModal<T = never>() {
 
     return {
         ...modal,
-        async close(result?: T) {
-            close(result);
+        async close(result?: T): Promise<void> {
+            void close(result);
 
             await after(1000);
 

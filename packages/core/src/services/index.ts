@@ -1,16 +1,15 @@
-import type { App as AppInstance } from 'vue';
-
 import { definePlugin } from '@aerogel/core/plugins';
 import { isDevelopment, isTesting } from '@noeldemartin/utils';
+import type { App as AppInstance } from 'vue';
 
 import App from './App';
+import type { AppSetting } from './App.state';
 import Browser from './Browser';
 import Cache from './Cache';
 import Events from './Events';
 import Service from './Service';
 import Storage from './Storage';
 import { getPiniaStore } from './store';
-import type { AppSetting } from './App.state';
 
 export * from './App';
 export * from './Browser';

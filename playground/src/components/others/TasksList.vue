@@ -3,7 +3,7 @@
         <li
             v-for="task of tasks"
             :key="task.url"
-            class="shadow-2xs flex justify-between overflow-hidden rounded-md bg-gray-100 px-6 py-4"
+            class="flex justify-between overflow-hidden rounded-md bg-gray-100 px-6 py-4 shadow-2xs"
         >
             <Markdown :text="task.name" />
 

@@ -1,3 +1,13 @@
+import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
+import type { ErrorSource } from '@aerogel/core';
+import { getAuthenticator } from '@aerogel/plugin-solid/auth';
+import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
+import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
+import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
+import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
+import type { Fetch, SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 import {
     after,
     arrayFilter,
@@ -20,20 +30,9 @@ import {
     tap,
     urlRoot,
 } from '@noeldemartin/utils';
-import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
-import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import { Container, SolidEngine, TypeIndex, TypeRegistration, defineSchema, setEngine } from 'soukai-bis';
-import type { ErrorSource } from '@aerogel/core';
 import type { NullablePartial } from '@noeldemartin/utils';
+import { Container, SolidEngine, TypeIndex, TypeRegistration, defineSchema, setEngine } from 'soukai-bis';
 import type { ContainerConstructor, ModelConstructor, ModelWithUrl } from 'soukai-bis';
-import type { Fetch, SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
-
-import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
-import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
-import { getAuthenticator } from '@aerogel/plugin-solid/auth';
-import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
-import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
-import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 
 import Service, { DEFAULT_STATE } from './Solid.state';
 
@@ -56,7 +55,6 @@ export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
 };
 
 export class SolidService extends Service {
-
     private _engine?: SolidEngine;
 
     public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
@@ -89,10 +87,8 @@ export class SolidService extends Service {
         return this.getUserProfile(url, { required: true });
     }
 
-    /* eslint-disable max-len */
     public async getUserProfile(url: string, options: Omit<UserProfileOptions, 'required'> & { required: true }): Promise<SolidUserProfile>; // prettier-ignore
     public async getUserProfile(url: string, options?: UserProfileOptions): Promise<SolidUserProfile | null>;
-    /* eslint-enable max-len */
 
     public async getUserProfile(url: string, options: UserProfileOptions = {}): Promise<SolidUserProfile | null> {
         let profileStore: SolidStore | null = null;
@@ -190,27 +186,27 @@ export class SolidService extends Service {
         const [confirmLogout, options] = !App.plugin('@aerogel/local-first')
             ? [true, { wipeLocalData: false }]
             : force
-                ? [true, { wipeLocalData: isCloudReady }]
-                : await UI.confirm(
+              ? [true, { wipeLocalData: isCloudReady }]
+              : await UI.confirm(
                     isCloudReady
                         ? translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?')
                         : translateWithDefault('solid.disconnectConfirmTitle', 'Disconnect account?'),
                     isCloudReady
                         ? hasLocalChanges
                             ? translateWithDefault(
-                                'solid.logoutConfirmMessageWithLocalChanges',
-                                'There are some changes that haven\'t been synchronized and will be lost, ' +
+                                  'solid.logoutConfirmMessageWithLocalChanges',
+                                  "There are some changes that haven't been synchronized and will be lost, " +
                                       'but the rest of the data will remain in your Solid POD.',
-                            )
+                              )
                             : translateWithDefault(
-                                'solid.logoutConfirmMessage',
-                                'Logging out will remove all the data from this device, ' +
-                                      'but you\'ll still have it in your Solid POD.',
-                            )
+                                  'solid.logoutConfirmMessage',
+                                  'Logging out will remove all the data from this device, ' +
+                                      "but you'll still have it in your Solid POD.",
+                              )
                         : translateWithDefault(
-                            'solid.disconnectConfirmMessage',
-                            'You\'ll need to introduce your credentials again to connect to your Solid POD.',
-                        ),
+                              'solid.disconnectConfirmMessage',
+                              "You'll need to introduce your credentials again to connect to your Solid POD.",
+                          ),
                     {
                         acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
                         acceptVariant: 'danger',
@@ -221,25 +217,25 @@ export class SolidService extends Service {
                         checkboxes: isCloudReady
                             ? hasLocalChanges
                                 ? {
-                                    wipeLocalData: {
-                                        label: translateWithDefault(
-                                            'solid.logoutConfirmWipeNotice',
-                                            'I understand that changes that haven\'t been synchronized will be lost.',
-                                        ),
-                                        default: false,
-                                        required: true,
-                                    },
-                                }
+                                      wipeLocalData: {
+                                          label: translateWithDefault(
+                                              'solid.logoutConfirmWipeNotice',
+                                              "I understand that changes that haven't been synchronized will be lost.",
+                                          ),
+                                          default: false,
+                                          required: true,
+                                      },
+                                  }
                                 : undefined
                             : {
-                                wipeLocalData: {
-                                    label: translateWithDefault(
-                                        'solid.logoutConfirmWipe',
-                                        'Also remove all existing data',
-                                    ),
-                                    default: false,
-                                },
-                            },
+                                  wipeLocalData: {
+                                      label: translateWithDefault(
+                                          'solid.logoutConfirmWipe',
+                                          'Also remove all existing data',
+                                      ),
+                                      default: false,
+                                  },
+                              },
                     },
                 );
 
@@ -294,6 +290,7 @@ export class SolidService extends Service {
     ): Promise<T | null> {
         const typeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
         const containers = await Promise.all(
+            // oxlint-disable-next-line typescript/await-thenable
             typeIndexes.map((typeIndex) => typeIndex?.findContainer(modelClass, containerClass)),
         );
 
@@ -303,6 +300,7 @@ export class SolidService extends Service {
     public async findTypeIndexes(): Promise<ModelWithUrl<TypeIndex>[]> {
         const originalTypeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
         const newTypeIndexes = await Promise.all(
+            // oxlint-disable-next-line typescript/await-thenable
             originalTypeIndexes.map((typeIndex) => typeIndex && TypeIndex.find(typeIndex.url)),
         );
 
@@ -443,7 +441,7 @@ export class SolidService extends Service {
                     authenticator: authenticatorName,
                     error: translateWithDefault(
                         'solid.stuckConnecting',
-                        'We didn\'t hear back from the identity provider at `{domain}`, maybe try reconnecting?',
+                        "We didn't hear back from the identity provider at `{domain}`, maybe try reconnecting?",
                         { domain: loginDomain },
                     ),
                 }),
@@ -568,7 +566,6 @@ export class SolidService extends Service {
             staleProfiles: arrayWithout(this.staleProfiles, profile.webId),
         });
     }
-
 }
 
 export default facade(SolidService);

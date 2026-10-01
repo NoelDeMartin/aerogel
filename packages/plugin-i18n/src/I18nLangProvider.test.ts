@@ -1,13 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
-import { mock } from '@noeldemartin/testing';
-import type { Composer } from 'vue-i18n';
-
 import type I18nMessages from '@aerogel/plugin-i18n/I18nMessages';
+import { mock } from '@noeldemartin/testing';
+import { describe, expect, it, vi } from 'vite-plus/test';
+import type { Composer } from 'vue-i18n';
 
 import I18nLangProvider from './I18nLangProvider';
 
 describe('I18nLangProvider', () => {
-
     it('uses defaults', () => {
         // Arrange
         const provider = new I18nLangProvider(
@@ -38,16 +36,15 @@ describe('I18nLangProvider', () => {
 
     it('uses plurals in defaults', () => {
         // Arrange
-        const defaultMessage = 'I don\'t have any apples | I have one apples | I have {n} apples';
+        const defaultMessage = "I don't have any apples | I have one apples | I have {n} apples";
         const provider = new I18nLangProvider(
             mock<Composer>({ t: vi.fn((key) => key) }),
             mock<I18nMessages>({ addListener: vi.fn() }),
         );
 
         // Act & Assert
-        expect(provider.translateWithDefault('apples', defaultMessage, 0)).toBe('I don\'t have any apples');
+        expect(provider.translateWithDefault('apples', defaultMessage, 0)).toBe("I don't have any apples");
         expect(provider.translateWithDefault('apples', defaultMessage, 1)).toBe('I have one apples');
         expect(provider.translateWithDefault('apples', defaultMessage, 2)).toBe('I have 2 apples');
     });
-
 });

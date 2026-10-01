@@ -1,12 +1,12 @@
-import DOMPurify from 'dompurify';
 import { stringMatchAll, tap } from '@noeldemartin/utils';
+import DOMPurify from 'dompurify';
 import { Renderer, marked } from 'marked';
 
 let router: MarkdownRouter | null = null;
 
 function makeRenderer(): Renderer {
     return tap(new Renderer(), (renderer) => {
-        renderer.link = function(link) {
+        renderer.link = function (link) {
             const defaultLink = Renderer.prototype.link.apply(this, [link]);
 
             if (!link.href.startsWith('#')) {

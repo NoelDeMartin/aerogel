@@ -2,7 +2,6 @@ import { Service } from '@aerogel/core';
 import { facade, hasLocationQueryParameter } from '@noeldemartin/utils';
 
 export class StartupService extends Service {
-
     protected override async boot(): Promise<void> {
         if (hasLocationQueryParameter('startupCrash')) {
             throw new Error(
@@ -11,7 +10,6 @@ export class StartupService extends Service {
             );
         }
     }
-
 }
 
 export default facade(StartupService);

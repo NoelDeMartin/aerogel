@@ -8,11 +8,10 @@
 </template>
 
 <script setup lang="ts">
+import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
+import { injectReactiveOrFail } from '@aerogel/core/utils';
 import { SelectIcon, SelectTrigger } from 'reka-ui';
 import { useTemplateRef, watchEffect } from 'vue';
-
-import { injectReactiveOrFail } from '@aerogel/core/utils';
-import type { SelectExpose } from '@aerogel/core/components/contracts/Select';
 
 import HeadlessSelectValue from './HeadlessSelectValue.vue';
 

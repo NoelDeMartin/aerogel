@@ -1,7 +1,6 @@
-import { computed } from 'vue';
-
-import { translateWithDefault } from '@aerogel/core/lang/utils';
 import type { ModalExpose } from '@aerogel/core/components/contracts/Modal';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
+import { computed } from 'vue';
 
 export interface AlertModalProps {
     title?: string;
@@ -10,7 +9,7 @@ export interface AlertModalProps {
 
 export interface AlertModalExpose extends ModalExpose {}
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+// oxlint-disable-next-line typescript/explicit-module-boundary-types
 export function useAlertModal(props: AlertModalProps) {
     const renderedTitle = computed(() => props.title ?? translateWithDefault('ui.alert', 'Alert'));
     const titleHidden = computed(() => !props.title);

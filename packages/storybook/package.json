@@ -1,49 +1,43 @@
 {
-  "name": "@aerogel/storybook",
-  "version": "0.1.2",
-  "type": "module",
-  "sideEffects": true,
-  "exports": {
-    ".": {
-      "types": "./dist/aerogel-storybook.d.ts",
-      "default": "./dist/aerogel-storybook.js"
+    "name": "@aerogel/storybook",
+    "version": "0.1.2",
+    "license": "MIT",
+    "author": "Noel De Martin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "packages/storybook"
+    },
+    "files": [
+        "src",
+        "dist"
+    ],
+    "type": "module",
+    "sideEffects": true,
+    "exports": {
+        ".": {
+            "types": "./dist/aerogel-storybook.d.ts",
+            "default": "./dist/aerogel-storybook.js"
+        }
+    },
+    "scripts": {
+        "build": "vp pack"
+    },
+    "devDependencies": {
+        "@aerogel/core": "workspace:*",
+        "@arethetypeswrong/core": "catalog:",
+        "@noeldemartin/scripts": "catalog:",
+        "@storybook/vue3-vite": "^10.5.4",
+        "@types/node": "catalog:",
+        "publint": "catalog:",
+        "soukai-bis": "catalog:",
+        "vite": "catalog:",
+        "vite-plus": "catalog:"
+    },
+    "peerDependencies": {
+        "@aerogel/core": "*",
+        "@storybook/vue3-vite": "^10.0.0",
+        "soukai-bis": "catalog:",
+        "vue": "catalog:"
     }
-  },
-  "files": [
-    "src",
-    "dist"
-  ],
-  "license": "MIT",
-  "author": "Noel De Martin",
-  "repository": "github:NoelDeMartin/aerogel",
-  "scripts": {
-    "build": "vite build",
-    "lint": "noeldemartin-lint src",
-    "verify": "noeldemartin-verify"
-  },
-  "peerDependencies": {
-    "@aerogel/core": "*",
-    "@storybook/vue3-vite": "^10.0.0",
-    "soukai-bis": "catalog:"
-  },
-  "devDependencies": {
-    "@aerogel/core": "workspace:*",
-    "@arethetypeswrong/cli": "catalog:",
-    "@noeldemartin/scripts": "catalog:",
-    "@storybook/vue3-vite": "^10.5.4",
-    "@types/node": "catalog:",
-    "eslint": "catalog:",
-    "prettier-eslint-cli": "^8.0.1",
-    "publint": "catalog:",
-    "soukai-bis": "catalog:",
-    "vite": "catalog:"
-  },
-  "eslintConfig": {
-    "extends": [
-      "@noeldemartin/eslint-config-typescript"
-    ]
-  },
-  "prettier": {
-    "printWidth": 120
-  }
 }
