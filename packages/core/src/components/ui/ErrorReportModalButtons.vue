@@ -2,15 +2,14 @@
     <div class="flex">
         <slot v-for="button of buttons" v-bind="button">
             <Button
-                size="icon"
                 variant="ghost"
-                class="group whitespace-nowrap"
+                class="group cursor-pointer whitespace-nowrap"
                 :href="button.url"
                 :title="$td(`errors.report_${button.id}`, button.description)"
                 @click="button.click"
             >
                 <span class="sr-only">{{ $td(`errors.report_${button.id}`, button.description) }}</span>
-                <component :is="button.iconComponent" class="size-4" aria-hidden="true" />
+                <component :is="button.iconComponent" :class="classes('size-5', button.iconClass)" aria-hidden="true" />
             </Button>
         </slot>
     </div>
@@ -18,21 +17,24 @@
 
 <script setup lang="ts">
 import Button from '@aerogel/core/components/ui/Button.vue';
-import type { ErrorReport } from '@aerogel/core/errors';
+import { Errors, type ErrorReport } from '@aerogel/core/errors';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
 import App from '@aerogel/core/services/App';
 import UI from '@aerogel/core/ui/UI';
+import { classes } from '@aerogel/core/utils/classes';
 import { stringExcerpt, tap } from '@noeldemartin/utils';
 import { computed } from 'vue';
 import type { Component } from 'vue';
 import IconConsole from '~icons/mdi/console';
 import IconGitHub from '~icons/mdi/github';
+import IconCause from '~icons/uil/top-arrow-from-top';
 import IconCopy from '~icons/zondicons/copy';
 
 interface ErrorReportModalButtonsDefaultSlotProps {
     id: string;
     description: string;
     iconComponent: Component;
+    iconClass?: string;
     url?: string;
     click?(): void;
 }
@@ -41,10 +43,8 @@ defineSlots<{
     default(props: ErrorReportModalButtonsDefaultSlotProps): unknown;
 }>();
 
-const props = defineProps<{ report: ErrorReport }>();
-const summary = computed(() =>
-    props.report.description ? `${props.report.title}: ${props.report.description}` : props.report.title,
-);
+const { report } = defineProps<{ report: ErrorReport }>();
+const summary = computed(() => (report.description ? `${report.title}: ${report.description}` : report.title));
 const githubReportUrl = computed(() => {
     if (!App.sourceUrl) {
         return false;
@@ -58,7 +58,7 @@ const githubReportUrl = computed(() => {
             'Error details:',
             '```',
             stringExcerpt(
-                props.report.details ?? 'Details missing from report',
+                report.details ?? 'Details missing from report',
                 1800 - issueTitle.length - App.sourceUrl.length,
             ).trim(),
             '```',
@@ -72,20 +72,21 @@ const buttons = computed(() =>
         [
             {
                 id: 'clipboard',
-                description: 'Copy to clipboard',
+                description: translateWithDefault('errors.copyToClipboard', 'Copy to clipboard'),
                 iconComponent: IconCopy,
+                iconClass: 'w-6! h-5!',
                 async click() {
-                    await navigator.clipboard.writeText(`${summary.value}\n\n${props.report.details}`);
+                    await navigator.clipboard.writeText(`${summary.value}\n\n${report.details}`);
 
                     UI.toast(translateWithDefault('errors.copiedToClipboard', 'Debug information copied to clipboard'));
                 },
             },
             {
                 id: 'console',
-                description: 'Log to console',
+                description: translateWithDefault('errors.logToConsole', 'Log to console'),
                 iconComponent: IconConsole,
                 click() {
-                    const error = props.report.error ?? props.report;
+                    const error = report.error ?? report;
 
                     (window as { error?: unknown }).error = error;
 
@@ -102,16 +103,25 @@ const buttons = computed(() =>
             },
         ] as ErrorReportModalButtonsDefaultSlotProps[],
         (reportButtons) => {
-            if (!githubReportUrl.value) {
-                return;
+            if (report.error instanceof Error && report.error.cause) {
+                const cause = report.error.cause;
+
+                reportButtons.unshift({
+                    id: 'cause',
+                    description: translateWithDefault('errors.cause', 'View cause'),
+                    iconComponent: IconCause,
+                    click: () => Errors.inspect(cause),
+                });
             }
 
-            reportButtons.push({
-                id: 'github',
-                description: 'Report in GitHub',
-                iconComponent: IconGitHub,
-                url: githubReportUrl.value,
-            });
+            if (githubReportUrl.value) {
+                reportButtons.push({
+                    id: 'github',
+                    description: translateWithDefault('errors.reportInGitHub', 'Report in GitHub'),
+                    iconComponent: IconGitHub,
+                    url: githubReportUrl.value,
+                });
+            }
         },
     ),
 );
