@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { URL, fileURLToPath } from 'node:url';
 
 import { CreateCommand } from '@aerogel/cli/commands/create';
 import { GenerateComponentCommand } from '@aerogel/cli/commands/generate-component';
@@ -7,6 +6,7 @@ import { GenerateModelCommand } from '@aerogel/cli/commands/generate-model';
 import { GenerateServiceCommand } from '@aerogel/cli/commands/generate-service';
 import { InfoCommand } from '@aerogel/cli/commands/info';
 import { InstallCommand } from '@aerogel/cli/commands/install';
+import { cliPath } from '@aerogel/cli/lib/utils/paths';
 import { facade, fail } from '@noeldemartin/utils';
 import { Command } from 'commander';
 
@@ -28,7 +28,7 @@ export class CLIService {
 
     public getVersion(): string {
         const errorMessage = "Could not find CLI's version, please report this bug.";
-        const packageJsonPath = fileURLToPath(new URL(/* @vite-ignore */ '../package.json', import.meta.url));
+        const packageJsonPath = cliPath('package.json');
 
         if (!existsSync(packageJsonPath)) {
             throw new Error(errorMessage);

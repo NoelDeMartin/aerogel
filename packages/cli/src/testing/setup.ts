@@ -1,5 +1,3 @@
-import { resolve } from 'node:path';
-
 import File from '@aerogel/cli/lib/File';
 import FileMock from '@aerogel/cli/lib/File.mock';
 import Log from '@aerogel/cli/lib/Log';
@@ -53,27 +51,3 @@ vi.mock('simple-git', () => ({
         clone: () => Promise.resolve(),
     }),
 }));
-
-// TODO find out why these need to be mocked
-vi.mock('@aerogel/cli/lib/utils/paths', async () => {
-    const original = (await vi.importActual('@aerogel/cli/lib/utils/paths')) as object;
-
-    function basePath(path: string = '') {
-        return resolve(__dirname, '../../', path);
-    }
-
-    function packagePath(packageName: string) {
-        return basePath(`../${packageName}`);
-    }
-
-    function templatePath(name: string = '') {
-        return resolve(__dirname, `../../templates/${name}`);
-    }
-
-    return {
-        ...original,
-        basePath,
-        packagePath,
-        templatePath,
-    };
-});

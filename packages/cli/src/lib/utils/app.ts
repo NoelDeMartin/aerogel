@@ -11,5 +11,5 @@ export function isLocalApp(): boolean {
 }
 
 export function isLinkedLocalApp(): boolean {
-    return File.isSymlink('node_modules/@aerogel/core');
+    return isLocalApp() && !/"@aerogel\/core": "file:[^"]*\.tgz"/.test(File.read('package.json') ?? '');
 }
