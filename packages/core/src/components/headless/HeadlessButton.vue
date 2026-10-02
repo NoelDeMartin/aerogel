@@ -13,20 +13,22 @@ import { Primitive } from 'reka-ui';
 import { computed, useTemplateRef } from 'vue';
 
 const $root = useTemplateRef('$rootRef');
-const { as, href, route, routeParams, routeQuery, submit, disabled, class: classes } = defineProps<ButtonProps>();
+const { as, href, to, route, routeParams, routeQuery, submit, disabled, class: classes } = defineProps<ButtonProps>();
 const props = computed(() => {
     if (as) {
         return { as };
     }
 
-    if (route) {
+    if (route || to) {
         return {
             as: UI.resolveComponent('router-link') ?? 'a',
-            to: objectWithoutEmpty({
-                name: route,
-                params: routeParams,
-                query: routeQuery,
-            }),
+            to:
+                to ??
+                objectWithoutEmpty({
+                    name: route,
+                    params: routeParams,
+                    query: routeQuery,
+                }),
         };
     }
 
