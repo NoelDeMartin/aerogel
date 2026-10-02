@@ -1,16 +1,10 @@
 import { URL, fileURLToPath } from 'node:url';
 
+import { pack } from '@noeldemartin/vite-plus-config';
 import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
-    pack: {
-        entry: { 'aerogel-cli': 'src/index.ts' },
-        sourcemap: true,
-        dts: true,
-        fixedExtension: false,
-        publint: true,
-        attw: { profile: 'esm-only' },
-    },
+    pack,
     resolve: {
         alias: {
             '@aerogel/cli': fileURLToPath(new URL('./src/', import.meta.url)),

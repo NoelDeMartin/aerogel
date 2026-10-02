@@ -19,8 +19,8 @@
     "type": "module",
     "sideEffects": false,
     "exports": {
-        "types": "./dist/aerogel-cli.d.ts",
-        "default": "./dist/aerogel-cli.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
     },
     "scripts": {
         "build": "vp pack",

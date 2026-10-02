@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-import { CLI } from '../dist/aerogel-cli.js';
+import { CLI } from '../dist/index.js';
 
 CLI.run();

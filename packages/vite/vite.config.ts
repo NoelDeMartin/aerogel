@@ -1,18 +1,17 @@
 import { URL, fileURLToPath } from 'node:url';
 
+import { pack, raw } from '@noeldemartin/vite-plus-config';
 import { defineConfig } from 'vite-plus';
+
+const html = raw(/\.html$/);
 
 export default defineConfig({
     pack: {
-        entry: { 'aerogel-vite': 'src/index.ts' },
-        loader: { '.html': 'text' },
+        ...pack,
+        plugins: [html],
         copy: [{ from: ['src/types/shims.d.ts', 'src/types/virtual.d.ts'], flatten: true }],
-        sourcemap: true,
-        dts: true,
-        fixedExtension: false,
-        publint: true,
-        attw: { profile: 'esm-only' },
     },
+    plugins: [html],
     resolve: {
         alias: {
             '@aerogel/vite': fileURLToPath(new URL('./src/', import.meta.url)),

@@ -16,8 +16,8 @@
     "sideEffects": true,
     "exports": {
         ".": {
-            "types": "./dist/aerogel-storybook.d.ts",
-            "default": "./dist/aerogel-storybook.js"
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
         }
     },
     "scripts": {

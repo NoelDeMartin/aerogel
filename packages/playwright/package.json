@@ -16,8 +16,8 @@
     "sideEffects": false,
     "exports": {
         ".": {
-            "types": "./dist/aerogel-playwright.d.ts",
-            "default": "./dist/aerogel-playwright.js"
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
         }
     },
     "scripts": {

@@ -19,7 +19,6 @@ jobs:
               with:
                   node-version-file: '.node-version'
                   cache: true
-            - run: vp dedupe --check
             - run: vp run build
             - uses: actions/cache/save@v6
               with:

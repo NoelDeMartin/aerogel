@@ -16,8 +16,8 @@
     "sideEffects": false,
     "exports": {
         ".": {
-            "types": "./dist/aerogel-vite.d.ts",
-            "default": "./dist/aerogel-vite.js"
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
         },
         "./shims": {
             "types": "./dist/shims.d.ts"
