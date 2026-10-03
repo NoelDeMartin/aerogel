@@ -209,7 +209,7 @@ catalogs:
       version: 8.0.3
     publint:
       specifier: ^0.3.24
-      version: 0.3.24
+      version: 0.3.25
     unplugin-icons:
       specifier: ^22.1.0
       version: 22.5.0
@@ -249,10 +249,10 @@ importers:
         version: 0.0.0-next.23b9f09c2e11d1c3ece07d50800c41e7b3576cc8(vitest@5.0.1)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@noeldemartin/vite-plus-config':
         specifier: next
-        version: 0.0.0-next.bbfa266be208c6f2428ed487c291ff73eb246e9e(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+        version: 0.0.0-next.1c896591fe21a2aad4690fbecb003c72fac0e9da(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.63.0
@@ -270,22 +270,22 @@ importers:
         version: 0.9.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@^1.0.0
-        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       vite-plugin-dts:
         specifier: 4.5.0
-        version: 4.5.0(@types/node@26.6.3)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(rollup@4.63.6)(supports-color@8.1.1)(typescript@5.9.3)
+        version: 4.5.0(@types/node@26.6.4)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(rollup@4.63.6)(supports-color@8.1.1)(typescript@5.9.3)
       vite-plus:
         specifier: 'catalog:'
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
       vitepress:
         specifier: ^1.6.3
-        version: 1.6.4(@algolia/client-search@5.59.0)(@types/node@26.6.3)(axios@1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(terser@5.51.2)(typescript@5.9.3)
+        version: 1.6.4(@algolia/client-search@5.59.0)(@types/node@26.6.4)(axios@1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(terser@5.51.2)(typescript@5.9.3)
       vue:
         specifier: ^3.5.0
         version: 3.5.43(typescript@5.9.3)
@@ -303,7 +303,7 @@ importers:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       chalk:
         specifier: ^5.4.1
         version: 5.6.2
@@ -315,7 +315,7 @@ importers:
         version: 4.2.0
       sharp:
         specifier: ^0.35.4
-        version: 0.35.5(@types/node@26.6.3)
+        version: 0.35.5(@types/node@26.6.4)
       simple-git:
         specifier: ^3.27.0
         version: 3.36.0(supports-color@8.1.1)
@@ -331,16 +331,16 @@ importers:
         version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
       '@types/node':
         specifier: ^26.6.3
-        version: 26.6.3
+        version: 26.6.4
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
 
   packages/core:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@noeldemartin/vue-modals':
         specifier: 0.1.1
         version: 0.1.1(vue@3.5.43(typescript@5.9.3))
@@ -376,7 +376,7 @@ importers:
         version: 2.10.5(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.7.0
@@ -404,7 +404,7 @@ importers:
         version: 20.14.5
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
       unplugin-icons:
         specifier: 'catalog:'
         version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
@@ -429,13 +429,13 @@ importers:
         version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       playwright-solid:
         specifier: next
         version: 0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -457,16 +457,16 @@ importers:
         version: 2.0.1
       '@types/node':
         specifier: ^26.6.3
-        version: 26.6.3
+        version: 26.6.4
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
 
   packages/plugin-i18n:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -485,7 +485,7 @@ importers:
         version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
       unplugin-icons:
         specifier: 'catalog:'
         version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
@@ -497,13 +497,13 @@ importers:
         version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       idb:
         specifier: 'catalog:'
         version: 8.0.3
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -522,13 +522,13 @@ importers:
         version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
       '@types/node':
         specifier: ^26.6.3
-        version: 26.6.3
+        version: 26.6.4
       fake-indexeddb:
         specifier: ^6.0.0
         version: 6.2.5
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
       unplugin-icons:
         specifier: 'catalog:'
         version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
@@ -540,13 +540,13 @@ importers:
     dependencies:
       '@aerogel/vite':
         specifier: '*'
-        version: 0.1.2(@babel/parser@7.29.9)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
+        version: 0.1.2(@babel/parser@7.29.9)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.43(typescript@5.9.3))
@@ -565,16 +565,16 @@ importers:
         version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
       unplugin-icons:
         specifier: 'catalog:'
         version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@^1.0.0
-        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       vite-plus:
         specifier: 'catalog:'
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
 
   packages/plugin-solid:
     dependencies:
@@ -586,13 +586,13 @@ importers:
         version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       solid-auth-client:
         specifier: 2.4.1
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -611,7 +611,7 @@ importers:
         version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
       unplugin-icons:
         specifier: 'catalog:'
         version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
@@ -623,7 +623,7 @@ importers:
     dependencies:
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue:
         specifier: ^3.5.0
         version: 3.5.43(typescript@5.9.3)
@@ -639,34 +639,34 @@ importers:
         version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
       '@storybook/vue3-vite':
         specifier: ^10.5.4
-        version: 10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
+        version: 10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       '@types/node':
         specifier: ^26.6.3
-        version: 26.6.3
+        version: 26.6.4
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@^1.0.0
-        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       vite-plus:
         specifier: 'catalog:'
-        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
+        version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
 
   packages/vite:
     dependencies:
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@tailwindcss/vite':
         specifier: ^4.1.4
-        version: 4.3.3(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+        version: 4.3.3(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       '@vitejs/plugin-vue':
         specifier: ^6.0.9
-        version: 6.0.9(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))
+        version: 6.0.9(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))
       '@vitejs/plugin-vue-jsx':
         specifier: ^5.1.6
-        version: 5.1.6(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
+        version: 5.1.6(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
       image-size:
         specifier: ^2.0.2
         version: 2.0.4
@@ -675,16 +675,16 @@ importers:
         version: 4.2.0
       sharp:
         specifier: ^0.35.4
-        version: 0.35.5(@types/node@26.6.3)
+        version: 0.35.5(@types/node@26.6.4)
       unplugin-vue-components:
         specifier: 'catalog:'
         version: 28.8.0(@babel/parser@7.29.9)(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@^1.0.0
-        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+        version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       vite-plugin-pwa:
         specifier: ^1.3.0
-        version: 1.3.0(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
+        version: 1.3.0(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
       workbox-build:
         specifier: ^7.4.0
         version: 7.4.1(supports-color@8.1.1)
@@ -697,10 +697,10 @@ importers:
         version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
       '@types/node':
         specifier: ^26.6.3
-        version: 26.6.3
+        version: 26.6.4
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
 
   playground:
     dependencies:
@@ -724,7 +724,7 @@ importers:
         version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
-        version: 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+        version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.11(tailwindcss@4.3.3)
@@ -733,7 +733,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.3.3
@@ -764,7 +764,7 @@ importers:
         version: 7.2.0(encoding@0.1.13)(jiti@2.7.0)(supports-color@8.1.1)
       '@types/node':
         specifier: ^26.6.3
-        version: 26.6.3
+        version: 26.6.4
       autoprefixer:
         specifier: ^10.4.14
         version: 10.6.1(postcss@8.5.28)
@@ -773,7 +773,7 @@ importers:
         version: 8.2.2
       publint:
         specifier: 'catalog:'
-        version: 0.3.24
+        version: 0.3.25
       start-server-and-test:
         specifier: ^2.0.0
         version: 2.1.5(supports-color@8.1.1)
@@ -2753,11 +2753,11 @@ packages:
     peerDependencies:
       vitest: '>=5.0.0'
 
-  '@noeldemartin/utils@0.7.3-next.83ae01802430e7055c8de265189291622814555a':
-    resolution: {integrity: sha512-KDJ7iHA5kIlt9b4zuAZN4PuRJis3bUXlNiky9GSPJMfe6zngekUyFQhMLgrr8cj3OCOMo2MbTOqs2lZI9YnkNQ==}
+  '@noeldemartin/utils@0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8':
+    resolution: {integrity: sha512-PR/wWrIICRXKzOXFhSN0sXUPSPJeM4DZF4LoPuC+Kw8YveHuqIrLS1tvz3xE83qHCSvWF953OtMIgWbblggNSg==}
 
-  '@noeldemartin/vite-plus-config@0.0.0-next.bbfa266be208c6f2428ed487c291ff73eb246e9e':
-    resolution: {integrity: sha512-WTM+Gx2QfIixSUjVYn9ZqonbV4Iy0JdMOSM9Z3kGArkLE3IkKRcnD+tis4Y2TjAd8UdCvflGYI6GRfLoa+B3yw==}
+  '@noeldemartin/vite-plus-config@0.0.0-next.1c896591fe21a2aad4690fbecb003c72fac0e9da':
+    resolution: {integrity: sha512-VYcFUxKOYQ7M90O1sqvbTRsGRDLhWxSlh89O8Dc1QJavfWRLVEfa1ftBN8rdxoq20zYUXPsg4MjDO3BAgEVF6g==}
     peerDependencies:
       vite-plus: '>=1.0.0'
 
@@ -3924,8 +3924,8 @@ packages:
   '@types/n3@1.26.4':
     resolution: {integrity: sha512-PFEJWfs9mL7yLgjHpmVI/BfpZZPrsaDkUN8YiQXJoz8MkBsCYXys0DSo0r20y3+zqQupbUqxAYb8fFe8kbCbTQ==}
 
-  '@types/node@26.6.3':
-    resolution: {integrity: sha512-dsqMQQoeTLqu9wynDD00q573mNzso3IdQOAfHRJqLCcmCFPoGo9A1bDpUcv/9tnKpErQWv9uKeGfl37EIS02Yg==}
+  '@types/node@26.6.4':
+    resolution: {integrity: sha512-ldVPDCzj7fsaGZrLB0NuHuTvJcsNasysBAqMolr/cgxrLd1xbqxIr3XJiPnHHJUCxj5sNF1vnRj9aWnrVh5Jcg==}
 
   '@types/nodemailer@6.4.24':
     resolution: {integrity: sha512-Ww4u0rT9wQNXh4JiQaIwx3QWdcOFXzOjQA2zc+jtFYNmQiT4mIUqcDin51bDFdkzKubFnQCZNK7FIHlPKQ/q9w==}
@@ -4730,8 +4730,8 @@ packages:
     resolution: {integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==}
     engines: {node: '>=6.0.0'}
 
-  baseline-browser-mapping@2.11.26:
-    resolution: {integrity: sha512-GLQdD3y6UF8iVuMJl5fHgE4jdn/ua7n+toKfLgNlg3BqQtOZjpy68T8Tup8/wGWZCDlm7KMg7tPb4MPn7oN0TQ==}
+  baseline-browser-mapping@2.11.27:
+    resolution: {integrity: sha512-ElY12DaROGuan+lMmZ8Cvo/ZUbXPe7Enc/9VU/b1T3Kp4dwytRcNdR8DoSJN5SNJT/CuvcCA0DHDVmMOCePdRQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -5209,8 +5209,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.443:
-    resolution: {integrity: sha512-TDJG36L9A3CWWwZ97HKaE+Iz1sW80pNp6sAU0owzCIV3Zc9eVyRqZK8Vz6NKuMIU8WjP0pIkoqCa0VRf/yFD0Q==}
+  electron-to-chromium@1.5.444:
+    resolution: {integrity: sha512-5ss/uJfoDYDHT0lfJzT6FbcskIzROIOPf0BbbFkGcvDzoJU7i//9GDrwwIHQVmIsrAGiF3ihpADBRIsrEFt1rQ==}
 
   elliptic@6.6.1:
     resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
@@ -5491,8 +5491,8 @@ packages:
   focus-trap@7.8.0:
     resolution: {integrity: sha512-/yNdlIkpWbM0ptxno3ONTuf+2g318kh2ez3KSeZN5dZ8YC6AAmgeWz+GasYYiBJPFaYcSAPeu4GfhUaChzIJXA==}
 
-  follow-redirects@1.16.0:
-    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
+  follow-redirects@1.16.1:
+    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -6842,8 +6842,8 @@ packages:
     engines: {node: '>= 0.10'}
     hasBin: true
 
-  publint@0.3.24:
-    resolution: {integrity: sha512-9zS56KrKBoqi5Qt8h92uMP8TTM9AYZSgnmCo4u2priMqkOZvQnTsziZ2p5LJ2ywbYkAjoCDp2jda9u4cgFefIw==}
+  publint@0.3.25:
+    resolution: {integrity: sha512-WMMbn/d7JqRlfXQL/JUI4n5skC8cJ5WVr8/wT5mmiYWkUdENkZr1I5rgs2+dQPVRgoJd+JRYtB46MTsuDylw9g==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -7261,8 +7261,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5:
-    resolution: {integrity: sha512-VrfnojbTymmr4r3x9Scq0AGcBPakRYA4xXidCa8NVFPVQJ35jS12QTW7LlKyIBwTDmoamxxhvrK8ZPfLiQv3sA==}
+  soukai-bis@0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266:
+    resolution: {integrity: sha512-n9avIJ4Hyxd+K4ekVoocwMexwv+WrvTvL/gBcFAtBbTwFbujdGJUEUPbKlnU7qRhAVCUVrlsAboXsioYkGwhlA==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -8246,15 +8246,15 @@ snapshots:
 
   '@adobe/css-tools@4.5.0': {}
 
-  '@aerogel/vite@0.1.2(@babel/parser@7.29.9)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)':
+  '@aerogel/vite@0.1.2(@babel/parser@7.29.9)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.83ae01802430e7055c8de265189291622814555a
-      '@tailwindcss/vite': 4.3.3(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
-      '@vitejs/plugin-vue': 5.2.4(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))
+      '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
+      '@tailwindcss/vite': 4.3.3(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      '@vitejs/plugin-vue': 5.2.4(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))
       image-size: 2.0.4
       mustache: 4.2.0
       unplugin-vue-components: 28.8.0(@babel/parser@7.29.9)(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
-      vite-plugin-pwa: 0.21.2(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
+      vite-plugin-pwa: 0.21.2(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
     transitivePeerDependencies:
       - '@babel/parser'
       - '@nuxt/kit'
@@ -11396,23 +11396,23 @@ snapshots:
     dependencies:
       '@braidai/lang': 1.1.2
 
-  '@microsoft/api-extractor-model@7.33.14(@types/node@26.6.3)':
+  '@microsoft/api-extractor-model@7.33.14(@types/node@26.6.4)':
     dependencies:
       '@microsoft/tsdoc': 0.17.1
       '@microsoft/tsdoc-config': 0.18.3
-      '@rushstack/node-core-library': 5.25.0(@types/node@26.6.3)
+      '@rushstack/node-core-library': 5.25.0(@types/node@26.6.4)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/api-extractor@7.59.3(@types/node@26.6.3)':
+  '@microsoft/api-extractor@7.59.3(@types/node@26.6.4)':
     dependencies:
-      '@microsoft/api-extractor-model': 7.33.14(@types/node@26.6.3)
+      '@microsoft/api-extractor-model': 7.33.14(@types/node@26.6.4)
       '@microsoft/tsdoc': 0.17.1
       '@microsoft/tsdoc-config': 0.18.3
-      '@rushstack/node-core-library': 5.25.0(@types/node@26.6.3)
+      '@rushstack/node-core-library': 5.25.0(@types/node@26.6.4)
       '@rushstack/rig-package': 0.7.3
-      '@rushstack/terminal': 0.24.6(@types/node@26.6.3)
-      '@rushstack/ts-command-line': 5.3.16(@types/node@26.6.3)
+      '@rushstack/terminal': 0.24.6(@types/node@26.6.4)
+      '@rushstack/ts-command-line': 5.3.16(@types/node@26.6.4)
       diff: 8.0.4
       minimatch: 10.2.3
       resolve: 1.22.12
@@ -11466,33 +11466,33 @@ snapshots:
 
   '@noeldemartin/solid-utils@0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+      '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@rdfjs/types': 2.0.1
       jsonld: 8.3.3(web-streams-polyfill@3.3.3)
       md5: 2.3.0
       n3: 1.26.0
     optionalDependencies:
-      vitest: 5.0.1(@types/node@26.6.3)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
+      vitest: 5.0.1(@types/node@26.6.4)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
     transitivePeerDependencies:
       - web-streams-polyfill
 
   '@noeldemartin/testing@0.0.0-next.23b9f09c2e11d1c3ece07d50800c41e7b3576cc8(vitest@5.0.1)':
     dependencies:
       '@noeldemartin/faker': 7.6.0
-      '@noeldemartin/utils': 0.7.3-next.83ae01802430e7055c8de265189291622814555a
-      vitest: 5.0.1(@types/node@26.6.3)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
+      '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
+      vitest: 5.0.1(@types/node@26.6.4)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
 
-  '@noeldemartin/utils@0.7.3-next.83ae01802430e7055c8de265189291622814555a':
+  '@noeldemartin/utils@0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8':
     dependencies:
       idb: 8.0.3
 
-  '@noeldemartin/vite-plus-config@0.0.0-next.bbfa266be208c6f2428ed487c291ff73eb246e9e(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))':
+  '@noeldemartin/vite-plus-config@0.0.0-next.1c896591fe21a2aad4690fbecb003c72fac0e9da(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))':
     dependencies:
-      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
+      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
 
   '@noeldemartin/vue-modals@0.1.1(vue@3.5.43(typescript@5.9.3))':
     dependencies:
-      '@noeldemartin/utils': 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+      '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       vue: 3.5.43(typescript@5.9.3)
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
@@ -11790,11 +11790,11 @@ snapshots:
 
   '@rdfjs/types@1.1.2':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@rdfjs/types@2.0.1':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@rolldown/pluginutils@1.0.1': {}
 
@@ -11920,7 +11920,7 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  '@rushstack/node-core-library@5.25.0(@types/node@26.6.3)':
+  '@rushstack/node-core-library@5.25.0(@types/node@26.6.4)':
     dependencies:
       ajv: 8.20.0
       ajv-draft-04: 1.0.0(ajv@8.20.0)
@@ -11931,28 +11931,28 @@ snapshots:
       resolve: 1.22.12
       semver: 7.7.4
     optionalDependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
-  '@rushstack/problem-matcher@0.2.1(@types/node@26.6.3)':
+  '@rushstack/problem-matcher@0.2.1(@types/node@26.6.4)':
     optionalDependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@rushstack/rig-package@0.7.3':
     dependencies:
       jju: 1.4.0
       resolve: 1.22.12
 
-  '@rushstack/terminal@0.24.6(@types/node@26.6.3)':
+  '@rushstack/terminal@0.24.6(@types/node@26.6.4)':
     dependencies:
-      '@rushstack/node-core-library': 5.25.0(@types/node@26.6.3)
-      '@rushstack/problem-matcher': 0.2.1(@types/node@26.6.3)
+      '@rushstack/node-core-library': 5.25.0(@types/node@26.6.4)
+      '@rushstack/problem-matcher': 0.2.1(@types/node@26.6.4)
       supports-color: 8.1.1
     optionalDependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
-  '@rushstack/ts-command-line@5.3.16(@types/node@26.6.3)':
+  '@rushstack/ts-command-line@5.3.16(@types/node@26.6.4)':
     dependencies:
-      '@rushstack/terminal': 0.24.6(@types/node@26.6.3)
+      '@rushstack/terminal': 0.24.6(@types/node@26.6.4)
       '@types/argparse': 1.0.38
       argparse: 1.0.10
       string-argv: 0.3.2
@@ -12049,7 +12049,7 @@ snapshots:
       '@types/lodash.orderby': 4.6.9
       '@types/mime-types': 2.1.4
       '@types/n3': 1.26.4
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       '@types/nodemailer': 6.4.24
       '@types/oidc-provider': 8.8.1
       '@types/proper-lockfile': 4.1.4
@@ -12130,11 +12130,11 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@storybook/builder-vite@10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))':
+  '@storybook/builder-vite@10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))':
     dependencies:
-      storybook: 10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      storybook: 10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       ts-dedent: 2.3.0
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
 
   '@storybook/global@5.0.0': {}
 
@@ -12142,24 +12142,24 @@ snapshots:
     dependencies:
       react: 19.3.0
 
-  '@storybook/vue3-vite@10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))':
+  '@storybook/vue3-vite@10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))':
     dependencies:
-      '@storybook/builder-vite': 10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))
-      '@storybook/vue3': 10.6.1(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
+      '@storybook/builder-vite': 10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))
+      '@storybook/vue3': 10.6.1(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       magic-string: 1.4.2
-      storybook: 10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      storybook: 10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
     optionalDependencies:
       typescript: 5.9.3
     transitivePeerDependencies:
       - vue
 
-  '@storybook/vue3@10.6.1(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))':
+  '@storybook/vue3@10.6.1(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))':
     dependencies:
       '@storybook/global': 5.0.0
       '@vue/compiler-dom': 3.5.43
       '@vue/language-core': 3.3.11
-      storybook: 10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      storybook: 10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       type-fest: 5.10.0
       vue: 3.5.43(typescript@5.9.3)
       vue-component-meta: 3.3.11(typescript@5.9.3)
@@ -12247,12 +12247,12 @@ snapshots:
       postcss-selector-parser: 6.0.10
       tailwindcss: 4.3.3
 
-  '@tailwindcss/vite@4.3.3(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))':
+  '@tailwindcss/vite@4.3.3(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))':
     dependencies:
       '@tailwindcss/node': 4.3.3
       '@tailwindcss/oxide': 4.3.3
       tailwindcss: 4.3.3
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
 
   '@tanstack/virtual-core@3.17.11': {}
 
@@ -12326,7 +12326,7 @@ snapshots:
 
   '@types/accepts@1.3.7':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/argparse@1.0.38': {}
 
@@ -12339,7 +12339,7 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/chai@5.2.3':
     dependencies:
@@ -12353,7 +12353,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/content-disposition@0.5.9': {}
 
@@ -12364,11 +12364,11 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/express': 5.0.6
       '@types/keygrip': 1.0.6
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/deep-eql@4.0.2': {}
 
@@ -12376,13 +12376,13 @@ snapshots:
 
   '@types/end-of-stream@1.4.4':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/estree@1.0.9': {}
 
   '@types/express-serve-static-core@5.1.3':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       '@types/qs': 6.15.1
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -12396,7 +12396,7 @@ snapshots:
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/hast@3.0.5':
     dependencies:
@@ -12410,13 +12410,13 @@ snapshots:
 
   '@types/http-link-header@1.0.7':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/json-schema@7.0.15': {}
 
   '@types/jsonfile@6.1.4':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/keygrip@1.0.6': {}
 
@@ -12433,7 +12433,7 @@ snapshots:
       '@types/http-errors': 2.0.5
       '@types/keygrip': 1.0.6
       '@types/koa-compose': 3.2.9
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/linkify-it@5.0.0': {}
 
@@ -12463,21 +12463,21 @@ snapshots:
   '@types/n3@1.26.4':
     dependencies:
       '@rdfjs/types': 2.0.1
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
-  '@types/node@26.6.3':
+  '@types/node@26.6.4':
     dependencies:
       undici-types: 8.9.0
 
   '@types/nodemailer@6.4.24':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/oidc-provider@8.8.1':
     dependencies:
       '@types/keygrip': 1.0.6
       '@types/koa': 3.0.3
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/proper-lockfile@4.1.4':
     dependencies:
@@ -12485,7 +12485,7 @@ snapshots:
 
   '@types/pump@1.1.3':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/punycode@2.1.4': {}
 
@@ -12497,21 +12497,21 @@ snapshots:
     dependencies:
       '@rdfjs/types': 2.0.1
       '@types/clownface': 2.0.10
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/rdfjs__environment@1.0.0':
     dependencies:
       '@rdfjs/types': 2.0.1
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/readable-stream@2.3.15':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       safe-buffer: 5.1.2
 
   '@types/readable-stream@4.0.25':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/resolve@1.20.2': {}
 
@@ -12521,12 +12521,12 @@ snapshots:
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/serve-static@2.2.0':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/spark-md5@3.0.5': {}
 
@@ -12552,7 +12552,7 @@ snapshots:
 
   '@types/ws@8.18.2':
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -12602,57 +12602,57 @@ snapshots:
 
   '@ungap/structured-clone@1.4.0': {}
 
-  '@vitejs/plugin-vue-jsx@5.1.6(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))':
+  '@vitejs/plugin-vue-jsx@5.1.6(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/plugin-syntax-typescript': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))
       '@babel/plugin-transform-typescript': 7.29.9(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
       '@rolldown/pluginutils': 1.0.1
       '@vue/babel-plugin-jsx': 2.0.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       vue: 3.5.43(typescript@5.9.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@5.2.4(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))':
+  '@vitejs/plugin-vue@5.2.4(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))':
     dependencies:
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       vue: 3.5.43(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@5.2.4(vite@5.4.21(@types/node@26.6.3)(lightningcss@1.33.0)(terser@5.51.2))(vue@3.5.43(typescript@5.9.3))':
+  '@vitejs/plugin-vue@5.2.4(vite@5.4.21(@types/node@26.6.4)(lightningcss@1.33.0)(terser@5.51.2))(vue@3.5.43(typescript@5.9.3))':
     dependencies:
-      vite: 5.4.21(@types/node@26.6.3)(lightningcss@1.33.0)(terser@5.51.2)
+      vite: 5.4.21(@types/node@26.6.4)(lightningcss@1.33.0)(terser@5.51.2)
       vue: 3.5.43(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@6.0.9(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.9(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       vue: 3.5.43(typescript@5.9.3)
 
-  '@vitest/browser-preview@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)':
+  '@vitest/browser-preview@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)':
     dependencies:
       '@testing-library/dom': 10.4.2
       '@testing-library/user-event': 14.6.7(@testing-library/dom@10.4.2)
-      '@vitest/browser': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
-      vitest: 5.0.1(@types/node@26.6.3)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
+      '@vitest/browser': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
+      vitest: 5.0.1(@types/node@26.6.4)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
     transitivePeerDependencies:
       - bufferutil
       - msw
       - utf-8-validate
       - vite
 
-  '@vitest/browser@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)':
+  '@vitest/browser@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)':
     dependencies:
       '@blazediff/core': 1.10.0
-      '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       '@vitest/ui': 5.0.1(vitest@5.0.1)
       '@vitest/utils': 5.0.1
       magic-string: 1.4.2
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.1(@types/node@26.6.3)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
+      vitest: 5.0.1(@types/node@26.6.4)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
       ws: 8.22.0
     transitivePeerDependencies:
       - bufferutil
@@ -12668,14 +12668,14 @@ snapshots:
       chai: 5.3.3
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))':
+  '@vitest/mocker@5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.1
       estree-walker: 3.0.3
       magic-string: 1.4.2
     optionalDependencies:
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -12706,7 +12706,7 @@ snapshots:
       pathe: 2.0.3
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.0.1(@types/node@26.6.3)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
+      vitest: 5.0.1(@types/node@26.6.4)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -12720,7 +12720,7 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.2.0
 
-  '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)':
+  '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)':
     dependencies:
       '@oxc-project/runtime': 0.151.0
       '@oxc-project/types': 0.151.0
@@ -12730,7 +12730,7 @@ snapshots:
       yuku-parser: 0.9.5
     optionalDependencies:
       '@arethetypeswrong/core': 0.18.5
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       '@voidzero-dev/vite-plus-darwin-arm64': 1.0.0
       '@voidzero-dev/vite-plus-darwin-x64': 1.0.0
       '@voidzero-dev/vite-plus-linux-arm64-gnu': 1.0.0
@@ -12742,7 +12742,7 @@ snapshots:
       esbuild: 0.28.2
       fsevents: 2.3.3
       jiti: 2.7.0
-      publint: 0.3.24
+      publint: 0.3.25
       terser: 5.51.2
       typescript: 5.9.3
       yaml: 2.9.1
@@ -13221,7 +13221,7 @@ snapshots:
 
   axios@1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1):
     dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3(supports-color@8.1.1))
+      follow-redirects: 1.16.1(debug@4.4.3(supports-color@8.1.1))
       form-data: 4.0.6
       https-proxy-agent: 5.0.1(supports-color@8.1.1)
       proxy-from-env: 2.1.0
@@ -13265,7 +13265,7 @@ snapshots:
 
   base64url@3.0.1: {}
 
-  baseline-browser-mapping@2.11.26: {}
+  baseline-browser-mapping@2.11.27: {}
 
   bcryptjs@2.4.3: {}
 
@@ -13300,9 +13300,9 @@ snapshots:
 
   browserslist@4.29.3:
     dependencies:
-      baseline-browser-mapping: 2.11.26
+      baseline-browser-mapping: 2.11.27
       caniuse-lite: 1.0.30001814
-      electron-to-chromium: 1.5.443
+      electron-to-chromium: 1.5.444
       node-releases: 2.0.57
       update-browserslist-db: 1.3.3(browserslist@4.29.3)
 
@@ -13310,7 +13310,7 @@ snapshots:
 
   buffer-image-size@0.6.4:
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   buffer@6.0.3:
     dependencies:
@@ -13499,7 +13499,7 @@ snapshots:
     dependencies:
       '@rdfjs/types': 2.0.1
       '@types/minimist': 1.2.5
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       '@types/semver': 7.8.0
       jsonld-context-parser: 2.4.0(encoding@0.1.13)
       minimist: 1.2.8
@@ -13728,7 +13728,7 @@ snapshots:
     dependencies:
       jake: 10.9.4
 
-  electron-to-chromium@1.5.443: {}
+  electron-to-chromium@1.5.444: {}
 
   elliptic@6.6.1:
     dependencies:
@@ -14156,7 +14156,7 @@ snapshots:
     dependencies:
       tabbable: 6.5.0
 
-  follow-redirects@1.16.0(debug@4.4.3(supports-color@8.1.1)):
+  follow-redirects@1.16.1(debug@4.4.3(supports-color@8.1.1)):
     optionalDependencies:
       debug: 4.4.3(supports-color@8.1.1)
 
@@ -14327,7 +14327,7 @@ snapshots:
 
   happy-dom@20.14.5:
     dependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       '@types/whatwg-mimetype': 3.0.2
       '@types/ws': 8.18.2
       buffer-image-size: 0.6.4
@@ -14729,7 +14729,7 @@ snapshots:
   jsonld-context-parser@2.4.0(encoding@0.1.13):
     dependencies:
       '@types/http-link-header': 1.0.7
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       cross-fetch: 3.2.0(encoding@0.1.13)
       http-link-header: 1.1.4
       relative-to-absolute-iri: 1.0.8
@@ -15360,7 +15360,7 @@ snapshots:
       '@oxc-resolver/binding-win32-arm64-msvc': 11.21.2
       '@oxc-resolver/binding-win32-x64-msvc': 11.21.2
 
-  oxfmt@0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)):
+  oxfmt@0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)):
     dependencies:
       tinypool: 2.1.2
     optionalDependencies:
@@ -15383,7 +15383,7 @@ snapshots:
       '@oxfmt/binding-win32-arm64-msvc': 0.70.0
       '@oxfmt/binding-win32-ia32-msvc': 0.70.0
       '@oxfmt/binding-win32-x64-msvc': 0.70.0
-      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
+      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
 
   oxlint-tsgolint@7.0.2003:
     optionalDependencies:
@@ -15394,7 +15394,7 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 7.0.2003
       '@oxlint-tsgolint/win32-x64': 7.0.2003
 
-  oxlint@1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)):
+  oxlint@1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)):
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.85.0
       '@oxlint/binding-android-arm64': 1.85.0
@@ -15416,7 +15416,7 @@ snapshots:
       '@oxlint/binding-win32-ia32-msvc': 1.85.0
       '@oxlint/binding-win32-x64-msvc': 1.85.0
       oxlint-tsgolint: 7.0.2003
-      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
+      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
 
   p-cancelable@3.0.0: {}
 
@@ -15507,10 +15507,10 @@ snapshots:
     dependencies:
       '@inrupt/solid-client-authn-core': 3.1.1
       '@noeldemartin/solid-utils': 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+      '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@playwright/test': 1.63.0
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+      soukai-bis: 0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       zod: 4.6.5
     transitivePeerDependencies:
       - vitest
@@ -15575,7 +15575,7 @@ snapshots:
     dependencies:
       event-stream: 3.3.4
 
-  publint@0.3.24:
+  publint@0.3.25:
     dependencies:
       '@publint/pack': 0.1.7
       package-manager-detector: 1.8.0
@@ -16150,7 +16150,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  sharp@0.35.5(@types/node@26.6.3):
+  sharp@0.35.5(@types/node@26.6.4):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -16181,7 +16181,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.5
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
 
   shebang-command@2.0.0:
     dependencies:
@@ -16268,10 +16268,10 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.40516f19ec5692c3c203c200d9f1e89616ed1cf5(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
+  soukai-bis@0.0.0-next.58332971fc482ae3fe352ecc98dbc15e81da6266(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
     dependencies:
       '@noeldemartin/solid-utils': 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
-      '@noeldemartin/utils': 0.7.3-next.83ae01802430e7055c8de265189291622814555a
+      '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@rdfjs/types': 2.0.1
       idb: 8.0.3
       zod: 4.6.5
@@ -16394,7 +16394,7 @@ snapshots:
       es-errors: 1.3.0
       internal-slot: 1.1.0
 
-  storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)):
+  storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)):
     dependencies:
       '@storybook/global': 5.0.0
       '@storybook/icons': 2.1.0(react@19.3.0)
@@ -16414,7 +16414,7 @@ snapshots:
       use-sync-external-store: 1.7.0(react@19.3.0)
       ws: 8.22.0
     optionalDependencies:
-      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
+      vite-plus: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
     transitivePeerDependencies:
       - bufferutil
       - react
@@ -16838,9 +16838,9 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-dts@4.5.0(@types/node@26.6.3)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(rollup@4.63.6)(supports-color@8.1.1)(typescript@5.9.3):
+  vite-plugin-dts@4.5.0(@types/node@26.6.4)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(rollup@4.63.6)(supports-color@8.1.1)(typescript@5.9.3):
     dependencies:
-      '@microsoft/api-extractor': 7.59.3(@types/node@26.6.3)
+      '@microsoft/api-extractor': 7.59.3(@types/node@26.6.4)
       '@rollup/pluginutils': 5.4.0(rollup@4.63.6)
       '@volar/typescript': 2.4.28(typescript@5.9.3)
       '@vue/language-core': 2.2.0(typescript@5.9.3)
@@ -16851,50 +16851,50 @@ snapshots:
       magic-string: 0.30.21
       typescript: 5.9.3
     optionalDependencies:
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
     transitivePeerDependencies:
       - '@types/node'
       - rollup
       - supports-color
 
-  vite-plugin-pwa@0.21.2(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1):
+  vite-plugin-pwa@0.21.2(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.17
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       workbox-build: 7.4.1(supports-color@8.1.1)
       workbox-window: 7.4.1
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-pwa@1.3.0(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1):
+  vite-plugin-pwa@1.3.0(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.17
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       workbox-build: 7.4.1(supports-color@8.1.1)
       workbox-window: 7.4.1
     transitivePeerDependencies:
       - supports-color
 
-  vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1):
+  vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1):
     dependencies:
       '@oxc-project/types': 0.151.0
       '@oxlint/plugins': 1.79.0
-      '@vitest/browser': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
-      '@vitest/browser-preview': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
-      '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      '@vitest/browser': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
+      '@vitest/browser-preview': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
+      '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       '@vitest/pretty-format': 5.0.1
       '@vitest/snapshot': 5.0.1
       '@vitest/spy': 5.0.1
       '@vitest/utils': 5.0.1
-      oxfmt: 0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
-      oxlint: 1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      oxfmt: 0.70.0(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      oxlint: 1.85.0(oxlint-tsgolint@7.0.2003)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       oxlint-tsgolint: 7.0.2003
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
-      vitest: 5.0.1(@types/node@26.6.3)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vitest: 5.0.1(@types/node@26.6.4)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5)
     optionalDependencies:
       '@voidzero-dev/vite-plus-darwin-arm64': 1.0.0
       '@voidzero-dev/vite-plus-darwin-x64': 1.0.0
@@ -16934,18 +16934,18 @@ snapshots:
       - utf-8-validate
       - yaml
 
-  vite@5.4.21(@types/node@26.6.3)(lightningcss@1.33.0)(terser@5.51.2):
+  vite@5.4.21(@types/node@26.6.4)(lightningcss@1.33.0)(terser@5.51.2):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.28
       rollup: 4.63.6
     optionalDependencies:
-      '@types/node': 26.6.3
+      '@types/node': 26.6.4
       fsevents: 2.3.3
       lightningcss: 1.33.0
       terser: 5.51.2
 
-  vitepress@1.6.4(@algolia/client-search@5.59.0)(@types/node@26.6.3)(axios@1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(terser@5.51.2)(typescript@5.9.3):
+  vitepress@1.6.4(@algolia/client-search@5.59.0)(@types/node@26.6.4)(axios@1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.28)(search-insights@2.17.3)(terser@5.51.2)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.59.0)(search-insights@2.17.3)
@@ -16954,7 +16954,7 @@ snapshots:
       '@shikijs/transformers': 2.5.0
       '@shikijs/types': 2.5.0
       '@types/markdown-it': 14.2.0
-      '@vitejs/plugin-vue': 5.2.4(vite@5.4.21(@types/node@26.6.3)(lightningcss@1.33.0)(terser@5.51.2))(vue@3.5.43(typescript@5.9.3))
+      '@vitejs/plugin-vue': 5.2.4(vite@5.4.21(@types/node@26.6.4)(lightningcss@1.33.0)(terser@5.51.2))(vue@3.5.43(typescript@5.9.3))
       '@vue/devtools-api': 7.7.10
       '@vue/shared': 3.5.43
       '@vueuse/core': 12.8.2(typescript@5.9.3)
@@ -16963,7 +16963,7 @@ snapshots:
       mark.js: 8.11.1
       minisearch: 7.2.0
       shiki: 2.5.0
-      vite: 5.4.21(@types/node@26.6.3)(lightningcss@1.33.0)(terser@5.51.2)
+      vite: 5.4.21(@types/node@26.6.4)(lightningcss@1.33.0)(terser@5.51.2)
       vue: 3.5.43(typescript@5.9.3)
     optionalDependencies:
       postcss: 8.5.28
@@ -16995,10 +16995,10 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@5.0.1(@types/node@26.6.3)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5):
+  vitest@5.0.1(@types/node@26.6.4)(@vitest/browser-preview@5.0.1)(@vitest/ui@5.0.1)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(happy-dom@20.14.5):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
+      '@vitest/mocker': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
       chai: 6.3.0
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -17009,11 +17009,11 @@ snapshots:
       tinybench: 6.1.4
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 26.6.3
-      '@vitest/browser-preview': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.24)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
+      '@types/node': 26.6.4
+      '@vitest/browser-preview': 5.0.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@5.0.1)
       '@vitest/ui': 5.0.1(vitest@5.0.1)
       happy-dom: 20.14.5
     transitivePeerDependencies:
