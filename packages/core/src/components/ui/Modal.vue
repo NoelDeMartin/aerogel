@@ -2,7 +2,7 @@
     <!-- @vue-generic {T} -->
     <HeadlessModal v-slot="{ close }" v-bind="props" :ref="forwardRef" :persistent>
         <HeadlessModalOverlay
-            class="fixed inset-0 transition-opacity duration-300 will-change-[opacity]"
+            class="fixed inset-0 z-40 transition-opacity duration-300 will-change-[opacity]"
             :class="{
                 'animate-[fade-in_var(--tw-duration)_ease-in-out]': !hasRenderedModals,
                 'bg-black/30': firstVisibleModal?.id === id || (!firstVisibleModal && modals[0]?.id === id),
@@ -127,7 +127,7 @@ const renderedContentClass = computed(() =>
 const renderFullscreen = computed(() => fullscreen || (fullscreenOnMobile && UI.mobile));
 const renderedWrapperClass = computed(() =>
     classes(
-        'isolate fixed z-50 flex flex-col overflow-hidden bg-white text-left duration-300',
+        'isolate fixed z-40 flex flex-col overflow-hidden bg-white text-left duration-300',
         renderFullscreen.value
             ? [
                   'inset-0 transition-[transform,translate] will-change-[transform,translate]',
