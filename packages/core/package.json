@@ -16,13 +16,13 @@
     "sideEffects": false,
     "exports": {
         ".": {
-            "types": "./dist/aerogel-core.d.ts",
+            "types": "./dist/index.d.ts",
             "style": "./src/index.css",
-            "default": "./dist/aerogel-core.js"
+            "default": "./dist/index.js"
         },
         "./setup-vitest": {
-            "types": "./dist/aerogel-core-setup-vitest.d.ts",
-            "default": "./dist/aerogel-core-setup-vitest.js"
+            "types": "./dist/setup-vitest.d.ts",
+            "default": "./dist/setup-vitest.js"
         }
     },
     "scripts": {
