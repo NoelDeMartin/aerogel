@@ -1,21 +1,25 @@
 import { Solid } from '@aerogel/plugin-solid';
-import { arrayFrom, objectEntries, required, urlResolveDirectory } from '@noeldemartin/utils';
-import { Container, ContainsRelation, isCoreRelation } from 'soukai-bis';
-import type { GetModelRelationName, Model, ModelConstructor } from 'soukai-bis';
+import { arrayFrom, isSubclassOf, objectEntries, required, urlResolveDirectory } from '@noeldemartin/utils';
+import { ContainsRelation, getRelatedClass, isContainerClass, isCoreRelation } from 'soukai-bis';
+import type { GetModelRelationName, Model, ModelConstructor, RelationConstructor } from 'soukai-bis';
 
 const containerRelations: WeakMap<ModelConstructor, string[]> = new WeakMap();
+
+function isContainsRelationClass(relationClass: RelationConstructor): boolean {
+    return relationClass === ContainsRelation || isSubclassOf(relationClass, ContainsRelation);
+}
 
 function getContainerRelations<T extends ModelConstructor>(modelClass: T): GetModelRelationName<T>[] {
     if (!containerRelations.has(modelClass)) {
         containerRelations.set(
             modelClass,
             objectEntries(modelClass.schema.relations)
-                .filter(([relationName, relationInstance]) => {
+                .filter(([relationName, relationDefinition]) => {
                     if (isCoreRelation(relationName)) {
                         return false;
                     }
 
-                    return relationInstance instanceof ContainsRelation;
+                    return isContainsRelationClass(relationDefinition.relationClass);
                 })
                 .map(([relationName]) => relationName),
         );
@@ -39,16 +43,16 @@ export function getContainedModels<T extends ModelConstructor>(model: InstanceTy
 export function getRemoteContainerUrl(modelClass: ModelConstructor, path?: string): string {
     const rootStorage = Solid.requireUser().storageUrls[0];
     const containedClass =
-        modelClass instanceof Container &&
+        isContainerClass(modelClass) &&
         getContainerRelations(modelClass)
             .map((relation) => {
-                const relatedClass = required(modelClass.schema.relations[relation]).relatedClass;
+                const relatedClass = getRelatedClass(modelClass, required(modelClass.schema.relations[relation]));
 
-                if (relatedClass instanceof Container) {
+                if (isContainerClass(relatedClass)) {
                     return null;
                 }
 
-                return relatedClass as ModelConstructor;
+                return relatedClass;
             })
             .filter(Boolean)[0];
 
