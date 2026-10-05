@@ -9,12 +9,15 @@ export default defineConfig({
     build: {
         sourcemap: true,
         lib: {
-            entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+            entry: {
+                'index': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+                'setup-vitest': fileURLToPath(new URL('./src/setup-vitest.ts', import.meta.url)),
+            },
             formats: ['es'],
-            fileName: 'aerogel-core',
         },
         rollupOptions: {
             external: [
+                '@noeldemartin/testing',
                 '@noeldemartin/utils',
                 '@noeldemartin/vue-modals',
                 'class-variance-authority',
@@ -27,6 +30,7 @@ export default defineConfig({
                 'reka-ui',
                 'tailwind-merge',
                 'virtual:aerogel',
+                'vite-plus/test',
                 'vue',
                 'vue-component-type-helpers',
                 'zod',
@@ -38,6 +42,7 @@ export default defineConfig({
             rollupTypes: true,
             tsconfigPath: './tsconfig.json',
             insertTypesEntry: true,
+            exclude: ['src/setup-vitest.ts'],
         }),
         Aerogel({ lib: true }),
         Icons(),

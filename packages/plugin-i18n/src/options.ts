@@ -1,5 +1,5 @@
 export interface Options {
-    messages: Record<string, unknown>;
+    messages?: Record<string, unknown>;
     defaultLocale?: string;
     fallbackLocale?: string;
 }

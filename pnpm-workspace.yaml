@@ -8,6 +8,7 @@ catalog:
     '@intlify/unplugin-vue-i18n': ^6.0.5
     '@noeldemartin/scripts': next
     '@noeldemartin/solid-utils': next
+    '@noeldemartin/testing': next
     '@noeldemartin/utils': next
     '@types/node': ^26.6.3
     '@rdfjs/types': ^2.0.1
@@ -24,6 +25,7 @@ catalog:
 overrides:
     '@aerogel/cli': 'workspace:*'
     '@noeldemartin/solid-utils': 'catalog:'
+    '@noeldemartin/testing': 'catalog:'
     '@noeldemartin/utils': 'catalog:'
     '@types/node': 'catalog:'
     soukai-bis: 'catalog:'

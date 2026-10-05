@@ -15,9 +15,15 @@
     "type": "module",
     "sideEffects": false,
     "exports": {
-        "types": "./dist/aerogel-plugin-solid.d.ts",
-        "style": "./src/index.css",
-        "default": "./dist/aerogel-plugin-solid.js"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "style": "./src/index.css",
+            "default": "./dist/index.js"
+        },
+        "./setup-vitest": {
+            "types": "./dist/setup-vitest.d.ts",
+            "default": "./dist/setup-vitest.js"
+        }
     },
     "scripts": {
         "build": "vp build",
@@ -46,6 +52,7 @@
         "@aerogel/core": "*",
         "@aerogel/vite": "*",
         "soukai-bis": "*",
+        "vite-plus": "catalog:",
         "zod": "catalog:"
     }
 }

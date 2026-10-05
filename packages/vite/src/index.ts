@@ -3,13 +3,17 @@ import { resolve } from 'node:path';
 import { generate404Assets } from '@aerogel/vite/lib/404';
 import { getSourceHash } from '@aerogel/vite/lib/git';
 import { renderHTML } from '@aerogel/vite/lib/html';
+import { generateMessagesVirtualModule } from '@aerogel/vite/lib/i18n';
 import { generateIconAssets, getManifestIcons, iconsMiddleware, resolveIconSource } from '@aerogel/vite/lib/icons';
 import { loadLocales } from '@aerogel/vite/lib/lang';
 import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 import { loadPackageInfo } from '@aerogel/vite/lib/package-parser';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
-import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
+import { generatePatchZodVirtualModule, generateModelsVirtualModule } from '@aerogel/vite/lib/soukai';
+import { generateSetupVitestVirtualModule } from '@aerogel/vite/lib/testing';
+import { stripQuery } from '@aerogel/vite/lib/urls';
+import { after, arrayFilter, arrayFrom, objectWithoutEmpty } from '@noeldemartin/utils';
 import TailwindCSS from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
@@ -55,6 +59,10 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             return `export default ${JSON.stringify(virtual)};`;
         },
         'virtual:aerogel-solid': () => generateSolidVirtualModule(app, options),
+        'virtual:aerogel-models': () => generateModelsVirtualModule(),
+        'virtual:aerogel-messages': () => generateMessagesVirtualModule(),
+        '/_virtual/soukai-bis/patch-zod': () => generatePatchZodVirtualModule(),
+        '/_virtual/aerogel-setup-vitest': () => generateSetupVitestVirtualModule(app),
     };
     const AerogelPlugin: Plugin = {
         name: 'vite:aerogel',
@@ -120,6 +128,14 @@ export default function Aerogel(options: Options = {}): Plugin[] {
                 ];
             }
 
+            if (!options.lib) {
+                loadPackageInfo(app, resolve(config.root ?? process.cwd(), 'package.json'));
+
+                config.test ??= {};
+                config.test.include ??= ['src/**/*.test.ts'];
+                config.test.setupFiles = ['/_virtual/aerogel-setup-vitest', ...arrayFrom(config.test.setupFiles ?? [])];
+            }
+
             config.build ??= {};
             config.build.rollupOptions ??= {};
 
@@ -166,22 +182,14 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             generateSolidAssets(this, app);
         },
         load(id) {
-            if (id in virtualHandlers) {
-                return virtualHandlers[id]?.();
-            }
-
-            if (id === 'virtual:soukai-bis/patch-zod') {
-                return "import 'soukai-bis/patch-zod';";
-            }
+            return virtualHandlers[stripQuery(id)]?.();
         },
         resolveId(id) {
-            if (id in virtualHandlers) {
-                return id;
+            if (!(stripQuery(id) in virtualHandlers)) {
+                return;
             }
 
-            if (id.startsWith('/_virtual/')) {
-                return `virtual:${id.slice(10)}`;
-            }
+            return id;
         },
         transform(code, id) {
             if (id.endsWith('.jsonld')) {

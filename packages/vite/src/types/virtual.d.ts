@@ -25,3 +25,15 @@ declare module 'virtual:aerogel-solid' {
 
     export default virtual;
 }
+
+declare module 'virtual:aerogel-models' {
+    const models: Record<string, Record<string, unknown>>;
+
+    export default models;
+}
+
+declare module 'virtual:aerogel-messages' {
+    const messages: Record<string, () => Promise<unknown>>;
+
+    export default messages;
+}

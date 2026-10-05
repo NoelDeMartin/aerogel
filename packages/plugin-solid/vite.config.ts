@@ -9,9 +9,11 @@ export default defineConfig({
     build: {
         sourcemap: true,
         lib: {
-            entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+            entry: {
+                index: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+                'setup-vitest': fileURLToPath(new URL('./src/setup-vitest.ts', import.meta.url)),
+            },
             formats: ['es'],
-            fileName: 'aerogel-plugin-solid',
         },
         rollupOptions: {
             external: [
@@ -22,8 +24,11 @@ export default defineConfig({
                 '@noeldemartin/utils',
                 'solid-auth-client',
                 'soukai-bis',
+                'soukai-bis/patch-zod',
                 'virtual:aerogel',
+                'virtual:aerogel-models',
                 'virtual:aerogel-solid',
+                'vite-plus/test',
                 'vue',
             ],
         },
@@ -33,6 +38,7 @@ export default defineConfig({
             rollupTypes: true,
             tsconfigPath: './tsconfig.json',
             insertTypesEntry: true,
+            exclude: ['src/setup-vitest.ts'],
         }),
         Aerogel({ lib: true }),
         Icons(),

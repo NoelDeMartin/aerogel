@@ -15,9 +15,15 @@
     "type": "module",
     "sideEffects": false,
     "exports": {
-        "types": "./dist/aerogel-core.d.ts",
-        "style": "./src/index.css",
-        "default": "./dist/aerogel-core.js"
+        ".": {
+            "types": "./dist/aerogel-core.d.ts",
+            "style": "./src/index.css",
+            "default": "./dist/aerogel-core.js"
+        },
+        "./setup-vitest": {
+            "types": "./dist/aerogel-core-setup-vitest.d.ts",
+            "default": "./dist/aerogel-core-setup-vitest.js"
+        }
     },
     "scripts": {
         "build": "vp build && ./scripts/fix-types.sh",
@@ -26,6 +32,7 @@
         "verify": "noeldemartin-verify"
     },
     "dependencies": {
+        "@noeldemartin/testing": "catalog:",
         "@noeldemartin/utils": "catalog:",
         "@noeldemartin/vue-modals": "0.1.1",
         "class-variance-authority": "^0.7.1",
@@ -53,6 +60,7 @@
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.16",
         "tailwindcss": "^4.1.4",
+        "vite-plus": "catalog:",
         "vue": "catalog:",
         "zod": "catalog:"
     }

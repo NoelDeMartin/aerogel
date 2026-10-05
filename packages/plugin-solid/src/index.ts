@@ -12,8 +12,10 @@ import { AuthenticationFailedError } from '@aerogel/plugin-solid/errors';
 import { services } from '@aerogel/plugin-solid/services';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
+import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
+import type { ModelsGlob } from '@aerogel/plugin-solid/utils/soukai';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
-import { IndexedDBEngine, bootCoreModels, bootModelsFromViteGlob, setEngine, setNamespace } from 'soukai-bis';
+import appModels from 'virtual:aerogel-models';
 
 import { testingRuntime } from './testing';
 
@@ -37,20 +39,16 @@ export interface Options {
     autoReconnect?: boolean;
     authenticators?: Record<string, Authenticator>;
     defaultAuthenticator?: AuthenticatorName | (() => AuthenticatorName);
-    models?: Record<string, Record<string, unknown>>;
+    models?: ModelsGlob;
     onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): unknown;
 }
 
 export default function solid(options: Options = {}): Plugin {
     return {
         async install(app) {
-            const engine = new IndexedDBEngine();
+            const engine = setupSoukai({ namespace: appNamespace(), models: options.models ?? appModels });
 
             setupTestingRuntime();
-            setEngine(engine);
-            setNamespace(appNamespace());
-            bootCoreModels({ reset: true });
-            bootModelsFromViteGlob(options.models ?? {}, { reset: true });
             registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });
             setDefaultAuthenticator(
                 getAuthenticator(

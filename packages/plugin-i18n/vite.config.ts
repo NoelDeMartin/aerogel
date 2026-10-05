@@ -15,7 +15,7 @@ export default defineConfig({
             fileName: 'aerogel-plugin-i18n',
         },
         rollupOptions: {
-            external: ['@aerogel/core', '@noeldemartin/utils', 'vue-i18n'],
+            external: ['@aerogel/core', '@noeldemartin/utils', 'virtual:aerogel-messages', 'vue-i18n'],
         },
     },
     plugins: lazyPlugins(() => [

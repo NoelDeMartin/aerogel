@@ -15,7 +15,7 @@
         "@iconify/json": "2.2.341",
         "@noeldemartin/scripts": "catalog:",
         "@noeldemartin/solid-utils": "^0.6.1",
-        "@noeldemartin/testing": "next",
+        "@noeldemartin/testing": "catalog:",
         "@noeldemartin/utils": "catalog:",
         "@noeldemartin/vite-plus-config": "next",
         "@playwright/test": "^1.60.0",
