@@ -54,11 +54,19 @@ function initializedTrackedModelsData<T extends Model>(
         loading.value = true;
 
         try {
-            modelsSet.reset(await modelClass.all({ depth: data.depth }));
+            const models = await modelClass.all({ depth: data.depth });
+
+            modelsSet.reset(loaded.value ? models : withTrackedInstances(models));
             loaded.value = true;
         } finally {
             loading.value = false;
         }
+    }
+
+    function withTrackedInstances(models: T[]): T[] {
+        const trackedInstances = new Map(modelsSet.values().map((model) => [model.url, model]));
+
+        return models.map((model) => trackedInstances.get(model.url) ?? model);
     }
 
     trackedModels.set(modelClass, data);

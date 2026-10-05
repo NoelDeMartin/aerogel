@@ -1,32 +1,33 @@
-import type { LoadedRoute } from '@aerogel/plugin-routing/services/Router';
 import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
-import { getTrackedModels, loadTrackedModels } from '@aerogel/plugin-solid';
+import { findTrackedModel, getTrackedModels, loadTrackedModels } from '@aerogel/plugin-solid';
 import type { Model, ModelConstructor } from 'soukai-bis';
-import type { LocationQueryValue } from 'vue-router';
+import type { RouteLocationNormalized } from 'vue-router';
 
-function findModel<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    routeUrl: LocationQueryValue | LocationQueryValue[] | undefined,
-    slug: string,
-): T | undefined {
+function findModel<T extends Model>(modelClass: ModelConstructor<T>, slug: string, url: string | null): T | undefined {
     return getTrackedModels(modelClass).find(
-        (instance) => (routeUrl && instance.url === routeUrl) || instance.getSlug() === slug,
+        (instance) => (url && instance.url === url) || instance.getSlug() === slug,
     );
 }
 
 export async function resolveModelBinding<T extends Model>(
     modelClass: ModelConstructor<T>,
     slug: string,
-    currentRoute: LoadedRoute | null,
+    route: RouteLocationNormalized | null,
 ): Promise<T> {
-    const routeUrl = currentRoute?.query?.url;
-    const model = findModel(modelClass, routeUrl, slug);
+    const url = typeof route?.query?.url === 'string' ? route.query.url : null;
+    const trackedModel = findModel(modelClass, slug, url);
 
-    if (model) {
+    if (trackedModel) {
+        return trackedModel;
+    }
+
+    const model = await findTrackedModel(modelClass, url ?? modelClass.urlFromSlug(slug));
+
+    if (model && (url || model.getSlug() === slug)) {
         return model;
     }
 
     await loadTrackedModels(modelClass);
 
-    return (findModel(modelClass, routeUrl, slug) as T) ?? bindingNotFound(slug);
+    return (findModel(modelClass, slug, url) as T) ?? bindingNotFound(slug);
 }

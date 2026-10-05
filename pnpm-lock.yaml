@@ -200,7 +200,7 @@ catalogs:
       version: 6.0.8
     '@noeldemartin/scripts':
       specifier: next
-      version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+      version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
     '@rdfjs/types':
       specifier: ^2.0.1
       version: 2.0.1
@@ -241,7 +241,7 @@ importers:
         version: 2.2.341
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@noeldemartin/solid-utils':
         specifier: next
         version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
@@ -271,7 +271,7 @@ importers:
         version: 0.9.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -329,7 +329,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@types/node':
         specifier: ^26.6.3
         version: 26.6.4
@@ -380,7 +380,7 @@ importers:
         version: 2.10.5(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.7.0
@@ -405,7 +405,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       happy-dom:
         specifier: ^20.10.1
         version: 20.14.5
@@ -427,7 +427,7 @@ importers:
     devDependencies:
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
 
   packages/playwright:
     dependencies:
@@ -442,7 +442,7 @@ importers:
         version: 0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -455,7 +455,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.63.0
@@ -489,7 +489,7 @@ importers:
         version: 6.0.8(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(rollup@4.64.0)(supports-color@8.1.1)(typescript@5.9.3)(vue-i18n@11.4.13(vue@3.5.43(typescript@5.9.3)))(vue@3.5.43(typescript@5.9.3))
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       publint:
         specifier: 'catalog:'
         version: 0.3.25
@@ -510,7 +510,7 @@ importers:
         version: 8.0.3
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -526,7 +526,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@types/node':
         specifier: ^26.6.3
         version: 26.6.4
@@ -550,7 +550,7 @@ importers:
         version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.43(typescript@5.9.3))
@@ -569,7 +569,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       publint:
         specifier: 'catalog:'
         version: 0.3.25
@@ -599,7 +599,7 @@ importers:
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vite-plus:
         specifier: 'catalog:'
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
@@ -618,7 +618,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       publint:
         specifier: 'catalog:'
         version: 0.3.25
@@ -633,7 +633,7 @@ importers:
     dependencies:
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue:
         specifier: ^3.5.0
         version: 3.5.43(typescript@5.9.3)
@@ -646,7 +646,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@storybook/vue3-vite':
         specifier: ^10.5.4
         version: 10.6.1(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(storybook@10.6.1(react@19.3.0)(vite-plus@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)))(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
@@ -704,7 +704,7 @@ importers:
         version: 0.18.5
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@types/node':
         specifier: ^26.6.3
         version: 26.6.4
@@ -743,7 +743,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.3.3
@@ -765,7 +765,7 @@ importers:
         version: 6.0.8(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(rollup@4.64.0)(supports-color@8.1.1)(typescript@5.9.3)(vue-i18n@11.4.13(vue@3.5.43(typescript@5.9.3)))(vue@3.5.43(typescript@5.9.3))
       '@noeldemartin/scripts':
         specifier: 'catalog:'
-        version: 0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0
+        version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.63.0
@@ -2743,8 +2743,8 @@ packages:
     resolution: {integrity: sha512-OB0CeTgLM3wN3a66qHD97NsVCLKCmgilYbGl+ZzpTjavtmciL5kTQm7HKVHzfarH0s4D5fIK2OM4arRP8Nu8fw==}
     engines: {node: '>=14.0.0', npm: '>=6.0.0'}
 
-  '@noeldemartin/scripts@0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0':
-    resolution: {integrity: sha512-5Cmc8JNldLorrmzBy52/roCiLJEDwQz3l2XfIOP7X0hLof+S0YlEhQysgZy82J0KIluyIj6eqLd9X7q1tNbJ6Q==}
+  '@noeldemartin/scripts@0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a':
+    resolution: {integrity: sha512-CrAoNE/cHbL/mQg3vRwjuSGtSuCIqgdrHs3kejBJH6eSW9F8CxiZBecmrUNP4+2bv4JG8Gcop5pzK3hKYPE3fA==}
     hasBin: true
 
   '@noeldemartin/solid-utils@0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952':
@@ -6492,8 +6492,8 @@ packages:
     resolution: {integrity: sha512-SQknS0ua90rN+3RHuk8BeIqeYyqIH/+ecViZxX08jR4j6MugqWRjtONl3uANG/crWXnOM2WIqBJtjIhVYFha+w==}
     engines: {node: '>=12.0'}
 
-  n3@2.10.7:
-    resolution: {integrity: sha512-0likQk68laO30ERFVaPs5ldstaOARNBYJSI03p+Q9VI04FxduFQoM3SPAGLXDxPFhukO8oWI/H9d/bDn25kTlA==}
+  n3@2.13.1:
+    resolution: {integrity: sha512-rRvSk8tHgIkG0LYAJDYIB0hekz69iZ8wvKlcfHF/kk8W6MAmVIjutjQx1+KfUHLTHmALk3znXN7549MkbQj8vA==}
     engines: {node: '>=12.0'}
 
   nanoid@3.3.19:
@@ -7039,8 +7039,8 @@ packages:
     resolution: {integrity: sha512-9ns8odR8e9q3otKeHj3DE80jZYKg6zVeZKE+zQmRKXFoVUcuiTGeO6iusDhPRoIQQPVPRvH+SfBhrTud4eczuw==}
     engines: {node: '>=4'}
 
-  regenerate@1.4.2:
-    resolution: {integrity: sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==}
+  regenerate@1.5.0:
+    resolution: {integrity: sha512-1s+CxXjJ71i7LNVy8nYwg47XV4y6lAnOEhsMtSKq3WpmPfhl9LuKlTqKIn/3yUpE8lBz+W+TT88Bxyhnr0U4yw==}
 
   regex-recursion@6.0.2:
     resolution: {integrity: sha512-0YCaSCq2VRIebiaUviZNs0cBz1kg5kVS2UKUfNIx8YVs1cN3AV7NTctO5FOKBA+UT2BPJIWZauYHPqJODG50cg==}
@@ -7271,8 +7271,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0:
-    resolution: {integrity: sha512-O/ZLhasbmHNDEwEzSsO6mKMpcNEwwZ8abVRCREHwhWW4p43pVdUXK2rXF/E5V8X4sVQaAla6vKzKTQlc3Uuqtg==}
+  soukai-bis@0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73:
+    resolution: {integrity: sha512-B733JSbTQItaGIMh+4ULcBUtO4Q1hXT63PXXy9w2S/aBLv5vgqxJ/JZyUYQIbDno5dQqrMFiPHkH5Y3YZcbluQ==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -11441,7 +11441,7 @@ snapshots:
 
   '@noeldemartin/faker@7.6.0': {}
 
-  '@noeldemartin/scripts@0.4.0-next.6b18a58b13704572cf2eff6cdd2e9c2687d1ffd0': {}
+  '@noeldemartin/scripts@0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a': {}
 
   '@noeldemartin/solid-utils@0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)':
     dependencies:
@@ -15150,7 +15150,7 @@ snapshots:
       buffer: 6.0.3
       readable-stream: 4.7.0
 
-  n3@2.10.7:
+  n3@2.13.1:
     dependencies:
       buffer: 6.0.3
       readable-stream: 4.7.0
@@ -15494,7 +15494,7 @@ snapshots:
       '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@playwright/test': 1.63.0
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+      soukai-bis: 0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       zod: 4.6.5
     transitivePeerDependencies:
       - vitest
@@ -15927,9 +15927,9 @@ snapshots:
 
   regenerate-unicode-properties@10.3.0:
     dependencies:
-      regenerate: 1.4.2
+      regenerate: 1.5.0
 
-  regenerate@1.4.2: {}
+  regenerate@1.5.0: {}
 
   regex-recursion@6.0.2:
     dependencies:
@@ -15952,7 +15952,7 @@ snapshots:
 
   regexpu-core@6.5.2:
     dependencies:
-      regenerate: 1.4.2
+      regenerate: 1.5.0
       regenerate-unicode-properties: 10.3.0
       regjsgen: 0.8.0
       regjsparser: 0.13.3
@@ -16129,7 +16129,7 @@ snapshots:
   shaclc-write@1.6.3(encoding@0.1.13):
     dependencies:
       '@jeswr/prefixcc': 1.2.1(encoding@0.1.13)
-      n3: 2.10.7
+      n3: 2.13.1
       rdf-string-ttl: 2.0.1
     transitivePeerDependencies:
       - encoding
@@ -16252,7 +16252,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.0d4c54b0424a9ca9c544b5cc4807d689ad53d8b0(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
+  soukai-bis@0.0.0-next.10634b9f42d7247a75924cbf37a6faee1b2dde73(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
     dependencies:
       '@noeldemartin/solid-utils': 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8

@@ -58,6 +58,29 @@ export async function refreshTrackedModels(modelClass: ModelConstructor): Promis
     await modelData.refresh();
 }
 
+export async function findTrackedModel<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    url: string,
+): Promise<T | null> {
+    const modelData = _getTrackedModelsData<T>(modelClass);
+    const findInstance = () => modelData.modelsSet.values().find((model) => model.url === url);
+    const trackedModel = findInstance();
+
+    if (trackedModel) {
+        return trackedModel;
+    }
+
+    const model = await modelClass.find(url);
+
+    if (!model || modelData.loaded.value) {
+        return model;
+    }
+
+    modelData.modelsSet.add(model);
+
+    return findInstance() ?? model;
+}
+
 export async function loadTrackedModels(modelClass: ModelConstructor): Promise<void> {
     await _getTrackedModelsData(modelClass).load();
 }

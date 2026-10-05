@@ -7,7 +7,14 @@ import { isModelClass } from 'soukai-bis';
 import type { ModelConstructor } from 'soukai-bis';
 import { computed, ref, shallowRef, unref, watch } from 'vue';
 import type { ComputedRef, Ref, WatchStopHandle } from 'vue';
-import type { RouteLocationNormalizedLoaded, RouteLocationRaw, RouteParamValue, RouteParams, Router } from 'vue-router';
+import type {
+    RouteLocationNormalized,
+    RouteLocationNormalizedLoaded,
+    RouteLocationRaw,
+    RouteParamValue,
+    RouteParams,
+    Router,
+} from 'vue-router';
 
 import Service from './Router.state';
 
@@ -57,7 +64,7 @@ export class RouterService extends Service {
         this.bindings = options.bindings ?? {};
 
         router.beforeEach(once(() => this.handleStatic404Redirect()));
-        router.beforeEach((to) => this.onEnterRoute(to.path, to.params));
+        router.beforeEach((to) => this.onEnterRoute(to));
     }
 
     protected override async boot(): Promise<void> {
@@ -72,7 +79,9 @@ export class RouterService extends Service {
             : super.__get(property);
     }
 
-    protected async onEnterRoute(path: string, params: RouteParams): Promise<void> {
+    protected async onEnterRoute(route: RouteLocationNormalized): Promise<void> {
+        const { path, params } = route;
+
         if (path in this.routesParams.value) {
             return;
         }
@@ -81,7 +90,7 @@ export class RouterService extends Service {
         const stopWatchers: WatchStopHandle[] = [];
 
         for (const [paramName, paramValue] of Object.entries(params)) {
-            const resolvedValue = await this.resolveBinding(path, paramName, paramValue);
+            const resolvedValue = await this.resolveBinding(route, paramName, paramValue);
             const stopWatcher = watch(resolvedValue, (newValue) => {
                 this.routesParams.value = {
                     ...this.routesParams.value,
@@ -147,7 +156,7 @@ export class RouterService extends Service {
     }
 
     protected async resolveBinding(
-        path: string,
+        route: RouteLocationNormalized,
         name: string,
         value: RouteParamValue | RouteParamValue[],
     ): Promise<Ref<unknown>> {
@@ -159,12 +168,13 @@ export class RouterService extends Service {
 
         await App.ready;
 
-        const otherParams = computedRouteParams(path, name);
+        const otherParams = computedRouteParams(route.path, name);
+        const initialValue = isModelClass(binding) ? await resolveModelBinding(binding, value, route) : undefined;
         const computedBinding = isModelClass(binding)
-            ? computedAsync(() => resolveModelBinding(binding, value, this.currentRoute.value))
+            ? computedAsync(() => resolveModelBinding(binding, value, route))
             : computedAsync(() => Promise.resolve(binding(value, otherParams.value)));
 
-        return computedModel(() => computedBinding.value);
+        return computedModel(() => computedBinding.value ?? initialValue);
     }
 }
 

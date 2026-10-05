@@ -2,7 +2,14 @@ import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { beforeEach, describe, expect, it } from 'vite-plus/test';
 
 import { _getTrackedModelsData } from './internal';
-import { getTrackedModels, loadTrackedModels, refreshTrackedModels, resetTrackedModels, trackModels } from './services';
+import {
+    findTrackedModel,
+    getTrackedModels,
+    loadTrackedModels,
+    refreshTrackedModels,
+    resetTrackedModels,
+    trackModels,
+} from './services';
 
 describe('Services helpers', () => {
     beforeEach(resetTrackedModels);
@@ -44,5 +51,21 @@ describe('Services helpers', () => {
         // Assert
         expect(_getTrackedModelsData(User).loaded.value).toBe(false);
         expect(getTrackedModels(User)).toHaveLength(0);
+    });
+
+    it('Finds models without adding them to loaded collections', async () => {
+        // Arrange
+        await User.create({ name: 'Alice', age: 23 });
+
+        const bob = await new User({ name: 'Bob', age: 30 }).save('solid://others/');
+
+        await loadTrackedModels(User);
+
+        // Act
+        const model = await findTrackedModel(User, bob.requireUrl());
+
+        // Assert
+        expect(model?.name).toEqual('Bob');
+        expect(getTrackedModels(User).map((user) => user.name)).toEqual(['Alice']);
     });
 });
