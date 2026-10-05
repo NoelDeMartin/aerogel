@@ -1,19 +1,21 @@
-import { Events, reactiveSet } from '@aerogel/core';
+import { Errors, Events, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
 import type { Model, ModelConstructor } from 'soukai-bis';
-import { computed, toRaw } from 'vue';
-import type { ComputedRef } from 'vue';
+import { computed, ref, toRaw } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 
 interface TrackedModelData<T extends object = Model> {
-    fetch: boolean;
     depth?: number;
     modelsSet: ReactiveSet<T>;
     modelsArray: ComputedRef<T[]>;
+    loading: Ref<boolean>;
+    loaded: Ref<boolean>;
+    load(): Promise<void>;
     refresh(): Promise<void>;
 }
 
 type TrackedModelOptions = {
-    fetch?: boolean;
+    load?: boolean;
     depth?: number;
 };
 
@@ -23,30 +25,51 @@ function initializedTrackedModelsData<T extends Model>(
     modelClass: ModelConstructor<T>,
     options: TrackedModelOptions = {},
 ): TrackedModelData<T> {
+    let pendingRefresh: Promise<void> | null = null;
     const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.url === b.url });
     const modelsArray = computed(() => modelsSet.values());
-    const data = {
-        fetch: options.fetch ?? true,
+    const loading = ref(false);
+    const loaded = ref(false);
+    const data: TrackedModelData<T> = {
         depth: options.depth,
         modelsSet,
         modelsArray,
-        async refresh() {
-            if (!data.fetch) {
+        loading,
+        loaded,
+        async load() {
+            if (loaded.value) {
                 return;
             }
 
-            const models = await modelClass.all({ depth: data.depth });
+            await (pendingRefresh ?? data.refresh());
+        },
+        refresh() {
+            const refresh = performRefresh().finally(() => pendingRefresh === refresh && (pendingRefresh = null));
 
-            modelsSet.reset(models);
+            return (pendingRefresh = refresh);
         },
     };
+
+    async function performRefresh(): Promise<void> {
+        loading.value = true;
+
+        try {
+            modelsSet.reset(await modelClass.all({ depth: data.depth }));
+            loaded.value = true;
+        } finally {
+            loading.value = false;
+        }
+    }
 
     trackedModels.set(modelClass, data);
     modelClass.on('created', (model) => modelsSet.add(toRaw(model)));
     modelClass.on('deleted', (model) => modelsSet.delete(toRaw(model)));
     modelClass.on('updated', (model) => modelsSet.add(toRaw(model)));
-    Events.on('purge-storage', () => modelsSet.clear());
-    Events.on('cloud:backup-completed', () => data.refresh());
+    Events.on('cloud:backup-completed', () => (loaded.value || loading.value) && data.refresh());
+    Events.on('purge-storage', () => {
+        loaded.value = false;
+        modelsSet.clear();
+    });
 
     void Events.emit('solid:track-models', modelClass);
 
@@ -80,8 +103,8 @@ export function _getTrackedModelsData<T extends Model>(
         throw new Error('Model collection is already being tracked with a different depth');
     }
 
-    if (options.fetch !== undefined && data.fetch !== options.fetch) {
-        throw new Error('Model collection is already being tracked with a different fetching behavior');
+    if (options.load) {
+        data.load().catch((error) => Errors.report(error));
     }
 
     return data;

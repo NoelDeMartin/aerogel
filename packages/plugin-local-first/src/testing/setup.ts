@@ -1,5 +1,9 @@
-import { Events } from '@aerogel/core';
-import User from '@aerogel/plugin-solid/testing/stubs/models/User';
+import 'soukai-bis/patch-zod';
+import { Events, resetPiniaStore } from '@aerogel/core';
+import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
+import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
+import { resetTrackedModels } from '@aerogel/plugin-solid';
+import { FakeLocalStorage } from '@noeldemartin/testing';
 import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
 
@@ -15,8 +19,11 @@ vi.mock('@aerogel/core', async () => {
 
 beforeEach(() => {
     Events.reset();
+    FakeLocalStorage.reset();
+    resetPiniaStore();
     resetModelListeners();
+    resetTrackedModels();
     bootCoreModels({ reset: true });
-    bootModels({ User }, { reset: true });
+    bootModels({ Post, PostsCollection }, { reset: true });
     setEngine(new InMemoryEngine());
 });

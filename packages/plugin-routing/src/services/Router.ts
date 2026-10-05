@@ -161,7 +161,7 @@ export class RouterService extends Service {
 
         const otherParams = computedRouteParams(path, name);
         const computedBinding = isModelClass(binding)
-            ? computedAsync(() => Promise.resolve(resolveModelBinding(binding, value, this.currentRoute.value)))
+            ? computedAsync(() => resolveModelBinding(binding, value, this.currentRoute.value))
             : computedAsync(() => Promise.resolve(binding(value, otherParams.value)));
 
         return computedModel(() => computedBinding.value);

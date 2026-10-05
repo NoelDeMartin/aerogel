@@ -296,7 +296,7 @@ export function useModelCollection<T extends Model>(
     options: { includeSoftDeleted?: boolean; depth?: number } = {},
 ): Ref<T[]> {
     const models = shallowRef([]) as Ref<T[]>;
-    const modelData = _getTrackedModelsData<T>(modelClass, { depth: options?.depth });
+    const modelData = _getTrackedModelsData<T>(modelClass, { load: true, depth: options?.depth });
 
     watchEffect(() => (models.value = modelData.modelsArray.value));
     onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));

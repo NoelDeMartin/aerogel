@@ -1,17 +1,13 @@
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { arrayGroupBy } from '@noeldemartin/utils';
-import { InMemoryEngine, bootCoreModels, bootModels, setEngine } from 'soukai-bis';
-import { beforeEach, describe, expect, it } from 'vite-plus/test';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
-import { computedModel, computedModels } from './composition';
+import { computedModel, computedModels, useModelCollection } from './composition';
+import { resetTrackedModels } from './services';
 
 describe('Composition helpers', () => {
-    beforeEach(() => {
-        bootModels({ User }, { reset: true });
-        bootCoreModels({ reset: true });
-        setEngine(new InMemoryEngine());
-    });
+    beforeEach(() => resetTrackedModels());
 
     it('Computes model collections', async () => {
         // Arrange
@@ -83,5 +79,22 @@ describe('Composition helpers', () => {
 
         // FIXME This should be 1
         expect(aliceUpdated).toEqual(2);
+    });
+
+    it('Loads model collections on demand', async () => {
+        // Arrange
+        await User.create({ name: 'Alice', age: 23 });
+
+        // Act
+        const users = useModelCollection(User);
+
+        // Assert
+        await vi.waitFor(() => expect(users.value).toHaveLength(1));
+
+        expect(users.value[0]?.name).toBe('Alice');
+
+        await User.create({ name: 'Bob', age: 30 });
+
+        expect(users.value).toHaveLength(2);
     });
 });

@@ -1,7 +1,7 @@
 import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
-import { getContainedModels, getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
+import { getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
-import { Solid, getTrackedModels, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
+import { Solid, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import {
     Semaphore,
@@ -16,16 +16,7 @@ import {
     parseBoolean,
     urlRoute,
 } from '@noeldemartin/utils';
-import {
-    Container,
-    MigrateLocalUrls,
-    Model,
-    Sync,
-    dispatch,
-    getBootedModels,
-    isCoreModel,
-    requireEngine,
-} from 'soukai-bis';
+import { MigrateLocalUrls, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
 import type { Engine, IndexedDBEngine, JobListener, ModelConstructor } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
@@ -49,6 +40,7 @@ export class CloudService extends Service {
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
     protected pollingInterval: ReturnType<typeof setInterval> | null = null;
+    protected dirtyModelClasses: Map<string, ModelConstructor> = new Map();
 
     public async whenReady<T>(callback: () => T): Promise<T> {
         if (this.ready) {
@@ -168,8 +160,10 @@ export class CloudService extends Service {
                         return;
                     }
 
+                    const dirtyLocalModels = await this.getDirtyLocalModels();
+
                     syncs++;
-                    models = this.getDirtyLocalModels().filter(
+                    models = dirtyLocalModels.filter(
                         (model) => !this.syncJob?.documentsWithErrors.has(model.requireDocumentUrl()),
                     );
                 } while (syncDirty && models.length > 0 && syncs < 3);
@@ -212,16 +206,17 @@ export class CloudService extends Service {
             this.setupRemoteCollection(modelClass, path);
 
             this.registeredModels.push({ modelClass, path });
+
+            await trackModels(modelClass, {
+                bypassServicesCheck: true,
+                lazy: true,
+                depth: typeof options.register === 'object' ? options.register.depth : undefined,
+            });
         }
 
-        await trackModels(modelClass, {
-            bypassServicesCheck: true,
-            fetch: !!options.register,
-            depth: typeof options.register === 'object' ? options.register.depth : undefined,
-            created: (model) => this.ready && this.onModelCreated(model),
-            updated: (model) => this.ready && this.onModelUpdated(model),
-            deleted: (model) => this.ready && this.onModelUpdated(model, { reset: true }),
-        });
+        modelClass.on('created', (model) => this.ready && this.onModelCreated(model));
+        modelClass.on('updated', (model) => this.ready && this.onModelUpdated(model));
+        modelClass.on('deleted', (model) => this.ready && this.onModelUpdated(model, { reset: true }));
     }
 
     public requireRemoteContainerUrl(modelClass: ModelConstructor): string {
@@ -264,35 +259,16 @@ export class CloudService extends Service {
         await this.trackModels();
     }
 
-    protected getDirtyLocalModels(): Model[] {
-        const urls = Object.keys(this.localModelUpdates);
-        const dirtyLocalModels = [];
+    protected async getDirtyLocalModels(): Promise<Model[]> {
+        const dirtyLocalModels: Model[] = [];
 
-        for (const { modelClass } of this.registeredModels) {
-            for (const model of getTrackedModels(modelClass, { includeSoftDeleted: true })) {
-                dirtyLocalModels.push(...this.getModelsIn(urls, model));
-            }
+        for (const url of Object.keys(this.localModelUpdates)) {
+            const model = await this.dirtyModelClasses.get(url)?.find(url);
+
+            model && dirtyLocalModels.push(model);
         }
 
         return dirtyLocalModels;
-    }
-
-    protected getModelsIn(urls: string[], model: Model): Model[] {
-        const models = [];
-
-        if (model.url && urls.includes(model.url)) {
-            models.push(model);
-        }
-
-        if (model instanceof Container) {
-            models.push(
-                ...getContainedModels(model)
-                    .map((containedModel) => this.getModelsIn(urls, containedModel))
-                    .flat(),
-            );
-        }
-
-        return models;
     }
 
     protected async setReady(ready: boolean): Promise<void> {
@@ -364,6 +340,8 @@ export class CloudService extends Service {
             syncError: null,
             syncJob: null,
         });
+
+        this.dirtyModelClasses.clear();
     }
 
     private watchNetworkStatus(): void {
@@ -447,6 +425,8 @@ export class CloudService extends Service {
                 syncedDocumentUrlsArray.some((modelUrl) => modelUrl.endsWith('/') && url.startsWith(modelUrl));
 
             if (wasSynced && !options.documentsWithErrors?.has(documentUrl)) {
+                this.dirtyModelClasses.delete(url);
+
                 continue;
             }
 
@@ -461,6 +441,7 @@ export class CloudService extends Service {
             return;
         }
 
+        this.dirtyModelClasses.set(model.url, model.static());
         this.localModelUpdates = {
             ...this.localModelUpdates,
             [model.url]: 1,
@@ -478,6 +459,7 @@ export class CloudService extends Service {
 
         const modelUpdates = this.localModelUpdates[model.url] ?? 0;
 
+        this.dirtyModelClasses.set(model.url, model.static());
         this.localModelUpdates = {
             ...this.localModelUpdates,
             [model.url]: options.reset ? 1 : modelUpdates + 1,

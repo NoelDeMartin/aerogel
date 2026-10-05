@@ -13,7 +13,7 @@ export type TrackOptions<TModel extends Model = Model, TKey extends string = str
     property?: TKey;
     transform?: (models: TModel[]) => TModel[];
     depth?: number;
-    fetch?: boolean;
+    lazy?: boolean;
     bypassServicesCheck?: boolean;
 } & {
     [K in keyof ModelEvents]?: ModelListener<TModel, K>;
@@ -49,7 +49,17 @@ export async function refreshTrackedModels(modelClass: ModelConstructor): Promis
         return;
     }
 
-    await _getTrackedModelsData(modelClass).refresh();
+    const modelData = _getTrackedModelsData(modelClass);
+
+    if (!modelData.loaded.value && !modelData.loading.value) {
+        return;
+    }
+
+    await modelData.refresh();
+}
+
+export async function loadTrackedModels(modelClass: ModelConstructor): Promise<void> {
+    await _getTrackedModelsData(modelClass).load();
 }
 
 export async function trackModels<TModel extends Model, TKey extends string>(
@@ -60,10 +70,9 @@ export async function trackModels<TModel extends Model, TKey extends string>(
         await App.service('$cloud')?.booted;
     }
 
-    const { service, property: stateKey, transform: optionsTransform, fetch, depth, ...eventListeners } = options ?? {};
+    const { service, property: stateKey, transform: optionsTransform, depth, lazy, ...eventListeners } = options ?? {};
     const transform = optionsTransform ?? ((models) => models);
-    const wasTracked = isTrackingModel(modelClass);
-    const modelData = _getTrackedModelsData<TModel>(modelClass, { fetch, depth });
+    const modelData = _getTrackedModelsData<TModel>(modelClass, { depth });
 
     for (const [event, listener] of Object.entries(eventListeners)) {
         modelClass.on(event as keyof ModelEvents, listener as ModelListener<TModel, keyof ModelEvents>);
@@ -73,5 +82,5 @@ export async function trackModels<TModel extends Model, TKey extends string>(
         watchEffect(() => service.setState(stateKey, transform(modelData.modelsArray.value)));
     }
 
-    wasTracked || (await modelData.refresh());
+    lazy || (await modelData.load());
 }
