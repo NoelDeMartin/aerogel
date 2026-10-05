@@ -32,7 +32,7 @@
         "vue": "catalog:",
         "vue-i18n": "^11.1.2",
         "vue-router": "^4.5.0",
-        "vue-tsc": "^3.3.11"
+        "vue-tsc": "3.3.11"
     },
     "packageManager": "pnpm@12.8.1"
 }
