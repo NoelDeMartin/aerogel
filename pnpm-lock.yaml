@@ -545,9 +545,6 @@ importers:
 
   packages/plugin-routing:
     dependencies:
-      '@aerogel/vite':
-        specifier: '*'
-        version: 0.1.2(@babel/parser@7.29.9)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
@@ -564,6 +561,9 @@ importers:
       '@aerogel/plugin-solid':
         specifier: workspace:*
         version: link:../plugin-solid
+      '@aerogel/vite':
+        specifier: workspace:*
+        version: link:../vite
       '@arethetypeswrong/cli':
         specifier: 'catalog:'
         version: 0.18.5
@@ -798,9 +798,6 @@ packages:
 
   '@adobe/css-tools@4.5.0':
     resolution: {integrity: sha512-6OzddxPio9UiWTCemp4N8cYLV2ZN1ncRnV1cVGtve7dhPOtRkleRyx32GQCYSwDYgaHU3USMm84tNsvKzRCa1Q==}
-
-  '@aerogel/vite@0.1.2':
-    resolution: {integrity: sha512-/XbQBvqxEK+R2eNVfVZw5UdnvPaxXTdgNeTFYO8BqfwJzL0JRUvK46Z/1/rCdsNK0rsfhK24jD+eVSANKT2L4g==}
 
   '@algolia/abtesting@1.25.0':
     resolution: {integrity: sha512-rSTin9Uta23uaewYVQEp8XI9T3iA/zrg0/1G2vhf8oFFDxFL5vybnZ5IQwsVAg4JpKxPX4/WYNKdcfWrZymk7w==}
@@ -7842,18 +7839,6 @@ packages:
       vite:
         optional: true
 
-  vite-plugin-pwa@0.21.2:
-    resolution: {integrity: sha512-vFhH6Waw8itNu37hWUJxL50q+CBbNcMVzsKaYHQVrfxTt3ihk3PeLO22SbiP1UNWzcEPaTQv+YVxe4G0KOjAkg==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      '@vite-pwa/assets-generator': ^0.2.6
-      vite: ^3.1.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
-      workbox-build: ^7.3.0
-      workbox-window: ^7.3.0
-    peerDependenciesMeta:
-      '@vite-pwa/assets-generator':
-        optional: true
-
   vite-plugin-pwa@1.3.0:
     resolution: {integrity: sha512-c5kMgN+ITrOtHXp8PAtk2uOIEea6XjP/unCGxOWWBzQ6qa65qj/awHg0wf+QF9E/2u9vh86LqxPwzEPNbM2r5A==}
     engines: {node: '>=16.0.0'}
@@ -8255,25 +8240,6 @@ packages:
 snapshots:
 
   '@adobe/css-tools@4.5.0': {}
-
-  '@aerogel/vite@0.1.2(@babel/parser@7.29.9)(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)':
-    dependencies:
-      '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
-      '@tailwindcss/vite': 4.3.3(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))
-      '@vitejs/plugin-vue': 5.2.4(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))
-      image-size: 2.0.4
-      mustache: 4.2.0
-      unplugin-vue-components: 28.8.0(@babel/parser@7.29.9)(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
-      vite-plugin-pwa: 0.21.2(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1)
-    transitivePeerDependencies:
-      - '@babel/parser'
-      - '@nuxt/kit'
-      - '@vite-pwa/assets-generator'
-      - supports-color
-      - vite
-      - vue
-      - workbox-build
-      - workbox-window
 
   '@algolia/abtesting@1.25.0':
     dependencies:
@@ -12624,11 +12590,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@5.2.4(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(vue@3.5.43(typescript@5.9.3))':
-    dependencies:
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
-      vue: 3.5.43(typescript@5.9.3)
-
   '@vitejs/plugin-vue@5.2.4(vite@5.4.21(@types/node@26.6.4)(lightningcss@1.33.0)(terser@5.51.2))(vue@3.5.43(typescript@5.9.3))':
     dependencies:
       vite: 5.4.21(@types/node@26.6.4)(lightningcss@1.33.0)(terser@5.51.2)
@@ -16865,17 +16826,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
       - rollup
-      - supports-color
-
-  vite-plugin-pwa@0.21.2(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1):
-    dependencies:
-      debug: 4.4.3(supports-color@8.1.1)
-      pretty-bytes: 6.1.1
-      tinyglobby: 0.2.17
-      vite: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
-      workbox-build: 7.4.1(supports-color@8.1.1)
-      workbox-window: 7.4.1
-    transitivePeerDependencies:
       - supports-color
 
   vite-plugin-pwa@1.3.0(@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1))(supports-color@8.1.1)(workbox-build@7.4.1(supports-color@8.1.1))(workbox-window@7.4.1):

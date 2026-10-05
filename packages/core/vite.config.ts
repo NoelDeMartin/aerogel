@@ -10,7 +10,7 @@ export default defineConfig({
         sourcemap: true,
         lib: {
             entry: {
-                'index': fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+                index: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
                 'setup-vitest': fileURLToPath(new URL('./src/setup-vitest.ts', import.meta.url)),
             },
             formats: ['es'],
