@@ -14,6 +14,7 @@ vi.mock('@aerogel/core', async () => {
 });
 
 beforeEach(() => {
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => setTimeout(callback));
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });

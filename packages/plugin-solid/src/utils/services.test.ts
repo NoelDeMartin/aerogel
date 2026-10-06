@@ -5,6 +5,7 @@ import { _getTrackedModelsData } from './internal';
 import {
     findTrackedModel,
     getTrackedModels,
+    loadRelations,
     loadTrackedModels,
     refreshTrackedModels,
     resetModelsState,
@@ -67,5 +68,38 @@ describe('Services helpers', () => {
         // Assert
         expect(model?.name).toEqual('Bob');
         expect(getTrackedModels(User).map((user) => user.name)).toEqual(['Alice']);
+    });
+
+    it('Loads relations for many models', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const bob = await User.create({ name: 'Bob', age: 30 });
+        const users = await Promise.all([User.findOrFail(alice.url), User.findOrFail(bob.url)]);
+        const loadedRelations: unknown[] = [];
+
+        users.forEach((user) => user.relatedMetadata?.unload());
+        User.on('relation-loaded', (_, relation) => loadedRelations.push(relation));
+
+        // Act
+        await loadRelations(User, users, ['metadata']);
+
+        // Assert
+        expect(users.every((user) => user.isRelationLoaded('metadata'))).toBe(true);
+        expect(users.map((user) => user.createdAt)).toEqual([alice.createdAt, bob.createdAt]);
+        expect(loadedRelations).toHaveLength(2);
+    });
+
+    it('Skips loading relations that are already loaded', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const loadedRelations: unknown[] = [];
+
+        User.on('relation-loaded', (_, relation) => loadedRelations.push(relation));
+
+        // Act
+        await loadRelations(User, [alice], ['metadata']);
+
+        // Assert
+        expect(loadedRelations).toHaveLength(0);
     });
 });
