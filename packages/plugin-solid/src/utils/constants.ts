@@ -1,1 +1,0 @@
-export const RELATIONS_LOAD_BATCH_SIZE = 50;

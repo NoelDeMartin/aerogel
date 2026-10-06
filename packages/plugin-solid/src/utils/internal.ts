@@ -1,8 +1,7 @@
 import { Errors, Events, appNamespace, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
-import { RELATIONS_LOAD_BATCH_SIZE } from '@aerogel/plugin-solid/utils/constants';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
-import { afterAnimationFrame, arrayChunk, isDevelopment, isInstanceOf } from '@noeldemartin/utils';
+import { isDevelopment, isInstanceOf } from '@noeldemartin/utils';
 import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
 import type { Model, ModelConstructor } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
@@ -28,28 +27,10 @@ let modelsWorker: ModelsWorker | null = null;
 
 const WORKER_THRESHOLD = 100;
 
-function canUseModelsWorker(engine: unknown): engine is IndexedDBEngine {
-    return typeof Worker !== 'undefined' && isInstanceOf(engine, IndexedDBEngine);
-}
-
-function getModelsWorker(): ModelsWorker {
-    return (modelsWorker ??= new ModelsWorker(appNamespace()));
-}
-
-async function reportWorkerFailure(worker: ModelsWorker, message: string, error: unknown): Promise<void> {
-    if (worker.terminated) {
-        throw error;
-    }
-
-    if (isDevelopment()) {
-        await Errors.report(new Error(message, { cause: error }));
-    }
-}
-
 async function shouldLoadModelsInWorker(modelClass: ModelConstructor, options: { depth?: number }): Promise<boolean> {
     const engine = getEngine();
 
-    if (!canUseModelsWorker(engine)) {
+    if (typeof Worker === 'undefined' || !isInstanceOf(engine, IndexedDBEngine)) {
         return false;
     }
 
@@ -77,7 +58,7 @@ async function fetchModels<T extends Model>(
         return modelClass.all({ depth: options.depth });
     }
 
-    const worker = getModelsWorker();
+    const worker = (modelsWorker ??= new ModelsWorker(appNamespace()));
 
     try {
         const loadedModels: T[] = [];
@@ -89,50 +70,19 @@ async function fetchModels<T extends Model>(
 
         return loadedModels;
     } catch (error) {
-        await reportWorkerFailure(
-            worker,
-            `Failed loading ${modelClass.modelName} models, retrying without the models worker`,
-            error,
-        );
+        if (worker.terminated) {
+            throw error;
+        }
+
+        if (isDevelopment()) {
+            await Errors.report(
+                new Error(`Failed loading ${modelClass.modelName} models, retrying without the models worker`, {
+                    cause: error,
+                }),
+            );
+        }
 
         return modelClass.all({ depth: options.depth });
-    }
-}
-
-async function loadRelationsInWorker<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    models: T[],
-    relations: string[],
-): Promise<void> {
-    const worker = getModelsWorker();
-    const modelsByUrl = new Map(models.map((model) => [model.requireUrl(), model]));
-
-    try {
-        for await (const serializedModels of worker.loadRelations(modelClass, [...modelsByUrl.keys()], relations)) {
-            for (const [url, serializedModel] of Object.entries(serializedModels)) {
-                await modelsByUrl.get(url)?.hydrateRelations(serializedModel);
-            }
-        }
-    } catch (error) {
-        await reportWorkerFailure(
-            worker,
-            `Failed loading ${modelClass.modelName} relations, retrying without the models worker`,
-            error,
-        );
-    }
-}
-
-async function loadRelationsInMainThread(models: Model[], relations: string[]): Promise<void> {
-    for (const batch of arrayChunk(models, RELATIONS_LOAD_BATCH_SIZE)) {
-        await Promise.all(
-            batch.map(async (model) => {
-                for (const relation of relations) {
-                    await model.loadRelationIfUnloaded(relation);
-                }
-            }),
-        );
-
-        await afterAnimationFrame();
     }
 }
 
@@ -200,27 +150,6 @@ function initializedTrackedModelsData<T extends Model>(
     void Events.emit('solid:track-models', modelClass);
 
     return data;
-}
-
-export async function _loadRelations<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    models: T[],
-    relations: string[],
-): Promise<void> {
-    const unloadedModels = models.filter((model) => relations.some((relation) => !model.isRelationLoaded(relation)));
-    const workerModels = unloadedModels.filter((model) => model.url && model.exists() && !model.isDirty());
-
-    if (canUseModelsWorker(getEngine()) && workerModels.length >= WORKER_THRESHOLD) {
-        await loadRelationsInWorker(modelClass, workerModels, relations);
-    }
-
-    const remainingModels = unloadedModels.filter((model) =>
-        relations.some((relation) => !model.isRelationLoaded(relation)),
-    );
-
-    if (remainingModels.length > 0) {
-        await loadRelationsInMainThread(remainingModels, relations);
-    }
 }
 
 export function isSoftDeleted(model: Model): boolean {

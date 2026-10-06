@@ -2,7 +2,7 @@ import { App, type Service } from '@aerogel/core';
 import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
-import { _getTrackedModels, _getTrackedModelsData, _loadRelations, _resetModelsState, isSoftDeleted } from './internal';
+import { _getTrackedModels, _getTrackedModelsData, _resetModelsState, isSoftDeleted } from './internal';
 
 export interface TrackCollectionsOptions {
     refresh?: boolean;
@@ -79,14 +79,6 @@ export async function findTrackedModel<T extends Model>(
     modelData.modelsSet.add(model);
 
     return findInstance() ?? model;
-}
-
-export async function loadRelations<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    models: T[],
-    relations: string[],
-): Promise<void> {
-    await _loadRelations(modelClass, models, relations);
 }
 
 export async function loadTrackedModels(modelClass: ModelConstructor): Promise<void> {

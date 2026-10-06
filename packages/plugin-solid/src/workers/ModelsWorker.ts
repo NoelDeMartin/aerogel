@@ -1,6 +1,6 @@
 import type { ModelsWorkerMethods } from '@aerogel/plugin-solid/models-worker';
 import { PromisedValue, toError } from '@noeldemartin/utils';
-import type { Model, ModelConstructor, SerializedModel } from 'soukai-bis';
+import type { Model, ModelConstructor } from 'soukai-bis';
 
 type MethodName = keyof ModelsWorkerMethods;
 type MethodArgs<T extends MethodName> = Parameters<ModelsWorkerMethods[T]>;
@@ -50,14 +50,6 @@ export default class ModelsWorker {
         )) {
             yield await Promise.all(serializedModels.map((serializedModel) => modelClass.hydrate(serializedModel)));
         }
-    }
-
-    public async *loadRelations<T extends Model>(
-        modelClass: ModelConstructor<T>,
-        urls: string[],
-        relations: string[],
-    ): AsyncGenerator<Record<string, SerializedModel>> {
-        yield* this.stream('loadRelations', modelClass.modelName, urls, relations);
     }
 
     public terminate(): void {
