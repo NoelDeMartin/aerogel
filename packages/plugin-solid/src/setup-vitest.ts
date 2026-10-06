@@ -1,6 +1,9 @@
 import 'soukai-bis/patch-zod';
 import { bootModels } from '@aerogel/plugin-solid/utils/soukai';
-import appModels from 'virtual:aerogel-models';
 import { beforeAll } from 'vite-plus/test';
 
-beforeAll(() => bootModels(appModels));
+beforeAll(async () => {
+    const { default: appModels } = await import('virtual:aerogel-models');
+
+    bootModels(appModels);
+});
