@@ -14,13 +14,13 @@ const methods = {
         engine = setupSoukai({ namespace, models });
     },
 
-    async *loadModels(modelName: string, depth?: number): AsyncGenerator<SerializedModel[]> {
+    async *loadModels(modelName: string, containerUrl: string, depth?: number): AsyncGenerator<SerializedModel[]> {
         if (!engine) {
             throw new Error('Models worker has not been booted');
         }
 
         const modelClass = requireBootedModel(modelName);
-        const documentsBatches = engine.readDocumentsInBatches(modelClass.defaultContainerUrl, { depth });
+        const documentsBatches = engine.readDocumentsInBatches(containerUrl, { depth });
 
         try {
             for await (const documents of documentsBatches) {

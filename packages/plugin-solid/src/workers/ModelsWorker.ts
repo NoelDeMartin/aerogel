@@ -42,7 +42,12 @@ export default class ModelsWorker {
         modelClass: ModelConstructor<T>,
         options: { depth?: number } = {},
     ): AsyncGenerator<T[]> {
-        for await (const serializedModels of this.stream('loadModels', modelClass.modelName, options.depth)) {
+        for await (const serializedModels of this.stream(
+            'loadModels',
+            modelClass.modelName,
+            modelClass.defaultContainerUrl,
+            options.depth,
+        )) {
             yield await Promise.all(serializedModels.map((serializedModel) => modelClass.hydrate(serializedModel)));
         }
     }
