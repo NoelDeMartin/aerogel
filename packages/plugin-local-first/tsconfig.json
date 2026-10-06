@@ -2,7 +2,7 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "lib": ["ESNext", "DOM"],
-        "types": ["@aerogel/core", "@aerogel/vite/virtual", "unplugin-icons/types/vue3", "node"],
+        "types": ["@aerogel/core", "@aerogel/vite/virtual", "node"],
         "paths": {
             "@aerogel/plugin-local-first/*": ["./src/*"]
         }

@@ -38,7 +38,6 @@
         "@aerogel/cli": "workspace:*",
         "@aerogel/playwright": "workspace:*",
         "@aerogel/vite": "workspace:*",
-        "@intlify/unplugin-vue-i18n": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "@playwright/test": "^1.60.0",
         "@solid/community-server": "^7.1.3",
@@ -46,8 +45,6 @@
         "autoprefixer": "^10.4.14",
         "concurrently": "^8.0.1",
         "publint": "catalog:",
-        "start-server-and-test": "^2.0.0",
-        "unplugin-icons": "catalog:",
-        "unplugin-vue-components": "catalog:"
+        "start-server-and-test": "^2.0.0"
     }
 }

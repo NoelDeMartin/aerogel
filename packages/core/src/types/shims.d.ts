@@ -1,7 +1,8 @@
 declare module '*.vue' {
-    import type { ComponentOptions } from 'vue';
+    import type { DefineComponent } from 'vue';
 
-    const component: ComponentOptions;
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const component: DefineComponent<Record<string, unknown>, {}, any>;
 
     export default component;
 }

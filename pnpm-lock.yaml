@@ -271,7 +271,7 @@ importers:
         version: 0.9.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -380,7 +380,7 @@ importers:
         version: 2.11.0(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.7.0
@@ -412,9 +412,6 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.25
-      unplugin-icons:
-        specifier: 'catalog:'
-        version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
       zod:
         specifier: ^4.3.4
         version: 4.6.5
@@ -442,7 +439,7 @@ importers:
         version: 0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -493,9 +490,6 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.25
-      unplugin-icons:
-        specifier: 'catalog:'
-        version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
 
   packages/plugin-local-first:
     dependencies:
@@ -510,7 +504,7 @@ importers:
         version: 8.0.3
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -536,9 +530,6 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.25
-      unplugin-icons:
-        specifier: 'catalog:'
-        version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
       zod:
         specifier: ^4.3.4
         version: 4.6.5
@@ -550,7 +541,7 @@ importers:
         version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.43(typescript@5.9.3))
@@ -573,9 +564,6 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.25
-      unplugin-icons:
-        specifier: 'catalog:'
-        version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@^1.0.0
         version: '@voidzero-dev/vite-plus-core@1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)'
@@ -599,7 +587,7 @@ importers:
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vite-plus:
         specifier: 'catalog:'
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
@@ -622,9 +610,6 @@ importers:
       publint:
         specifier: 'catalog:'
         version: 0.3.25
-      unplugin-icons:
-        specifier: 'catalog:'
-        version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
       zod:
         specifier: ^4.3.4
         version: 4.6.5
@@ -633,7 +618,7 @@ importers:
     dependencies:
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue:
         specifier: ^3.5.0
         version: 3.5.43(typescript@5.9.3)
@@ -665,6 +650,9 @@ importers:
 
   packages/vite:
     dependencies:
+      '@intlify/unplugin-vue-i18n':
+        specifier: 'catalog:'
+        version: 6.0.8(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(rollup@4.64.0)(supports-color@8.1.1)(typescript@5.9.3)(vue-i18n@11.4.13(vue@3.5.43(typescript@5.9.3)))(vue@3.5.43(typescript@5.9.3))
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
@@ -686,6 +674,9 @@ importers:
       sharp:
         specifier: ^0.35.4
         version: 0.35.5(@types/node@26.6.4)
+      unplugin-icons:
+        specifier: 'catalog:'
+        version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
       unplugin-vue-components:
         specifier: 'catalog:'
         version: 28.8.0(@babel/parser@7.29.9)(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
@@ -743,7 +734,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwindcss:
         specifier: ^4.1.4
         version: 4.3.3
@@ -760,9 +751,6 @@ importers:
       '@aerogel/vite':
         specifier: workspace:*
         version: link:../packages/vite
-      '@intlify/unplugin-vue-i18n':
-        specifier: 'catalog:'
-        version: 6.0.8(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(rollup@4.64.0)(supports-color@8.1.1)(typescript@5.9.3)(vue-i18n@11.4.13(vue@3.5.43(typescript@5.9.3)))(vue@3.5.43(typescript@5.9.3))
       '@noeldemartin/scripts':
         specifier: 'catalog:'
         version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
@@ -787,12 +775,6 @@ importers:
       start-server-and-test:
         specifier: ^2.0.0
         version: 2.1.5(supports-color@8.1.1)
-      unplugin-icons:
-        specifier: 'catalog:'
-        version: 22.5.0(@vue/compiler-sfc@3.5.43)(supports-color@8.1.1)
-      unplugin-vue-components:
-        specifier: 'catalog:'
-        version: 28.8.0(@babel/parser@7.29.9)(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
 
 packages:
 
@@ -7273,8 +7255,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98:
-    resolution: {integrity: sha512-fkyitjklNXWrFMAxFJCLmY0+0+C02UuAF7y+zuoKqHAk82C8S0k4OjtjXUEgOKJFd0DMD/RNpv6b0maaoCTUrg==}
+  soukai-bis@0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934:
+    resolution: {integrity: sha512-PJe+IKK/kLYdBefDF7R8t5oVhRr31cygqE1aD8F6XfuAZyyM3l1wgCmmLIHyzaeTnRD8wBdEOxw89unDt0xcHg==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -15493,7 +15475,7 @@ snapshots:
       '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8
       '@playwright/test': 1.63.0
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+      soukai-bis: 0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       zod: 4.6.5
     transitivePeerDependencies:
       - vitest
@@ -16248,7 +16230,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.2d91e3f9bfc6f7ae9c1ab78e31343db5a5d00f98(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
+  soukai-bis@0.0.0-next.cbad1e84a303d16287fd57696f6b6de7b5fe1934(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
     dependencies:
       '@noeldemartin/solid-utils': 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.e9f179da31277bb42da38e0c3697aad3faf33aa8

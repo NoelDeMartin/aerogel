@@ -1,21 +1,32 @@
 import { resolve } from 'node:path';
 
 import { generate404Assets } from '@aerogel/vite/lib/404';
+import { buildComponentsPlugin } from '@aerogel/vite/lib/components';
 import {
+    configureAliases,
+    configureBuild,
     configureCodeSplitting,
     configureDependencies,
     configureDevelopmentHost,
     configureEnvironment,
+    configurePublicDir,
     configureTests,
     configureWorkers,
 } from '@aerogel/vite/lib/config';
 import { getSourceHash } from '@aerogel/vite/lib/git';
 import { renderHTML } from '@aerogel/vite/lib/html';
-import { generateMessagesVirtualModule } from '@aerogel/vite/lib/i18n';
-import { generateIconAssets, getManifestIcons, iconsMiddleware, resolveIconSource } from '@aerogel/vite/lib/icons';
+import { buildI18nPlugin, generateMessagesVirtualModule } from '@aerogel/vite/lib/i18n';
+import {
+    buildIconsPlugin,
+    generateIconAssets,
+    getManifestIcons,
+    iconsMiddleware,
+    resolveIconSource,
+} from '@aerogel/vite/lib/icons';
 import { loadLocales } from '@aerogel/vite/lib/lang';
 import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 import { loadPackageInfo } from '@aerogel/vite/lib/package-parser';
+import { buildPWAPlugin } from '@aerogel/vite/lib/pwa';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
 import {
@@ -31,7 +42,6 @@ import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
 import type { VirtualAerogel } from 'virtual:aerogel';
 import type { Plugin } from 'vite';
-import { VitePWA } from 'vite-plugin-pwa';
 import type { ManifestOptions } from 'vite-plugin-pwa';
 
 export type { Options, AppInfo, ClientIDDocument };
@@ -41,6 +51,7 @@ export * from './resolvers';
 export default function Aerogel(options: Options = {}): Plugin[] {
     const app: AppInfo = {
         name: options.name ?? 'App',
+        root: resolve(process.cwd()),
         version: '?',
         sourceHash: getSourceHash(),
         description: options.description,
@@ -103,12 +114,11 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             loadLocales(app, `${server.config.root}/src/lang/locales.json`);
         },
         config: (config, { mode }) => {
-            const root = resolve(config.root ?? process.cwd());
-
+            app.root = resolve(config.root ?? app.root);
             app.basePath = config.base ?? app.basePath;
 
             if (!options.lib && options.generateIcons !== false) {
-                resolveIconSource(app, root);
+                resolveIconSource(app, app.root);
             }
 
             if (app.baseIconPath) {
@@ -116,9 +126,12 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             }
 
             if (!options.lib) {
-                loadPackageInfo(app, resolve(root, 'package.json'));
+                loadPackageInfo(app, resolve(app.root, 'package.json'));
+                configurePublicDir(config, app.root);
+                configureAliases(config, app.root);
             }
 
+            configureBuild(config);
             configureDependencies(config, Object.keys(virtualHandlers));
             configureEnvironment(config, mode);
             configureTests(config, options);
@@ -171,20 +184,10 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         Vue(),
         VueJsx(),
         TailwindCSS(),
-        !options.lib &&
-            options.pwa !== false &&
-            process.env.STORYBOOK !== 'true' &&
-            VitePWA({
-                registerType: 'autoUpdate',
-                devOptions: { enabled: options.pwa?.development ?? false },
-                includeAssets: options.pwa?.includeAssets,
-                manifest,
-                workbox: {
-                    mode: ['production', 'staging'].includes(process.env.NODE_ENV ?? '') ? 'production' : 'development',
-                    maximumFileSizeToCacheInBytes: 10000000,
-                    additionalManifestEntries: app.additionalManifestEntries,
-                },
-            }),
+        buildIconsPlugin(options, app),
+        buildComponentsPlugin(options),
+        buildI18nPlugin(options, app),
+        buildPWAPlugin(options, app, manifest),
         AerogelPlugin,
     ]).flat();
 }

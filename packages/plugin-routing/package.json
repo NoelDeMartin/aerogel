@@ -36,7 +36,6 @@
         "@noeldemartin/scripts": "catalog:",
         "publint": "catalog:",
         "soukai-bis": "catalog:",
-        "unplugin-icons": "catalog:",
         "vite": "catalog:",
         "vite-plus": "catalog:"
     },

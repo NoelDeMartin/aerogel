@@ -53,7 +53,6 @@
         "@noeldemartin/scripts": "catalog:",
         "happy-dom": "^20.10.1",
         "publint": "catalog:",
-        "unplugin-icons": "catalog:",
         "zod": "catalog:"
     },
     "peerDependencies": {

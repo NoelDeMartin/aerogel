@@ -3,6 +3,7 @@ import type { ManifestEntry } from 'workbox-build';
 
 export interface Options {
     lib?: boolean;
+    icons?: boolean;
     name?: string;
     description?: string;
     themeColor?: string;
@@ -21,6 +22,7 @@ export interface Options {
 }
 
 export interface AppInfo {
+    root: string;
     name: string;
     version: string;
     basePath: string;

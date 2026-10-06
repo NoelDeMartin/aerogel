@@ -2,7 +2,6 @@ import { URL, fileURLToPath } from 'node:url';
 
 import Aerogel from '@aerogel/vite';
 import I18n from '@intlify/unplugin-vue-i18n/vite';
-import Icons from 'unplugin-icons/vite';
 import dts from 'vite-plugin-dts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
 
@@ -25,7 +24,6 @@ export default defineConfig({
             insertTypesEntry: true,
         }),
         Aerogel({ lib: true }),
-        Icons(),
         I18n({ include: fileURLToPath(new URL('./src/testing/stubs/lang/**/*.yaml', import.meta.url)) }),
     ]),
     resolve: {

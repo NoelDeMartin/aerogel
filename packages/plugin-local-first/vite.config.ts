@@ -1,7 +1,6 @@
 import { URL, fileURLToPath } from 'node:url';
 
 import Aerogel from '@aerogel/vite';
-import Icons from 'unplugin-icons/vite';
 import dts from 'vite-plugin-dts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
 
@@ -32,7 +31,6 @@ export default defineConfig({
             insertTypesEntry: true,
         }),
         Aerogel({ lib: true }),
-        Icons(),
     ]),
     resolve: {
         alias: {

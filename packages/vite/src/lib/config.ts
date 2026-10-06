@@ -1,6 +1,39 @@
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 import { arrayFrom } from '@noeldemartin/utils';
-import type { Plugin, Rolldown, UserConfig } from 'vite';
+import type { Alias, Plugin, Rolldown, UserConfig } from 'vite';
+
+export function configureBuild(config: UserConfig): void {
+    config.build ??= {};
+    config.build.sourcemap ??= true;
+}
+
+export function configureAliases(config: UserConfig, root: string): void {
+    config.resolve ??= {};
+
+    if (Array.isArray(config.resolve.alias)) {
+        const aliases = config.resolve.alias as Alias[];
+
+        if (!aliases.some((alias) => alias.find === '@')) {
+            aliases.push({ find: '@', replacement: resolve(root, 'src') });
+        }
+    } else {
+        config.resolve.alias = {
+            '@': resolve(root, 'src'),
+            ...(config.resolve.alias as Record<string, string>),
+        };
+    }
+}
+
+export function configurePublicDir(config: UserConfig, root: string): void {
+    const publicDir = resolve(root, 'src/assets/public');
+
+    if (existsSync(publicDir)) {
+        config.publicDir ??= publicDir;
+    }
+}
 
 export function configureDependencies(config: UserConfig, virtualModules: string[]): void {
     config.optimizeDeps = config.optimizeDeps ?? {};

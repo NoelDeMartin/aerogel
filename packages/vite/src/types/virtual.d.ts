@@ -1,3 +1,5 @@
+/// <reference types="unplugin-icons/types/vue3" />
+
 declare module 'virtual:aerogel' {
     export interface VirtualAerogel {
         name: string;

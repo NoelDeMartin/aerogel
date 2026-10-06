@@ -49,7 +49,6 @@
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "publint": "catalog:",
-        "unplugin-icons": "catalog:",
         "zod": "catalog:"
     },
     "peerDependencies": {

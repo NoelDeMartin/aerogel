@@ -1,10 +1,6 @@
 import { URL, fileURLToPath } from 'node:url';
 
-import Aerogel, { AerogelResolver } from '@aerogel/vite';
-import I18n from '@intlify/unplugin-vue-i18n/vite';
-import IconsResolver from 'unplugin-icons/resolver';
-import Icons from 'unplugin-icons/vite';
-import Components from 'unplugin-vue-components/vite';
+import Aerogel from '@aerogel/vite';
 import { defineConfig } from 'vite-plus';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -12,28 +8,15 @@ const basePath = isProduction ? '/playground/' : undefined;
 
 export default defineConfig({
     base: basePath,
-    publicDir: fileURLToPath(new URL('./src/assets/public/', import.meta.url)),
     plugins: [
         Aerogel({
             name: 'Aerogel Playground',
             description: 'Explore this playground to see what Aerogel can do',
             baseUrl: 'https://aerogel.js.org/playground/',
         }),
-        Components({
-            dts: 'src/types/components.d.ts',
-            dirs: ['src/pages', 'src/components'],
-            resolvers: [AerogelResolver(), IconsResolver()],
-        }),
-        I18n({ include: fileURLToPath(new URL('./src/lang/**/*.yaml', import.meta.url)) }),
-        Icons({
-            iconCustomizer(_, __, props) {
-                props['aria-hidden'] = 'true';
-            },
-        }),
     ],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src/', import.meta.url)),
             '@aerogel/core': fileURLToPath(new URL('../packages/core/src/', import.meta.url)),
             '@aerogel/playground': fileURLToPath(new URL('../packages/playground/src/', import.meta.url)),
             '@aerogel/plugin-i18n': fileURLToPath(new URL('../packages/plugin-i18n/src/', import.meta.url)),

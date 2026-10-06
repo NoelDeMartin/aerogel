@@ -32,8 +32,7 @@
         "@arethetypeswrong/cli": "catalog:",
         "@intlify/unplugin-vue-i18n": "catalog:",
         "@noeldemartin/scripts": "catalog:",
-        "publint": "catalog:",
-        "unplugin-icons": "catalog:"
+        "publint": "catalog:"
     },
     "peerDependencies": {
         "@aerogel/core": "*"

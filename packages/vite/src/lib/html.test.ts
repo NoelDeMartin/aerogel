@@ -11,6 +11,7 @@ vi.mock('image-size', async () => ({
 describe('HTML helpers', () => {
     const app: AppInfo = {
         name: 'My App',
+        root: '/var/www',
         version: '0.1.0',
         basePath: '/site/',
         cacheDir: 'node_modules/.vite',

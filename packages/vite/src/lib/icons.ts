@@ -1,10 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import type { AppInfo } from '@aerogel/vite/lib/options';
+import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 import { md5 } from '@noeldemartin/utils';
-import type { Connect } from 'vite';
-import type { Rollup } from 'vite';
+import { FileSystemIconLoader } from 'unplugin-icons/loaders';
+import Icons from 'unplugin-icons/vite';
+import type { Connect, Plugin, Rollup } from 'vite';
 import type { IconResource } from 'vite-plugin-pwa';
 
 const ICON_BACKGROUND = '#ffffff';
@@ -225,4 +226,25 @@ export function iconsMiddleware(app: AppInfo): Connect.NextHandleFunction {
             })
             .catch(next);
     };
+}
+
+export function buildIconsPlugin(options: Options, app: AppInfo): Plugin | Plugin[] | false {
+    if (options.icons === false) {
+        return false;
+    }
+
+    let appIconsLoader: ReturnType<typeof FileSystemIconLoader> | undefined;
+
+    return Icons({
+        customCollections: {
+            app(name) {
+                appIconsLoader ??= FileSystemIconLoader(resolve(app.root, 'src/assets/icons'));
+
+                return appIconsLoader(name);
+            },
+        },
+        iconCustomizer(_, __, props) {
+            props['aria-hidden'] = 'true';
+        },
+    });
 }
