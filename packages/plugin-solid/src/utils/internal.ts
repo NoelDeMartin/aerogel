@@ -1,5 +1,8 @@
-import { Errors, Events, reactiveSet } from '@aerogel/core';
+import { Errors, Events, appNamespace, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
+import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
+import { isDevelopment, isInstanceOf } from '@noeldemartin/utils';
+import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
 import type { Model, ModelConstructor } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
@@ -20,6 +23,68 @@ type TrackedModelOptions = {
 };
 
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
+let modelsWorker: ModelsWorker | null = null;
+
+const WORKER_THRESHOLD = 100;
+
+async function shouldLoadModelsInWorker(modelClass: ModelConstructor, options: { depth?: number }): Promise<boolean> {
+    const engine = getEngine();
+
+    if (typeof Worker === 'undefined' || !isInstanceOf(engine, IndexedDBEngine)) {
+        return false;
+    }
+
+    try {
+        const documentsCount = await engine.countDocuments({
+            containerUrl: modelClass.defaultContainerUrl,
+            depth: options.depth,
+        });
+
+        return documentsCount >= WORKER_THRESHOLD;
+    } catch (error) {
+        if (!isInstanceOf(error, DocumentNotFound)) {
+            throw error;
+        }
+
+        return false;
+    }
+}
+
+async function fetchModels<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options: { depth?: number; onChunk(models: T[]): unknown },
+): Promise<T[]> {
+    if (!(await shouldLoadModelsInWorker(modelClass, options))) {
+        return modelClass.all({ depth: options.depth });
+    }
+
+    const worker = (modelsWorker ??= new ModelsWorker(appNamespace()));
+
+    try {
+        const loadedModels: T[] = [];
+
+        for await (const chunkModels of worker.loadModels(modelClass, { depth: options.depth })) {
+            loadedModels.push(...chunkModels);
+            options.onChunk(loadedModels.slice(0));
+        }
+
+        return loadedModels;
+    } catch (error) {
+        if (worker.terminated) {
+            throw error;
+        }
+
+        if (isDevelopment()) {
+            await Errors.report(
+                new Error(`Failed loading ${modelClass.modelName} models, retrying without the models worker`, {
+                    cause: error,
+                }),
+            );
+        }
+
+        return modelClass.all({ depth: options.depth });
+    }
+}
 
 function initializedTrackedModelsData<T extends Model>(
     modelClass: ModelConstructor<T>,
@@ -54,7 +119,10 @@ function initializedTrackedModelsData<T extends Model>(
         loading.value = true;
 
         try {
-            const models = await modelClass.all({ depth: data.depth });
+            const models = await fetchModels(modelClass, {
+                depth: data.depth,
+                onChunk: (chunkModels) => loaded.value || modelsSet.reset(withTrackedInstances(chunkModels)),
+            });
 
             modelsSet.reset(loaded.value ? models : withTrackedInstances(models));
             loaded.value = true;
@@ -96,8 +164,11 @@ export function _getTrackedModels(): WeakMap<ModelConstructor, TrackedModelData>
     return trackedModels;
 }
 
-export function _setTrackedModels(value: WeakMap<ModelConstructor, TrackedModelData>): void {
-    trackedModels = value;
+export function _resetModelsState(): void {
+    trackedModels = new WeakMap();
+
+    modelsWorker?.terminate();
+    modelsWorker = null;
 }
 
 export function _getTrackedModelsData<T extends Model>(

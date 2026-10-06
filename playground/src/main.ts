@@ -12,10 +12,5 @@ import { services } from './services';
 
 await bootstrap(App, {
     services,
-    plugins: [
-        routing({ routes }),
-        i18n({ messages: import.meta.glob('@/lang/*.yaml') }),
-        solid({ models: import.meta.glob(['@/models/*', '!**/*.test.ts'], { eager: true }) }),
-        localFirst(),
-    ],
+    plugins: [routing({ routes }), i18n(), solid(), localFirst()],
 });

@@ -9,6 +9,7 @@ import {
     customRef,
     getCurrentScope,
     onScopeDispose,
+    readonly,
     shallowReactive,
     shallowRef,
     toRaw,
@@ -186,6 +187,12 @@ export interface ComputedModelsOptions {
     watch?: string[];
 }
 
+export interface UseModelsResult<T extends Model> {
+    models: ComputedRef<T[]>;
+    loading: ComputedRef<boolean>;
+    refreshing: Readonly<Ref<boolean>>;
+}
+
 export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
@@ -291,23 +298,27 @@ export function computedModelAttribute<TModel extends Model, TAttribute extends 
     }) as TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never;
 }
 
-export function useModelCollection<T extends Model>(
+export function useModels<T extends Model>(
     modelClass: ModelConstructor<T>,
     options: { includeSoftDeleted?: boolean; depth?: number } = {},
-): Ref<T[]> {
+): UseModelsResult<T> {
     const models = shallowRef([]) as Ref<T[]>;
-    const modelData = _getTrackedModelsData<T>(modelClass, { load: true, depth: options?.depth });
+    const modelData = _getTrackedModelsData<T>(modelClass, { load: true, depth: options.depth });
 
     watchEffect(() => (models.value = modelData.modelsArray.value));
     onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));
 
-    return computed(() => {
-        if (options.includeSoftDeleted) {
-            return models.value;
-        }
+    return {
+        models: computed(() => {
+            if (options.includeSoftDeleted) {
+                return models.value;
+            }
 
-        return models.value.filter((model) => !isSoftDeleted(model));
-    });
+            return models.value.filter((model) => !isSoftDeleted(model));
+        }),
+        loading: computed(() => modelData.loading.value && !modelData.loaded.value),
+        refreshing: readonly(modelData.loading),
+    };
 }
 
 export function useModelEvent<TModel extends Model, TEvent extends keyof ModelEvents>(

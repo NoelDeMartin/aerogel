@@ -1,6 +1,14 @@
 import { resolve } from 'node:path';
 
 import { generate404Assets } from '@aerogel/vite/lib/404';
+import {
+    configureCodeSplitting,
+    configureDependencies,
+    configureDevelopmentHost,
+    configureEnvironment,
+    configureTests,
+    configureWorkers,
+} from '@aerogel/vite/lib/config';
 import { getSourceHash } from '@aerogel/vite/lib/git';
 import { renderHTML } from '@aerogel/vite/lib/html';
 import { generateMessagesVirtualModule } from '@aerogel/vite/lib/i18n';
@@ -10,15 +18,19 @@ import type { AppInfo, Options } from '@aerogel/vite/lib/options';
 import { loadPackageInfo } from '@aerogel/vite/lib/package-parser';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
-import { generatePatchZodVirtualModule, generateModelsVirtualModule } from '@aerogel/vite/lib/soukai';
+import {
+    generateModelsVirtualModule,
+    generateModelsWorkerVirtualModule,
+    generatePatchZodVirtualModule,
+} from '@aerogel/vite/lib/soukai';
 import { generateSetupVitestVirtualModule } from '@aerogel/vite/lib/testing';
 import { stripQuery } from '@aerogel/vite/lib/urls';
-import { after, arrayFilter, arrayFrom, objectWithoutEmpty } from '@noeldemartin/utils';
+import { after, arrayFilter, objectWithoutEmpty } from '@noeldemartin/utils';
 import TailwindCSS from '@tailwindcss/vite';
 import Vue from '@vitejs/plugin-vue';
 import VueJsx from '@vitejs/plugin-vue-jsx';
 import type { VirtualAerogel } from 'virtual:aerogel';
-import type { Plugin, Rolldown } from 'vite';
+import type { Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import type { ManifestOptions } from 'vite-plugin-pwa';
 
@@ -60,6 +72,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         },
         'virtual:aerogel-solid': () => generateSolidVirtualModule(app, options),
         'virtual:aerogel-models': () => generateModelsVirtualModule(),
+        'virtual:aerogel-models-worker': () => generateModelsWorkerVirtualModule(),
         'virtual:aerogel-messages': () => generateMessagesVirtualModule(),
         '/_virtual/soukai-bis/patch-zod': () => generatePatchZodVirtualModule(),
         '/_virtual/aerogel-setup-vitest': () => generateSetupVitestVirtualModule(app),
@@ -90,85 +103,28 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             loadLocales(app, `${server.config.root}/src/lang/locales.json`);
         },
         config: (config, { mode }) => {
-            const testInlineDeps = config.test?.server?.deps?.inline;
+            const root = resolve(config.root ?? process.cwd());
 
             app.basePath = config.base ?? app.basePath;
 
             if (!options.lib && options.generateIcons !== false) {
-                resolveIconSource(app, resolve(config.root ?? process.cwd()));
+                resolveIconSource(app, root);
             }
 
             if (app.baseIconPath) {
                 manifest.icons = getManifestIcons();
             }
 
-            config.optimizeDeps = config.optimizeDeps ?? {};
-            config.optimizeDeps.exclude = [...(config.optimizeDeps.exclude ?? []), ...Object.keys(virtualHandlers)];
-            config.optimizeDeps.include = [...(config.optimizeDeps.include ?? []), 'soukai-bis/patch-zod'];
-
-            config.resolve = {
-                ...config.resolve,
-                dedupe: [...(config.resolve?.dedupe ?? []), 'zod'],
-            };
-
-            config.define = {
-                ...config.define,
-                __AEROGEL_ENV__: JSON.stringify(mode === 'testing' ? 'testing' : process.env.NODE_ENV),
-            };
-
-            if (testInlineDeps !== true) {
-                config.test ??= {};
-                config.test.server ??= {};
-                config.test.server.deps ??= {};
-                config.test.server.deps.inline = [
-                    '@aerogel/core',
-                    '@aerogel/plugin-routing',
-                    '@aerogel/plugin-solid',
-                    ...(testInlineDeps ?? []),
-                ];
-            }
-
             if (!options.lib) {
-                loadPackageInfo(app, resolve(config.root ?? process.cwd(), 'package.json'));
-
-                config.test ??= {};
-                config.test.include ??= ['src/**/*.test.ts'];
-                config.test.setupFiles = ['/_virtual/aerogel-setup-vitest', ...arrayFrom(config.test.setupFiles ?? [])];
+                loadPackageInfo(app, resolve(root, 'package.json'));
             }
 
-            config.build ??= {};
-            config.build.rollupOptions ??= {};
-
-            if (app.developmentHost) {
-                config.server = {
-                    allowedHosts: [app.developmentHost],
-                    hmr: {
-                        protocol: 'wss',
-                        host: app.developmentHost,
-                        clientPort: 443,
-                    },
-                };
-            }
-
-            if ('rolldownOptions' in config.build) {
-                const rolldownOptions = config.build.rollupOptions as Rolldown.RolldownOptions;
-
-                if (!Array.isArray(rolldownOptions.output)) {
-                    rolldownOptions.output ??= {};
-
-                    if (typeof rolldownOptions.output.codeSplitting === 'boolean') {
-                        rolldownOptions.output.codeSplitting = {};
-                    } else {
-                        rolldownOptions.output.codeSplitting ??= {};
-                    }
-
-                    rolldownOptions.output.codeSplitting.groups ??= [];
-                    rolldownOptions.output.codeSplitting.groups.push({
-                        test: /soukai-bis.*patch-zod/,
-                        name: 'patch-zod',
-                    });
-                }
-            }
+            configureDependencies(config, Object.keys(virtualHandlers));
+            configureEnvironment(config, mode);
+            configureTests(config, options);
+            configureWorkers(config, AerogelPlugin);
+            configureDevelopmentHost(config, app);
+            configureCodeSplitting(config);
 
             return config;
         },

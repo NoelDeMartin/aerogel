@@ -13,7 +13,6 @@ import { services } from '@aerogel/plugin-solid/services';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
-import type { ModelsGlob } from '@aerogel/plugin-solid/utils/soukai';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 import appModels from 'virtual:aerogel-models';
 
@@ -39,14 +38,13 @@ export interface Options {
     autoReconnect?: boolean;
     authenticators?: Record<string, Authenticator>;
     defaultAuthenticator?: AuthenticatorName | (() => AuthenticatorName);
-    models?: ModelsGlob;
     onUserProfileLoaded?(user: SolidUserProfile, store: SolidStore): unknown;
 }
 
 export default function solid(options: Options = {}): Plugin {
     return {
         async install(app) {
-            const engine = setupSoukai({ namespace: appNamespace(), models: options.models ?? appModels });
+            const engine = setupSoukai({ namespace: appNamespace(), models: appModels });
 
             setupTestingRuntime();
             registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });

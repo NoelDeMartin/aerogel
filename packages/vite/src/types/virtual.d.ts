@@ -32,6 +32,12 @@ declare module 'virtual:aerogel-models' {
     export default models;
 }
 
+declare module 'virtual:aerogel-models-worker' {
+    const ModelsWorker: new () => Worker;
+
+    export default ModelsWorker;
+}
+
 declare module 'virtual:aerogel-messages' {
     const messages: Record<string, () => Promise<unknown>>;
 

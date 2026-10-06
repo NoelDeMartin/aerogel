@@ -11,6 +11,7 @@ export default defineConfig({
         lib: {
             entry: {
                 index: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+                'models-worker': fileURLToPath(new URL('./src/models-worker.ts', import.meta.url)),
                 'setup-vitest': fileURLToPath(new URL('./src/setup-vitest.ts', import.meta.url)),
             },
             formats: ['es'],
@@ -27,6 +28,7 @@ export default defineConfig({
                 'soukai-bis/patch-zod',
                 'virtual:aerogel',
                 'virtual:aerogel-models',
+                'virtual:aerogel-models-worker',
                 'virtual:aerogel-solid',
                 'vite-plus/test',
                 'vue',
@@ -38,7 +40,7 @@ export default defineConfig({
             rollupTypes: true,
             tsconfigPath: './tsconfig.json',
             insertTypesEntry: true,
-            exclude: ['src/setup-vitest.ts'],
+            exclude: ['src/setup-vitest.ts', 'src/models-worker.ts'],
         }),
         Aerogel({ lib: true }),
         Icons(),

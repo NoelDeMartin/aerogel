@@ -1,6 +1,6 @@
 import { Events } from '@aerogel/core';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
-import { resetTrackedModels } from '@aerogel/plugin-solid';
+import { resetModelsState } from '@aerogel/plugin-solid';
 import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
 
@@ -17,7 +17,7 @@ vi.mock('@aerogel/core', async () => {
 beforeEach(() => {
     Events.reset();
     resetModelListeners();
-    resetTrackedModels();
+    resetModelsState();
     bootCoreModels({ reset: true });
     bootModels({ Post }, { reset: true });
     setEngine(new InMemoryEngine());

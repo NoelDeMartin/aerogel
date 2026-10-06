@@ -1,7 +1,7 @@
 import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
-import { useModelCollection } from '@aerogel/plugin-solid';
+import { useModels } from '@aerogel/plugin-solid';
 import type { Model } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -60,7 +60,7 @@ describe('Cloud', () => {
         await cloud.track(Post, { register: { depth: 1 } });
 
         // Act
-        const posts = useModelCollection(Post);
+        const { models: posts } = useModels(Post);
 
         // Assert
         await vi.waitFor(() => expect(posts.value.map((model) => model.url)).toEqual([post.url]));

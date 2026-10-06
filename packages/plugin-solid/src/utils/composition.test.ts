@@ -3,11 +3,11 @@ import { arrayGroupBy } from '@noeldemartin/utils';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
-import { computedModel, computedModels, useModelCollection } from './composition';
-import { resetTrackedModels } from './services';
+import { computedModel, computedModels, useModels } from './composition';
+import { refreshTrackedModels, resetModelsState } from './services';
 
 describe('Composition helpers', () => {
-    beforeEach(() => resetTrackedModels());
+    beforeEach(() => resetModelsState());
 
     it('Computes model collections', async () => {
         // Arrange
@@ -86,15 +86,41 @@ describe('Composition helpers', () => {
         await User.create({ name: 'Alice', age: 23 });
 
         // Act
-        const users = useModelCollection(User);
+        const { models: users, loading, refreshing } = useModels(User);
 
         // Assert
-        await vi.waitFor(() => expect(users.value).toHaveLength(1));
+        expect(loading.value).toBe(true);
+        expect(refreshing.value).toBe(true);
 
-        expect(users.value[0]?.name).toBe('Alice');
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        expect(refreshing.value).toBe(false);
+
+        expect(users.value.map((user) => user.name)).toEqual(['Alice']);
 
         await User.create({ name: 'Bob', age: 30 });
 
         expect(users.value).toHaveLength(2);
+    });
+
+    it('Refreshes model collections without loading', async () => {
+        // Arrange
+        await User.create({ name: 'Alice', age: 23 });
+
+        const { loading, refreshing } = useModels(User);
+
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        // Act
+        const refresh = refreshTrackedModels(User);
+
+        // Assert
+        expect(loading.value).toBe(false);
+        expect(refreshing.value).toBe(true);
+
+        await refresh;
+
+        expect(loading.value).toBe(false);
+        expect(refreshing.value).toBe(false);
     });
 });

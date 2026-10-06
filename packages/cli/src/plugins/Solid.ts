@@ -24,7 +24,7 @@ export default class Solid extends Plugin {
     }
 
     protected override getBootstrapConfig(): string {
-        return "solid({ models: import.meta.glob('@/models/*', { eager: true }) })";
+        return 'solid()';
     }
 
     protected async updateNpmScripts(editor: Editor): Promise<void> {

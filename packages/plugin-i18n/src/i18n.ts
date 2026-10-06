@@ -4,7 +4,7 @@ import type { I18n, Locale } from 'vue-i18n';
 import type I18nMessages from './I18nMessages';
 import type { Options } from './options';
 
-type AppI18nOptions = Omit<Options, 'messages'> & { messages: I18nMessages };
+type AppI18nOptions = Options & { messages: I18nMessages };
 
 function appLocales(options: AppI18nOptions): { locale: string; fallbackLocale: string } {
     return {

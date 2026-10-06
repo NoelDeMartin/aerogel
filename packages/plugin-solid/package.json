@@ -20,6 +20,10 @@
             "style": "./src/index.css",
             "default": "./dist/index.js"
         },
+        "./models-worker": {
+            "types": "./dist/models-worker.d.ts",
+            "default": "./dist/models-worker.js"
+        },
         "./setup-vitest": {
             "types": "./dist/setup-vitest.d.ts",
             "default": "./dist/setup-vitest.js"

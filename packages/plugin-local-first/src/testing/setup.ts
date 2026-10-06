@@ -2,7 +2,7 @@ import 'soukai-bis/patch-zod';
 import { Events, resetPiniaStore } from '@aerogel/core';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
-import { resetTrackedModels } from '@aerogel/plugin-solid';
+import { resetModelsState } from '@aerogel/plugin-solid';
 import { FakeLocalStorage } from '@noeldemartin/testing';
 import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
@@ -22,7 +22,7 @@ beforeEach(() => {
     FakeLocalStorage.reset();
     resetPiniaStore();
     resetModelListeners();
-    resetTrackedModels();
+    resetModelsState();
     bootCoreModels({ reset: true });
     bootModels({ Post, PostsCollection }, { reset: true });
     setEngine(new InMemoryEngine());

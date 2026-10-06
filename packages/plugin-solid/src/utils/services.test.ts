@@ -7,12 +7,12 @@ import {
     getTrackedModels,
     loadTrackedModels,
     refreshTrackedModels,
-    resetTrackedModels,
+    resetModelsState,
     trackModels,
 } from './services';
 
 describe('Services helpers', () => {
-    beforeEach(resetTrackedModels);
+    beforeEach(resetModelsState);
 
     it('Loads lazily tracked models when they are tracked again', async () => {
         // Arrange
