@@ -16,7 +16,16 @@ import {
     parseBoolean,
     urlRoute,
 } from '@noeldemartin/utils';
-import { MigrateLocalUrls, Model, Sync, dispatch, getBootedModels, isCoreModel, requireEngine } from 'soukai-bis';
+import {
+    MigrateLocalUrls,
+    Model,
+    Sync,
+    dispatch,
+    getBootedModels,
+    isCoreModel,
+    requireEngine,
+    isLocalUrl,
+} from 'soukai-bis';
 import type { Engine, IndexedDBEngine, JobListener, ModelConstructor } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
@@ -303,7 +312,7 @@ export class CloudService extends Service {
         const engine = requireEngine() as IndexedDBEngine;
         const containerUrls = await engine.getContainerUrls();
 
-        await this.setReady(!containerUrls.some((containerUrl) => containerUrl.startsWith('solid://')));
+        await this.setReady(!containerUrls.some(isLocalUrl));
     }
 
     protected async onApplicationMounted(): Promise<void> {
