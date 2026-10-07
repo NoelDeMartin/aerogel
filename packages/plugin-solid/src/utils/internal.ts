@@ -130,7 +130,11 @@ function initializedTrackedModelsData<T extends Model>(
         try {
             const models = await fetchModels(modelClass, {
                 depth: data.depth,
-                onChunk: throttle((chunkModels) => loaded.value || modelsSet.reset(withTrackedInstances(chunkModels))),
+                onChunk: throttle(
+                    (chunkModels) =>
+                        loaded.value ||
+                        modelsSet.reset(withUnloadedTrackedInstances(withTrackedInstances(chunkModels))),
+                ),
             });
 
             modelsSet.reset(loaded.value ? models : withTrackedInstances(models));
@@ -143,7 +147,17 @@ function initializedTrackedModelsData<T extends Model>(
     function withTrackedInstances(models: T[]): T[] {
         const trackedInstances = new Map(modelsSet.values().map((model) => [model.url, model]));
 
-        return models.map((model) => trackedInstances.get(model.url) ?? model);
+        return models.map((model) => {
+            const trackedInstance = trackedInstances.get(model.url);
+
+            return trackedInstance && !isNewerModel(model, trackedInstance) ? trackedInstance : model;
+        });
+    }
+
+    function withUnloadedTrackedInstances(loadedModels: T[]): T[] {
+        const loadedUrls = new Set(loadedModels.map((model) => model.url));
+
+        return loadedModels.concat(modelsSet.values().filter((model) => !loadedUrls.has(model.url)));
     }
 
     trackedModels.set(modelClass, data);
@@ -159,6 +173,10 @@ function initializedTrackedModelsData<T extends Model>(
     void Events.emit('solid:track-models', modelClass);
 
     return data;
+}
+
+function isNewerModel(model: Model, otherModel: Model): boolean {
+    return (model.updatedAt?.getTime() ?? 0) > (otherModel.updatedAt?.getTime() ?? 0);
 }
 
 export function isSoftDeleted(model: Model): boolean {

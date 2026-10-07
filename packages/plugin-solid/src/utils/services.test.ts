@@ -1,5 +1,5 @@
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
-import { beforeEach, describe, expect, it } from 'vite-plus/test';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 import { _getTrackedModelsData } from './internal';
 import {
@@ -67,5 +67,41 @@ describe('Services helpers', () => {
         // Assert
         expect(model?.name).toEqual('Bob');
         expect(getTrackedModels(User).map((user) => user.name)).toEqual(['Alice']);
+    });
+
+    it('Reuses tracked instances when loading collections', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const trackedAlice = await findTrackedModel(User, alice.requireUrl());
+
+        // Act
+        await loadTrackedModels(User);
+
+        // Assert
+        expect(getTrackedModels(User)).toHaveLength(1);
+        expect(getTrackedModels(User)[0]).toBe(trackedAlice);
+    });
+
+    it('Replaces outdated tracked instances when loading collections', async () => {
+        // Arrange
+        vi.useFakeTimers({ toFake: ['Date'] });
+        vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
+
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const trackedAlice = await findTrackedModel(User, alice.requireUrl());
+
+        vi.setSystemTime(new Date('2026-01-02T00:00:00Z'));
+
+        await (await User.findOrFail(alice.requireUrl())).update({ name: 'Alicia' });
+
+        // Act
+        await loadTrackedModels(User);
+
+        // Assert
+        expect(getTrackedModels(User)).toHaveLength(1);
+        expect(getTrackedModels(User)[0]).not.toBe(trackedAlice);
+        expect(getTrackedModels(User)[0]?.name).toEqual('Alicia');
+
+        vi.useRealTimers();
     });
 });
