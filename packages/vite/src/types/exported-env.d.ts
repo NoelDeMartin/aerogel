@@ -1,3 +1,3 @@
 /// <reference types="unplugin-icons/types/vue3" />
-/// <reference path="./shims.d.ts" />
-/// <reference path="./virtual.d.ts" />
+import './shims.d.ts';
+import './virtual.d.ts';
