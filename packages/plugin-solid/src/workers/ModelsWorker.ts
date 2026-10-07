@@ -1,4 +1,4 @@
-import type { ModelsWorkerMethods } from '@aerogel/plugin-solid/models-worker';
+import type { SerializedDocumentError, ModelsWorkerMethods } from '@aerogel/plugin-solid/models-worker';
 import { PromisedValue, toError } from '@noeldemartin/utils';
 import type { Model, ModelConstructor } from 'soukai-bis';
 
@@ -26,6 +26,10 @@ interface PendingRequest {
     reject(error: Error): void;
 }
 
+function hydrateDocumentError({ name, message, stack }: SerializedDocumentError): Error {
+    return Object.assign(new Error(message), { name, stack });
+}
+
 export default class ModelsWorker {
     private worker: Promise<Worker> | null = null;
     private lastRequestId = 0;
@@ -40,15 +44,19 @@ export default class ModelsWorker {
 
     public async *loadModels<T extends Model>(
         modelClass: ModelConstructor<T>,
-        options: { depth?: number } = {},
+        options: { depth?: number; onDocumentError?: (error: Error, documentUrl: string) => unknown } = {},
     ): AsyncGenerator<T[]> {
-        for await (const serializedModels of this.stream(
+        for await (const { models, documentErrors } of this.stream(
             'loadModels',
             modelClass.modelName,
             modelClass.defaultContainerUrl,
             options.depth,
         )) {
-            yield await Promise.all(serializedModels.map((serializedModel) => modelClass.hydrate(serializedModel)));
+            for (const documentError of documentErrors) {
+                options.onDocumentError?.(hydrateDocumentError(documentError), documentError.documentUrl);
+            }
+
+            yield await Promise.all(models.map((serializedModel) => modelClass.hydrate(serializedModel)));
         }
     }
 

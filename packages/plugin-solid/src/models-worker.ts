@@ -1,11 +1,17 @@
 import 'soukai-bis/patch-zod';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
 import type { ModelsWorkerRequest, ModelsWorkerResponse } from '@aerogel/plugin-solid/workers/ModelsWorker';
-import { isInstanceOf } from '@noeldemartin/utils';
+import { isInstanceOf, toError } from '@noeldemartin/utils';
 import { DocumentNotFound, requireBootedModel } from 'soukai-bis';
 import type { IndexedDBEngine, SerializedModel } from 'soukai-bis';
 
 let engine: IndexedDBEngine | null = null;
+
+function serializeDocumentError(error: unknown, documentUrl: string): SerializedDocumentError {
+    const { name, message, stack } = toError(error);
+
+    return { documentUrl, name, message, stack };
+}
 
 const methods = {
     async boot(namespace: string): Promise<void> {
@@ -14,7 +20,11 @@ const methods = {
         engine = setupSoukai({ namespace, models });
     },
 
-    async *loadModels(modelName: string, containerUrl: string, depth?: number): AsyncGenerator<SerializedModel[]> {
+    async *loadModels(
+        modelName: string,
+        containerUrl: string,
+        depth?: number,
+    ): AsyncGenerator<ModelsWorkerModelsChunk> {
         if (!engine) {
             throw new Error('Models worker has not been booted');
         }
@@ -24,13 +34,22 @@ const methods = {
 
         try {
             for await (const documents of documentsBatches) {
+                const documentErrors: SerializedDocumentError[] = [];
                 const models = await Promise.all(
-                    Object.values(documents).map((document) => modelClass.createManyFromDocument(document)),
+                    Object.values(documents).map(async (document) => {
+                        try {
+                            return await modelClass.createManyFromDocument(document);
+                        } catch (error) {
+                            documentErrors.push(serializeDocumentError(error, document.url));
+
+                            return [];
+                        }
+                    }),
                 ).then((documentModels) => documentModels.flat());
 
                 await Promise.all(models.map((model) => model.loadComputedAttributes()));
 
-                yield models.map((model) => model.serialize());
+                yield { models: models.map((model) => model.serialize()), documentErrors };
             }
         } catch (error) {
             if (!isInstanceOf(error, DocumentNotFound)) {
@@ -46,6 +65,18 @@ function isAsyncIterable(value: unknown): value is AsyncIterable<unknown> {
 
 function respond(response: ModelsWorkerResponse): void {
     postMessage(response);
+}
+
+export interface SerializedDocumentError {
+    documentUrl: string;
+    name: string;
+    message: string;
+    stack?: string;
+}
+
+export interface ModelsWorkerModelsChunk {
+    models: SerializedModel[];
+    documentErrors: SerializedDocumentError[];
 }
 
 export type ModelsWorkerMethods = typeof methods;

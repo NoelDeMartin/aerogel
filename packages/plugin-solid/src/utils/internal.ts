@@ -3,7 +3,7 @@ import type { ReactiveSet } from '@aerogel/core';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
 import { isDevelopment, isInstanceOf, throttle } from '@noeldemartin/utils';
 import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
-import type { Model, ModelConstructor } from 'soukai-bis';
+import type { LoadAllOptions, Model, ModelConstructor } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 
@@ -54,8 +54,17 @@ async function fetchModels<T extends Model>(
     modelClass: ModelConstructor<T>,
     options: { depth?: number; onChunk(models: T[]): unknown },
 ): Promise<T[]> {
+    const loadOptions: LoadAllOptions = {
+        depth: options.depth,
+        async onDocumentError(error, documentUrl) {
+            await Errors.report(
+                new Error(`Failed loading ${modelClass.modelName} from ${documentUrl}`, { cause: error }),
+            );
+        },
+    };
+
     if (!(await shouldLoadModelsInWorker(modelClass, options))) {
-        return modelClass.all({ depth: options.depth });
+        return modelClass.all(loadOptions);
     }
 
     const worker = (modelsWorker ??= new ModelsWorker(appNamespace()));
@@ -63,7 +72,7 @@ async function fetchModels<T extends Model>(
     try {
         const loadedModels: T[] = [];
 
-        for await (const chunkModels of worker.loadModels(modelClass, { depth: options.depth })) {
+        for await (const chunkModels of worker.loadModels(modelClass, loadOptions)) {
             loadedModels.push(...chunkModels);
             options.onChunk(loadedModels.slice(0));
         }
@@ -82,7 +91,7 @@ async function fetchModels<T extends Model>(
             );
         }
 
-        return modelClass.all({ depth: options.depth });
+        return modelClass.all(loadOptions);
     }
 }
 
