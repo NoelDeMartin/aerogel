@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["@aerogel/vite/virtual"],
+        "types": ["@aerogel/vite/env"],
         "paths": {
             "@aerogel/plugin-i18n/*": ["./src/*"]
         }

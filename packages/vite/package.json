@@ -19,11 +19,8 @@
             "types": "./dist/index.d.ts",
             "default": "./dist/index.js"
         },
-        "./shims": {
-            "types": "./dist/shims.d.ts"
-        },
-        "./virtual": {
-            "types": "./dist/virtual.d.ts"
+        "./env": {
+            "types": "./dist/env.d.ts"
         }
     },
     "scripts": {

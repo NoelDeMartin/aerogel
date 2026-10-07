@@ -9,7 +9,10 @@ export default defineConfig({
     pack: {
         ...pack,
         plugins: [html],
-        copy: [{ from: ['src/types/shims.d.ts', 'src/types/virtual.d.ts'], flatten: true }],
+        copy: [
+            { from: ['src/types/shims.d.ts', 'src/types/virtual.d.ts'], flatten: true },
+            { from: 'src/types/exported-env.d.ts', rename: 'env.d.ts' },
+        ],
     },
     plugins: [html],
     resolve: {
