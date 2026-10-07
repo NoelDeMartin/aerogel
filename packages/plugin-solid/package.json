@@ -10,7 +10,9 @@
     },
     "files": [
         "src",
-        "dist"
+        "dist",
+        "!src/**/*.test.ts",
+        "!src/**/*.stories.tsx"
     ],
     "type": "module",
     "sideEffects": false,

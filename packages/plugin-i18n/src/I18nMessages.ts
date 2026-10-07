@@ -1,4 +1,4 @@
-import { fail, stringMatch } from '@noeldemartin/utils';
+import { isDevelopment, stringMatch } from '@noeldemartin/utils';
 import type { LocaleMessages, VueMessageType } from 'vue-i18n';
 
 type Messages = LocaleMessages<VueMessageType, string, string>;
@@ -44,7 +44,20 @@ export default class I18nMessages {
             return this.messages[locale] as Messages;
         }
 
-        const loader = this.loaders[locale] ?? fail<MessagesLoader>(`Couldn't load messages for '${locale}' locale`);
+        const loader = this.loaders[locale];
+
+        if (!loader) {
+            this.messages[locale] = {};
+            this.listeners.forEach((listener) => listener(locale, {}));
+
+            if (isDevelopment()) {
+                // oxlint-disable-next-line no-console
+                console.warn(`Locale ${locale} not found`);
+            }
+
+            return {};
+        }
+
         const localeMessages = await loader();
 
         this.messages[locale] = localeMessages;

@@ -10,7 +10,9 @@
     },
     "files": [
         "src",
-        "dist"
+        "dist",
+        "!src/**/*.test.ts",
+        "!src/**/*.stories.tsx"
     ],
     "type": "module",
     "sideEffects": false,
@@ -56,9 +58,9 @@
         "zod": "catalog:"
     },
     "peerDependencies": {
-        "@tailwindcss/forms": "^0.5.10",
-        "@tailwindcss/typography": "^0.5.16",
-        "tailwindcss": "^4.1.4",
+        "@tailwindcss/forms": "catalog:",
+        "@tailwindcss/typography": "catalog:",
+        "tailwindcss": "catalog:",
         "vite-plus": "catalog:",
         "vue": "catalog:",
         "zod": "catalog:"

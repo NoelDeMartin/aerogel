@@ -1,0 +1,40 @@
+{
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoelDeMartin/aerogel.git",
+        "directory": "storybook"
+    },
+    "type": "module",
+    "scripts": {
+        "build": "storybook build",
+        "dev": "storybook dev -p 6006",
+        "type-check": "vue-tsc --build --force"
+    },
+    "dependencies": {
+        "@aerogel/core": "workspace:*",
+        "@aerogel/plugin-i18n": "workspace:*",
+        "@aerogel/plugin-local-first": "workspace:*",
+        "@aerogel/plugin-routing": "workspace:*",
+        "@aerogel/plugin-solid": "workspace:*",
+        "@aerogel/storybook": "workspace:*",
+        "@noeldemartin/utils": "catalog:",
+        "@tailwindcss/forms": "catalog:",
+        "@tailwindcss/typography": "catalog:",
+        "soukai-bis": "catalog:",
+        "tailwindcss": "catalog:",
+        "zod": "catalog:"
+    },
+    "devDependencies": {
+        "@aerogel/cli": "workspace:*",
+        "@aerogel/vite": "workspace:*",
+        "@noeldemartin/scripts": "catalog:",
+        "@storybook/addon-docs": "catalog:",
+        "@storybook/vue3-vite": "catalog:",
+        "@types/node": "catalog:",
+        "storybook": "catalog:",
+        "unplugin-icons": "catalog:",
+        "unplugin-vue-components": "catalog:",
+        "vue-tsc": "catalog:"
+    }
+}

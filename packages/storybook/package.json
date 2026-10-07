@@ -10,7 +10,8 @@
     },
     "files": [
         "src",
-        "dist"
+        "dist",
+        "!src/**/*.test.ts"
     ],
     "type": "module",
     "sideEffects": true,
@@ -27,7 +28,7 @@
         "@aerogel/core": "workspace:*",
         "@arethetypeswrong/core": "catalog:",
         "@noeldemartin/scripts": "catalog:",
-        "@storybook/vue3-vite": "^10.5.4",
+        "@storybook/vue3-vite": "catalog:",
         "@types/node": "catalog:",
         "publint": "catalog:",
         "soukai-bis": "catalog:",

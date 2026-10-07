@@ -1,6 +1,7 @@
 packages:
     - packages/**
     - playground
+    - storybook
 
 catalog:
     '@arethetypeswrong/cli': ^0.18.3
@@ -10,15 +11,22 @@ catalog:
     '@noeldemartin/solid-utils': next
     '@noeldemartin/testing': next
     '@noeldemartin/utils': next
-    '@types/node': ^26.6.3
     '@rdfjs/types': ^2.0.1
+    '@storybook/addon-docs': ^10.6.0
+    '@storybook/vue3-vite': ^10.6.0
+    '@tailwindcss/forms': ^0.5.10
+    '@tailwindcss/typography': ^0.5.16
+    '@types/node': ^26.6.3
     idb: ^8.0.2
     publint: ^0.3.24
     soukai-bis: next
+    storybook: ^10.6.0
+    tailwindcss: ^4.1.4
     unplugin-icons: ^22.1.0
     unplugin-vue-components: ^28.4.1
-    vite: npm:@voidzero-dev/vite-plus-core@^1.0.0
     vite-plus: ^1.0.0
+    vite: npm:@voidzero-dev/vite-plus-core@^1.0.0
+    vue-tsc: ^3.3.11
     vue: ^3.5.0
     zod: ^4.3.4
 
@@ -32,6 +40,7 @@ overrides:
     vite: 'catalog:'
     'vitepress@1>vite': ^5.4.14
     vue: 'catalog:'
+    vue-tsc: 'catalog:'
     zod: 'catalog:'
 
 peerDependencyRules:

@@ -10,7 +10,8 @@
     },
     "files": [
         "src",
-        "dist"
+        "dist",
+        "!src/**/*.test.ts"
     ],
     "type": "module",
     "sideEffects": false,

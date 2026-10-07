@@ -2,9 +2,14 @@
     "extends": "@vue/tsconfig/tsconfig.dom.json",
     "include": [
         "packages/*/src/**/*.ts",
+        "packages/*/src/**/*.tsx",
         "packages/*/src/**/*.vue",
         "playground/src/**/*.ts",
-        "playground/src/**/*.vue"
+        "playground/src/**/*.vue",
+        "storybook/src/**/*.ts",
+        "storybook/src/**/*.tsx",
+        "storybook/src/**/*.vue",
+        "storybook/.storybook/**/*.ts"
     ],
     "compilerOptions": {
         "moduleDetection": "force",

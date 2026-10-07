@@ -14,7 +14,8 @@
     "files": [
         "src",
         "dist",
-        "templates"
+        "templates",
+        "!src/**/*.test.ts"
     ],
     "type": "module",
     "sideEffects": false,

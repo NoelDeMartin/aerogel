@@ -7,5 +7,5 @@
             "@aerogel/plugin-local-first/*": ["./src/*"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.vue"]
+    "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.tsx"]
 }

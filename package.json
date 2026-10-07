@@ -3,11 +3,14 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vp run --filter @aerogel/vite --filter @aerogel/cli build && vp run --filter @aerogel/core build && vp run --filter @aerogel/plugin-solid build && vp run --filter @aerogel/plugin-i18n --filter @aerogel/plugin-local-first --filter @aerogel/plugin-routing build && vp run --filter @aerogel/playwright --filter @aerogel/storybook --filter create-aerogel --filter ./playground build",
-        "docs:build": "vp run docs:build:vitepress && vp run docs:build:playground",
+        "build": "vp run --filter @aerogel/vite --filter @aerogel/cli build && vp run --filter @aerogel/core build && vp run --filter @aerogel/plugin-solid build && vp run --filter @aerogel/plugin-i18n --filter @aerogel/plugin-local-first --filter @aerogel/plugin-routing build && vp run --filter @aerogel/playwright --filter @aerogel/storybook --filter create-aerogel --filter ./playground --filter ./storybook build",
+        "docs:build": "vp run docs:build:vitepress && vp run docs:build:playground && vp run docs:build:storybook",
         "docs:build:playground": "vp run --filter ./playground build && cp -r playground/dist docs/.vitepress/dist/playground",
+        "docs:build:storybook": "vp run --filter ./storybook build && cp -r storybook/storybook-static docs/.vitepress/dist/storybook",
         "docs:build:vitepress": "vitepress build docs",
         "docs:dev": "vitepress dev docs",
+        "storybook": "vp run --filter ./storybook dev",
+        "storybook:build": "vp run --filter ./storybook build",
         "type-check": "vp run -r --parallel type-check",
         "verify": "vp run -r --parallel verify"
     },
@@ -19,6 +22,7 @@
         "@noeldemartin/utils": "catalog:",
         "@noeldemartin/vite-plus-config": "next",
         "@playwright/test": "^1.60.0",
+        "@storybook/vue3-vite": "catalog:",
         "@total-typescript/ts-reset": "^0.4.2",
         "@tsconfig/node24": "^24.0.3",
         "@types/mustache": "^4.2.2",
@@ -32,7 +36,7 @@
         "vue": "catalog:",
         "vue-i18n": "^11.1.2",
         "vue-router": "^4.5.0",
-        "vue-tsc": "3.3.11"
+        "vue-tsc": "catalog:"
     },
     "packageManager": "pnpm@12.8.1"
 }

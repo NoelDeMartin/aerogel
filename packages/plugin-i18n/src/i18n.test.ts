@@ -37,4 +37,15 @@ describe('i18n', () => {
         expect(messages.getMessages()['en']).key('foo').to.exist;
         expect(listener).toHaveBeenCalledWith('en', expect.objectContaining({ foo: expect.anything() }));
     });
+
+    it('Handles missing locale messages gracefully', async () => {
+        // Arrange
+        const messages = new I18nMessages({});
+
+        // Act
+        await loadAppLocales({ messages });
+
+        // Assert
+        expect(messages.getMessages()['en']).toEqual({});
+    });
 });
