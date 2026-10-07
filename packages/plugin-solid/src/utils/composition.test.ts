@@ -1,10 +1,11 @@
+import { Cache } from '@aerogel/core';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { arrayGroupBy } from '@noeldemartin/utils';
+import type { SerializedModel } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 import { computedModel, computedModels, useModels } from './composition';
-import { getPersistedModels } from './persistence';
 import { refreshTrackedModels, resetModelsState } from './services';
 
 describe('Composition helpers', () => {
@@ -169,26 +170,25 @@ describe('Composition helpers', () => {
         expect(refreshing.value).toBe(false);
     });
 
-    it('Persists computed models once updated', async () => {
+    it('Caches computed models once updated', async () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });
         await User.create({ name: 'Bob', age: 42 });
 
-        const persistedModels = getPersistedModels();
         const { models: users, loading } = useModels(User);
 
         computedModels(User, () => users.value.filter((user) => (user.age ?? 0) > 30), {
-            persist: 'adults',
+            cache: 'adults',
         });
 
         // Act
         await vi.waitFor(() => expect(loading.value).toBe(false));
 
         // Assert
-        await vi.waitFor(async () => expect(await persistedModels.get('adults')).toHaveLength(1));
+        await vi.waitFor(async () => expect(await Cache.get('adults')).toHaveLength(1));
 
-        const persistedAdults = await persistedModels.get('adults');
+        const cachedAdults = await Cache.get<SerializedModel[]>('adults');
 
-        expect(persistedAdults?.[0]?.nodes[0]?.attributes.name).toEqual('Bob');
+        expect(cachedAdults?.[0]?.nodes[0]?.attributes.name).toEqual('Bob');
     });
 });

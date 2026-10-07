@@ -1,40 +1,36 @@
+import Events from '@aerogel/core/services/Events';
 import Service from '@aerogel/core/services/Service';
-import { PromisedValue, facade, tap } from '@noeldemartin/utils';
+import { appNamespace } from '@aerogel/core/utils/app';
+import { IndexedDBMap, facade } from '@noeldemartin/utils';
 
 export class CacheService extends Service {
-    private cache?: PromisedValue<Cache> = undefined;
+    private storage: IndexedDBMap<unknown> | null = null;
 
-    public async get(url: string): Promise<Response | null> {
-        const cache = await this.open();
-        const response = await cache.match(url);
-
-        return response ?? null;
+    public async get<T>(key: string): Promise<T | undefined> {
+        return (await this.getStorage().get(key)) as T | undefined;
     }
 
-    public async store(url: string, response: Response): Promise<void> {
-        const cache = await this.open();
-
-        await cache.put(url, response);
+    public async set(key: string, value: unknown): Promise<void> {
+        await this.getStorage().set(key, value);
     }
 
-    public async replace(url: string, response: Response): Promise<void> {
-        const cache = await this.open();
-        const keys = await cache.keys(url);
-
-        if (keys.length === 0) {
-            return;
-        }
-
-        await cache.put(url, response);
+    public async clear(): Promise<void> {
+        await Promise.all([this.getStorage().clear(), Events.emit('clear-cache')]);
     }
 
-    protected async open(): Promise<Cache> {
-        return (this.cache =
-            this.cache ??
-            tap(new PromisedValue<Cache>(), (cache) => {
-                void caches.open('app').then((instance) => cache.resolve(instance));
-            }));
+    protected override async boot(): Promise<void> {
+        Events.on('purge-storage', () => this.getStorage().clear());
+    }
+
+    private getStorage(): IndexedDBMap<unknown> {
+        return (this.storage ??= new IndexedDBMap(`${appNamespace()}-cache`));
     }
 }
 
 export default facade(CacheService);
+
+declare module '@aerogel/core/services/Events' {
+    export interface EventsPayload {
+        'clear-cache': void;
+    }
+}

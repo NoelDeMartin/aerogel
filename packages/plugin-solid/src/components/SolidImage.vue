@@ -3,12 +3,12 @@
 </template>
 
 <script setup lang="ts">
-import { Cache, computedAsync } from '@aerogel/core';
+import { NetworkCache, computedAsync } from '@aerogel/core';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 
 const { src } = defineProps<{ src: string }>();
 const sourceUrl = computedAsync(async () => {
-    const cachedResponse = (await Cache.get(src)) ?? (await downloadImage(src));
+    const cachedResponse = (await NetworkCache.get(src)) ?? (await downloadImage(src));
     const blob = await cachedResponse?.blob();
 
     return (blob && URL.createObjectURL(blob)) || src;
@@ -22,9 +22,9 @@ async function downloadImage(url: string) {
             return null;
         }
 
-        await Cache.store(url, response);
+        await NetworkCache.store(url, response);
 
-        return Cache.get(url);
+        return NetworkCache.get(url);
     } catch (error) {
         return null;
     }

@@ -1,13 +1,15 @@
 import { definePlugin } from '@aerogel/core/plugins';
+import type { AppSetting } from '@aerogel/core/utils/settings';
 import { isDevelopment, isTesting } from '@noeldemartin/utils';
 import type { App as AppInstance } from 'vue';
 
 import App from './App';
-import type { AppSetting } from './App.state';
 import Browser from './Browser';
 import Cache from './Cache';
 import Events from './Events';
+import NetworkCache from './NetworkCache';
 import Service from './Service';
+import settings from './settings';
 import Storage from './Storage';
 import { getPiniaStore } from './store';
 
@@ -15,15 +17,17 @@ export * from './App';
 export * from './Browser';
 export * from './Cache';
 export * from './Events';
+export * from './NetworkCache';
 export * from './Service';
 export * from './store';
 export * from './utils';
 
-export { App, Browser, Cache, Events, Storage, Service };
+export { App, Browser, Cache, Events, NetworkCache, Storage, Service };
 
 const defaultServices = {
     $app: App,
     $browser: Browser,
+    $cache: Cache,
     $events: Events,
     $storage: Storage,
 };
@@ -56,6 +60,7 @@ export default definePlugin({
         };
 
         app.use(getPiniaStore());
+        settings.forEach((setting) => App.addSetting(setting));
         options.settings?.forEach((setting) => App.addSetting(setting));
 
         if (options.settingsFullscreenOnMobile !== undefined) {

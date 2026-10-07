@@ -1,7 +1,8 @@
 import type { Plugin } from '@aerogel/core/plugins';
-import type { AppSetting, Services } from '@aerogel/core/services';
+import type { Services } from '@aerogel/core/services';
 import Events, { EventListenerPriorities } from '@aerogel/core/services/Events';
 import BaseService from '@aerogel/core/services/Service';
+import type { AppSetting } from '@aerogel/core/utils/settings';
 import {
     PromisedValue,
     facade,
@@ -14,9 +15,6 @@ import Aerogel from 'virtual:aerogel';
 import { markRaw } from 'vue';
 
 import Service from './App.state';
-
-export { defineSettings } from './App.state';
-export type { AppSetting } from './App.state';
 
 export class AppService extends Service {
     public readonly name = Aerogel.name;

@@ -1,18 +1,9 @@
 import type { Plugin } from '@aerogel/core/plugins/Plugin';
 import { defineServiceState } from '@aerogel/core/services/utils';
+import type { AppSetting } from '@aerogel/core/utils/settings';
 import { getEnv } from '@noeldemartin/utils';
 import Aerogel from 'virtual:aerogel';
-import type { App, Component } from 'vue';
-
-export interface AppSetting {
-    component: Component;
-    priority: number;
-    development?: boolean;
-}
-
-export function defineSettings<T extends AppSetting[]>(settings: T): T {
-    return settings;
-}
+import type { App } from 'vue';
 
 export default defineServiceState({
     name: 'app',

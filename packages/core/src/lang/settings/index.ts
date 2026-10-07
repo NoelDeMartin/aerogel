@@ -1,4 +1,4 @@
-import { defineSettings } from '@aerogel/core/services';
+import { defineSettings } from '@aerogel/core/utils/settings';
 
 import Language from './Language.vue';
 

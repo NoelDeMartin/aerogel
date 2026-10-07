@@ -18,26 +18,17 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Setting, UI, translateWithDefault, useLoading } from '@aerogel/core';
-import { ComputedAttributesCache, engineFulfillsContract, requireEngine } from 'soukai-bis';
+import Button from '@aerogel/core/components/ui/Button.vue';
+import Setting from '@aerogel/core/components/ui/Setting.vue';
+import { translateWithDefault } from '@aerogel/core/lang/utils';
+import Cache from '@aerogel/core/services/Cache';
+import UI from '@aerogel/core/ui/UI';
+import { useLoading } from '@aerogel/core/utils/composition/loading';
 
 const { loading, run } = useLoading();
 
 async function clearCache(): Promise<void> {
-    const engine = requireEngine();
-
-    if (!engineFulfillsContract(engine, 'PurgesMetadata')) {
-        UI.toast(
-            translateWithDefault(
-                'settings.metadataCannotBePurged',
-                "The current engine doesn't support purging metadata.",
-            ),
-        );
-
-        return;
-    }
-
-    await run(engine.purgeMetadata(), ComputedAttributesCache.clear());
+    await run(Cache.clear());
 
     UI.toast(translateWithDefault('settings.cacheCleared', 'Cache cleared successfully!'));
 }

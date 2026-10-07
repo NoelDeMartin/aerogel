@@ -5,6 +5,7 @@ export * from './datatables';
 export * from './dom';
 export * from './env';
 export * from './markdown';
+export * from './settings';
 export * from './time';
 export * from './types';
 export * from './vue';

@@ -1,8 +1,8 @@
-import { Errors, Events, onCleanMounted } from '@aerogel/core';
+import { Cache, Errors, Events, onCleanMounted } from '@aerogel/core';
 import { debounce, fail, isArray, isInstanceOf, isObject, tap, throttle } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
 import { Model, getRelatedClasses, hydrateModel } from 'soukai-bis';
-import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
+import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener, SerializedModel } from 'soukai-bis';
 import {
     ReactiveEffect,
     computed,
@@ -21,7 +21,6 @@ import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 
 import { IS_REACTIVE, RAW } from './flags';
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
-import { getPersistedModels } from './persistence';
 
 function mapModels<T extends Model>(
     models: unknown,
@@ -149,18 +148,18 @@ function reactiveComputedModels<T>(
 
     getCurrentScope() && onScopeDispose(stop);
 
-    if (options.persist) {
-        void restorePersistedModels(options.persist);
+    if (options.cache) {
+        void restoreCachedModels(options.cache);
 
-        watchPersistedModels(modelClass, options.persist, reactiveModels);
+        watchCachedModels(modelClass, options.cache, reactiveModels);
     }
 
     return reactiveModels;
 }
 
-async function restorePersistedModels(key: string): Promise<void> {
+async function restoreCachedModels(key: string): Promise<void> {
     try {
-        const serializedModels = (await getPersistedModels().get(key)) ?? [];
+        const serializedModels = (await Cache.get<SerializedModel[]>(key)) ?? [];
         const models = await Promise.all(serializedModels.map((serializedModel) => hydrateModel(serializedModel)));
 
         for (const model of models) {
@@ -173,20 +172,20 @@ async function restorePersistedModels(key: string): Promise<void> {
             trackedModelsData.modelsSet.add(model);
         }
     } catch (error) {
-        Errors.reportDevelopmentError(error, `Failed restoring persisted models '${key}'`);
+        Errors.reportDevelopmentError(error, `Failed restoring cached models '${key}'`);
     }
 }
 
-function watchPersistedModels(modelClass: ModelConstructor, key: string, reactiveModels: ComputedRef<unknown>): void {
+function watchCachedModels(modelClass: ModelConstructor, key: string, reactiveModels: ComputedRef<unknown>): void {
     const stopListeners = Events.on('purge-storage', () => saveModels.cancel());
     const saveModels = debounce(async (models: Model[]) => {
         try {
-            await getPersistedModels().set(
+            await Cache.set(
                 key,
                 models.map((model) => toRaw(model).serialize()),
             );
         } catch (error) {
-            Errors.reportDevelopmentError(error, `Failed persisting models '${key}'`);
+            Errors.reportDevelopmentError(error, `Failed caching models '${key}'`);
         }
     }, 500);
 
@@ -247,7 +246,7 @@ export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 
 export interface ComputedModelsOptions {
     watch?: string[];
-    persist?: string;
+    cache?: string;
 }
 
 export interface UseModelsResult<T extends Model> {
