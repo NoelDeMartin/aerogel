@@ -50,6 +50,7 @@
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
+        "fake-indexeddb": "catalog:",
         "publint": "catalog:",
         "zod": "catalog:"
     },

@@ -1,7 +1,9 @@
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
+import { computedModels } from './composition';
 import { _getTrackedModelsData } from './internal';
+import { getPersistedModels } from './persistence';
 import {
     findTrackedModel,
     getTrackedModels,
@@ -103,5 +105,29 @@ describe('Services helpers', () => {
         expect(getTrackedModels(User)[0]?.name).toEqual('Alicia');
 
         vi.useRealTimers();
+    });
+
+    it('Restores persisted models before collections are loaded', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const persistedModels = getPersistedModels();
+
+        await persistedModels.set('users', [alice.serialize()]);
+        await trackModels(User, { bypassServicesCheck: true, lazy: true });
+
+        // Act
+        const users = computedModels(User, () => getTrackedModels(User), { persist: 'users' });
+
+        await vi.waitFor(() => expect(users.value).toHaveLength(1));
+
+        const restoredAlice = getTrackedModels(User)[0];
+
+        await loadTrackedModels(User);
+
+        // Assert
+        expect(restoredAlice).not.toBe(alice);
+        expect(restoredAlice?.name).toEqual('Alice');
+        expect(getTrackedModels(User)).toHaveLength(1);
+        expect(getTrackedModels(User)[0]).toBe(restoredAlice);
     });
 });

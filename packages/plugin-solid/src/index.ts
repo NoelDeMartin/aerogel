@@ -12,6 +12,7 @@ import { AuthenticationFailedError } from '@aerogel/plugin-solid/errors';
 import { services } from '@aerogel/plugin-solid/services';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
+import { clearPersistedModels } from '@aerogel/plugin-solid/utils/persistence';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
 import appModels from 'virtual:aerogel-models';
@@ -74,6 +75,7 @@ export default function solid(options: Options = {}): Plugin {
             }
 
             Events.on('purge-storage', () => engine.clear());
+            Events.on('purge-storage', clearPersistedModels);
 
             await bootServices(app, services);
         },

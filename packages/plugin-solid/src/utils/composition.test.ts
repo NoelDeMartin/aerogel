@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 import { computedModel, computedModels, useModels } from './composition';
+import { getPersistedModels } from './persistence';
 import { refreshTrackedModels, resetModelsState } from './services';
 
 describe('Composition helpers', () => {
@@ -166,5 +167,28 @@ describe('Composition helpers', () => {
 
         expect(loading.value).toBe(false);
         expect(refreshing.value).toBe(false);
+    });
+
+    it('Persists computed models once updated', async () => {
+        // Arrange
+        await User.create({ name: 'Alice', age: 23 });
+        await User.create({ name: 'Bob', age: 42 });
+
+        const persistedModels = getPersistedModels();
+        const { models: users, loading } = useModels(User);
+
+        computedModels(User, () => users.value.filter((user) => (user.age ?? 0) > 30), {
+            persist: 'adults',
+        });
+
+        // Act
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        // Assert
+        await vi.waitFor(async () => expect(await persistedModels.get('adults')).toHaveLength(1));
+
+        const persistedAdults = await persistedModels.get('adults');
+
+        expect(persistedAdults?.[0]?.nodes[0]?.attributes.name).toEqual('Bob');
     });
 });

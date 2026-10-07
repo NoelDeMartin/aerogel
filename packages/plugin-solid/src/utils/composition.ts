@@ -1,7 +1,7 @@
-import { onCleanMounted } from '@aerogel/core';
-import { fail, isArray, isInstanceOf, isObject, tap, throttle } from '@noeldemartin/utils';
+import { Errors, Events, onCleanMounted } from '@aerogel/core';
+import { debounce, fail, isArray, isInstanceOf, isObject, tap, throttle } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
-import { Model, getRelatedClasses } from 'soukai-bis';
+import { Model, getRelatedClasses, hydrateModel } from 'soukai-bis';
 import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import {
     ReactiveEffect,
@@ -14,12 +14,14 @@ import {
     shallowRef,
     toRaw,
     toValue,
+    watch,
     watchEffect,
 } from 'vue';
 import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 
 import { IS_REACTIVE, RAW } from './flags';
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
+import { getPersistedModels } from './persistence';
 
 function mapModels<T extends Model>(
     models: unknown,
@@ -147,7 +149,50 @@ function reactiveComputedModels<T>(
 
     getCurrentScope() && onScopeDispose(stop);
 
+    if (options.persist) {
+        void restorePersistedModels(options.persist);
+
+        watchPersistedModels(modelClass, options.persist, reactiveModels);
+    }
+
     return reactiveModels;
+}
+
+async function restorePersistedModels(key: string): Promise<void> {
+    try {
+        const serializedModels = (await getPersistedModels().get(key)) ?? [];
+        const models = await Promise.all(serializedModels.map((serializedModel) => hydrateModel(serializedModel)));
+
+        for (const model of models) {
+            const trackedModelsData = _getTrackedModelsData(model.static());
+
+            if (trackedModelsData.loaded.value) {
+                continue;
+            }
+
+            trackedModelsData.modelsSet.add(model);
+        }
+    } catch (error) {
+        Errors.reportDevelopmentError(error, `Failed restoring persisted models '${key}'`);
+    }
+}
+
+function watchPersistedModels(modelClass: ModelConstructor, key: string, reactiveModels: ComputedRef<unknown>): void {
+    const stopListeners = Events.on('purge-storage', () => saveModels.cancel());
+    const saveModels = debounce(async (models: Model[]) => {
+        try {
+            await getPersistedModels().set(
+                key,
+                models.map((model) => toRaw(model).serialize()),
+            );
+        } catch (error) {
+            Errors.reportDevelopmentError(error, `Failed persisting models '${key}'`);
+        }
+    }, 500);
+
+    watch(reactiveModels, (value) => saveModels(Array.from(mapModels(value).values())));
+
+    getCurrentScope() && onScopeDispose(stopListeners);
 }
 
 function toReactiveModels<T>(shallowModels: T): T {
@@ -202,6 +247,7 @@ export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 
 export interface ComputedModelsOptions {
     watch?: string[];
+    persist?: string;
 }
 
 export interface UseModelsResult<T extends Model> {

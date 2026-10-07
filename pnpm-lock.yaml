@@ -216,6 +216,9 @@ catalogs:
     '@tailwindcss/typography':
       specifier: ^0.5.16
       version: 0.5.20
+    fake-indexeddb:
+      specifier: ^6.0.1
+      version: 6.2.5
     idb:
       specifier: ^8.0.2
       version: 8.0.4
@@ -263,7 +266,7 @@ importers:
         version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/testing':
         specifier: next
         version: 0.0.0-next.23b9f09c2e11d1c3ece07d50800c41e7b3576cc8(vitest@5.0.1)
@@ -293,7 +296,7 @@ importers:
         version: 0.9.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -402,7 +405,7 @@ importers:
         version: 2.11.0(vue@3.5.43(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.7.0
@@ -452,7 +455,7 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
@@ -461,7 +464,7 @@ importers:
         version: 0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -517,7 +520,7 @@ importers:
     dependencies:
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
@@ -526,7 +529,7 @@ importers:
         version: 8.0.4
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -547,7 +550,7 @@ importers:
         specifier: ^26.6.3
         version: 26.6.4
       fake-indexeddb:
-        specifier: ^6.0.0
+        specifier: 'catalog:'
         version: 6.2.5
       publint:
         specifier: 'catalog:'
@@ -563,7 +566,7 @@ importers:
         version: 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue-router:
         specifier: ^4.5.0
         version: 4.6.4(vue@3.5.43(typescript@5.9.3))
@@ -600,7 +603,7 @@ importers:
         version: 3.1.1
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
@@ -609,7 +612,7 @@ importers:
         version: 2.4.1(encoding@0.1.13)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vite-plus:
         specifier: 'catalog:'
         version: 1.0.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.4)(@vitest/ui@5.0.1)(esbuild@0.28.2)(happy-dom@20.14.5)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(yaml@2.9.1)
@@ -629,6 +632,9 @@ importers:
       '@noeldemartin/scripts':
         specifier: 'catalog:'
         version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
+      fake-indexeddb:
+        specifier: 'catalog:'
+        version: 6.2.5
       publint:
         specifier: 'catalog:'
         version: 0.3.25
@@ -640,7 +646,7 @@ importers:
     dependencies:
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       vue:
         specifier: ^3.5.0
         version: 3.5.43(typescript@5.9.3)
@@ -744,7 +750,7 @@ importers:
         version: link:../packages/plugin-solid
       '@noeldemartin/solid-utils':
         specifier: next
-        version: 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
+        version: 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils':
         specifier: next
         version: 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
@@ -756,7 +762,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3
@@ -829,7 +835,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+        version: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3
@@ -2829,8 +2835,8 @@ packages:
     resolution: {integrity: sha512-CrAoNE/cHbL/mQg3vRwjuSGtSuCIqgdrHs3kejBJH6eSW9F8CxiZBecmrUNP4+2bv4JG8Gcop5pzK3hKYPE3fA==}
     hasBin: true
 
-  '@noeldemartin/solid-utils@0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952':
-    resolution: {integrity: sha512-f3jO81tFTz+5Kfuw5e4fRHWxNfIgH7q9AsAjRa47VNLgNkUiN39y7vlGQZPbXFfhLb+KTca3K3OEM/bFosVlPA==}
+  '@noeldemartin/solid-utils@0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3':
+    resolution: {integrity: sha512-S9KmviTVgiq8Jahe79LANEjn6gRgidMr8bZcZ1RZzyx6O/shIAp/Gzzpvj/mmvmQ7t6bCSjqS9cB9jwlaTh+hw==}
     peerDependencies:
       vitest: '>=5.0.0'
     peerDependenciesMeta:
@@ -7391,8 +7397,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac:
-    resolution: {integrity: sha512-aOlu2Plx6gzRPD14Ke9wb0jiDMwkAuFPzF52IsGd9QnKGEBx7+dc/cJUdPTkmU2qFt0732dzn71xg9b8Cn617Q==}
+  soukai-bis@0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8:
+    resolution: {integrity: sha512-Gf83W8lkMcS9PsdcgMTAzFlmxfpl1ohTbmfCn20SIxDTJYLGlqiLgSc2/IGaarf3sE5g9eMMepP4gaNqaHlDFg==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -11567,7 +11573,7 @@ snapshots:
 
   '@noeldemartin/scripts@0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a': {}
 
-  '@noeldemartin/solid-utils@0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)':
+  '@noeldemartin/solid-utils@0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)':
     dependencies:
       '@noeldemartin/utils': 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
       '@rdfjs/types': 2.0.1
@@ -15643,11 +15649,11 @@ snapshots:
   playwright-solid@0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.0.1)(web-streams-polyfill@3.3.3):
     dependencies:
       '@inrupt/solid-client-authn-core': 3.1.1
-      '@noeldemartin/solid-utils': 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
+      '@noeldemartin/solid-utils': 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
       '@playwright/test': 1.63.0
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
+      soukai-bis: 0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5)
       zod: 4.6.5
     transitivePeerDependencies:
       - vitest
@@ -16409,9 +16415,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.dc61822e742eb620557c9ac33f489dd0a19c53ac(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
+  soukai-bis@0.0.0-next.7405a825f75d90c00d855ce2102d805b1cd476d8(vitest@5.0.1)(web-streams-polyfill@3.3.3)(zod@4.6.5):
     dependencies:
-      '@noeldemartin/solid-utils': 0.6.1-next.249f62b0a25e207c0dcfd0b4b4d3f6a7d17ba952(vitest@5.0.1)(web-streams-polyfill@3.3.3)
+      '@noeldemartin/solid-utils': 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.1)(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.7.3-next.657c2edcf90be0b73888ba6dbc57154b43fa0cf4
       '@rdfjs/types': 2.0.1
       idb: 8.0.4

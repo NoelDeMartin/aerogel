@@ -1,5 +1,7 @@
+import 'fake-indexeddb/auto';
 import { Events } from '@aerogel/core';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
+import { clearPersistedModels } from '@aerogel/plugin-solid/utils/persistence';
 import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
 
@@ -13,7 +15,9 @@ vi.mock('@aerogel/core', async () => {
     return original;
 });
 
-beforeEach(() => {
+beforeEach(async () => {
+    await clearPersistedModels();
+
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });

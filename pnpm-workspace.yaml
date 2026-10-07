@@ -17,6 +17,7 @@ catalog:
     '@tailwindcss/forms': ^0.5.10
     '@tailwindcss/typography': ^0.5.16
     '@types/node': ^26.6.3
+    fake-indexeddb: ^6.0.1
     idb: ^8.0.2
     publint: ^0.3.24
     soukai-bis: next
