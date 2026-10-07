@@ -4,6 +4,7 @@ import type { Nullable } from '@noeldemartin/utils';
 import { Model, getRelatedClasses } from 'soukai-bis';
 import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
 import {
+    ReactiveEffect,
     computed,
     customRef,
     getCurrentScope,
@@ -89,21 +90,33 @@ function shallowComputedModels<T>(
 ): ComputedRef<T> {
     return customRef((track, trigger) => {
         let value: T;
-        const recompute = () => ((value = compute()), trigger());
+        let dirty = true;
+        const invalidate = () => dirty || ((dirty = true), trigger());
+        const computeEffect = new ReactiveEffect(compute);
         const listeners: Array<() => void> = [
-            modelClass.on('deleted', recompute),
-            modelClass.on('created', recompute),
-            modelClass.on('updated', recompute),
-            modelClass.on('modified', recompute),
-            modelClass.on('relation-loaded', recompute),
+            modelClass.on('deleted', invalidate),
+            modelClass.on('created', invalidate),
+            modelClass.on('updated', invalidate),
+            modelClass.on('modified', invalidate),
+            modelClass.on('relation-loaded', invalidate),
         ];
 
-        watchEffect(recompute);
-        watchComputedAttributes(modelClass, options.watch ?? [], recompute);
+        computeEffect.scheduler = invalidate;
+
+        watchComputedAttributes(modelClass, options.watch ?? [], invalidate);
         getCurrentScope() && onScopeDispose(() => listeners.forEach((stop) => stop()));
 
         return {
-            get: () => tap(value, () => track()),
+            get: () => {
+                if (dirty) {
+                    value = computeEffect.run();
+                    dirty = false;
+                }
+
+                track();
+
+                return value;
+            },
 
             // oxlint-disable-next-line no-console
             set: () => console.warn('Computed models ref was not set (it is immutable).'),
@@ -116,37 +129,18 @@ function reactiveComputedModels<T>(
     compute: () => T,
     options: ComputedModelsOptions = {},
 ): ComputedRef<T> {
+    let reactiveModelsMap = new Map<string, Model>();
     const shallowModels = shallowComputedModels(modelClass, compute, options);
-    const reactiveModels = computed(() => {
-        if (isArray(shallowModels.value)) {
-            return shallowModels.value
-                .filter((shallowModel) => !isSoftDeleted(shallowModel))
-                .map((shallowModel) => shallowReactive(shallowModel)) as T;
-        }
+    const reactiveModels = computed(() =>
+        tap(toReactiveModels(shallowModels.value), (models) => (reactiveModelsMap = mapModels(models))),
+    );
 
-        if (isObject(shallowModels.value)) {
-            return Object.entries(shallowModels.value).reduce((models, [name, value]) => {
-                if (isArray(value)) {
-                    models[name as keyof T] = value
-                        .filter((shallowModel) => !isSoftDeleted(shallowModel))
-                        .map((shallowModel) => shallowReactive(shallowModel)) as T[keyof T];
-                } else if (!isSoftDeleted(value as Model)) {
-                    models[name as keyof T] = shallowReactive(value as Model) as T[keyof T];
-                }
-
-                return models;
-            }, {} as T);
-        }
-
-        return shallowModels.value;
-    });
-    const reactiveModelsMap = computed(() => mapModels(reactiveModels.value));
     const stop = modelClass.on('modified', (updatedModel, field) => {
         if (!updatedModel.url) {
             return;
         }
 
-        Object.assign(reactiveModelsMap.value.get(updatedModel.url) ?? {}, {
+        Object.assign(reactiveModelsMap.get(updatedModel.url) ?? {}, {
             [field]: updatedModel.getAttribute(field),
         });
     });
@@ -154,6 +148,30 @@ function reactiveComputedModels<T>(
     getCurrentScope() && onScopeDispose(stop);
 
     return reactiveModels;
+}
+
+function toReactiveModels<T>(shallowModels: T): T {
+    if (isArray(shallowModels)) {
+        return shallowModels
+            .filter((shallowModel) => !isSoftDeleted(shallowModel))
+            .map((shallowModel) => shallowReactive(shallowModel)) as T;
+    }
+
+    if (isObject(shallowModels)) {
+        return Object.entries(shallowModels).reduce((models, [name, value]) => {
+            if (isArray(value)) {
+                models[name as keyof T] = value
+                    .filter((shallowModel) => !isSoftDeleted(shallowModel))
+                    .map((shallowModel) => shallowReactive(shallowModel)) as T[keyof T];
+            } else if (!isSoftDeleted(value as Model)) {
+                models[name as keyof T] = shallowReactive(value as Model) as T[keyof T];
+            }
+
+            return models;
+        }, {} as T);
+    }
+
+    return shallowModels;
 }
 
 function createModelProxy<T extends object>(model: T, track: () => void, trigger: () => void): T {

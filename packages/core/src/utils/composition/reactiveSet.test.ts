@@ -27,4 +27,23 @@ describe('Vue reactiveSet', () => {
         // Assert
         expect(updates).toEqual(5);
     });
+
+    it('compares items by key', () => {
+        // Arrange
+        const set = reactiveSet<{ id: string; name: string }>(undefined, { key: (item) => item.id });
+        const alice = { id: 'alice', name: 'Alice' };
+        const otherAlice = { id: 'alice', name: 'Alice (other instance)' };
+        const bob = { id: 'bob', name: 'Bob' };
+
+        // Act
+        set.add(alice);
+        set.add(otherAlice);
+        set.add(bob);
+        set.delete({ ...bob });
+
+        // Assert
+        expect(set.values()).toEqual([alice]);
+        expect(set.has(otherAlice)).toBe(true);
+        expect(set.has(bob)).toBe(false);
+    });
 });

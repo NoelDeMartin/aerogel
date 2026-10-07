@@ -1,21 +1,24 @@
 import { fail } from '@noeldemartin/utils';
 import { customRef } from 'vue';
 
+function createItemsMap<T>(values: T[] | Set<T>, getKey: (item: T) => unknown) {
+    return new Map(Array.from(values).map((item) => [getKey(item), item]));
+}
+
 // oxlint-disable-next-line typescript/explicit-module-boundary-types
-export function reactiveSet<T>(initial?: T[] | Set<T>, options: { equals?: (a: T, b: T) => boolean } = {}) {
-    let set: Set<T> = new Set(initial);
+export function reactiveSet<T>(initial?: T[] | Set<T>, options: { key?: (item: T) => unknown } = {}) {
+    const getKey = options.key ?? ((item: T) => item);
+
+    let items = createItemsMap(initial ?? [], getKey);
     let trigger: () => void;
     let track: () => void;
-    const equals = options?.equals;
-    const hasEqual = equals
-        ? (item: T) => Array.from(ref.value.values()).some((existingItem) => equals(item, existingItem))
-        : () => false;
+
     const ref = customRef((_track, _trigger) => {
         track = _track;
         trigger = _trigger;
 
         return {
-            get: () => set,
+            get: () => items,
             set: () => fail('Attempted to write read-only reactive set'),
         };
     });
@@ -29,31 +32,33 @@ export function reactiveSet<T>(initial?: T[] | Set<T>, options: { equals?: (a: T
         has(item: T): boolean {
             track();
 
-            return ref.value.has(item) || hasEqual(item);
+            return ref.value.has(getKey(item));
         },
         add(item: T): void {
+            const key = getKey(item);
+
             trigger();
 
-            if (hasEqual(item)) {
+            if (ref.value.has(key)) {
                 return;
             }
 
-            ref.value.add(item);
+            ref.value.set(key, item);
         },
         delete(item: T): void {
             trigger();
 
-            ref.value.delete(item);
+            ref.value.delete(getKey(item));
         },
         clear(): void {
             trigger();
 
             ref.value.clear();
         },
-        reset(items?: T[] | Set<T>): void {
+        reset(newItems?: T[] | Set<T>): void {
             trigger();
 
-            set = new Set(items);
+            items = createItemsMap(newItems ?? [], getKey);
         },
     };
 }

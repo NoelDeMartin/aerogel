@@ -100,7 +100,7 @@ function initializedTrackedModelsData<T extends Model>(
     options: TrackedModelOptions = {},
 ): TrackedModelData<T> {
     let pendingRefresh: Promise<void> | null = null;
-    const modelsSet = reactiveSet<T>(undefined, { equals: (a, b) => a.url === b.url });
+    const modelsSet = reactiveSet<T>(undefined, { key: (model) => model.url });
     const modelsArray = computed(() => modelsSet.values());
     const loading = ref(false);
     const loaded = ref(false);

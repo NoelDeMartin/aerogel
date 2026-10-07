@@ -53,10 +53,54 @@ describe('Composition helpers', () => {
         expect(usersByAge.value[25]?.[0]?.url === alice.url).toBe(true);
 
         // FIXME This should be 3
-        expect(collectionUpdated).toEqual(10);
+        expect(collectionUpdated).toEqual(8);
 
         // FIXME This should be 2
         expect(aliceUpdated).toEqual(1);
+    });
+
+    it('Defers recomputing model collections until they are read', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const compute = vi.fn(() => [alice]);
+        const users = computedModels(User, compute);
+
+        users.value;
+        compute.mockClear();
+
+        // Act
+        alice.setAttribute('name', 'Alicia');
+        alice.setAttribute('age', 24);
+        await alice.save();
+
+        const computedBeforeReading = compute.mock.calls.length;
+
+        users.value;
+        users.value;
+
+        // Assert
+        expect(computedBeforeReading).toEqual(0);
+        expect(compute).toHaveBeenCalledOnce();
+    });
+
+    it('Updates reactive models when their attributes change', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const users = computedModels(User, () => [alice]);
+        const reactiveAlice = users.value[0];
+        const ages: unknown[] = [];
+
+        watchEffect(() => ages.push(reactiveAlice?.age));
+
+        // Act
+        alice.setAttribute('age', 24);
+        await nextTick();
+
+        await alice.update({ age: 25 });
+        await nextTick();
+
+        // Assert
+        expect(ages).toEqual([23, 24, 25]);
     });
 
     it('Computes model instances', async () => {
