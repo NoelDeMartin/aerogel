@@ -1,7 +1,7 @@
 import { Errors, Events, appNamespace, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
-import { isDevelopment, isInstanceOf } from '@noeldemartin/utils';
+import { isDevelopment, isInstanceOf, throttle } from '@noeldemartin/utils';
 import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
 import type { Model, ModelConstructor } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
@@ -121,7 +121,7 @@ function initializedTrackedModelsData<T extends Model>(
         try {
             const models = await fetchModels(modelClass, {
                 depth: data.depth,
-                onChunk: (chunkModels) => loaded.value || modelsSet.reset(withTrackedInstances(chunkModels)),
+                onChunk: throttle((chunkModels) => loaded.value || modelsSet.reset(withTrackedInstances(chunkModels))),
             });
 
             modelsSet.reset(loaded.value ? models : withTrackedInstances(models));

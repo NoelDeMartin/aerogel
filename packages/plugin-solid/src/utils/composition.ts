@@ -1,6 +1,5 @@
 import { onCleanMounted } from '@aerogel/core';
-import { throttle } from '@aerogel/plugin-solid/utils/timing';
-import { fail, isArray, isInstanceOf, isObject, tap } from '@noeldemartin/utils';
+import { fail, isArray, isInstanceOf, isObject, tap, throttle } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
 import { Model, getRelatedClasses } from 'soukai-bis';
 import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
