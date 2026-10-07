@@ -26,7 +26,7 @@ catalog:
     unplugin-vue-components: ^28.4.1
     vite-plus: ^1.0.0
     vite: npm:@voidzero-dev/vite-plus-core@^1.0.0
-    vue-tsc: ^3.3.11
+    vue-tsc: 3.3.11 # unpin once https://github.com/vuejs/language-tools/issues/6237 is fixed.
     vue: ^3.5.0
     zod: ^4.3.4
 
