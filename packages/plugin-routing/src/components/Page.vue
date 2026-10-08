@@ -12,6 +12,8 @@ import { classes } from '@aerogel/core';
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
+import PageTitle from './PageTitle.vue';
+
 const { class: rootClasses, fullbleed } = defineProps<{
     class?: HTMLAttributes['class'];
     title?: string;
