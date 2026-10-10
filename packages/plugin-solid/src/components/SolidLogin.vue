@@ -41,6 +41,7 @@
                     </span>
                 </Button>
                 <Button
+                    :loading="noLoading && $solid.loginOngoing"
                     :disabled="noLoading && $solid.loginOngoing"
                     submit
                     class="whitespace-nowrap"
@@ -49,7 +50,13 @@
                     {{ $td('solid.logIn.dev', 'Log in to dev server') }}
                 </Button>
             </div>
-            <Button v-else :disabled="noLoading && $solid.loginOngoing" submit :class="renderedButtonClasses">
+            <Button
+                v-else
+                :loading="noLoading && $solid.loginOngoing"
+                :disabled="noLoading && $solid.loginOngoing"
+                submit
+                :class="renderedButtonClasses"
+            >
                 {{ $td('solid.logIn.submit', 'Log in') }}
             </Button>
         </div>

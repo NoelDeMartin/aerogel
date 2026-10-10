@@ -4,7 +4,8 @@
         "lib": ["ESNext", "DOM"],
         "types": ["@aerogel/core", "@aerogel/vite/env", "node"],
         "paths": {
-            "@aerogel/plugin-local-first/*": ["./src/*"]
+            "@aerogel/plugin-local-first/*": ["./src/*"],
+            "@aerogel/storybook": ["../storybook/src"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.tsx"]
