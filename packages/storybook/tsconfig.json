@@ -1,12 +1,10 @@
 {
-    "extends": "@tsconfig/node24/tsconfig.json",
-    "include": ["src/**/*.ts"],
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "lib": ["DOM", "ESNext"],
+        "types": ["@aerogel/core", "@aerogel/vite/env"],
         "paths": {
             "@aerogel/storybook/*": ["./src/*"]
         }
-    }
+    },
+    "include": ["src/**/*.ts", "src/**/*.vue"]
 }

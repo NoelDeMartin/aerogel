@@ -35,9 +35,11 @@
     "devDependencies": {
         "@aerogel/core": "workspace:*",
         "@aerogel/plugin-solid": "workspace:*",
+        "@aerogel/storybook": "workspace:*",
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
+        "@storybook/vue3-vite": "catalog:",
         "@types/node": "catalog:",
         "fake-indexeddb": "catalog:",
         "publint": "catalog:",

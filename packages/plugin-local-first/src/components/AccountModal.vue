@@ -2,9 +2,9 @@
     <Modal title-hidden close-hidden :title="$td('account.title', 'Account')">
         <div class="relative flex items-center rounded-md bg-gray-100 p-4 pr-12">
             <SolidAvatar class="mr-2 size-16 shrink-0" />
-            <div class="flex flex-col overflow-hidden">
+            <div class="-m-1 flex flex-col overflow-hidden p-1">
                 <span class="font-semibold">{{ $solid.user?.name ?? $td('user.anonymous', 'Anonymous') }}</span>
-                <Link :href="$solid.user?.webId" class="mt-0.5 truncate text-sm font-light text-gray-500">
+                <Link :href="$solid.user?.webId" class="mt-0.5 min-h-0 truncate text-sm font-light text-gray-500">
                     {{ $solid.user?.webId }}
                 </Link>
             </div>

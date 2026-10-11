@@ -22,11 +22,14 @@
         }
     },
     "scripts": {
-        "build": "vp pack"
+        "build": "vp build",
+        "type-check": "vue-tsc --noEmit",
+        "verify": "noeldemartin-verify"
     },
     "devDependencies": {
         "@aerogel/core": "workspace:*",
-        "@arethetypeswrong/core": "catalog:",
+        "@aerogel/vite": "workspace:*",
+        "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "@storybook/vue3-vite": "catalog:",
         "@types/node": "catalog:",

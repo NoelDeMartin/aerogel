@@ -2,6 +2,7 @@
     <!-- @vue-generic {T} -->
     <HeadlessModal v-slot="{ close }" v-bind="props" :ref="forwardRef" :persistent>
         <HeadlessModalOverlay
+            v-if="!inline"
             class="fixed inset-0 z-40 transition-opacity duration-300 will-change-[opacity]"
             :class="{
                 'animate-[fade-in_var(--tw-duration)_ease-in-out]': !hasRenderedModals,
@@ -61,7 +62,7 @@ import HeadlessModalDescription from '@aerogel/core/components/headless/Headless
 import HeadlessModalOverlay from '@aerogel/core/components/headless/HeadlessModalOverlay.vue';
 import HeadlessModalTitle from '@aerogel/core/components/headless/HeadlessModalTitle.vue';
 import Markdown from '@aerogel/core/components/ui/Markdown.vue';
-import { injectModal, modals, useModal } from '@aerogel/core/ui/modals';
+import { injectInlineModals, injectModal, modals, useModal } from '@aerogel/core/ui/modals';
 import type { ModalController } from '@aerogel/core/ui/modals';
 import UI from '@aerogel/core/ui/UI';
 import { reactiveSet } from '@aerogel/core/utils';
@@ -106,6 +107,7 @@ defineExpose<AcceptRefs<ModalExpose>>({
 const { forwardRef, currentRef: $modal } = useForwardExpose<HeadlessModalInstance>();
 const { id, visible } = useModal();
 const modal = injectModal();
+const inline = injectInlineModals();
 const inForeground = computed(
     () =>
         visible.value &&
@@ -127,20 +129,25 @@ const renderedContentClass = computed(() =>
 const renderFullscreen = computed(() => fullscreen || (fullscreenOnMobile && UI.mobile));
 const renderedWrapperClass = computed(() =>
     classes(
-        'isolate fixed z-40 flex flex-col overflow-hidden bg-white text-left duration-300',
-        renderFullscreen.value
-            ? [
-                  'inset-0 transition-[transform,translate] will-change-[transform,translate]',
-                  renderedModals.has(modal.value) || 'animate-[slide-in_var(--tw-duration)_ease-in-out]',
-                  inForeground.value ? 'translate-y-0' : 'translate-y-full',
-              ]
+        'isolate flex flex-col overflow-hidden bg-white text-left',
+        inline
+            ? ['relative', renderFullscreen.value ? 'w-full' : 'w-lg max-w-full rounded-lg shadow-xl']
             : [
-                  'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full',
-                  'max-w-[calc(100%-2rem)] rounded-lg shadow-xl sm:max-w-lg',
-                  'transition-[scale,opacity] will-change-[scale,opacity]',
-                  renderedModals.has(modal.value) ||
-                      'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
-                  inForeground.value ? 'scale-100 opacity-100' : 'scale-50 opacity-0',
+                  'fixed z-40 duration-300',
+                  renderFullscreen.value
+                      ? [
+                            'inset-0 transition-[transform,translate] will-change-[transform,translate]',
+                            renderedModals.has(modal.value) || 'animate-[slide-in_var(--tw-duration)_ease-in-out]',
+                            inForeground.value ? 'translate-y-0' : 'translate-y-full',
+                        ]
+                      : [
+                            'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full',
+                            'max-w-[calc(100%-2rem)] rounded-lg shadow-xl sm:max-w-lg',
+                            'transition-[scale,opacity] will-change-[scale,opacity]',
+                            renderedModals.has(modal.value) ||
+                                'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
+                            inForeground.value ? 'scale-100 opacity-100' : 'scale-50 opacity-0',
+                        ],
               ],
         wrapperClass,
     ),

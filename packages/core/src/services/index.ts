@@ -4,6 +4,7 @@ import { isDevelopment, isTesting } from '@noeldemartin/utils';
 import type { App as AppInstance } from 'vue';
 
 import App from './App';
+import AppFake from './App.fake';
 import Browser from './Browser';
 import Cache from './Cache';
 import Events from './Events';
@@ -14,6 +15,7 @@ import Storage from './Storage';
 import { getPiniaStore } from './store';
 
 export * from './App';
+export * from './App.fake';
 export * from './Browser';
 export * from './Cache';
 export * from './Events';
@@ -22,7 +24,7 @@ export * from './Service';
 export * from './store';
 export * from './utils';
 
-export { App, Browser, Cache, Events, NetworkCache, Storage, Service };
+export { App, AppFake, Browser, Cache, Events, NetworkCache, Storage, Service };
 
 const defaultServices = {
     $app: App,
