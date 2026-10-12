@@ -10,5 +10,5 @@ import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 
 const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class'] }>();
-const renderedClasses = computed(() => classes('text-page-title text-slate-900', rootClasses));
+const renderedClasses = computed(() => classes('text-page-title text-gray-900', rootClasses));
 </script>
