@@ -1,4 +1,4 @@
-import { Events, appNamespace, bootServices, registerErrorHandler } from '@aerogel/core';
+import { Events, appNamespace, bootServices, registerErrorHandler, registerFakeService } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
 import {
     authenticators as baseAuthenticators,
@@ -11,6 +11,7 @@ import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import { AuthenticationFailedError } from '@aerogel/plugin-solid/errors';
 import { services } from '@aerogel/plugin-solid/services';
 import Solid from '@aerogel/plugin-solid/services/Solid';
+import SolidFake from '@aerogel/plugin-solid/services/Solid.fake';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
@@ -45,6 +46,8 @@ export interface Options {
 export default function solid(options: Options = {}): Plugin {
     return {
         async install(app) {
+            registerFakeService(Solid, SolidFake);
+
             const engine = setupSoukai({ namespace: appNamespace(), models: appModels });
 
             setupTestingRuntime();

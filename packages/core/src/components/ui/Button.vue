@@ -27,8 +27,8 @@ const { class: baseClasses, size, variant, disabled, loading, ...props } = defin
 const { forwardRef } = useForwardExpose();
 
 // prettier-ignore
-const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps, 'size' | 'variant' | 'disabled'>>>(
-    { baseClasses, variant, size, disabled: disabled || loading },
+const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps, 'size' | 'variant' | 'disabled' | 'loading'>>>(
+    { baseClasses, variant, size, disabled: disabled || loading, loading },
     {
         baseClasses: 'clickable focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         variants: {
@@ -50,6 +50,10 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
             disabled: {
                 false: null,
                 true: 'opacity-50 cursor-not-allowed',
+            },
+            loading: {
+                false: null,
+                true: null,
             },
         },
         compoundVariants: [
@@ -102,6 +106,11 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
             },
             {
                 variant: 'link',
+                loading: true,
+                class: 'inline-flex items-center justify-center gap-1',
+            },
+            {
+                variant: 'link',
                 size: 'small',
                 class: 'leading-6',
             },
@@ -120,6 +129,7 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
             variant: 'default',
             size: 'default',
             disabled: false,
+            loading: false,
         },
     },
 ));

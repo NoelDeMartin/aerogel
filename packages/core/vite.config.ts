@@ -1,8 +1,11 @@
 import { URL, fileURLToPath } from 'node:url';
 
 import Aerogel from '@aerogel/vite';
+import { externalDependencies } from '@noeldemartin/vite-plus-config';
 import dts from 'vite-plugin-dts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
+
+import packageJson from './package.json' with { type: 'json' };
 
 export default defineConfig({
     build: {
@@ -15,25 +18,7 @@ export default defineConfig({
             formats: ['es'],
         },
         rollupOptions: {
-            external: [
-                '@noeldemartin/testing',
-                '@noeldemartin/utils',
-                '@noeldemartin/vue-modals',
-                'class-variance-authority',
-                'clsx',
-                'dompurify',
-                'eruda',
-                'eruda-indexeddb',
-                'marked',
-                'pinia',
-                'reka-ui',
-                'tailwind-merge',
-                'virtual:aerogel',
-                'vite-plus/test',
-                'vue',
-                'vue-component-type-helpers',
-                'zod',
-            ],
+            external: externalDependencies(packageJson, { include: [/^virtual:/] }),
         },
     },
     plugins: lazyPlugins(() => [

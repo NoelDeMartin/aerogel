@@ -18,15 +18,19 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
+            "style": "./src/index.css",
             "default": "./dist/index.js"
         }
     },
     "scripts": {
-        "build": "vp pack"
+        "build": "vp build",
+        "type-check": "vue-tsc --noEmit",
+        "verify": "noeldemartin-verify"
     },
     "devDependencies": {
         "@aerogel/core": "workspace:*",
-        "@arethetypeswrong/core": "catalog:",
+        "@aerogel/vite": "workspace:*",
+        "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "@storybook/vue3-vite": "catalog:",
         "@types/node": "catalog:",

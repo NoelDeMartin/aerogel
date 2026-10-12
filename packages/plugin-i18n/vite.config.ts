@@ -2,8 +2,11 @@ import { URL, fileURLToPath } from 'node:url';
 
 import Aerogel from '@aerogel/vite';
 import I18n from '@intlify/unplugin-vue-i18n/vite';
+import { externalDependencies } from '@noeldemartin/vite-plus-config';
 import dts from 'vite-plugin-dts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
+
+import packageJson from './package.json' with { type: 'json' };
 
 export default defineConfig({
     build: {
@@ -14,7 +17,7 @@ export default defineConfig({
             fileName: 'aerogel-plugin-i18n',
         },
         rollupOptions: {
-            external: ['@aerogel/core', '@noeldemartin/utils', 'virtual:aerogel-messages', 'vue-i18n'],
+            external: externalDependencies(packageJson, { include: [/^virtual:/] }),
         },
     },
     plugins: lazyPlugins(() => [

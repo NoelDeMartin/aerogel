@@ -2,3 +2,4 @@
 @import '@aerogel/plugin-solid';
 @import '@aerogel/plugin-local-first';
 @import '@aerogel/plugin-routing';
+@import '@aerogel/storybook';

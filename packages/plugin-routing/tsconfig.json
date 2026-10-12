@@ -1,7 +1,6 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["@aerogel/vite/env"],
         "paths": {
             "@aerogel/plugin-routing/*": ["./src/*"]
         }

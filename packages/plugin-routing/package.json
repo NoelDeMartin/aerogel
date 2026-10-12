@@ -46,6 +46,7 @@
         "@aerogel/plugin-solid": "*",
         "@aerogel/vite": "*",
         "soukai-bis": "*",
+        "vue": "catalog:",
         "vue-router": "^4.5.0"
     }
 }

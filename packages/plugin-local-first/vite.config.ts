@@ -1,8 +1,11 @@
 import { URL, fileURLToPath } from 'node:url';
 
 import Aerogel from '@aerogel/vite';
+import { externalDependencies } from '@noeldemartin/vite-plus-config';
 import dts from 'vite-plugin-dts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
+
+import packageJson from './package.json' with { type: 'json' };
 
 export default defineConfig({
     build: {
@@ -13,15 +16,7 @@ export default defineConfig({
             fileName: 'aerogel-plugin-local-first',
         },
         rollupOptions: {
-            external: [
-                '@aerogel/core',
-                '@aerogel/plugin-solid',
-                '@noeldemartin/solid-utils',
-                '@noeldemartin/utils',
-                'idb',
-                'soukai-bis',
-                'vue',
-            ],
+            external: externalDependencies(packageJson),
         },
     },
     plugins: lazyPlugins(() => [

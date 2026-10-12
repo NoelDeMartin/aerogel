@@ -19,7 +19,7 @@ type StoryArgs = {
 };
 
 const meta: Meta<StoryArgs> = {
-    title: 'Button',
+    title: 'Core/Button',
     component: Button,
     argTypes: {
         variant: {

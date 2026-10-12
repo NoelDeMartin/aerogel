@@ -11,6 +11,7 @@ catalog:
     '@noeldemartin/solid-utils': next
     '@noeldemartin/testing': next
     '@noeldemartin/utils': next
+    '@noeldemartin/vue-modals': next
     '@rdfjs/types': ^2.0.1
     '@storybook/addon-docs': ^10.6.0
     '@storybook/vue3-vite': ^10.6.0
@@ -27,6 +28,7 @@ catalog:
     unplugin-vue-components: ^28.4.1
     vite-plus: ^1.0.0
     vite: npm:@voidzero-dev/vite-plus-core@^1.0.0
+    vue-i18n: ^11.1.2
     vue-tsc: 3.3.11 # unpin once https://github.com/vuejs/language-tools/issues/6237 is fixed.
     vue: ^3.5.0
     zod: ^4.3.4

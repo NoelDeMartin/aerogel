@@ -36,7 +36,7 @@
     "dependencies": {
         "@noeldemartin/testing": "catalog:",
         "@noeldemartin/utils": "catalog:",
-        "@noeldemartin/vue-modals": "0.1.1",
+        "@noeldemartin/vue-modals": "catalog:",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "dompurify": "^3.2.4",

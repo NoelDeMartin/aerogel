@@ -12,6 +12,8 @@ export {
     type GetModalProps,
     type GetModalResponse,
     type ModalController,
+    type ModalMetadata,
+    type ModalOptions,
 } from '@noeldemartin/vue-modals';
 
 const instances = new WeakSet();
@@ -33,4 +35,10 @@ export function useModal<T = never>() {
             remove();
         },
     };
+}
+
+declare module '@noeldemartin/vue-modals' {
+    interface ModalMetadata {
+        inline?: boolean;
+    }
 }

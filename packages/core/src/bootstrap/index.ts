@@ -4,13 +4,14 @@ import errors from '@aerogel/core/errors';
 import { queueStartupError } from '@aerogel/core/errors/internal';
 import lang from '@aerogel/core/lang';
 import { installPlugins } from '@aerogel/core/plugins';
-import services from '@aerogel/core/services';
+import services, { registerFakeService } from '@aerogel/core/services';
 import App from '@aerogel/core/services/App';
+import AppFake from '@aerogel/core/services/App.fake';
 import Events from '@aerogel/core/services/Events';
 import testing from '@aerogel/core/testing';
 import ui from '@aerogel/core/ui';
 import { setupEnv } from '@aerogel/core/utils/env';
-import { isDevelopment } from '@noeldemartin/utils';
+import { InMemoryStorageService, Storage, isDevelopment } from '@noeldemartin/utils';
 import { createApp } from 'vue';
 import type { App as AppInstance, Component } from 'vue';
 
@@ -23,6 +24,9 @@ export interface AerogelApp {
 
 export async function bootstrapApplication(app: AppInstance, options: AerogelOptions = {}): Promise<void> {
     const plugins = [testing, directives, errors, lang, services, ui, ...(options.plugins ?? [])];
+
+    registerFakeService(App, AppFake);
+    registerFakeService(Storage, { reset: () => new InMemoryStorageService() });
 
     App.instance = app;
 

@@ -80,18 +80,19 @@ export default class Service<
     }
 
     public launch(): Promise<void> {
-        const handleError = (error: unknown) => this._booted.reject(new ServiceBootError(this._name, error));
+        const booted = this._booted;
+        const handleError = (error: unknown) => booted.reject(new ServiceBootError(this._name, error));
 
         try {
             this.frameworkBoot()
                 .then(() => this.boot())
-                .then(() => this._booted.resolve())
+                .then(() => booted.resolve())
                 .catch(handleError);
         } catch (error) {
             handleError(error);
         }
 
-        return this._booted;
+        return booted;
     }
 
     public hasPersistedState(): boolean {

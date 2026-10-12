@@ -1,6 +1,11 @@
 <template>
-    <DialogRoot :ref="forwardRef" open @update:open="persistent || $event || close()">
-        <DialogPortal>
+    <DialogRoot
+        :ref="forwardRef"
+        open
+        :modal="!metadata.inline"
+        @update:open="persistent || metadata.inline || $event || close()"
+    >
+        <DialogPortal :disabled="metadata.inline">
             <slot :close />
         </DialogPortal>
     </DialogRoot>
@@ -17,7 +22,7 @@ import type { DialogContent } from 'reka-ui';
 import { provide, ref } from 'vue';
 
 const $content = ref<Nullable<InstanceType<typeof DialogContent>>>(null);
-const { close } = useModal<T>();
+const { close, metadata } = useModal<T>();
 
 defineProps<ModalProps>();
 defineSlots<ModalSlots<T>>();

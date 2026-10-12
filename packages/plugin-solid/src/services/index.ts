@@ -1,7 +1,9 @@
 import Solid from './Solid';
+import SolidFake from './Solid.fake';
 
 export * from './Solid';
-export { Solid };
+export * from './Solid.fake';
+export { Solid, SolidFake };
 
 export const services = { $solid: Solid };
 

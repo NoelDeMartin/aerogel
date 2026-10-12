@@ -59,6 +59,7 @@
         "@aerogel/vite": "*",
         "soukai-bis": "*",
         "vite-plus": "catalog:",
+        "vue": "catalog:",
         "zod": "catalog:"
     }
 }

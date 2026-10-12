@@ -36,6 +36,7 @@
         "publint": "catalog:"
     },
     "peerDependencies": {
-        "@aerogel/core": "*"
+        "@aerogel/core": "*",
+        "vue-i18n": "catalog:"
     }
 }

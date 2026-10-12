@@ -1,8 +1,11 @@
 import { URL, fileURLToPath } from 'node:url';
 
 import Aerogel from '@aerogel/vite';
+import { externalDependencies } from '@noeldemartin/vite-plus-config';
 import dts from 'vite-plugin-dts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
+
+import packageJson from './package.json' with { type: 'json' };
 
 export default defineConfig({
     build: {
@@ -16,22 +19,7 @@ export default defineConfig({
             formats: ['es'],
         },
         rollupOptions: {
-            external: [
-                '@aerogel/core',
-                '@aerogel/vite',
-                '@inrupt/solid-client-authn-browser',
-                '@noeldemartin/solid-utils',
-                '@noeldemartin/utils',
-                'solid-auth-client',
-                'soukai-bis',
-                'soukai-bis/patch-zod',
-                'virtual:aerogel',
-                'virtual:aerogel-models',
-                'virtual:aerogel-models-worker',
-                'virtual:aerogel-solid',
-                'vite-plus/test',
-                'vue',
-            ],
+            external: externalDependencies(packageJson, { include: [/^virtual:/] }),
         },
     },
     plugins: lazyPlugins(() => [
