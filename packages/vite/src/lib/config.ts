@@ -42,7 +42,7 @@ export function configureDependencies(config: UserConfig, virtualModules: string
 
     config.resolve = {
         ...config.resolve,
-        dedupe: [...(config.resolve?.dedupe ?? []), 'zod'],
+        dedupe: [...(config.resolve?.dedupe ?? []), 'reka-ui', 'zod'],
     };
 }
 
