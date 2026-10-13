@@ -17,12 +17,18 @@
 
 <script setup lang="ts">
 import Button from '@aerogel/core/components/ui/Button.vue';
-import { Errors, type ErrorReport } from '@aerogel/core/errors';
+import {
+    Errors,
+    getErrorReportDebugInformation,
+    getErrorReportDetails,
+    getErrorReportSummary,
+    type ErrorReport,
+} from '@aerogel/core/errors';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
 import App from '@aerogel/core/services/App';
 import UI from '@aerogel/core/ui/UI';
 import { classes } from '@aerogel/core/utils/classes';
-import { stringExcerpt, tap } from '@noeldemartin/utils';
+import { isObject, stringExcerpt, tap } from '@noeldemartin/utils';
 import { computed } from 'vue';
 import type { Component } from 'vue';
 import IconConsole from '~icons/mdi/console';
@@ -44,13 +50,12 @@ defineSlots<{
 }>();
 
 const { report } = defineProps<{ report: ErrorReport }>();
-const summary = computed(() => (report.description ? `${report.title}: ${report.description}` : report.title));
 const githubReportUrl = computed(() => {
     if (!App.sourceUrl) {
         return false;
     }
 
-    const issueTitle = encodeURIComponent(summary.value);
+    const issueTitle = encodeURIComponent(getErrorReportSummary(report));
     const issueBody = encodeURIComponent(
         [
             '[Please, explain here what you were trying to do when this error appeared]',
@@ -58,7 +63,7 @@ const githubReportUrl = computed(() => {
             'Error details:',
             '```',
             stringExcerpt(
-                report.details ?? 'Details missing from report',
+                getErrorReportDetails(report) || 'Details missing from report',
                 1800 - issueTitle.length - App.sourceUrl.length,
             ).trim(),
             '```',
@@ -76,7 +81,7 @@ const buttons = computed(() =>
                 iconComponent: IconCopy,
                 iconClass: 'w-6! h-5!',
                 async click() {
-                    await navigator.clipboard.writeText(`${summary.value}\n\n${report.details}`);
+                    await navigator.clipboard.writeText(getErrorReportDebugInformation(report));
 
                     UI.toast(translateWithDefault('errors.copiedToClipboard', 'Debug information copied to clipboard'));
                 },
@@ -103,7 +108,7 @@ const buttons = computed(() =>
             },
         ] as ErrorReportModalButtonsDefaultSlotProps[],
         (reportButtons) => {
-            if (report.error instanceof Error && report.error.cause) {
+            if (isObject(report.error) && report.error.cause) {
                 const cause = report.error.cause;
 
                 reportButtons.unshift({
