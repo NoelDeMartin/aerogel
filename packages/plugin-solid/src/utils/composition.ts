@@ -1,5 +1,5 @@
 import { Cache, Errors, Events, onCleanMounted } from '@aerogel/core';
-import { debounce, fail, isArray, isInstanceOf, isObject, tap, throttle } from '@noeldemartin/utils';
+import { debounce, fail, isArray, isInstanceOf, isNullable, isPlainObject, tap, throttle } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
 import { Model, getRelatedClasses, hydrateModel } from 'soukai-bis';
 import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener, SerializedModel } from 'soukai-bis';
@@ -22,30 +22,48 @@ import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
 import { IS_REACTIVE, RAW } from './flags';
 import { _getTrackedModelsData, isSoftDeleted } from './internal';
 
-function mapModels<T extends Model>(
-    models: unknown,
-    existingMap?: Map<string, T>,
-    deep: boolean = true,
-): Map<string, T> {
-    const map = existingMap ?? new Map();
+const SERIALIZED_MODEL_KEY = '@model';
 
-    if (isArray(models)) {
-        models.forEach((model) => map.set(model.url, model));
+function isSerializedModelReference(value: unknown): value is { [SERIALIZED_MODEL_KEY]: SerializedModel } {
+    return isPlainObject(value) && SERIALIZED_MODEL_KEY in value;
+}
 
-        return map;
+function isModel(value: unknown): value is Model {
+    return isInstanceOf(value, Model);
+}
+
+function mapNestedValues<TLeaf>(
+    value: unknown,
+    isLeaf: (value: unknown) => value is TLeaf,
+    callback: (leaf: TLeaf) => unknown,
+    filter: (leaf: TLeaf) => boolean = () => true,
+): unknown {
+    const isIncluded = (item: unknown) => !isLeaf(item) || filter(item);
+    const mapItem = (item: unknown) => mapNestedValues(item, isLeaf, callback, filter);
+
+    if (isLeaf(value)) {
+        return callback(value);
     }
 
-    if (isObject(models)) {
-        if (deep) {
-            Object.values(models).forEach((value) => mapModels(value, map, false));
-
-            return map;
-        }
-
-        map.set(models.url as string, models as T);
-
-        return map;
+    if (isArray(value)) {
+        return value.filter(isIncluded).map(mapItem);
     }
+
+    if (isPlainObject(value)) {
+        return Object.fromEntries(
+            Object.entries(value)
+                .filter(([, item]) => isIncluded(item))
+                .map(([key, item]) => [key, mapItem(item)]),
+        );
+    }
+
+    return value;
+}
+
+function mapModels(value: unknown): Map<string, Model> {
+    const map = new Map<string, Model>();
+
+    mapNestedValues(value, isModel, (model) => model.url && map.set(model.url, model));
 
     return map;
 }
@@ -85,7 +103,7 @@ function watchComputedAttributes(modelClass: ModelConstructor, attributes: strin
 }
 
 function shallowComputedModels<T>(
-    modelClass: ModelConstructor,
+    modelClasses: ModelConstructor[],
     compute: () => T,
     options: ComputedModelsOptions = {},
 ): ComputedRef<T> {
@@ -93,18 +111,21 @@ function shallowComputedModels<T>(
         let value: T;
         let dirty = true;
         const invalidate = () => dirty || ((dirty = true), trigger());
+        const invalidateComputedAttributes = throttle(invalidate);
         const computeEffect = new ReactiveEffect(compute);
-        const listeners: Array<() => void> = [
+        const listeners: Array<() => void> = modelClasses.flatMap((modelClass) => [
             modelClass.on('deleted', invalidate),
             modelClass.on('created', invalidate),
             modelClass.on('updated', invalidate),
             modelClass.on('modified', invalidate),
             modelClass.on('relation-loaded', invalidate),
-        ];
+        ]);
 
         computeEffect.scheduler = invalidate;
 
-        watchComputedAttributes(modelClass, options.watch ?? [], invalidate);
+        modelClasses.forEach((modelClass) =>
+            watchComputedAttributes(modelClass, options.watch ?? [], invalidateComputedAttributes),
+        );
         getCurrentScope() && onScopeDispose(() => listeners.forEach((stop) => stop()));
 
         return {
@@ -126,96 +147,127 @@ function shallowComputedModels<T>(
 }
 
 function reactiveComputedModels<T>(
-    modelClass: ModelConstructor,
+    modelClasses: ModelConstructor[],
     compute: () => T,
     options: ComputedModelsOptions = {},
 ): ComputedRef<T> {
     let reactiveModelsMap = new Map<string, Model>();
-    const shallowModels = shallowComputedModels(modelClass, compute, options);
-    const reactiveModels = computed(() =>
-        tap(toReactiveModels(shallowModels.value), (models) => (reactiveModelsMap = mapModels(models))),
-    );
+    const cachedValue = shallowRef<{ value: T } | null>(null);
+    const shallowModels = shallowComputedModels(modelClasses, compute, options);
+    const reactiveModels = computed(() => {
+        const value = shallowModels.value;
 
-    const stop = modelClass.on('modified', (updatedModel, field) => {
-        if (!updatedModel.url) {
-            return;
-        }
-
-        Object.assign(reactiveModelsMap.get(updatedModel.url) ?? {}, {
-            [field]: updatedModel.getAttribute(field),
-        });
+        return tap(
+            toReactiveModels(isNullable(value) && cachedValue.value ? cachedValue.value.value : value),
+            (models) => (reactiveModelsMap = mapModels(models)),
+        );
     });
 
-    getCurrentScope() && onScopeDispose(stop);
+    const listeners = modelClasses.map((modelClass) =>
+        modelClass.on('modified', (updatedModel, field) => {
+            if (!updatedModel.url) {
+                return;
+            }
+
+            Object.assign(reactiveModelsMap.get(updatedModel.url) ?? {}, {
+                [field]: updatedModel.getAttribute(field),
+            });
+        }),
+    );
+
+    getCurrentScope() && onScopeDispose(() => listeners.forEach((stop) => stop()));
 
     if (options.cache) {
-        void restoreCachedModels(options.cache);
+        void restoreCachedValue<T>(options.cache).then((value) => value && (cachedValue.value ??= value));
 
-        watchCachedModels(modelClass, options.cache, reactiveModels);
+        watchCachedValue(options.cache, reactiveModels, shallowModels, cachedValue);
     }
 
     return reactiveModels;
 }
 
-async function restoreCachedModels(key: string): Promise<void> {
+async function restoreCachedValue<T>(key: string): Promise<{ value: T } | null> {
     try {
-        const serializedModels = (await Cache.get<SerializedModel[]>(key)) ?? [];
-        const models = await Promise.all(serializedModels.map((serializedModel) => hydrateModel(serializedModel)));
+        const cached = await Cache.get(key);
 
-        for (const model of models) {
-            const trackedModelsData = _getTrackedModelsData(model.static());
-
-            if (trackedModelsData.loaded.value) {
-                continue;
-            }
-
-            trackedModelsData.modelsSet.add(model);
+        if (cached === undefined) {
+            return null;
         }
+
+        return { value: (await hydrateCachedValue(cached)) as T };
     } catch (error) {
-        Errors.reportDevelopmentError(error, `Failed restoring cached models '${key}'`);
+        Errors.reportDevelopmentError(error, `Failed restoring cached value '${key}'`);
+
+        return null;
     }
 }
 
-function watchCachedModels(modelClass: ModelConstructor, key: string, reactiveModels: ComputedRef<unknown>): void {
-    const stopListeners = Events.on('purge-storage', () => saveModels.cancel());
-    const saveModels = debounce(async (models: Model[]) => {
+async function hydrateCachedModel(serializedModel: SerializedModel): Promise<Model> {
+    const model = await hydrateModel(serializedModel);
+    const trackedModelsData = _getTrackedModelsData(model.static());
+    const trackedModel = trackedModelsData.modelsSet.values().find(({ url }) => url === model.url);
+
+    if (trackedModel) {
+        return trackedModel;
+    }
+
+    if (!trackedModelsData.loaded.value) {
+        trackedModelsData.modelsSet.add(model);
+    }
+
+    return model;
+}
+
+async function hydrateCachedValue(value: unknown): Promise<unknown> {
+    const hydratingModels: Promise<[object, Model]>[] = [];
+
+    mapNestedValues(value, isSerializedModelReference, (reference) =>
+        hydratingModels.push(hydrateCachedModel(reference[SERIALIZED_MODEL_KEY]).then((model) => [reference, model])),
+    );
+
+    const models = new Map(await Promise.all(hydratingModels));
+
+    return mapNestedValues(value, isSerializedModelReference, (reference) => models.get(reference));
+}
+
+function serializeCachedValue(value: unknown): unknown {
+    return mapNestedValues(value, isModel, (model) => ({ [SERIALIZED_MODEL_KEY]: toRaw(model).serialize() }));
+}
+
+function watchCachedValue(
+    key: string,
+    reactiveModels: ComputedRef<unknown>,
+    shallowModels: ComputedRef<unknown>,
+    cachedValue: Ref<{ value: unknown } | null>,
+): void {
+    const stopListeners = Events.on('purge-storage', () => {
+        saveValue.cancel();
+
+        cachedValue.value = null;
+    });
+    const saveValue = debounce(async (value: unknown) => {
         try {
-            await Cache.set(
-                key,
-                models.map((model) => toRaw(model).serialize()),
-            );
+            await Cache.set(key, serializeCachedValue(value));
         } catch (error) {
-            Errors.reportDevelopmentError(error, `Failed caching models '${key}'`);
+            Errors.reportDevelopmentError(error, `Failed caching value '${key}'`);
         }
     }, 500);
 
-    watch(reactiveModels, (value) => saveModels(Array.from(mapModels(value).values())));
+    watch(reactiveModels, (value) => {
+        if (isNullable(shallowModels.value)) {
+            return;
+        }
+
+        cachedValue.value = { value };
+
+        saveValue(value);
+    });
 
     getCurrentScope() && onScopeDispose(stopListeners);
 }
 
-function toReactiveModels<T>(shallowModels: T): T {
-    if (isArray(shallowModels)) {
-        return shallowModels
-            .filter((shallowModel) => !isSoftDeleted(shallowModel))
-            .map((shallowModel) => shallowReactive(shallowModel)) as T;
-    }
-
-    if (isObject(shallowModels)) {
-        return Object.entries(shallowModels).reduce((models, [name, value]) => {
-            if (isArray(value)) {
-                models[name as keyof T] = value
-                    .filter((shallowModel) => !isSoftDeleted(shallowModel))
-                    .map((shallowModel) => shallowReactive(shallowModel)) as T[keyof T];
-            } else if (!isSoftDeleted(value as Model)) {
-                models[name as keyof T] = shallowReactive(value as Model) as T[keyof T];
-            }
-
-            return models;
-        }, {} as T);
-    }
-
-    return shallowModels;
+function toReactiveModels<T>(value: T): T {
+    return mapNestedValues(value, isModel, shallowReactive, (model) => !isSoftDeleted(model)) as T;
 }
 
 function createModelProxy<T extends object>(model: T, track: () => void, trigger: () => void): T {
@@ -316,13 +368,13 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
 }
 
 export function computedModels<T>(
-    modelClass: ModelConstructor,
+    modelClasses: ModelConstructor | ModelConstructor[],
     compute: () => T,
     options: ComputedModelsOptions = {},
 ): ComputedRef<T> {
     // TODO This implementation is probably very inefficient and needs to be improved for better performance with large
     // collections. There are also more details in the unit tests for this function.
-    return reactiveComputedModels(modelClass, compute, options);
+    return reactiveComputedModels(isArray(modelClasses) ? modelClasses : [modelClasses], compute, options);
 }
 
 export function computedModelAttribute<TModel extends Model, TAttribute extends string & keyof TModel>(

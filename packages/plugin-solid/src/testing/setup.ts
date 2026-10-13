@@ -1,5 +1,6 @@
 import 'fake-indexeddb/auto';
 import { Cache, Events } from '@aerogel/core';
+import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
@@ -20,6 +21,6 @@ beforeEach(async () => {
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });
-    bootModels({ User }, { reset: true });
+    bootModels({ Post, User }, { reset: true });
     setEngine(new InMemoryEngine());
 });

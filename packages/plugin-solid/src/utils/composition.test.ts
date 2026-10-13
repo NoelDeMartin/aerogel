@@ -1,12 +1,13 @@
 import { Cache } from '@aerogel/core';
+import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
-import { arrayGroupBy } from '@noeldemartin/utils';
+import { after, arrayGroupBy } from '@noeldemartin/utils';
 import type { SerializedModel } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 import { computedModel, computedModels, useModels } from './composition';
-import { refreshTrackedModels, resetModelsState } from './services';
+import { getTrackedModels, loadTrackedModels, refreshTrackedModels, resetModelsState, trackModels } from './services';
 
 describe('Composition helpers', () => {
     beforeEach(() => resetModelsState());
@@ -170,6 +171,23 @@ describe('Composition helpers', () => {
         expect(refreshing.value).toBe(false);
     });
 
+    it('Computes collections from multiple model classes', async () => {
+        // Arrange
+        const { models: users } = useModels(User);
+        const { models: posts } = useModels(Post);
+        const counts = computedModels([User, Post], () => ({
+            users: users.value.length,
+            posts: posts.value.length,
+        }));
+
+        // Act
+        await User.create({ name: 'Alice', age: 23 });
+        await Post.create({ title: 'Hello World' });
+
+        // Assert
+        await vi.waitFor(() => expect(counts.value).toEqual({ users: 1, posts: 1 }));
+    });
+
     it('Caches computed models once updated', async () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });
@@ -177,18 +195,134 @@ describe('Composition helpers', () => {
 
         const { models: users, loading } = useModels(User);
 
-        computedModels(User, () => users.value.filter((user) => (user.age ?? 0) > 30), {
-            cache: 'adults',
-        });
+        computedModels(
+            User,
+            () => ({
+                adults: users.value.filter((user) => (user.age ?? 0) > 30),
+                stats: { count: users.value.length, ages: new Map(users.value.map((user) => [user.name, user.age])) },
+            }),
+            { cache: 'users' },
+        );
 
         // Act
         await vi.waitFor(() => expect(loading.value).toBe(false));
 
         // Assert
-        await vi.waitFor(async () => expect(await Cache.get('adults')).toHaveLength(1));
+        await vi.waitFor(async () => expect(await Cache.get('users')).toBeTruthy());
 
-        const cachedAdults = await Cache.get<SerializedModel[]>('adults');
+        const cached = await Cache.get<{
+            adults: { '@model': SerializedModel }[];
+            stats: { count: number; ages: Map<string, number> };
+        }>('users');
 
-        expect(cachedAdults?.[0]?.nodes[0]?.attributes.name).toEqual('Bob');
+        expect(cached?.adults).toHaveLength(1);
+        expect(cached?.adults[0]?.['@model'].nodes[0]?.attributes.name).toEqual('Bob');
+        expect(cached?.stats).toEqual({
+            count: 2,
+            ages: new Map([
+                ['Alice', 23],
+                ['Bob', 42],
+            ]),
+        });
+    });
+
+    it('Falls back to cached values while computing nullish values', async () => {
+        // Arrange
+        await User.create({ name: 'Alice', age: 23 });
+        await User.create({ name: 'Bob', age: 42 });
+        await Cache.set('users', { count: 1, ages: new Map([['Alice', 23]]) });
+
+        const ready = ref(false);
+        const { models: users } = useModels(User);
+        const stats = computedModels(
+            User,
+            () =>
+                ready.value
+                    ? { count: users.value.length, ages: new Map(users.value.map((user) => [user.name, user.age])) }
+                    : null,
+            { cache: 'users' },
+        );
+
+        // Act
+        await vi.waitFor(() => expect(stats.value?.count).toEqual(1));
+        await after(600);
+
+        const cachedStats = stats.value;
+        const cachedValue = await Cache.get('users');
+
+        ready.value = true;
+
+        // Assert
+        expect(cachedStats?.ages).toEqual(new Map([['Alice', 23]]));
+        expect(cachedValue).toEqual({ count: 1, ages: new Map([['Alice', 23]]) });
+
+        await vi.waitFor(() => expect(stats.value?.count).toEqual(2));
+        await vi.waitFor(async () => expect(await Cache.get('users')).toMatchObject({ count: 2 }));
+    });
+
+    it('Falls back to last known values when computing nullish values again', async () => {
+        // Arrange
+        await User.create({ name: 'Alice', age: 23 });
+        await Cache.set('users', { count: 0 });
+
+        const ready = ref(true);
+        const { models: users, loading } = useModels(User);
+        const stats = computedModels(User, () => (ready.value ? { count: users.value.length } : null), {
+            cache: 'users',
+        });
+
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+        await vi.waitFor(() => expect(stats.value).toEqual({ count: 1 }));
+
+        // Act
+        ready.value = false;
+
+        await User.create({ name: 'Bob', age: 42 });
+
+        // Assert
+        expect(stats.value).toEqual({ count: 1 });
+    });
+
+    it('Reuses tracked instances when restoring cached models', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+
+        await Cache.set('alice', [{ '@model': alice.serialize() }]);
+        await Cache.set('users', [{ '@model': alice.serialize() }]);
+        await trackModels(User, { bypassServicesCheck: true, lazy: true });
+
+        // Act
+        const cachedAlice = computedModels(User, () => null as User[] | null, { cache: 'alice' });
+        const cachedUsers = computedModels(User, () => null as User[] | null, { cache: 'users' });
+
+        await vi.waitFor(() => expect(cachedAlice.value).toHaveLength(1));
+        await vi.waitFor(() => expect(cachedUsers.value).toHaveLength(1));
+
+        const trackedAlice = getTrackedModels(User)[0];
+
+        await loadTrackedModels(User);
+
+        // Assert
+        expect(getTrackedModels(User)).toHaveLength(1);
+        expect(getTrackedModels(User)[0]).toBe(trackedAlice);
+        expect(toRaw(cachedAlice.value?.[0])).toBe(trackedAlice);
+        expect(toRaw(cachedUsers.value?.[0])).toBe(trackedAlice);
+    });
+
+    it('Reuses loaded instances when restoring cached models', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+
+        await Cache.set('users', [{ '@model': alice.serialize() }]);
+        await trackModels(User, { bypassServicesCheck: true, lazy: true });
+        await loadTrackedModels(User);
+
+        // Act
+        const users = computedModels(User, () => null as User[] | null, { cache: 'users' });
+
+        await vi.waitFor(() => expect(users.value).toHaveLength(1));
+
+        // Assert
+        expect(toRaw(users.value?.[0])).toBe(getTrackedModels(User)[0]);
     });
 });

@@ -111,7 +111,7 @@ describe('Services helpers', () => {
         // Arrange
         const alice = await User.create({ name: 'Alice', age: 23 });
 
-        await Cache.set('users', [alice.serialize()]);
+        await Cache.set('users', [{ '@model': alice.serialize() }]);
         await trackModels(User, { bypassServicesCheck: true, lazy: true });
 
         // Act
