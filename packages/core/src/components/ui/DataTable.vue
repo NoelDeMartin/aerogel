@@ -129,9 +129,9 @@
 <script setup lang="ts" generic="T extends object">
 import Button from '@aerogel/core/components/ui/Button.vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
-import { arraySorted, arrayWithout, deepGet, isEmpty, isTruthy, range, uuid } from '@noeldemartin/utils';
+import { arraySorted, arrayWithout, clamp, deepGet, isEmpty, isTruthy, range, uuid } from '@noeldemartin/utils';
 import type { ArraySortDirection, DeepKeyOf } from '@noeldemartin/utils';
-import { Fragment, computed, ref, shallowRef, watch } from 'vue';
+import { Fragment, computed, shallowRef, watchEffect } from 'vue';
 import type { VNode, VNodeChild, VNodeNormalizedChildren } from 'vue';
 import IconListBold from '~icons/ph/list-bold';
 import IconSortAscendingBold from '~icons/ph/sort-ascending-bold';
@@ -153,26 +153,36 @@ const {
     itemKey,
     itemsLabel = 'items',
     itemsPerPage = 10,
-} = defineProps<{ items: T[]; itemsLabel?: string; itemKey?: DeepKeyOf<T>; itemsPerPage?: number }>();
+    loading,
+} = defineProps<{
+    items: T[];
+    itemsLabel?: string;
+    itemKey?: DeepKeyOf<T>;
+    itemsPerPage?: number;
+    loading?: boolean;
+}>();
 const slots = defineSlots<{ default?(): VNode[]; empty?(): VNode[] }>();
 const id = `data-table-${uuid()}`;
-const currentPage = ref(1);
+const pageModel = defineModel<number>('page', { default: 1 });
 const sorting = shallowRef<SortedColumn[]>([]);
 const sortingColumns = computed(() => Object.fromEntries(sorting.value.map((s) => [s.field, s.direction])));
 const normalizedItemsPerPage = computed(() => Math.max(1, itemsPerPage));
+const totalPages = computed(() => Math.max(1, Math.ceil(items.length / normalizedItemsPerPage.value)));
+const currentPage = computed({
+    get: () => clamp(pageModel.value, 1, totalPages.value),
+    set: (page) => (pageModel.value = page),
+});
 
 const pagination = computed(() => {
     if (items.length <= normalizedItemsPerPage.value) {
         return;
     }
 
-    const totalPages = Math.ceil(items.length / normalizedItemsPerPage.value);
-
     return {
-        totalPages,
+        totalPages: totalPages.value,
         start: (currentPage.value - 1) * normalizedItemsPerPage.value + 1,
         end: Math.min(currentPage.value * normalizedItemsPerPage.value, items.length),
-        pages: getPaginationPages(totalPages, currentPage.value),
+        pages: getPaginationPages(totalPages.value, currentPage.value),
     };
 });
 
@@ -295,17 +305,11 @@ function toggleSort(field?: DeepKeyOf<T>, event?: MouseEvent) {
     }
 }
 
-watch(pagination, () => {
-    if (!pagination.value) {
-        currentPage.value = 1;
-
+watchEffect(() => {
+    if (loading || pageModel.value === currentPage.value) {
         return;
     }
 
-    if (pagination.value.totalPages >= currentPage.value) {
-        return;
-    }
-
-    currentPage.value = pagination.value.totalPages;
+    pageModel.value = currentPage.value;
 });
 </script>
