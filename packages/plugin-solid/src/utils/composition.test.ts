@@ -188,6 +188,27 @@ describe('Composition helpers', () => {
         await vi.waitFor(() => expect(counts.value).toEqual({ users: 1, posts: 1 }));
     });
 
+    it('Watches computed attributes only in the models that define them', async () => {
+        // Arrange
+        const { models: users } = useModels(User);
+        const { models: posts } = useModels(Post);
+        const stats = computedModels(
+            [User, Post],
+            () => ({
+                users: users.value.length,
+                titleLengths: posts.value.map((post) => post.titleLength.value),
+            }),
+            { watch: ['titleLength'] },
+        );
+
+        // Act
+        await User.create({ name: 'Alice', age: 23 });
+        await Post.create({ title: 'Hello World' });
+
+        // Assert
+        await vi.waitFor(() => expect(stats.value).toEqual({ users: 1, titleLengths: [11] }));
+    });
+
     it('Caches computed models once updated', async () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });

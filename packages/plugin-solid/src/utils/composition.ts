@@ -69,6 +69,12 @@ function mapModels(value: unknown): Map<string, Model> {
 }
 
 function watchComputedAttributes(modelClass: ModelConstructor, attributes: string[], callback: () => void) {
+    const modelAttributes = attributes.filter((attribute) => attribute in modelClass.schema.computed);
+
+    if (modelAttributes.length === 0) {
+        return;
+    }
+
     const modelData = _getTrackedModelsData(modelClass);
     const subscriptions = new Map<Model, () => void>();
 
@@ -89,7 +95,7 @@ function watchComputedAttributes(modelClass: ModelConstructor, attributes: strin
                 return;
             }
 
-            const unsubscribes = attributes.map((attribute) => {
+            const unsubscribes = modelAttributes.map((attribute) => {
                 const computedAttribute = toRaw(model).getComputedAttribute(attribute);
 
                 return computedAttribute.subscribe(callback);
@@ -107,6 +113,15 @@ function shallowComputedModels<T>(
     compute: () => T,
     options: ComputedModelsOptions = {},
 ): ComputedRef<T> {
+    const watchedAttributes = options.watch ?? [];
+    const unknownAttribute = watchedAttributes.find(
+        (attribute) => !modelClasses.some((modelClass) => attribute in modelClass.schema.computed),
+    );
+
+    if (unknownAttribute) {
+        throw new Error(`Computed attribute '${unknownAttribute}' is not defined in any of the watched models.`);
+    }
+
     return customRef((track, trigger) => {
         let value: T;
         let dirty = true;
@@ -124,7 +139,7 @@ function shallowComputedModels<T>(
         computeEffect.scheduler = invalidate;
 
         modelClasses.forEach((modelClass) =>
-            watchComputedAttributes(modelClass, options.watch ?? [], invalidateComputedAttributes),
+            watchComputedAttributes(modelClass, watchedAttributes, invalidateComputedAttributes),
         );
         getCurrentScope() && onScopeDispose(() => listeners.forEach((stop) => stop()));
 
@@ -296,8 +311,14 @@ function createModelProxy<T extends object>(model: T, track: () => void, trigger
 
 export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 
-export interface ComputedModelsOptions {
-    watch?: string[];
+export type ComputedAttributeName<T extends ModelConstructor> = T extends ModelConstructor
+    ? string extends keyof T['computed']
+        ? never
+        : string & keyof T['computed']
+    : never;
+
+export interface ComputedModelsOptions<TAttribute extends string = string> {
+    watch?: TAttribute[];
     cache?: string;
 }
 
@@ -367,10 +388,12 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     });
 }
 
-export function computedModels<T>(
-    modelClasses: ModelConstructor | ModelConstructor[],
+export function computedModels<T, TModelClass extends ModelConstructor = ModelConstructor>(
+    modelClasses: TModelClass | TModelClass[],
     compute: () => T,
-    options: ComputedModelsOptions = {},
+    options: ComputedModelsOptions<
+        ModelConstructor extends TModelClass ? string : ComputedAttributeName<TModelClass>
+    > = {},
 ): ComputedRef<T> {
     // TODO This implementation is probably very inefficient and needs to be improved for better performance with large
     // collections. There are also more details in the unit tests for this function.
