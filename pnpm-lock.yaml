@@ -668,6 +668,12 @@ importers:
 
   packages/storybook:
     dependencies:
+      '@noeldemartin/solid-utils':
+        specifier: next
+        version: 0.6.1-next.baec86d13f6c46634566df001370aeb568c420b3(vitest@5.0.3)(web-streams-polyfill@3.3.3)
+      '@noeldemartin/utils':
+        specifier: next
+        version: 0.8.0-next.0cd0ce3a738bc71332562fbdae574d202dbe76cc
       soukai-bis:
         specifier: next
         version: 0.0.0-next.4a7f4de176cc1f65c7fbe98b8462d691b5f49b94(vitest@5.0.3)(web-streams-polyfill@3.3.3)(zod@4.6.5)
@@ -678,6 +684,9 @@ importers:
       '@aerogel/core':
         specifier: workspace:*
         version: link:../core
+      '@aerogel/plugin-solid':
+        specifier: workspace:*
+        version: link:../plugin-solid
       '@aerogel/vite':
         specifier: workspace:*
         version: link:../vite

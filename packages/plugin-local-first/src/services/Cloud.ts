@@ -216,11 +216,7 @@ export class CloudService extends Service {
 
             this.registeredModels.push({ modelClass, path });
 
-            await trackModels(modelClass, {
-                bypassServicesCheck: true,
-                lazy: true,
-                depth: typeof options.register === 'object' ? options.register.depth : undefined,
-            });
+            await this.initializeTrackedModels(modelClass, options.register);
         }
 
         modelClass.on('created', (model) => this.ready && this.onModelCreated(model));
@@ -351,6 +347,17 @@ export class CloudService extends Service {
         });
 
         this.dirtyModelClasses.clear();
+    }
+
+    protected async initializeTrackedModels(
+        modelClass: ModelConstructor,
+        register: true | RegisterOptions,
+    ): Promise<void> {
+        await trackModels(modelClass, {
+            bypassServicesCheck: true,
+            lazy: true,
+            depth: typeof register === 'object' ? register.depth : undefined,
+        });
     }
 
     private watchNetworkStatus(): void {

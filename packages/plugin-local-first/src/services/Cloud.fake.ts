@@ -1,4 +1,5 @@
 import { facade } from '@noeldemartin/utils';
+import { getBootedModels, isCoreModel } from 'soukai-bis';
 
 import { CloudService } from './Cloud';
 
@@ -12,7 +13,13 @@ export class FakeCloudService extends CloudService {
     }
 
     protected override async boot(): Promise<void> {
-        // Models are not tracked, and nothing is synchronized on startup.
+        for (const modelClass of getBootedModels().values()) {
+            if (isCoreModel(modelClass) || !modelClass.cloud) {
+                continue;
+            }
+
+            await this.initializeTrackedModels(modelClass, modelClass.cloud);
+        }
     }
 }
 

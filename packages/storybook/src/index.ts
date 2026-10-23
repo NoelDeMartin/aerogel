@@ -4,6 +4,7 @@ import { setup as setupStorybook } from '@storybook/vue3-vite';
 import { bootCoreModels } from 'soukai-bis';
 
 export * from './components';
+export * from './lib';
 
 globalThis.__aerogelStorybook__ = true;
 

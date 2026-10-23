@@ -1,4 +1,5 @@
-import { IndexedDBEngine, bootCoreModels, bootModelsFromViteGlob, setEngine, setNamespace } from 'soukai-bis';
+import { bootCoreModels, bootModelsFromViteGlob, setEngine, setNamespace } from 'soukai-bis';
+import type { Engine } from 'soukai-bis';
 
 export type ModelsGlob = Record<string, Record<string, unknown>>;
 
@@ -7,12 +8,8 @@ export function bootModels(models: ModelsGlob = {}): void {
     bootModelsFromViteGlob(models, { reset: true });
 }
 
-export function setupSoukai(options: { namespace: string; models?: ModelsGlob }): IndexedDBEngine {
-    const engine = new IndexedDBEngine();
-
-    setEngine(engine);
+export function setupSoukai(options: { engine: Engine; namespace: string; models?: ModelsGlob }): void {
+    setEngine(options.engine);
     setNamespace(options.namespace);
     bootModels(options.models);
-
-    return engine;
 }

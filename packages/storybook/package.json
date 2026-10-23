@@ -27,11 +27,16 @@
         "type-check": "vue-tsc --noEmit",
         "verify": "noeldemartin-verify"
     },
+    "dependencies": {
+        "@noeldemartin/utils": "catalog:"
+    },
     "devDependencies": {
         "@aerogel/core": "workspace:*",
+        "@aerogel/plugin-solid": "workspace:*",
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
+        "@noeldemartin/solid-utils": "catalog:",
         "@storybook/vue3-vite": "catalog:",
         "@types/node": "catalog:",
         "publint": "catalog:",
@@ -41,6 +46,8 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
+        "@aerogel/plugin-solid": "*",
+        "@noeldemartin/solid-utils": "catalog:",
         "@storybook/vue3-vite": "^10.0.0",
         "soukai-bis": "catalog:",
         "vue": "catalog:"

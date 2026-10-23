@@ -13,9 +13,10 @@ import { services } from '@aerogel/plugin-solid/services';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import SolidFake from '@aerogel/plugin-solid/services/Solid.fake';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
+import { resetModelsState } from '@aerogel/plugin-solid/utils/services';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
 import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
-import { ComputedAttributesCache } from 'soukai-bis';
+import { ComputedAttributesCache, InMemoryEngine, IndexedDBEngine } from 'soukai-bis';
 import appModels from 'virtual:aerogel-models';
 
 import { testingRuntime } from './testing';
@@ -48,7 +49,11 @@ export default function solid(options: Options = {}): Plugin {
         async install(app) {
             registerFakeService(Solid, SolidFake);
 
-            const engine = setupSoukai({ namespace: appNamespace(), models: appModels });
+            const engine = globalThis.__aerogelStorybook__ ? new InMemoryEngine() : new IndexedDBEngine();
+
+            setupSoukai({ engine, namespace: appNamespace(), models: appModels });
+
+            globalThis.__aerogelStorybook__ && resetModelsState();
 
             setupTestingRuntime();
             registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });
@@ -77,7 +82,7 @@ export default function solid(options: Options = {}): Plugin {
                 });
             }
 
-            Events.on('purge-storage', () => engine.clear());
+            Events.on('purge-storage', () => engine instanceof IndexedDBEngine && engine.clear());
             Events.on('clear-cache', () => engine.purgeMetadata());
             Events.on('clear-cache', () => ComputedAttributesCache.clear());
 

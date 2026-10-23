@@ -2,8 +2,8 @@ import 'soukai-bis/patch-zod';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
 import type { ModelsWorkerRequest, ModelsWorkerResponse } from '@aerogel/plugin-solid/workers/ModelsWorker';
 import { isInstanceOf, toError } from '@noeldemartin/utils';
-import { DocumentNotFound, requireBootedModel } from 'soukai-bis';
-import type { IndexedDBEngine, SerializedModel } from 'soukai-bis';
+import { DocumentNotFound, IndexedDBEngine, requireBootedModel } from 'soukai-bis';
+import type { SerializedModel } from 'soukai-bis';
 
 let engine: IndexedDBEngine | null = null;
 
@@ -17,7 +17,9 @@ const methods = {
     async boot(namespace: string): Promise<void> {
         const { default: models } = await import('virtual:aerogel-models');
 
-        engine = setupSoukai({ namespace, models });
+        engine = new IndexedDBEngine();
+
+        setupSoukai({ namespace, models, engine });
     },
 
     async *loadModels(
