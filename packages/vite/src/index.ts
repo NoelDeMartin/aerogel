@@ -30,7 +30,9 @@ import { buildPWAPlugin } from '@aerogel/vite/lib/pwa';
 import { generateSolidAssets, generateSolidVirtualModule, solidMiddleware } from '@aerogel/vite/lib/solid';
 import type { ClientIDDocument } from '@aerogel/vite/lib/solid';
 import {
+    generateModelsDeclaration,
     generateModelsVirtualModule,
+    isModelPath,
     generateModelsWorkerVirtualModule,
     generatePatchZodVirtualModule,
 } from '@aerogel/vite/lib/soukai';
@@ -110,6 +112,24 @@ export default function Aerogel(options: Options = {}): Plugin[] {
             server.middlewares.use(iconsMiddleware(app));
             server.middlewares.use(solidMiddleware(app));
 
+            if (!options.lib) {
+                const updateModelsDeclaration = (path: string) => {
+                    if (!isModelPath(app.root, path)) {
+                        return;
+                    }
+
+                    try {
+                        generateModelsDeclaration(app.root);
+                    } catch (error) {
+                        server.config.logger.error(String(error));
+                    }
+                };
+
+                server.watcher.on('add', updateModelsDeclaration);
+                server.watcher.on('change', updateModelsDeclaration);
+                server.watcher.on('unlink', updateModelsDeclaration);
+            }
+
             loadPackageInfo(app, `${server.config.root}/package.json`);
             loadLocales(app, `${server.config.root}/src/lang/locales.json`);
         },
@@ -143,6 +163,10 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         },
         configResolved(config) {
             app.cacheDir = config.cacheDir;
+
+            if (!options.lib) {
+                generateModelsDeclaration(app.root);
+            }
         },
         async generateBundle() {
             await generateIconAssets(this, app);

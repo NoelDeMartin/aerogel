@@ -46,6 +46,7 @@
         "@arethetypeswrong/core": "catalog:",
         "@noeldemartin/scripts": "catalog:",
         "@types/node": "catalog:",
+        "memfs": "^4.80.0",
         "publint": "catalog:"
     },
     "peerDependencies": {

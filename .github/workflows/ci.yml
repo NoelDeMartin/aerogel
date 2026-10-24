@@ -20,11 +20,14 @@ jobs:
                   node-version-file: '.node-version'
                   cache: true
             - run: vp run build
+            - run: vp run --filter ./playground build
             - uses: actions/cache/save@v6
               with:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
 
     check:
         runs-on: ubuntu-latest
@@ -40,6 +43,8 @@ jobs:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
             - run: vp check
             - run: vp run type-check
 
@@ -57,6 +62,8 @@ jobs:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
             - run: vp test --reporter verbose
 
     e2e:
@@ -77,6 +84,8 @@ jobs:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
             - run: vp exec playwright install --with-deps ${{ matrix.browser }}
             - run: vp run e2e:test:${{ matrix.browser }}
               working-directory: playground
@@ -101,6 +110,8 @@ jobs:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
             - run: vp run verify
 
     docs:
@@ -117,6 +128,8 @@ jobs:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
             - run: vp run docs:build
 
     storybook:
@@ -133,6 +146,8 @@ jobs:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
             - run: vp run storybook:build
 
     publish:
@@ -155,4 +170,6 @@ jobs:
                   key: build-${{ github.sha }}
                   path: |
                       packages/*/dist/**
+                      playground/src/types/components.d.ts
+                      playground/src/types/models.d.ts
             - run: vp exec noeldemartin-publish-modified-packages

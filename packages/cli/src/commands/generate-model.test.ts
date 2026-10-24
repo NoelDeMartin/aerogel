@@ -36,4 +36,16 @@ describe('Generate Model command', () => {
             `),
         );
     });
+
+    it('generates models in modules', async () => {
+        // Arrange
+        FileMock.stub('package.json', '"@aerogel/core": "next"');
+
+        // Act
+        await GenerateModelCommand.run('Movie', { module: 'movies' });
+
+        // Assert
+        FileMock.expectCreated('src/modules/movies/models/Movie.ts').toContain("import Model from './Movie.schema'");
+        FileMock.expectCreated('src/modules/movies/models/Movie.schema.ts');
+    });
 });

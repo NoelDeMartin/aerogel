@@ -65,13 +65,20 @@ export function registerFakeService<T extends object>(service: Facade<T>, fake: 
 
 export default definePlugin({
     async install(app, options) {
+        const modules = options.modules ?? [];
+        const moduleServices = modules.reduce(
+            (allServices, module) => Object.assign(allServices, module.services),
+            {} as Record<string, Service>,
+        );
         const services = {
             ...defaultServices,
+            ...moduleServices,
             ...options.services,
         };
 
         app.use(getPiniaStore());
         settings.forEach((setting) => App.addSetting(setting));
+        modules.forEach((module) => module.settings?.forEach((setting) => App.addSetting(setting)));
         options.settings?.forEach((setting) => App.addSetting(setting));
 
         if (options.settingsFullscreenOnMobile !== undefined) {
@@ -87,6 +94,13 @@ declare module '@aerogel/core/bootstrap/options' {
         services?: Record<string, Service>;
         settings?: AppSetting[];
         settingsFullscreenOnMobile?: boolean;
+    }
+}
+
+declare module '@aerogel/core/modules' {
+    export interface AerogelModule {
+        services?: Record<string, Service>;
+        settings?: AppSetting[];
     }
 }
 

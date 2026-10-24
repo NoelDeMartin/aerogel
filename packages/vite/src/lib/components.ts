@@ -13,7 +13,12 @@ export function buildComponentsPlugin(options: Options): Plugin | false {
     return Components({
         deep: true,
         dts: 'src/types/components.d.ts',
-        dirs: ['src/components', 'src/pages/**/components'],
+        dirs: [
+            'src/components',
+            'src/pages/**/components',
+            'src/modules/*/components',
+            'src/modules/*/pages/**/components',
+        ],
         resolvers: arrayFilter([
             AerogelResolver(),
             options.icons !== false && IconsResolver({ customCollections: ['app'] }),

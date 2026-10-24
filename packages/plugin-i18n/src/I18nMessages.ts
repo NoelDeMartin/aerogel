@@ -1,4 +1,4 @@
-import { isDevelopment, stringMatch } from '@noeldemartin/utils';
+import { arraySorted, deepAssign, isDevelopment, stringMatch } from '@noeldemartin/utils';
 import type { LocaleMessages, VueMessageType } from 'vue-i18n';
 
 type Messages = LocaleMessages<VueMessageType, string, string>;
@@ -9,21 +9,28 @@ export type Listener = (locale: string, messages: Messages) => unknown;
 export default class I18nMessages {
     private listeners: Listener[] = [];
     private messages: Record<string, Messages> = {};
-    private loaders: Record<string, MessagesLoader>;
+    private loaders: Record<string, MessagesLoader[]>;
 
     constructor(loaders: Record<string, unknown>) {
-        this.loaders = Object.entries(loaders).reduce(
-            (messageLoaders, [fileName, loader]) => {
+        const fileNames = arraySorted(Object.keys(loaders), (a, b) => {
+            const aIsModule = a.includes('/modules/');
+            const bIsModule = b.includes('/modules/');
+
+            return aIsModule === bIsModule ? a.localeCompare(b) : aIsModule ? -1 : 1;
+        });
+
+        this.loaders = fileNames.reduce(
+            (messageLoaders, fileName) => {
                 const locale = stringMatch<2>(fileName, /.*\/lang\/(.+)\.yaml/)?.[1];
+                const loader = loaders[fileName] as () => Promise<{ default: Messages }>;
 
                 if (locale) {
-                    messageLoaders[locale] = () =>
-                        (loader as () => Promise<{ default: Messages }>)().then(({ default: messages }) => messages);
+                    (messageLoaders[locale] ??= []).push(() => loader().then(({ default: messages }) => messages));
                 }
 
                 return messageLoaders;
             },
-            {} as Record<string, MessagesLoader>,
+            {} as Record<string, MessagesLoader[]>,
         );
     }
 
@@ -44,9 +51,9 @@ export default class I18nMessages {
             return this.messages[locale] as Messages;
         }
 
-        const loader = this.loaders[locale];
+        const loaders = this.loaders[locale];
 
-        if (!loader) {
+        if (!loaders) {
             this.messages[locale] = {};
             this.listeners.forEach((listener) => listener(locale, {}));
 
@@ -58,7 +65,7 @@ export default class I18nMessages {
             return {};
         }
 
-        const localeMessages = await loader();
+        const localeMessages = deepAssign({} as Messages, ...(await Promise.all(loaders.map((loader) => loader()))));
 
         this.messages[locale] = localeMessages;
         this.listeners.forEach((listener) => listener(locale, localeMessages));

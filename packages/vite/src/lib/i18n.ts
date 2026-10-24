@@ -10,10 +10,10 @@ export function buildI18nPlugin(options: Options, app: AppInfo): Plugin | Plugin
     }
 
     return I18n({
-        include: resolve(app.root, 'src/lang/**/*.yaml'),
+        include: [resolve(app.root, 'src/lang/**/*.yaml'), resolve(app.root, 'src/modules/*/lang/**/*.yaml')],
     });
 }
 
 export function generateMessagesVirtualModule(): string {
-    return `export default import.meta.glob('/src/lang/*.yaml');`;
+    return `export default import.meta.glob(['/src/lang/*.yaml', '/src/modules/*/lang/*.yaml']);`;
 }

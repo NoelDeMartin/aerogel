@@ -4,6 +4,7 @@ export * from './directives';
 export * from './errors';
 export * from './forms';
 export * from './lang';
+export * from './modules';
 export * from './plugins';
 export * from './services';
 export * from './testing';

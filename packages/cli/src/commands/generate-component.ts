@@ -1,4 +1,5 @@
 import Command from '@aerogel/cli/commands/Command';
+import type { CommandOptions } from '@aerogel/cli/commands/Command';
 import File from '@aerogel/cli/lib/File';
 import Log from '@aerogel/cli/lib/Log';
 import Template from '@aerogel/cli/lib/Template';
@@ -13,6 +14,7 @@ export interface Options {
     button?: boolean;
     checkbox?: boolean;
     input?: boolean;
+    module?: string;
     story?: boolean;
 }
 
@@ -22,17 +24,26 @@ export class GenerateComponentCommand extends Command {
     protected static override parameters: [string, string][] = [
         ['path', 'Component path (relative to components folder; extension not necessary)'],
     ];
+    protected static override options: CommandOptions = {
+        module: 'Create component in the given module',
+    };
 
     private path: string;
+    private options: Options;
 
-    constructor(path: string) {
+    constructor(path: string, options: Options = {}) {
         super();
 
         this.path = path;
+        this.options = options;
+    }
+
+    protected get componentsPath(): string {
+        return `${this.getSourcePath(this.options.module)}/components`;
     }
 
     protected override async run(): Promise<void> {
-        this.assertAerogelOrDirectory('src/components');
+        this.assertAerogelOrDirectory(this.componentsPath);
 
         const files = new Set<string>();
         const [directoryName, componentName] = this.parsePathComponents();
@@ -49,23 +60,27 @@ export class GenerateComponentCommand extends Command {
 
     protected async createComponent(directoryName: string, componentName: string, files: Set<string>): Promise<void> {
         await Log.animate('Creating component', async () => {
-            if (File.exists(`src/components/${this.path}.vue`)) {
+            if (File.exists(`${this.componentsPath}/${this.path}.vue`)) {
                 Log.fail(`${this.path} component already exists!`);
             }
 
-            const componentFiles = Template.instantiate(templatePath('component'), `src/components/${directoryName}`, {
-                component: {
-                    name: componentName,
-                    slug: stringToSlug(componentName),
+            const componentFiles = Template.instantiate(
+                templatePath('component'),
+                `${this.componentsPath}/${directoryName}`,
+                {
+                    component: {
+                        name: componentName,
+                        slug: stringToSlug(componentName),
+                    },
                 },
-            });
+            );
 
             componentFiles.forEach((file) => files.add(file));
         });
     }
 
     protected async declareComponents(): Promise<void> {
-        if (!editFiles()) {
+        if (!editFiles() || this.options.module) {
             return;
         }
 

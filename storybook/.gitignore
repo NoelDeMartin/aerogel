@@ -2,3 +2,4 @@ storybook-static
 node_modules
 dist
 /src/types/components.d.ts
+/src/types/models.d.ts

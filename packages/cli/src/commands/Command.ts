@@ -44,6 +44,10 @@ export default class Command {
         // Placeholder for overrides, don't place any functionality here.
     }
 
+    protected getSourcePath(module?: string): string {
+        return module ? `src/modules/${module}` : 'src';
+    }
+
     protected assertAerogelOrDirectory(path?: string): void {
         const packageJson = File.read('package.json');
 

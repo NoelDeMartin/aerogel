@@ -69,6 +69,6 @@ export default class Solid extends Plugin {
 
         const gitignore = File.read('.gitignore') ?? '';
 
-        File.write('.gitignore', `${gitignore}/solid\n`);
+        File.write('.gitignore', `${gitignore}/solid\n/src/types/models.d.ts\n`);
     }
 }

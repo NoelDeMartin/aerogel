@@ -8,6 +8,7 @@ import { formatCodeBlock, stringToCamelCase } from '@noeldemartin/utils';
 
 interface Options {
     fields?: string;
+    module?: string;
 }
 
 export class GenerateModelCommand extends Command {
@@ -16,6 +17,7 @@ export class GenerateModelCommand extends Command {
     protected static override parameters: [string, string][] = [['name', 'Model name']];
     protected static override options: CommandOptions = {
         fields: 'Create model with the given fields',
+        module: 'Create model in the given module',
     };
 
     private name: string;
@@ -29,14 +31,16 @@ export class GenerateModelCommand extends Command {
     }
 
     protected override async run(): Promise<void> {
-        this.assertAerogelOrDirectory('src/models');
+        const modelsPath = `${this.getSourcePath(this.options.module)}/models`;
 
-        if (File.exists(`src/models/${this.name}.ts`)) {
+        this.assertAerogelOrDirectory(modelsPath);
+
+        if (File.exists(`${modelsPath}/${this.name}.ts`)) {
             Log.fail(`${this.name} model already exists!`);
         }
 
         const filesList = await Log.animate('Creating model', async () => {
-            const files = Template.instantiate(templatePath('model'), 'src/models', {
+            const files = Template.instantiate(templatePath('model'), modelsPath, {
                 model: {
                     name: this.name,
                     fieldsDefinition: this.getFieldsDefinition(),

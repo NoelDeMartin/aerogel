@@ -1,8 +1,12 @@
 import measure from '@aerogel/core/directives/measure';
+import { defineModule } from '@aerogel/core/modules';
+import App from '@aerogel/core/services/App';
 import Events from '@aerogel/core/services/Events';
+import Service from '@aerogel/core/services/Service';
 import { env } from '@aerogel/core/utils/env';
 import type { Env } from '@aerogel/core/utils/env';
 import { mock } from '@noeldemartin/testing';
+import { facade } from '@noeldemartin/utils';
 import { describe, expect, it, vi } from 'vite-plus/test';
 import { createApp } from 'vue';
 import type { Component } from 'vue';
@@ -66,5 +70,28 @@ describe('Aerogel', () => {
 
         // Assert
         expect(vi.mocked(createApp).mock.results[0]?.value.directive).toHaveBeenCalledWith('measure', measure);
+    });
+
+    it('Boots modules', async () => {
+        // Arrange
+        class ModuleService extends Service {}
+
+        const rootComponent = mock<Component>();
+        const moduleService = facade(ModuleService);
+        const moduleSetting = { component: mock<Component>(), priority: 42 };
+        const module = defineModule({
+            services: { $moduleService: moduleService },
+            settings: [moduleSetting],
+        });
+
+        // Act
+        await bootstrap(rootComponent, { modules: [module] });
+
+        // Assert
+        const globals = vi.mocked(createApp).mock.results[0]?.value.config.globalProperties;
+
+        expect(globals).to.have.property('$events');
+        expect(globals.$moduleService).toBe(moduleService);
+        expect(App.settings).toContain(moduleSetting);
     });
 });

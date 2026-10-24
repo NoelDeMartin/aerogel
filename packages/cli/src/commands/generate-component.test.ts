@@ -25,4 +25,15 @@ describe('Generate Component command', () => {
         // Assert
         FileMock.expectCreated('src/components/module/FooBar.vue').toContain('<div>FooBar</div>');
     });
+
+    it('generates components in modules', async () => {
+        // Arrange
+        FileMock.stub('package.json', '@aerogel/core');
+
+        // Act
+        await GenerateComponentCommand.run('MovieCard', { module: 'movies' });
+
+        // Assert
+        FileMock.expectCreated('src/modules/movies/components/MovieCard.vue').toContain('<div>MovieCard</div>');
+    });
 });

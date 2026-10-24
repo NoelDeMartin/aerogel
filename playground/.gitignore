@@ -1,5 +1,6 @@
 /solid
 /src/types/components.d.ts
+/src/types/models.d.ts
 dist
 node_modules
 playwright-report
