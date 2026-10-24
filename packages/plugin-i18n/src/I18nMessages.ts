@@ -1,8 +1,36 @@
-import { arraySorted, deepAssign, isDevelopment, stringMatch } from '@noeldemartin/utils';
+import { arraySorted, isDevelopment, isPlainObject, stringMatch } from '@noeldemartin/utils';
 import type { LocaleMessages, VueMessageType } from 'vue-i18n';
 
 type Messages = LocaleMessages<VueMessageType, string, string>;
 type MessagesLoader = () => Promise<Messages>;
+type MessagesGroup = Record<string, unknown>;
+
+function isCompiledMessage(value: object): boolean {
+    const isResource = 'type' in value && value.type === 0 && 'body' in value;
+    const isMinifiedResource = 't' in value && value.t === 0 && 'b' in value;
+
+    return isResource || isMinifiedResource;
+}
+
+function isMessagesGroup(value: unknown): value is MessagesGroup {
+    return isPlainObject(value) && !isCompiledMessage(value);
+}
+
+function mergeMessages(target: MessagesGroup, source: MessagesGroup): MessagesGroup {
+    for (const [key, value] of Object.entries(source)) {
+        if (!isMessagesGroup(value)) {
+            target[key] = value;
+
+            continue;
+        }
+
+        const targetValue = target[key];
+
+        target[key] = mergeMessages(isMessagesGroup(targetValue) ? targetValue : {}, value);
+    }
+
+    return target;
+}
 
 export type Listener = (locale: string, messages: Messages) => unknown;
 
@@ -65,7 +93,10 @@ export default class I18nMessages {
             return {};
         }
 
-        const localeMessages = deepAssign({} as Messages, ...(await Promise.all(loaders.map((loader) => loader()))));
+        const localeMessages = (await Promise.all(loaders.map((loader) => loader()))).reduce<Messages>(
+            (messages, fileMessages) => mergeMessages(messages, fileMessages) as Messages,
+            {},
+        );
 
         this.messages[locale] = localeMessages;
         this.listeners.forEach((listener) => listener(locale, localeMessages));
