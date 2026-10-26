@@ -40,13 +40,13 @@
                                     </span>
                                 </template>
                                 <template v-else-if="column.field && sortingColumns[column.field] === 'asc'">
-                                    <IconSortAscendingBold class="size-4" />
+                                    <IconSortSmallestFirst class="size-4" />
                                     <span class="sr-only">
                                         {{ translateWithDefault('pagination.sortDescending', 'Sort descending') }}
                                     </span>
                                 </template>
                                 <template v-else>
-                                    <IconSortDescendingBold class="size-4" />
+                                    <IconSortLargestFirst class="size-4" />
                                     <span class="sr-only">
                                         {{ translateWithDefault('pagination.unsort', 'Reset sort') }}
                                     </span>
@@ -134,8 +134,8 @@ import type { ArraySortDirection, DeepKeyOf } from '@noeldemartin/utils';
 import { Fragment, computed, shallowRef, watchEffect } from 'vue';
 import type { VNode, VNodeChild, VNodeNormalizedChildren } from 'vue';
 import IconListBold from '~icons/ph/list-bold';
-import IconSortAscendingBold from '~icons/ph/sort-ascending-bold';
-import IconSortDescendingBold from '~icons/ph/sort-descending-bold';
+import IconSortLargestFirst from '~icons/ph/sort-ascending-bold';
+import IconSortSmallestFirst from '~icons/ph/sort-descending-bold';
 import IconCheveronLeft from '~icons/zondicons/cheveron-left';
 import IconCheveronRight from '~icons/zondicons/cheveron-right';
 
