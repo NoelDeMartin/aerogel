@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { renderMarkdown } from './markdown';
+import { renderMarkdown, renderMarkdownAsText } from './markdown';
 
 describe('Markdown utils', () => {
     it('renders basic markdown', () => {
@@ -35,6 +35,47 @@ describe('Markdown utils', () => {
 
         // Assert
         expect(normalizeHTML(html)).toMatch(new RegExp(normalizeHTML(expectedHTML)));
+    });
+
+    it('renders markdown as text', () => {
+        // Arrange
+        const markdown = [
+            '# Title',
+            '',
+            'Recommended by **Alice** and _Bob_, \\*not emphasized\\* `a*b*`.',
+            'See [Alien](https://en.wikipedia.org/wiki/Alien_(film)) or https://example.com/some_page_name',
+            '',
+            '- One',
+            '- Two **bold**',
+            '',
+            '3. Three',
+            '4. Four',
+            '',
+            '> Quote',
+            '',
+            '![Poster](https://example.com/poster.jpg)',
+        ].join('\n');
+
+        // Act
+        const text = renderMarkdownAsText(markdown);
+
+        // Assert
+        expect(text).toEqual(
+            [
+                'Title',
+                '',
+                'Recommended by Alice and Bob, *not emphasized* a*b*.',
+                'See Alien or https://example.com/some_page_name',
+                '',
+                '• One',
+                '• Two bold',
+                '',
+                '3. Three',
+                '4. Four',
+                '',
+                'Quote',
+            ].join('\n'),
+        );
     });
 });
 

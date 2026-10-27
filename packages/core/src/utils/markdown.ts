@@ -1,6 +1,7 @@
 import { stringMatchAll, tap } from '@noeldemartin/utils';
 import DOMPurify from 'dompurify';
 import { Renderer, marked } from 'marked';
+import type { Token, Tokens } from 'marked';
 
 let router: MarkdownRouter | null = null;
 
@@ -40,6 +41,60 @@ function renderRouteLinks(html: string): string {
     return html;
 }
 
+function renderBlockTokensAsText(tokens: Token[], separator: string = '\n\n'): string {
+    return tokens
+        .map(renderTokenAsText)
+        .filter((text) => text.length > 0)
+        .join(separator);
+}
+
+function renderInlineTokensAsText(tokens: Token[]): string {
+    return tokens.map(renderTokenAsText).join('');
+}
+
+function renderListAsText(list: Tokens.List): string {
+    const start = typeof list.start === 'number' ? list.start : 1;
+
+    return list.items
+        .map((item, index) => {
+            const bullet = list.ordered ? `${start + index}.` : '•';
+
+            return `${bullet} ${renderBlockTokensAsText(item.tokens, '\n')}`;
+        })
+        .join('\n');
+}
+
+function renderTableAsText(table: Tokens.Table): string {
+    return [table.header, ...table.rows]
+        .map((cells) => cells.map((cell) => renderInlineTokensAsText(cell.tokens)).join(' | '))
+        .join('\n');
+}
+
+function renderTokenAsText(token: Token): string {
+    switch (token.type) {
+        case 'space':
+        case 'hr':
+        case 'def':
+        case 'html':
+        case 'image':
+            return '';
+        case 'br':
+            return '\n';
+        case 'list':
+            return renderListAsText(token as Tokens.List);
+        case 'table':
+            return renderTableAsText(token as Tokens.Table);
+        case 'blockquote':
+            return renderBlockTokensAsText(token.tokens ?? []);
+    }
+
+    if ('tokens' in token && token.tokens) {
+        return renderInlineTokensAsText(token.tokens);
+    }
+
+    return 'text' in token && typeof token.text === 'string' ? token.text : '';
+}
+
 export interface MarkdownRouter {
     resolve(route: string): string;
     visit(route: string): Promise<void>;
@@ -61,6 +116,10 @@ export function renderMarkdown(markdown: string): string {
     html = renderRouteLinks(html);
 
     return html;
+}
+
+export function renderMarkdownAsText(markdown: string): string {
+    return renderBlockTokensAsText(marked.lexer(markdown)).trim();
 }
 
 export function safeHtml(html: string): string {
