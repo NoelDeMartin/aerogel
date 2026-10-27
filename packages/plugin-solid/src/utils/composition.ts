@@ -2,7 +2,14 @@ import { Cache, Errors, Events, onCleanMounted } from '@aerogel/core';
 import { debounce, fail, isArray, isInstanceOf, isNullable, isPlainObject, tap, throttle } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
 import { Model, getRelatedClasses, hydrateModel } from 'soukai-bis';
-import type { ComputedAttribute, ModelConstructor, ModelEvents, ModelListener, SerializedModel } from 'soukai-bis';
+import type {
+    ComputedAttribute,
+    ModelConstructor,
+    ModelEvents,
+    ModelListener,
+    ModelWithUrl,
+    SerializedModel,
+} from 'soukai-bis';
 import {
     ReactiveEffect,
     computed,
@@ -79,7 +86,7 @@ function watchComputedAttributes(modelClass: ModelConstructor, attributes: strin
     const subscriptions = new Map<Model, () => void>();
 
     watchEffect(() => {
-        const watchedModels = new Set(modelData.modelsArray.value);
+        const watchedModels = new Set<Model>(modelData.modelsArray.value);
 
         for (const [model, unsubscribe] of subscriptions.entries()) {
             if (watchedModels.has(model)) {
@@ -91,7 +98,7 @@ function watchComputedAttributes(modelClass: ModelConstructor, attributes: strin
         }
 
         modelData.modelsArray.value.forEach((model) => {
-            if (!model.url || subscriptions.has(model)) {
+            if (subscriptions.has(model)) {
                 return;
             }
 
@@ -219,6 +226,11 @@ async function restoreCachedValue<T>(key: string): Promise<{ value: T } | null> 
 
 async function hydrateCachedModel(serializedModel: SerializedModel): Promise<Model> {
     const model = await hydrateModel(serializedModel);
+
+    if (!model.hasUrl()) {
+        return model;
+    }
+
     const trackedModelsData = _getTrackedModelsData(model.static());
     const trackedModel = trackedModelsData.modelsSet.values().find(({ url }) => url === model.url);
 
@@ -323,7 +335,7 @@ export interface ComputedModelsOptions<TAttribute extends string = string> {
 }
 
 export interface UseModelsResult<T extends Model> {
-    models: ComputedRef<T[]>;
+    models: ComputedRef<ModelWithUrl<T>[]>;
     loading: ComputedRef<boolean>;
     refreshing: Readonly<Ref<boolean>>;
 }
@@ -439,7 +451,7 @@ export function useModels<T extends Model>(
     modelClass: ModelConstructor<T>,
     options: { includeSoftDeleted?: boolean; depth?: number } = {},
 ): UseModelsResult<T> {
-    const models = shallowRef([]) as Ref<T[]>;
+    const models = shallowRef([]) as Ref<ModelWithUrl<T>[]>;
     const modelData = _getTrackedModelsData<T>(modelClass, { load: true, depth: options.depth });
 
     watchEffect(() => (models.value = modelData.modelsArray.value));

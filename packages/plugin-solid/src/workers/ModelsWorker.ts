@@ -1,6 +1,6 @@
 import type { SerializedDocumentError, ModelsWorkerMethods } from '@aerogel/plugin-solid/models-worker';
 import { PromisedValue, toError } from '@noeldemartin/utils';
-import type { Model, ModelConstructor } from 'soukai-bis';
+import type { Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 
 type MethodName = keyof ModelsWorkerMethods;
 type MethodArgs<T extends MethodName> = Parameters<ModelsWorkerMethods[T]>;
@@ -45,7 +45,7 @@ export default class ModelsWorker {
     public async *loadModels<T extends Model>(
         modelClass: ModelConstructor<T>,
         options: { depth?: number; onDocumentError?: (error: Error, documentUrl: string) => unknown } = {},
-    ): AsyncGenerator<T[]> {
+    ): AsyncGenerator<ModelWithUrl<T>[]> {
         for await (const { models, documentErrors } of this.stream(
             'loadModels',
             modelClass.modelName,
@@ -56,7 +56,11 @@ export default class ModelsWorker {
                 options.onDocumentError?.(hydrateDocumentError(documentError), documentError.documentUrl);
             }
 
-            yield await Promise.all(models.map((serializedModel) => modelClass.hydrate(serializedModel)));
+            const hydratedModels = await Promise.all(
+                models.map((serializedModel) => modelClass.hydrate(serializedModel)),
+            );
+
+            yield hydratedModels.filter((model) => model.hasUrl());
         }
     }
 

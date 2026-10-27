@@ -1,5 +1,5 @@
 import { App, type Service } from '@aerogel/core';
-import type { Model, ModelConstructor, ModelEvents, ModelListener } from 'soukai-bis';
+import type { Model, ModelConstructor, ModelEvents, ModelListener, ModelWithUrl } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
 import { _getTrackedModels, _getTrackedModelsData, _resetModelsState, isSoftDeleted } from './internal';
@@ -11,7 +11,7 @@ export interface TrackCollectionsOptions {
 export type TrackOptions<TModel extends Model = Model, TKey extends string = string> = {
     service?: ModelService<TModel, TKey>;
     property?: TKey;
-    transform?: (models: TModel[]) => TModel[];
+    transform?: (models: ModelWithUrl<TModel>[]) => ModelWithUrl<TModel>[];
     depth?: number;
     lazy?: boolean;
     bypassServicesCheck?: boolean;
@@ -20,14 +20,14 @@ export type TrackOptions<TModel extends Model = Model, TKey extends string = str
 };
 
 export type ModelService<TModel extends Model = Model, TKey extends string = string> = Service<{
-    [K in TKey]: TModel[];
+    [K in TKey]: ModelWithUrl<TModel>[];
 }>;
 
 export function getTrackedModels<T extends Model>(
     modelClass: ModelConstructor<T>,
     options: { includeSoftDeleted?: boolean } = {},
-): T[] {
-    const models = (_getTrackedModels().get(modelClass)?.modelsArray.value as T[]) ?? [];
+): ModelWithUrl<T>[] {
+    const models = (_getTrackedModels().get(modelClass)?.modelsArray.value as ModelWithUrl<T>[]) ?? [];
 
     if (options.includeSoftDeleted) {
         return models;
@@ -61,7 +61,7 @@ export async function refreshTrackedModels(modelClass: ModelConstructor): Promis
 export async function findTrackedModel<T extends Model>(
     modelClass: ModelConstructor<T>,
     url: string,
-): Promise<T | null> {
+): Promise<ModelWithUrl<T> | null> {
     const modelData = _getTrackedModelsData<T>(modelClass);
     const findInstance = () => modelData.modelsSet.values().find((model) => model.url === url);
     const trackedModel = findInstance();

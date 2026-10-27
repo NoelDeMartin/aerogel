@@ -3,14 +3,14 @@ import type { ReactiveSet } from '@aerogel/core';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
 import { isDevelopment, isInstanceOf, throttle } from '@noeldemartin/utils';
 import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
-import type { LoadAllOptions, Model, ModelConstructor } from 'soukai-bis';
+import type { LoadAllOptions, Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 
-interface TrackedModelData<T extends object = Model> {
+interface TrackedModelData<T extends Model = Model> {
     depth?: number;
-    modelsSet: ReactiveSet<T>;
-    modelsArray: ComputedRef<T[]>;
+    modelsSet: ReactiveSet<ModelWithUrl<T>>;
+    modelsArray: ComputedRef<ModelWithUrl<T>[]>;
     loading: Ref<boolean>;
     loaded: Ref<boolean>;
     load(): Promise<void>;
@@ -52,8 +52,8 @@ async function shouldLoadModelsInWorker(modelClass: ModelConstructor, options: {
 
 async function fetchModels<T extends Model>(
     modelClass: ModelConstructor<T>,
-    options: { depth?: number; onChunk(models: T[]): unknown },
-): Promise<T[]> {
+    options: { depth?: number; onChunk(models: ModelWithUrl<T>[]): unknown },
+): Promise<ModelWithUrl<T>[]> {
     const loadOptions: LoadAllOptions = {
         depth: options.depth,
         async onDocumentError(error, documentUrl) {
@@ -70,7 +70,7 @@ async function fetchModels<T extends Model>(
     const worker = (modelsWorker ??= new ModelsWorker(appNamespace()));
 
     try {
-        const loadedModels: T[] = [];
+        const loadedModels: ModelWithUrl<T>[] = [];
 
         for await (const chunkModels of worker.loadModels(modelClass, loadOptions)) {
             loadedModels.push(...chunkModels);
@@ -100,7 +100,7 @@ function initializedTrackedModelsData<T extends Model>(
     options: TrackedModelOptions = {},
 ): TrackedModelData<T> {
     let pendingRefresh: Promise<void> | null = null;
-    const modelsSet = reactiveSet<T>(undefined, { key: (model) => model.url });
+    const modelsSet = reactiveSet<ModelWithUrl<T>>(undefined, { key: (model) => model.url });
     const modelsArray = computed(() => modelsSet.values());
     const loading = ref(false);
     const loaded = ref(false);
@@ -144,7 +144,7 @@ function initializedTrackedModelsData<T extends Model>(
         }
     }
 
-    function withTrackedInstances(models: T[]): T[] {
+    function withTrackedInstances(models: ModelWithUrl<T>[]): ModelWithUrl<T>[] {
         const trackedInstances = new Map(modelsSet.values().map((model) => [model.url, model]));
 
         return models.map((model) => {
@@ -154,16 +154,16 @@ function initializedTrackedModelsData<T extends Model>(
         });
     }
 
-    function withUnloadedTrackedInstances(loadedModels: T[]): T[] {
+    function withUnloadedTrackedInstances(loadedModels: ModelWithUrl<T>[]): ModelWithUrl<T>[] {
         const loadedUrls = new Set(loadedModels.map((model) => model.url));
 
         return loadedModels.concat(modelsSet.values().filter((model) => !loadedUrls.has(model.url)));
     }
 
     trackedModels.set(modelClass, data);
-    modelClass.on('created', (model) => modelsSet.add(toRaw(model)));
-    modelClass.on('deleted', (model) => modelsSet.delete(toRaw(model)));
-    modelClass.on('updated', (model) => modelsSet.add(toRaw(model)));
+    modelClass.on('created', (model) => model.hasUrl() && modelsSet.add(toRaw(model)));
+    modelClass.on('deleted', (model) => model.hasUrl() && modelsSet.delete(toRaw(model)));
+    modelClass.on('updated', (model) => model.hasUrl() && modelsSet.add(toRaw(model)));
     Events.on('cloud:backup-completed', () => (loaded.value || loading.value) && data.refresh());
     Events.on('purge-storage', () => {
         loaded.value = false;
