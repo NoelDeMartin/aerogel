@@ -6,7 +6,7 @@ import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
 import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
-import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
+import { SolidDocumentPermissions, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import type { SolidUserProfile, Fetch, SolidStore, CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import {
     after,
@@ -19,7 +19,6 @@ import {
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isDevelopment,
-    isTruthy,
     objectWithout,
     objectWithoutEmpty,
     parseBoolean,
@@ -59,6 +58,13 @@ export type RequiredUserProfileOptions = { required: true };
 export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
     force?: boolean;
 };
+
+export interface CreateContainerOptions {
+    url: string;
+    name?: string;
+    registerFor?: ModelConstructor;
+    reuseExisting?: boolean;
+}
 
 export class SolidService extends Service {
     private _engine?: SolidEngine;
@@ -320,70 +326,79 @@ export class SolidService extends Service {
         modelClass: ModelConstructor,
         containerClass?: ContainerConstructor<T>,
     ): Promise<T | null> {
-        const typeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
+        const [publicTypeIndexes, privateTypeIndexes] = await Promise.all([
+            this.findPublicTypeIndexes(),
+            this.findPrivateTypeIndexes(),
+        ]);
         const containers = await Promise.all(
-            // oxlint-disable-next-line typescript/await-thenable
-            typeIndexes.map((typeIndex) => typeIndex?.findContainer(modelClass, containerClass)),
+            [...publicTypeIndexes, ...privateTypeIndexes].map((typeIndex) =>
+                typeIndex.findContainer(modelClass, containerClass),
+            ),
         );
 
         return containers.find((model) => !!model) ?? null;
     }
 
-    public async findTypeIndexes(): Promise<ModelWithUrl<TypeIndex>[]> {
-        const originalTypeIndexes = await Promise.all([this.findPublicTypeIndex(), this.findPrivateTypeIndex()]);
-        const newTypeIndexes = await Promise.all(
-            // oxlint-disable-next-line typescript/await-thenable
-            originalTypeIndexes.map((typeIndex) => typeIndex && TypeIndex.find(typeIndex.url)),
-        );
+    public async findTypeIndexes(): Promise<{
+        publicTypeIndexes: ModelWithUrl<TypeIndex>[];
+        privateTypeIndexes: ModelWithUrl<TypeIndex>[];
+    }> {
+        const { publicTypeIndexUrls, privateTypeIndexUrls } = this.requireUser();
+        const [publicTypeIndexes, privateTypeIndexes] = await Promise.all([
+            this.findTypeIndexesByUrl(publicTypeIndexUrls),
+            this.findTypeIndexesByUrl(privateTypeIndexUrls),
+        ]);
 
-        return newTypeIndexes.filter(isTruthy);
+        return { publicTypeIndexes, privateTypeIndexes };
+    }
+
+    public async findOrCreatePublicTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
+        return (await this.findPublicTypeIndexes())[0] ?? (await this.createPublicTypeIndex());
     }
 
     public async findOrCreatePrivateTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
-        return (await this.findPrivateTypeIndex()) ?? (await this.createPrivateTypeIndex());
+        return (await this.findPrivateTypeIndexes())[0] ?? (await this.createPrivateTypeIndex());
     }
 
-    public async findPrivateTypeIndex(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex> | null> {
-        const { webId, privateTypeIndexUrl } = this.requireUser();
-
-        if (!privateTypeIndexUrl) {
-            return null;
-        }
+    public async findPrivateTypeIndexes(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex>[]> {
+        const { webId, privateTypeIndexUrls } = this.requireUser();
 
         if (options.fresh) {
-            resetAsyncMemo(`${webId}-privateTypeIndex`);
+            resetAsyncMemo(`${webId}-privateTypeIndexes`);
         }
 
-        return asyncMemo(`${webId}-privateTypeIndex`, () => TypeIndex.find(privateTypeIndexUrl));
+        return asyncMemo(`${webId}-privateTypeIndexes`, () => this.findTypeIndexesByUrl(privateTypeIndexUrls));
     }
 
-    public async findPublicTypeIndex(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex> | null> {
-        const { webId, publicTypeIndexUrl } = this.requireUser();
-
-        if (!publicTypeIndexUrl) {
-            return null;
-        }
+    public async findPublicTypeIndexes(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex>[]> {
+        const { webId, publicTypeIndexUrls } = this.requireUser();
 
         if (options.fresh) {
-            resetAsyncMemo(`${webId}-publicTypeIndex`);
+            resetAsyncMemo(`${webId}-publicTypeIndexes`);
         }
 
-        return asyncMemo(`${webId}-publicTypeIndex`, () => TypeIndex.find(publicTypeIndexUrl));
+        return asyncMemo(`${webId}-publicTypeIndexes`, () => this.findTypeIndexesByUrl(publicTypeIndexUrls));
     }
 
     public clearTypeIndexesCache(): void {
         const { webId } = this.requireUser();
 
-        resetAsyncMemo(`${webId}-publicTypeIndex`);
-        resetAsyncMemo(`${webId}-privateTypeIndex`);
+        resetAsyncMemo(`${webId}-publicTypeIndexes`);
+        resetAsyncMemo(`${webId}-privateTypeIndexes`);
     }
 
-    public async createPrivateContainer(options: {
-        url: string;
-        name?: string;
-        registerFor?: ModelConstructor;
-        reuseExisting?: boolean;
-    }): Promise<ModelWithUrl<Container>> {
+    public async createPrivateContainer(options: CreateContainerOptions): Promise<ModelWithUrl<Container>> {
+        return this.createContainer(options, 'private');
+    }
+
+    public async createPublicContainer(options: CreateContainerOptions): Promise<ModelWithUrl<Container>> {
+        return this.createContainer(options, 'public');
+    }
+
+    protected async createContainer(
+        options: CreateContainerOptions,
+        visibility: 'public' | 'private',
+    ): Promise<ModelWithUrl<Container>> {
         const engine = this.requireAuthenticator().engine;
         const RemoteContainer = tap(defineSchema(Container), (model) => model.setEngine(engine));
         const existingContainer = await RemoteContainer.find(options.url);
@@ -396,8 +411,15 @@ export class SolidService extends Service {
 
         await remoteContainer.save();
 
+        if (visibility === 'public') {
+            await remoteContainer.updatePublicPermissions([SolidDocumentPermissions.Read]);
+        }
+
         if (options.registerFor) {
-            const typeIndex = await this.findOrCreatePrivateTypeIndex();
+            const typeIndex =
+                visibility === 'public'
+                    ? await this.findOrCreatePublicTypeIndex()
+                    : await this.findOrCreatePrivateTypeIndex();
 
             await remoteContainer.register(typeIndex, options.registerFor);
         }
@@ -430,14 +452,33 @@ export class SolidService extends Service {
         await this.startupReconnect();
     }
 
+    protected async findTypeIndexesByUrl(urls: string[]): Promise<ModelWithUrl<TypeIndex>[]> {
+        const typeIndexes = await Promise.all(urls.map((url) => TypeIndex.find(url)));
+
+        return arrayFilter(typeIndexes);
+    }
+
+    protected async createPublicTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
+        const user = this.requireUser();
+        const typeIndex = await TypeIndex.createPublic(user);
+
+        return tap(typeIndex, () => {
+            user.publicTypeIndexUrls = arrayUnique([...user.publicTypeIndexUrls, typeIndex.url]);
+
+            setAsyncMemo(`${user.webId}-publicTypeIndexes`, [typeIndex]);
+
+            this.rememberProfile(user);
+        });
+    }
+
     protected async createPrivateTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
         const user = this.requireUser();
         const typeIndex = await TypeIndex.createPrivate(user);
 
         return tap(typeIndex, () => {
-            user.privateTypeIndexUrl = typeIndex.url;
+            user.privateTypeIndexUrls = arrayUnique([...user.privateTypeIndexUrls, typeIndex.url]);
 
-            setAsyncMemo(`${user.webId}-privateTypeIndex`, typeIndex);
+            setAsyncMemo(`${user.webId}-privateTypeIndexes`, [typeIndex]);
 
             this.rememberProfile(user);
         });

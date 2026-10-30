@@ -13,6 +13,7 @@ export const CloudStatus = {
 export interface ModelRegistration {
     modelClass: ModelConstructor;
     path?: string;
+    public?: boolean;
 }
 
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];

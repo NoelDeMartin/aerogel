@@ -95,6 +95,7 @@ cloud:
     reconnect: Reconnect
     sync: Synchronize
     syncFailed: Sync failed
+    registrationFailed: Some data could not be registered in your Solid POD, other apps may not find it
     logOut: Log out
     disconnect: Disconnect
     setup:

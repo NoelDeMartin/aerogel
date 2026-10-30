@@ -1,13 +1,19 @@
 import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
-import { useModels } from '@aerogel/plugin-solid';
-import type { Model } from 'soukai-bis';
+import { Solid, useModels } from '@aerogel/plugin-solid';
+import type { Authenticator } from '@aerogel/plugin-solid';
+import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
+import type { Model, SyncConfig } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 class TestCloudService extends CloudService {
     public override getDirtyLocalModels(): Promise<Model[]> {
         return super.getDirtyLocalModels();
+    }
+
+    public override getSyncConfig(): Promise<SyncConfig> {
+        return super.getSyncConfig();
     }
 }
 
@@ -64,5 +70,35 @@ describe('Cloud', () => {
 
         // Assert
         await vi.waitFor(() => expect(posts.value.map((model) => model.url)).toEqual([post.url]));
+    });
+
+    it('configures type index registrations', async () => {
+        // Arrange
+        const user: CompleteSolidUserProfile = {
+            webId: 'https://alice.example/profile/card#me',
+            shallow: false,
+            cloakedDocumentUrls: [],
+            publicTypeIndexUrls: [],
+            privateTypeIndexUrls: [],
+            storageUrls: ['https://alice.example/'],
+            writableProfileUrl: 'https://alice.example/profile/card',
+        };
+
+        Solid.setState({ session: { user, loginUrl: user.webId, authenticator: {} as Authenticator } });
+
+        await cloud.track(Post, { register: { public: true } });
+        await cloud.track(PostsCollection, { register: true });
+
+        // Act
+        const config = await cloud.getSyncConfig();
+
+        // Assert
+        expect(config.userProfile).toEqual(user);
+        expect(config.applicationModels).toEqual(
+            expect.arrayContaining([
+                { model: Post, registration: { path: undefined, public: true } },
+                { model: PostsCollection, registration: { path: undefined, public: undefined } },
+            ]),
+        );
     });
 });

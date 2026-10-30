@@ -17,6 +17,8 @@ export class FakeSolidService extends SolidService {
             storageUrls: [`https://${domain}/`],
             shallow: false,
             cloakedDocumentUrls: [],
+            publicTypeIndexUrls: [],
+            privateTypeIndexUrls: [],
             writableProfileUrl: null,
         };
     }

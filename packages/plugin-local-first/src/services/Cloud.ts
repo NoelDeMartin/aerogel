@@ -26,7 +26,7 @@ import {
     requireEngine,
     isLocalUrl,
 } from 'soukai-bis';
-import type { Engine, IndexedDBEngine, JobListener, ModelConstructor } from 'soukai-bis';
+import type { Engine, IndexedDBEngine, JobListener, ModelConstructor, SyncConfig } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
@@ -34,6 +34,7 @@ import Service, { CloudStatus } from './Cloud.state';
 export interface RegisterOptions {
     path?: string;
     depth?: number;
+    public?: boolean;
 }
 
 export interface SyncOptions extends JobListener {
@@ -129,33 +130,15 @@ export class CloudService extends Service {
 
                 const syncDirty = options.syncDirty ?? true;
                 let syncs = 0;
+                let registrationError: unknown;
 
                 do {
-                    const applicationModels = Array.from(getBootedModels().values()).filter(
-                        (model) => !isCoreModel(model) && model.cloud !== false,
-                    );
-
-                    this.syncJob = new Sync({
-                        userProfile: Solid.requireUser(),
-                        localEngine: requireEngine(),
-                        remoteEngine: Solid.requireEngine(),
-                        typeIndexes: await Solid.findTypeIndexes(),
-                        createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
-                        applicationModels: applicationModels.map((modelClass) => {
-                            const registration = this.registeredModels.find(
-                                (registered) => registered.modelClass === modelClass,
-                            );
-
-                            return {
-                                model: modelClass as ModelConstructor,
-                                registration: registration?.path ? { path: registration.path } : !!registration,
-                            };
-                        }),
-                    });
+                    this.syncJob = new Sync(await this.getSyncConfig());
 
                     this.syncJob.listeners.add({
                         ...options,
                         onModelsRegistered: () => Solid.clearTypeIndexesCache(),
+                        onModelsRegistrationFailed: (_, error) => (registrationError ??= error),
                         onFinished: (result) =>
                             this.clearLocalModelUpdates({
                                 syncedDocumentUrls: result.syncedDocumentUrls,
@@ -176,6 +159,16 @@ export class CloudService extends Service {
                         (model) => !this.syncJob?.documentsWithErrors.has(model.requireDocumentUrl()),
                     );
                 } while (syncDirty && models.length > 0 && syncs < 3);
+
+                if (registrationError) {
+                    await Errors.report(
+                        registrationError,
+                        translateWithDefault(
+                            'cloud.registrationFailed',
+                            'Some data could not be registered in your Solid POD, other apps may not find it',
+                        ),
+                    );
+                }
 
                 if (!isTesting('unit')) {
                     await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
@@ -210,11 +203,11 @@ export class CloudService extends Service {
         }
 
         if (options.register) {
-            const path = typeof options.register === 'object' ? options.register.path : undefined;
+            const { path, public: isPublic } = typeof options.register === 'object' ? options.register : {};
 
             this.setupRemoteCollection(modelClass, path);
 
-            this.registeredModels.push({ modelClass, path });
+            this.registeredModels.push({ modelClass, path, public: isPublic });
 
             await this.initializeTrackedModels(modelClass, options.register);
         }
@@ -262,6 +255,29 @@ export class CloudService extends Service {
 
         this.watchNetworkStatus();
         await this.trackModels();
+    }
+
+    protected async getSyncConfig(): Promise<SyncConfig> {
+        const applicationModels = Array.from(getBootedModels().values()).filter(
+            (model) => !isCoreModel(model) && model.cloud !== false,
+        );
+
+        return {
+            ...(await Solid.findTypeIndexes()),
+            userProfile: Solid.requireUser(),
+            localEngine: requireEngine(),
+            remoteEngine: Solid.requireEngine(),
+            createPublicTypeIndex: () => Solid.findOrCreatePublicTypeIndex(),
+            createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
+            applicationModels: applicationModels.map((modelClass) => {
+                const registration = this.registeredModels.find((registered) => registered.modelClass === modelClass);
+
+                return {
+                    model: modelClass as ModelConstructor,
+                    registration: registration ? { path: registration.path, public: registration.public } : false,
+                };
+            }),
+        };
     }
 
     protected async getDirtyLocalModels(): Promise<Model[]> {
