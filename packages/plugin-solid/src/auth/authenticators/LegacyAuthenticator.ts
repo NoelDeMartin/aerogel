@@ -66,7 +66,9 @@ export default class LegacyAuthenticator extends Authenticator {
         });
 
         try {
-            const user = await Solid.requireUserProfile(required(session?.webId ?? this.store.webId));
+            const user = await Solid.requireUserProfile(required(session?.webId ?? this.store.webId), {
+                fetch: this.requireAuthenticatedFetch(),
+            });
 
             await this.startSession({ user, loginUrl });
         } catch (error) {

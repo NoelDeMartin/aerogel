@@ -48,6 +48,7 @@ export type LoginOptions = NullablePartial<{
 export type UserProfileOptions = NullablePartial<{
     required: boolean;
     markStale: boolean;
+    fetch: Fetch;
     shallow: boolean;
 }>;
 
@@ -120,13 +121,14 @@ export class SolidService extends Service {
     public async getUserProfile(url: string, options: UserProfileOptions = {}): Promise<SolidUserProfile | null> {
         let profileStore: SolidStore | null = null;
         const shallow = options.shallow ?? false;
-        const markStale = options.markStale ?? !this.authenticator?.getAuthenticatedFetch();
+        const authenticatedFetch = options.fetch ?? this.authenticator?.getAuthenticatedFetch();
+        const markStale = options.markStale ?? !authenticatedFetch;
         const cachedProfile = this.profiles[url];
         const userProfile =
             (cachedProfile && (shallow || !cachedProfile.shallow) ? cachedProfile : null) ??
             (await tap(
                 await fetchLoginUserProfile(url, {
-                    fetch: this.fetch,
+                    fetch: authenticatedFetch ?? this.fetch,
                     required: options.required ?? false,
                     shallow,
                     onLoaded(store) {

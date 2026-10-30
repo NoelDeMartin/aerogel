@@ -92,7 +92,7 @@ export default class InruptAuthenticator extends Authenticator {
         await this.initAuthenticatedFetch(this._fetch);
 
         try {
-            const user = await Solid.requireUserProfile(webId);
+            const user = await Solid.requireUserProfile(webId, { fetch: this.requireAuthenticatedFetch() });
 
             await this.startSession({ user, loginUrl: webId });
         } catch (error) {

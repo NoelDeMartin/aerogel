@@ -35,6 +35,7 @@ describe('Solid', () => {
 
     beforeEach(() => {
         solid = new SolidService();
+        solid.setState({ profiles: {}, staleProfiles: [], previousSession: null, session: null });
 
         vi.mocked(fetchLoginUserProfile).mockReset();
     });
@@ -67,6 +68,32 @@ describe('Solid', () => {
         // Assert
         expect(profile).toEqual(fullProfile);
         expect(fetchLoginUserProfile).not.toHaveBeenCalled();
+    });
+
+    it('reads profiles with the given fetch', async () => {
+        // Arrange
+        const authenticatedFetch = vi.fn();
+
+        vi.mocked(fetchLoginUserProfile).mockResolvedValue(fullProfile);
+
+        // Act
+        const profile = await solid.requireUserProfile(webId, { fetch: authenticatedFetch });
+
+        // Assert
+        expect(profile).toEqual(fullProfile);
+        expect(fetchLoginUserProfile).toHaveBeenCalledWith(webId, expect.objectContaining({ fetch: authenticatedFetch })); // prettier-ignore
+        expect(solid.staleProfiles).toEqual([]);
+    });
+
+    it('marks profiles read without authentication as stale', async () => {
+        // Arrange
+        vi.mocked(fetchLoginUserProfile).mockResolvedValue(fullProfile);
+
+        // Act
+        await solid.requireUserProfile(webId);
+
+        // Assert
+        expect(solid.staleProfiles).toEqual([webId]);
     });
 
     it('does not return shallow profiles as the required user', () => {
