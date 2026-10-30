@@ -5,6 +5,7 @@ declare global {
         // oxlint-disable-next-line typescript/no-unused-vars
         interface Matchers<R, T> {
             toEqualSparql(expected: string): R;
+            toEqualTurtle(expected: string): R;
         }
     }
 }
