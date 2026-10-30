@@ -1,6 +1,6 @@
 import type { ErrorSource } from '@aerogel/core';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
-import type { Fetch, SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { SolidUserProfile, Fetch, CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import { PromisedValue, arr, fail } from '@noeldemartin/utils';
 import type { Closure, FluentArray, Nullable } from '@noeldemartin/utils';
 import { SolidEngine } from 'soukai-bis';
@@ -13,7 +13,7 @@ type ListenerEventPayload<
 > = Callback extends Closure ? Parameters<Callback> : never;
 
 export interface AuthSession {
-    user: SolidUserProfile;
+    user: CompleteSolidUserProfile;
     loginUrl: string;
     authenticator: Authenticator;
 }

@@ -15,7 +15,7 @@ import SolidFake from '@aerogel/plugin-solid/services/Solid.fake';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
 import { resetModelsState } from '@aerogel/plugin-solid/utils/services';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
-import type { SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { SolidUserProfile, SolidStore } from '@noeldemartin/solid-utils';
 import { ComputedAttributesCache, InMemoryEngine, IndexedDBEngine } from 'soukai-bis';
 import appModels from 'virtual:aerogel-models';
 

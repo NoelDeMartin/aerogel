@@ -1,6 +1,6 @@
 import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 import FakeAuthenticator from '@aerogel/plugin-solid/auth/authenticators/FakeAuthenticator';
-import type { SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import { facade, stringToSlug } from '@noeldemartin/utils';
 
 import { SolidService } from './Solid';
@@ -8,19 +8,20 @@ import { SolidService } from './Solid';
 export class FakeSolidService extends SolidService {
     private fakeAuthenticator = new FakeAuthenticator();
 
-    public fakeProfile(name: string): SolidUserProfile {
+    public fakeProfile(name: string): CompleteSolidUserProfile {
         const domain = `${stringToSlug(name) || 'anonymous'}.example`;
 
         return {
             name: name || undefined,
             webId: `https://${domain}/profile/card#me`,
             storageUrls: [`https://${domain}/`],
-            cloaked: false,
+            shallow: false,
+            cloakedDocumentUrls: [],
             writableProfileUrl: null,
         };
     }
 
-    public fakeSession(profile: SolidUserProfile): AuthSession {
+    public fakeSession(profile: CompleteSolidUserProfile): AuthSession {
         return { user: profile, loginUrl: profile.webId, authenticator: this.fakeAuthenticator };
     }
 

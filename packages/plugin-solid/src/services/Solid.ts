@@ -7,7 +7,7 @@ import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
 import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
 import { fetchLoginUserProfile } from '@noeldemartin/solid-utils';
-import type { Fetch, SolidStore, SolidUserProfile } from '@noeldemartin/solid-utils';
+import type { SolidUserProfile, Fetch, SolidStore, CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import {
     after,
     arrayFilter,
@@ -48,7 +48,12 @@ export type LoginOptions = NullablePartial<{
 export type UserProfileOptions = NullablePartial<{
     required: boolean;
     markStale: boolean;
+    shallow: boolean;
 }>;
+
+export type ShallowUserProfileOptions = Omit<UserProfileOptions, 'shallow'> & { shallow: true };
+export type CompleteUserProfileOptions = Omit<UserProfileOptions, 'shallow'> & { shallow?: false | null };
+export type RequiredUserProfileOptions = { required: true };
 
 export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
     force?: boolean;
@@ -57,7 +62,11 @@ export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
 export class SolidService extends Service {
     private _engine?: SolidEngine;
 
-    public isLoggedIn(): this is { session: AuthSession; user: SolidUserProfile; authenticator: Authenticator } {
+    public isLoggedIn(): this is {
+        session: AuthSession;
+        user: CompleteSolidUserProfile;
+        authenticator: Authenticator;
+    } {
         return !!this.session;
     }
 
@@ -79,26 +88,47 @@ export class SolidService extends Service {
         }));
     }
 
-    public requireUser(): SolidUserProfile {
-        return this.user ?? fail('Could not get user profile (are you logged in?)');
+    public requireUser(): CompleteSolidUserProfile {
+        if (!this.user || this.user.shallow) {
+            throw new Error('Could not get user profile (are you logged in?)');
+        }
+
+        return this.user;
     }
 
-    public requireUserProfile(url: string): Promise<SolidUserProfile> {
-        return this.getUserProfile(url, { required: true });
+    public requireUserProfile(url: string, options: Omit<ShallowUserProfileOptions, 'required'>): Promise<SolidUserProfile>; // prettier-ignore
+    public requireUserProfile(url: string, options?: Omit<CompleteUserProfileOptions, 'required'>): Promise<CompleteSolidUserProfile>; // prettier-ignore
+    public requireUserProfile(url: string, options?: Omit<UserProfileOptions, 'required'>): Promise<SolidUserProfile>;
+
+    public requireUserProfile(
+        url: string,
+        options: Omit<UserProfileOptions, 'required'> = {},
+    ): Promise<SolidUserProfile> {
+        return this.getUserProfile(url, { ...options, required: true });
     }
 
-    public async getUserProfile(url: string, options: Omit<UserProfileOptions, 'required'> & { required: true }): Promise<SolidUserProfile>; // prettier-ignore
+    public async getUserProfile(url: string, options: ShallowUserProfileOptions & RequiredUserProfileOptions): Promise<SolidUserProfile>; // prettier-ignore
+    public async getUserProfile(url: string, options: CompleteUserProfileOptions & RequiredUserProfileOptions): Promise<CompleteSolidUserProfile>; // prettier-ignore
+    public async getUserProfile(url: string, options: UserProfileOptions & RequiredUserProfileOptions): Promise<SolidUserProfile>; // prettier-ignore
+    public async getUserProfile(url: string, options: ShallowUserProfileOptions): Promise<SolidUserProfile | null>; // prettier-ignore
+    public async getUserProfile(
+        url: string,
+        options?: CompleteUserProfileOptions,
+    ): Promise<CompleteSolidUserProfile | null>;
     public async getUserProfile(url: string, options?: UserProfileOptions): Promise<SolidUserProfile | null>;
 
     public async getUserProfile(url: string, options: UserProfileOptions = {}): Promise<SolidUserProfile | null> {
         let profileStore: SolidStore | null = null;
+        const shallow = options.shallow ?? false;
         const markStale = options.markStale ?? !this.authenticator?.getAuthenticatedFetch();
+        const cachedProfile = this.profiles[url];
         const userProfile =
-            this.profiles[url] ??
+            (cachedProfile && (shallow || !cachedProfile.shallow) ? cachedProfile : null) ??
             (await tap(
                 await fetchLoginUserProfile(url, {
                     fetch: this.fetch,
                     required: options.required ?? false,
+                    shallow,
                     onLoaded(store) {
                         profileStore = store;
                     },
@@ -427,7 +457,9 @@ export class SolidService extends Service {
         this.loginOngoing = true;
 
         try {
-            const profile = options.skipProfile ? null : await this.getUserProfile(loginUrl, { markStale: true });
+            const profile = options.skipProfile
+                ? null
+                : await this.getUserProfile(loginUrl, { markStale: true, shallow: true });
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
             const authenticator = await this.bootAuthenticator(authenticatorName);
             const { domain: loginDomain } = requireUrlParse(loginUrl);
