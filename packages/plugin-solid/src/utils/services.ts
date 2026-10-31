@@ -2,7 +2,13 @@ import { App, type Service } from '@aerogel/core';
 import type { Model, ModelConstructor, ModelEvents, ModelListener, ModelWithUrl } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
-import { _getTrackedModels, _getTrackedModelsData, _resetModelsState, isSoftDeleted } from './internal';
+import {
+    _getTrackedModels,
+    _getTrackedModelsData,
+    _resetModelsState,
+    _setTrackedContainerUrls,
+    isSoftDeleted,
+} from './internal';
 
 export interface TrackCollectionsOptions {
     refresh?: boolean;
@@ -42,6 +48,10 @@ export function isTrackingModel(modelClass: ModelConstructor): boolean {
 
 export function resetModelsState(): void {
     _resetModelsState();
+}
+
+export function setTrackedModelsContainerUrls(modelClass: ModelConstructor, containerUrls: string[] | null): void {
+    _setTrackedContainerUrls(modelClass, containerUrls);
 }
 
 export async function refreshTrackedModels(modelClass: ModelConstructor): Promise<void> {

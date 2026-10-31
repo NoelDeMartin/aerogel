@@ -44,12 +44,16 @@ export default class ModelsWorker {
 
     public async *loadModels<T extends Model>(
         modelClass: ModelConstructor<T>,
-        options: { depth?: number; onDocumentError?: (error: Error, documentUrl: string) => unknown } = {},
+        options: {
+            containerUrl?: string;
+            depth?: number;
+            onDocumentError?: (error: Error, documentUrl: string) => unknown;
+        } = {},
     ): AsyncGenerator<ModelWithUrl<T>[]> {
         for await (const { models, documentErrors } of this.stream(
             'loadModels',
             modelClass.modelName,
-            modelClass.defaultContainerUrl,
+            options.containerUrl ?? modelClass.defaultContainerUrl,
             options.depth,
         )) {
             for (const documentError of documentErrors) {

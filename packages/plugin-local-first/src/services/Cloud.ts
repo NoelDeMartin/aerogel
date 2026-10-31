@@ -1,19 +1,22 @@
 import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
 import { getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
-import { Solid, refreshTrackedModels, trackModels } from '@aerogel/plugin-solid';
+import { Solid, refreshTrackedModels, setTrackedModelsContainerUrls, trackModels } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import {
     Semaphore,
     after,
+    arrayUnique,
     facade,
     fail,
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isArray,
     isTesting,
+    isTruthy,
     objectFromEntries,
     parseBoolean,
+    required,
     urlRoute,
 } from '@noeldemartin/utils';
 import {
@@ -26,7 +29,7 @@ import {
     requireEngine,
     isLocalUrl,
 } from 'soukai-bis';
-import type { Engine, IndexedDBEngine, JobListener, ModelConstructor, SyncConfig } from 'soukai-bis';
+import type { Engine, IndexedDBEngine, JobListener, ModelConstructor, SyncConfig, TypeIndex } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
@@ -45,6 +48,11 @@ export interface SyncOptions extends JobListener {
 }
 
 export type CloudRegistration = boolean | RegisterOptions | undefined;
+
+export interface ModelContainerUrls {
+    default: string;
+    registered: string[];
+}
 
 export class CloudService extends Service {
     protected asyncLock: Semaphore = new Semaphore();
@@ -128,17 +136,29 @@ export class CloudService extends Service {
                     await Solid.refreshUserProfile();
                 }
 
-                const syncDirty = options.syncDirty ?? true;
                 let syncs = 0;
                 let registrationError: unknown;
+                let typeIndexes: TypeIndex[] = [];
+                const syncDirty = options.syncDirty ?? true;
+                const modelsWithFailedRegistration = new Set<ModelConstructor>();
 
                 do {
-                    this.syncJob = new Sync(await this.getSyncConfig());
+                    const config = await this.getSyncConfig();
+
+                    typeIndexes = [...(config.publicTypeIndexes ?? []), ...(config.privateTypeIndexes ?? [])];
+
+                    this.syncJob = new Sync(config);
 
                     this.syncJob.listeners.add({
                         ...options,
-                        onModelsRegistered: () => Solid.clearTypeIndexesCache(),
-                        onModelsRegistrationFailed: (_, error) => (registrationError ??= error),
+                        onModelsRegistered: (typeIndex) => {
+                            Solid.clearTypeIndexesCache();
+                            typeIndexes.includes(typeIndex) || typeIndexes.push(typeIndex);
+                        },
+                        onModelsRegistrationFailed: (failedModels, error) => {
+                            registrationError ??= error;
+                            failedModels.forEach((modelClass) => modelsWithFailedRegistration.add(modelClass));
+                        },
                         onFinished: (result) =>
                             this.clearLocalModelUpdates({
                                 syncedDocumentUrls: result.syncedDocumentUrls,
@@ -159,6 +179,10 @@ export class CloudService extends Service {
                         (model) => !this.syncJob?.documentsWithErrors.has(model.requireDocumentUrl()),
                     );
                 } while (syncDirty && models.length > 0 && syncs < 3);
+
+                this.setContainerUrls(
+                    this.findContainerUrls(typeIndexes, { keepDefaults: modelsWithFailedRegistration }),
+                );
 
                 if (registrationError) {
                     await Errors.report(
@@ -223,7 +247,10 @@ export class CloudService extends Service {
                 continue;
             }
 
-            return getRemoteContainerUrl(registration.modelClass, registration.path);
+            return (
+                this.defaultContainerUrls[modelClass.modelName] ??
+                getRemoteContainerUrl(registration.modelClass, registration.path)
+            );
         }
 
         throw new Error(`Failed resolving remote collection for '${modelClass.modelName}' model`);
@@ -303,17 +330,91 @@ export class CloudService extends Service {
     }
 
     protected async migrateLocalUrls(): Promise<void> {
+        const { publicTypeIndexes, privateTypeIndexes } = await Solid.findTypeIndexes();
+        const containerUrls = this.findContainerUrls([...publicTypeIndexes, ...privateTypeIndexes]);
         const job = new MigrateLocalUrls({
             engine: requireEngine('ManagesContainers'),
             migrations: objectFromEntries(
-                this.registeredModels.map(({ modelClass, path }) => [
+                this.registeredModels.map(({ modelClass }) => [
                     modelClass.defaultContainerUrl,
-                    getRemoteContainerUrl(modelClass, path),
+                    required(containerUrls[modelClass.modelName]).default,
                 ]),
             ),
         });
 
         await dispatch(job);
+
+        this.setContainerUrls(containerUrls);
+    }
+
+    protected findContainerUrls(
+        typeIndexes: TypeIndex[],
+        options: { keepDefaults?: Set<ModelConstructor> } = {},
+    ): Record<string, ModelContainerUrls> {
+        const registrations = typeIndexes.flatMap((typeIndex) => typeIndex.registrations ?? []);
+
+        return objectFromEntries(
+            this.registeredModels.map(({ modelClass, path }) => {
+                const registeredContainerUrls = arrayUnique(
+                    registrations
+                        .filter((registration) => registration.registers(modelClass))
+                        .map((registration) => registration.instanceContainer)
+                        .filter(isTruthy),
+                );
+                const defaultContainerUrl = this.pickDefaultContainerUrl(modelClass, path, registeredContainerUrls, {
+                    keepCurrent: options.keepDefaults?.has(modelClass),
+                });
+
+                return [modelClass.modelName, { default: defaultContainerUrl, registered: registeredContainerUrls }];
+            }),
+        );
+    }
+
+    protected pickDefaultContainerUrl(
+        modelClass: ModelConstructor,
+        path: string | undefined,
+        registeredContainerUrls: string[],
+        options: { keepCurrent?: boolean } = {},
+    ): string {
+        const currentContainerUrl = this.defaultContainerUrls[modelClass.modelName];
+
+        if (
+            currentContainerUrl &&
+            (options.keepCurrent ||
+                registeredContainerUrls.length === 0 ||
+                registeredContainerUrls.includes(currentContainerUrl))
+        ) {
+            return currentContainerUrl;
+        }
+
+        return registeredContainerUrls[0] ?? getRemoteContainerUrl(modelClass, path);
+    }
+
+    protected setContainerUrls(containerUrls: Record<string, ModelContainerUrls>): void {
+        for (const { modelClass } of this.registeredModels) {
+            const modelContainerUrls = containerUrls[modelClass.modelName];
+
+            if (!modelContainerUrls) {
+                continue;
+            }
+
+            this.useContainerUrls(modelClass, modelContainerUrls);
+        }
+
+        const entries = Object.entries(containerUrls);
+
+        this.setState({
+            defaultContainerUrls: {
+                ...this.defaultContainerUrls,
+                ...objectFromEntries(
+                    entries.map(([modelName, modelContainerUrls]) => [modelName, modelContainerUrls.default]),
+                ),
+            },
+            registeredContainerUrls: {
+                ...this.registeredContainerUrls,
+                ...objectFromEntries(entries.map(([modelName, { registered }]) => [modelName, registered])),
+            },
+        });
     }
 
     protected async onApplicationReady(): Promise<void> {
@@ -350,7 +451,8 @@ export class CloudService extends Service {
         this.setState({
             autoPush: true,
             localModelUpdates: {},
-            rootContainerUrls: {},
+            defaultContainerUrls: {},
+            registeredContainerUrls: {},
             pollingEnabled: true,
             pollingMinutes: 10,
             ready: false,
@@ -361,6 +463,10 @@ export class CloudService extends Service {
             syncError: null,
             syncJob: null,
         });
+
+        for (const { modelClass } of this.registeredModels) {
+            setTrackedModelsContainerUrls(modelClass, null);
+        }
 
         this.dirtyModelClasses.clear();
     }
@@ -403,24 +509,34 @@ export class CloudService extends Service {
     }
 
     private setupRemoteCollection(modelClass: ModelConstructor, path?: string): void {
-        const rootContainerUrl = this.rootContainerUrls[modelClass.modelName];
+        const defaultContainerUrl = this.defaultContainerUrls[modelClass.modelName];
 
-        if (rootContainerUrl) {
-            modelClass.defaultContainerUrl = rootContainerUrl;
+        if (defaultContainerUrl) {
+            this.useContainerUrls(modelClass, {
+                default: defaultContainerUrl,
+                registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
+            });
 
             return;
         }
 
         void this.whenReady(() => {
-            const remoteContainerUrl = getRemoteContainerUrl(modelClass, path);
+            const remoteContainerUrl =
+                this.defaultContainerUrls[modelClass.modelName] ?? getRemoteContainerUrl(modelClass, path);
 
-            modelClass.defaultContainerUrl = remoteContainerUrl;
-
-            this.setState('rootContainerUrls', {
-                ...this.rootContainerUrls,
-                [modelClass.modelName]: remoteContainerUrl,
+            this.setContainerUrls({
+                [modelClass.modelName]: {
+                    default: remoteContainerUrl,
+                    registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
+                },
             });
         });
+    }
+
+    private useContainerUrls(modelClass: ModelConstructor, containerUrls: ModelContainerUrls): void {
+        modelClass.defaultContainerUrl = containerUrls.default;
+
+        setTrackedModelsContainerUrls(modelClass, [containerUrls.default, ...containerUrls.registered]);
     }
 
     private async trackModels(): Promise<void> {

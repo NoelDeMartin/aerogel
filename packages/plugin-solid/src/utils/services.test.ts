@@ -10,6 +10,7 @@ import {
     loadTrackedModels,
     refreshTrackedModels,
     resetModelsState,
+    setTrackedModelsContainerUrls,
     trackModels,
 } from './services';
 
@@ -26,6 +27,22 @@ describe('Services helpers', () => {
 
         // Assert
         expect(getTrackedModels(User).map((user) => user.name)).toEqual(['Alice']);
+    });
+
+    it('Loads tracked models from all their containers', async () => {
+        // Arrange
+        const alice = await new User({ name: 'Alice', age: 23 }).save('https://alice.example/users/');
+        const bob = await new User({ name: 'Bob', age: 30 }).save('https://alice.example/people/');
+
+        await User.create({ name: 'Charlie', age: 40 });
+
+        setTrackedModelsContainerUrls(User, ['https://alice.example/users/', 'https://alice.example/people/']);
+
+        // Act
+        await trackModels(User, { bypassServicesCheck: true });
+
+        // Assert
+        expect(getTrackedModels(User).map((user) => user.url)).toEqual([alice.url, bob.url]);
     });
 
     it('Loads tracked models once', async () => {

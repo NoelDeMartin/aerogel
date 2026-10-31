@@ -22,11 +22,20 @@ export const DEFAULT_STATE = { manualSetup: false };
 
 export default defineServiceState({
     name: 'cloud',
-    persist: ['localModelUpdates', 'rootContainerUrls', 'pollingEnabled', 'pollingMinutes', 'ready', 'startupSync'],
+    persist: [
+        'localModelUpdates',
+        'defaultContainerUrls',
+        'registeredContainerUrls',
+        'pollingEnabled',
+        'pollingMinutes',
+        'ready',
+        'startupSync',
+    ],
     initialState: () => ({
         autoPush: true,
         localModelUpdates: {} as Record<string, number>,
-        rootContainerUrls: {} as Record<string, string>,
+        defaultContainerUrls: {} as Record<string, string>,
+        registeredContainerUrls: {} as Record<string, string[]>,
         pollingEnabled: true,
         pollingMinutes: 10,
         ready: false,

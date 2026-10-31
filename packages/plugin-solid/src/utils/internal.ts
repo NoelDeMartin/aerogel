@@ -1,7 +1,7 @@
 import { Errors, Events, appNamespace, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
-import { isDevelopment, isInstanceOf, throttle } from '@noeldemartin/utils';
+import { arrayUnique, isDevelopment, isInstanceOf, throttle } from '@noeldemartin/utils';
 import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
 import type { LoadAllOptions, Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
@@ -23,31 +23,51 @@ type TrackedModelOptions = {
 };
 
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
+let trackedContainerUrls: WeakMap<ModelConstructor, string[]> = new WeakMap();
 let modelsWorker: ModelsWorker | null = null;
 
 const WORKER_THRESHOLD = 100;
 
-async function shouldLoadModelsInWorker(modelClass: ModelConstructor, options: { depth?: number }): Promise<boolean> {
+async function countDocuments(engine: IndexedDBEngine, containerUrl: string, depth?: number): Promise<number> {
+    try {
+        return await engine.countDocuments({ containerUrl, depth });
+    } catch (error) {
+        if (!isInstanceOf(error, DocumentNotFound)) {
+            throw error;
+        }
+
+        return 0;
+    }
+}
+
+async function shouldLoadModelsInWorker(containerUrls: string[], options: { depth?: number }): Promise<boolean> {
     const engine = getEngine();
 
     if (typeof Worker === 'undefined' || !isInstanceOf(engine, IndexedDBEngine)) {
         return false;
     }
 
-    try {
-        const documentsCount = await engine.countDocuments({
-            containerUrl: modelClass.defaultContainerUrl,
-            depth: options.depth,
-        });
+    const documentsCounts = await Promise.all(
+        containerUrls.map((containerUrl) => countDocuments(engine, containerUrl, options.depth)),
+    );
 
-        return documentsCount >= WORKER_THRESHOLD;
-    } catch (error) {
-        if (!isInstanceOf(error, DocumentNotFound)) {
-            throw error;
-        }
+    return documentsCounts.reduce((total, count) => total + count, 0) >= WORKER_THRESHOLD;
+}
 
-        return false;
-    }
+async function loadAllModels<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    containerUrls: string[],
+    options: LoadAllOptions,
+): Promise<ModelWithUrl<T>[]> {
+    const containerModels = await Promise.all(
+        containerUrls.map((containerUrl) => modelClass.all({ ...options, from: containerUrl })),
+    );
+
+    return uniqueModels(containerModels.flat());
+}
+
+function uniqueModels<T extends Model>(models: ModelWithUrl<T>[]): ModelWithUrl<T>[] {
+    return Array.from(new Map(models.map((model) => [model.url, model])).values());
 }
 
 async function fetchModels<T extends Model>(
@@ -63,8 +83,10 @@ async function fetchModels<T extends Model>(
         },
     };
 
-    if (!(await shouldLoadModelsInWorker(modelClass, options))) {
-        return modelClass.all(loadOptions);
+    const containerUrls = _getTrackedContainerUrls(modelClass);
+
+    if (!(await shouldLoadModelsInWorker(containerUrls, options))) {
+        return loadAllModels(modelClass, containerUrls, loadOptions);
     }
 
     const worker = (modelsWorker ??= new ModelsWorker(appNamespace()));
@@ -72,12 +94,14 @@ async function fetchModels<T extends Model>(
     try {
         const loadedModels: ModelWithUrl<T>[] = [];
 
-        for await (const chunkModels of worker.loadModels(modelClass, loadOptions)) {
-            loadedModels.push(...chunkModels);
-            options.onChunk(loadedModels.slice(0));
+        for (const containerUrl of containerUrls) {
+            for await (const chunkModels of worker.loadModels(modelClass, { ...loadOptions, containerUrl })) {
+                loadedModels.push(...chunkModels);
+                options.onChunk(uniqueModels(loadedModels));
+            }
         }
 
-        return loadedModels;
+        return uniqueModels(loadedModels);
     } catch (error) {
         if (worker.terminated) {
             throw error;
@@ -91,7 +115,7 @@ async function fetchModels<T extends Model>(
             );
         }
 
-        return modelClass.all(loadOptions);
+        return loadAllModels(modelClass, containerUrls, loadOptions);
     }
 }
 
@@ -191,8 +215,23 @@ export function _getTrackedModels(): WeakMap<ModelConstructor, TrackedModelData>
     return trackedModels;
 }
 
+export function _getTrackedContainerUrls(modelClass: ModelConstructor): string[] {
+    return trackedContainerUrls.get(modelClass) ?? [modelClass.defaultContainerUrl];
+}
+
+export function _setTrackedContainerUrls(modelClass: ModelConstructor, containerUrls: string[] | null): void {
+    if (!containerUrls || containerUrls.length === 0) {
+        trackedContainerUrls.delete(modelClass);
+
+        return;
+    }
+
+    trackedContainerUrls.set(modelClass, arrayUnique(containerUrls));
+}
+
 export function _resetModelsState(): void {
     trackedModels = new WeakMap();
+    trackedContainerUrls = new WeakMap();
 
     modelsWorker?.terminate();
     modelsWorker = null;
