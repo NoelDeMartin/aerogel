@@ -52,6 +52,7 @@ export type CloudRegistration = boolean | RegisterOptions | undefined;
 export interface ModelContainerUrls {
     default: string;
     registered: string[];
+    unregistered: string[];
 }
 
 export class CloudService extends Service {
@@ -59,6 +60,7 @@ export class CloudService extends Service {
     protected engine: Engine | null = null;
     protected pollingInterval: ReturnType<typeof setInterval> | null = null;
     protected dirtyModelClasses: Map<string, ModelConstructor> = new Map();
+    protected modelsChangedWhileSyncing: Map<string, Model> = new Map();
 
     public async whenReady<T>(callback: () => T): Promise<T> {
         if (this.ready) {
@@ -212,6 +214,7 @@ export class CloudService extends Service {
                 this.status = CloudStatus.Online;
 
                 Browser.releaseScreenLock();
+                this.pushModelsChangedWhileSyncing();
                 await this.refreshTrackedModels();
                 await Events.emit('cloud:sync-completed', models);
             }
@@ -364,8 +367,19 @@ export class CloudService extends Service {
                 const defaultContainerUrl = this.pickDefaultContainerUrl(modelClass, path, registeredContainerUrls, {
                     keepCurrent: options.keepDefaults?.has(modelClass),
                 });
+                const unregisteredContainerUrls = (this.unregisteredContainerUrls[modelClass.modelName] ?? []).filter(
+                    (containerUrl) =>
+                        containerUrl !== defaultContainerUrl && !registeredContainerUrls.includes(containerUrl),
+                );
 
-                return [modelClass.modelName, { default: defaultContainerUrl, registered: registeredContainerUrls }];
+                return [
+                    modelClass.modelName,
+                    {
+                        default: defaultContainerUrl,
+                        registered: registeredContainerUrls,
+                        unregistered: unregisteredContainerUrls,
+                    },
+                ];
             }),
         );
     }
@@ -414,6 +428,10 @@ export class CloudService extends Service {
                 ...this.registeredContainerUrls,
                 ...objectFromEntries(entries.map(([modelName, { registered }]) => [modelName, registered])),
             },
+            unregisteredContainerUrls: {
+                ...this.unregisteredContainerUrls,
+                ...objectFromEntries(entries.map(([modelName, { unregistered }]) => [modelName, unregistered])),
+            },
         });
     }
 
@@ -453,6 +471,7 @@ export class CloudService extends Service {
             localModelUpdates: {},
             defaultContainerUrls: {},
             registeredContainerUrls: {},
+            unregisteredContainerUrls: {},
             pollingEnabled: true,
             pollingMinutes: 10,
             ready: false,
@@ -469,6 +488,7 @@ export class CloudService extends Service {
         }
 
         this.dirtyModelClasses.clear();
+        this.modelsChangedWhileSyncing.clear();
     }
 
     protected async initializeTrackedModels(
@@ -515,6 +535,7 @@ export class CloudService extends Service {
             this.useContainerUrls(modelClass, {
                 default: defaultContainerUrl,
                 registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
+                unregistered: this.unregisteredContainerUrls[modelClass.modelName] ?? [],
             });
 
             return;
@@ -528,6 +549,7 @@ export class CloudService extends Service {
                 [modelClass.modelName]: {
                     default: remoteContainerUrl,
                     registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
+                    unregistered: this.unregisteredContainerUrls[modelClass.modelName] ?? [],
                 },
             });
         });
@@ -536,7 +558,66 @@ export class CloudService extends Service {
     private useContainerUrls(modelClass: ModelConstructor, containerUrls: ModelContainerUrls): void {
         modelClass.defaultContainerUrl = containerUrls.default;
 
-        setTrackedModelsContainerUrls(modelClass, [containerUrls.default, ...containerUrls.registered]);
+        setTrackedModelsContainerUrls(modelClass, [
+            containerUrls.default,
+            ...containerUrls.registered,
+            ...containerUrls.unregistered,
+        ]);
+    }
+
+    private useModelContainerUrl(model: Model): void {
+        const modelClass = model.static();
+        const modelName = modelClass.modelName;
+        const containerUrl = model.getContainerUrl();
+        const containerUrls: ModelContainerUrls = {
+            default: this.defaultContainerUrls[modelName] ?? modelClass.defaultContainerUrl,
+            registered: this.registeredContainerUrls[modelName] ?? [],
+            unregistered: this.unregisteredContainerUrls[modelName] ?? [],
+        };
+
+        if (
+            !containerUrl ||
+            !this.registeredModels.some((registration) => registration.modelClass === modelClass) ||
+            [containerUrls.default, ...containerUrls.registered, ...containerUrls.unregistered].includes(containerUrl)
+        ) {
+            return;
+        }
+
+        this.setContainerUrls({
+            [modelName]: { ...containerUrls, unregistered: [...containerUrls.unregistered, containerUrl] },
+        });
+    }
+
+    private pushModelsChangedWhileSyncing(): void {
+        const models = Array.from(this.modelsChangedWhileSyncing.entries());
+
+        this.modelsChangedWhileSyncing.clear();
+
+        if (!this.autoPush) {
+            return;
+        }
+
+        for (const [url, model] of models) {
+            if (!(url in this.localModelUpdates)) {
+                continue;
+            }
+
+            SyncQueue.push(model);
+        }
+    }
+
+    private pushModel(model: Model): void {
+        if (this.syncing) {
+            this.modelsChangedWhileSyncing.set(model.requireUrl(), model);
+
+            return;
+        }
+
+        if (!this.autoPush) {
+            return;
+        }
+
+        SyncQueue.push(model);
     }
 
     private async trackModels(): Promise<void> {
@@ -595,9 +676,8 @@ export class CloudService extends Service {
             [model.url]: 1,
         };
 
-        if (this.autoPush && !this.syncing) {
-            SyncQueue.push(model);
-        }
+        this.useModelContainerUrl(model);
+        this.pushModel(model);
     }
 
     private onModelUpdated(model: Model, options: { reset?: boolean } = {}): void {
@@ -613,9 +693,7 @@ export class CloudService extends Service {
             [model.url]: options.reset ? 1 : modelUpdates + 1,
         };
 
-        if (this.autoPush && !this.syncing) {
-            SyncQueue.push(model);
-        }
+        this.pushModel(model);
     }
 }
 

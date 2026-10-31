@@ -1,4 +1,5 @@
 import { Errors } from '@aerogel/core';
+import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
 import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
@@ -68,6 +69,7 @@ describe('Cloud', () => {
             typeIndexes?: TypeIndex[];
             createdTypeIndex?: TypeIndex;
             failedRegistrations?: ModelConstructor[];
+            onRun?: () => Promise<unknown>;
         } = {},
     ): void {
         vi.spyOn(cloud, 'getSyncConfig').mockResolvedValue({
@@ -78,6 +80,8 @@ describe('Cloud', () => {
         vi.spyOn(Sync.prototype as unknown as { run(): Promise<SyncJobResult> }, 'run').mockImplementation(
             async function (this: Sync) {
                 const { _listeners: listeners } = this as unknown as { _listeners: ListenersManager<SyncJobListener> };
+
+                await options.onRun?.();
 
                 if (options.createdTypeIndex) {
                     await listeners.emit('onModelsRegistered', options.createdTypeIndex, [Post]);
@@ -195,10 +199,11 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
+        const post = await new Post({ title: 'Elsewhere' }).save('https://alice.example/blog/');
+
         await cloud.track(Post, { register: true });
 
         const findTypeIndexes = vi.spyOn(Solid.requireInstance(), 'findTypeIndexes');
-        const post = await new Post({ title: 'Elsewhere' }).save('https://alice.example/blog/');
         const { models: posts } = useModels(Post);
 
         await vi.waitFor(() => expect(posts.value).toEqual([]));
@@ -250,10 +255,11 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        await cloud.track(Post, { register: true });
-
         const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
         const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+
+        await cloud.track(Post, { register: true });
+
         const { models: posts } = useModels(Post);
 
         await vi.waitFor(() => expect(posts.value.map((model) => model.url)).toEqual([post.url]));
@@ -289,10 +295,11 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        await cloud.track(Post, { register: true });
-
         const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
         const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+
+        await cloud.track(Post, { register: true });
+
         const { models: posts } = useModels(Post);
 
         await vi.waitFor(() => expect(posts.value.map((model) => model.url)).toEqual([post.url]));
@@ -332,6 +339,96 @@ describe('Cloud', () => {
         await vi.waitFor(() =>
             expect(posts.value.map((model) => model.url).sort()).toEqual([blogPost.url, post.url].sort()),
         );
+    });
+
+    it('reads models created in unregistered containers', async () => {
+        // Arrange
+        logIn();
+        fakeSync();
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            autoPush: false,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        await cloud.track(Post, { register: true });
+
+        const { models: posts } = useModels(Post);
+        const post = await new Post({ title: 'Elsewhere' }).save('https://alice.example/blog/');
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(cloud.unregisteredContainerUrls).toEqual({ Post: ['https://alice.example/blog/'] });
+        expect(posts.value.map((model) => model.url)).toEqual([post.url]);
+    });
+
+    it('reads models from unregistered containers before syncing', async () => {
+        // Arrange
+        cloud.setState({
+            ready: true,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+            unregisteredContainerUrls: { Post: ['https://alice.example/blog/'] },
+        });
+
+        const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
+
+        await cloud.track(Post, { register: true });
+
+        // Act
+        const { models: posts } = useModels(Post);
+
+        // Assert
+        await vi.waitFor(() => expect(posts.value.map((model) => model.url)).toEqual([blogPost.url]));
+    });
+
+    it('forgets unregistered containers once they are registered', async () => {
+        // Arrange
+        logIn();
+        fakeSync({ typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+            unregisteredContainerUrls: { Post: ['https://alice.example/blog/'] },
+        });
+
+        await cloud.track(Post, { register: true });
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(cloud.registeredContainerUrls).toEqual({ Post: ['https://alice.example/blog/'] });
+        expect(cloud.unregisteredContainerUrls).toEqual({ Post: [] });
+    });
+
+    it('pushes models created during sync', async () => {
+        // Arrange
+        let post: Post | null = null;
+
+        logIn();
+        fakeSync({ onRun: async () => (post ??= await Post.create({ title: 'During sync' })) });
+
+        const push = vi.spyOn(SyncQueue.requireInstance(), 'push').mockReturnValue();
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        await cloud.track(Post, { register: true });
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(push).toHaveBeenCalledExactlyOnceWith(post);
     });
 
     it('configures type index registrations', async () => {
