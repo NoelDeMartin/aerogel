@@ -1,3 +1,4 @@
+import type { SortedColumn } from '@aerogel/core/components/ui/DataTable';
 import DataTable from '@aerogel/core/components/ui/DataTable.vue';
 import DataTableColumn from '@aerogel/core/components/ui/DataTableColumn.vue';
 import type { DeepKeyOf } from '@noeldemartin/utils';
@@ -7,7 +8,12 @@ import type { ComponentProps } from 'vue-component-type-helpers';
 
 type TableComponent<T extends object> = typeof DataTable &
     (new () => {
-        $props: Omit<ComponentProps<typeof DataTable>, 'items' | 'itemKey'> & { items?: T[]; itemKey?: DeepKeyOf<T> };
+        $props: Omit<ComponentProps<typeof DataTable>, 'items' | 'itemKey' | 'sortBy' | 'onUpdate:sortBy'> & {
+            items?: T[];
+            itemKey?: DeepKeyOf<T>;
+            sortBy?: SortedColumn<T>[];
+            'onUpdate:sortBy'?: (sortBy: SortedColumn<T>[]) => void;
+        };
     });
 type TableColumnComponent<T extends object> = typeof DataTableColumn &
     (new () => {

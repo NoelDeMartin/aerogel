@@ -131,7 +131,7 @@ import Button from '@aerogel/core/components/ui/Button.vue';
 import { translateWithDefault } from '@aerogel/core/lang/utils';
 import { arraySorted, arrayWithout, clamp, deepGet, isEmpty, isTruthy, range, uuid } from '@noeldemartin/utils';
 import type { ArraySortDirection, DeepKeyOf } from '@noeldemartin/utils';
-import { Fragment, computed, shallowRef, watchEffect } from 'vue';
+import { Fragment, computed, watchEffect } from 'vue';
 import type { VNode, VNodeChild, VNodeNormalizedChildren } from 'vue';
 import IconListBold from '~icons/ph/list-bold';
 import IconSortLargestFirst from '~icons/ph/sort-ascending-bold';
@@ -139,7 +139,7 @@ import IconSortSmallestFirst from '~icons/ph/sort-descending-bold';
 import IconCheveronLeft from '~icons/zondicons/cheveron-left';
 import IconCheveronRight from '~icons/zondicons/cheveron-right';
 
-type SortedColumn = { field: DeepKeyOf<T>; direction: ArraySortDirection };
+import type { SortedColumn } from './DataTable.ts';
 
 const ARIA_SORT = {
     asc: 'ascending',
@@ -164,7 +164,7 @@ const {
 const slots = defineSlots<{ default?(): VNode[]; empty?(): VNode[] }>();
 const id = `data-table-${uuid()}`;
 const pageModel = defineModel<number>('page', { default: 1 });
-const sorting = shallowRef<SortedColumn[]>([]);
+const sorting = defineModel<SortedColumn<T>[]>('sortBy', { default: () => [] });
 const sortingColumns = computed(() => Object.fromEntries(sorting.value.map((s) => [s.field, s.direction])));
 const normalizedItemsPerPage = computed(() => Math.max(1, itemsPerPage));
 const totalPages = computed(() => Math.max(1, Math.ceil(items.length / normalizedItemsPerPage.value)));
@@ -189,7 +189,7 @@ const pagination = computed(() => {
 const filteredItems = computed(() => {
     const sortedItems = arraySorted(
         items,
-        sorting.value.map(({ field, direction }) => [field, direction] as const),
+        sorting.value.map(({ field, direction }) => [field as DeepKeyOf<T>, direction] as const),
     );
 
     return sortedItems.slice(
@@ -283,6 +283,8 @@ function toggleSort(field?: DeepKeyOf<T>, event?: MouseEvent) {
     if (!field) {
         return;
     }
+
+    pageModel.value = 1;
 
     const existingSort = sorting.value.find((s) => s.field === field);
 

@@ -42,3 +42,5 @@ export { default as StartupCrash } from './StartupCrash.vue';
 export { default as Switch } from './Switch.vue';
 export { default as TextArea } from './TextArea.vue';
 export { default as Toast } from './Toast.vue';
+
+export * from './DataTable';
