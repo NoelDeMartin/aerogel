@@ -1,7 +1,7 @@
 import { Errors, Events, appNamespace, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
-import { arrayUnique, isDevelopment, isInstanceOf, throttle } from '@noeldemartin/utils';
+import { arrayUnique, isDevelopment, isInstanceOf, isTruthy, throttle, urlRoute } from '@noeldemartin/utils';
 import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
 import type { LoadAllOptions, Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
@@ -23,7 +23,7 @@ type TrackedModelOptions = {
 };
 
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
-let trackedContainerUrls: WeakMap<ModelConstructor, string[]> = new WeakMap();
+let trackedUrls: WeakMap<ModelConstructor, string[]> = new WeakMap();
 let modelsWorker: ModelsWorker | null = null;
 
 const WORKER_THRESHOLD = 100;
@@ -54,7 +54,7 @@ async function shouldLoadModelsInWorker(containerUrls: string[], options: { dept
     return documentsCounts.reduce((total, count) => total + count, 0) >= WORKER_THRESHOLD;
 }
 
-async function loadAllModels<T extends Model>(
+async function loadModelsByContainer<T extends Model>(
     modelClass: ModelConstructor<T>,
     containerUrls: string[],
     options: LoadAllOptions,
@@ -64,6 +64,26 @@ async function loadAllModels<T extends Model>(
     );
 
     return uniqueModels(containerModels.flat());
+}
+
+async function loadModelsByUrl<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    modelUrls: string[],
+    options: LoadAllOptions,
+): Promise<ModelWithUrl<T>[]> {
+    const models = await Promise.all(
+        modelUrls.map(async (modelUrl) => {
+            try {
+                return await modelClass.find(modelUrl);
+            } catch (error) {
+                await options.onDocumentError?.(error, urlRoute(modelUrl));
+
+                return null;
+            }
+        }),
+    );
+
+    return models.filter(isTruthy);
 }
 
 function uniqueModels<T extends Model>(models: ModelWithUrl<T>[]): ModelWithUrl<T>[] {
@@ -83,16 +103,24 @@ async function fetchModels<T extends Model>(
         },
     };
 
-    const containerUrls = _getTrackedContainerUrls(modelClass);
+    const urls = _getTrackedUrls(modelClass);
+    const containerUrls = urls.filter((url) => url.endsWith('/'));
+    const modelUrls = urls.filter((url) => !url.endsWith('/'));
 
     if (!(await shouldLoadModelsInWorker(containerUrls, options))) {
-        return loadAllModels(modelClass, containerUrls, loadOptions);
+        const [urlModels, containerModels] = await Promise.all([
+            loadModelsByUrl(modelClass, modelUrls, loadOptions),
+            loadModelsByContainer(modelClass, containerUrls, loadOptions),
+        ]);
+
+        return uniqueModels([...urlModels, ...containerModels]);
     }
 
     const worker = (modelsWorker ??= new ModelsWorker(appNamespace()));
+    const urlModels = await loadModelsByUrl(modelClass, modelUrls, loadOptions);
 
     try {
-        const loadedModels: ModelWithUrl<T>[] = [];
+        const loadedModels: ModelWithUrl<T>[] = [...urlModels];
 
         for (const containerUrl of containerUrls) {
             for await (const chunkModels of worker.loadModels(modelClass, { ...loadOptions, containerUrl })) {
@@ -115,7 +143,7 @@ async function fetchModels<T extends Model>(
             );
         }
 
-        return loadAllModels(modelClass, containerUrls, loadOptions);
+        return uniqueModels([...urlModels, ...(await loadModelsByContainer(modelClass, containerUrls, loadOptions))]);
     }
 }
 
@@ -215,23 +243,23 @@ export function _getTrackedModels(): WeakMap<ModelConstructor, TrackedModelData>
     return trackedModels;
 }
 
-export function _getTrackedContainerUrls(modelClass: ModelConstructor): string[] {
-    return trackedContainerUrls.get(modelClass) ?? [modelClass.defaultContainerUrl];
+export function _getTrackedUrls(modelClass: ModelConstructor): string[] {
+    return trackedUrls.get(modelClass) ?? [modelClass.defaultContainerUrl];
 }
 
-export function _setTrackedContainerUrls(modelClass: ModelConstructor, containerUrls: string[] | null): void {
-    if (!containerUrls || containerUrls.length === 0) {
-        trackedContainerUrls.delete(modelClass);
+export function _setTrackedUrls(modelClass: ModelConstructor, urls: string[] | null): void {
+    if (!urls || urls.length === 0) {
+        trackedUrls.delete(modelClass);
 
         return;
     }
 
-    trackedContainerUrls.set(modelClass, arrayUnique(containerUrls));
+    trackedUrls.set(modelClass, arrayUnique(urls));
 }
 
 export function _resetModelsState(): void {
     trackedModels = new WeakMap();
-    trackedContainerUrls = new WeakMap();
+    trackedUrls = new WeakMap();
 
     modelsWorker?.terminate();
     modelsWorker = null;

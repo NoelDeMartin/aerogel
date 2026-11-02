@@ -340,6 +340,12 @@ export interface UseModelsResult<T extends Model> {
     refreshing: Readonly<Ref<boolean>>;
 }
 
+export interface UseSingletonModelResult<T extends Model> {
+    model: ComputedRef<ModelWithUrl<T> | null>;
+    loading: ComputedRef<boolean>;
+    refreshing: Readonly<Ref<boolean>>;
+}
+
 export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
     return customRef((track, trigger) => {
         let value: T;
@@ -467,6 +473,19 @@ export function useModels<T extends Model>(
         }),
         loading: computed(() => modelData.loading.value && !modelData.loaded.value),
         refreshing: readonly(modelData.loading),
+    };
+}
+
+export function useSingletonModel<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options: { includeSoftDeleted?: boolean } = {},
+): UseSingletonModelResult<T> {
+    const { models, loading, refreshing } = useModels(modelClass, options);
+
+    return {
+        model: computed(() => models.value[0] ?? null),
+        loading,
+        refreshing,
     };
 }
 

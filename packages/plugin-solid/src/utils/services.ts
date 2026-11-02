@@ -6,7 +6,7 @@ import {
     _getTrackedModels,
     _getTrackedModelsData,
     _resetModelsState,
-    _setTrackedContainerUrls,
+    _setTrackedUrls,
     isSoftDeleted,
 } from './internal';
 
@@ -50,8 +50,24 @@ export function resetModelsState(): void {
     _resetModelsState();
 }
 
-export function setTrackedModelsContainerUrls(modelClass: ModelConstructor, containerUrls: string[] | null): void {
-    _setTrackedContainerUrls(modelClass, containerUrls);
+export function setTrackedModelsUrls(modelClass: ModelConstructor, urls: string[] | null): void {
+    _setTrackedUrls(modelClass, urls);
+}
+
+export function getTrackedSingletonModel<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options: { includeSoftDeleted?: boolean } = {},
+): ModelWithUrl<T> | null {
+    return getTrackedModels(modelClass, options)[0] ?? null;
+}
+
+export async function loadTrackedSingletonModel<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options: { includeSoftDeleted?: boolean } = {},
+): Promise<ModelWithUrl<T> | null> {
+    await loadTrackedModels(modelClass);
+
+    return getTrackedSingletonModel(modelClass, options);
 }
 
 export async function refreshTrackedModels(modelClass: ModelConstructor): Promise<void> {

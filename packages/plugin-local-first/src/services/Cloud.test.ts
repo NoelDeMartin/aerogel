@@ -4,7 +4,7 @@ import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
-import { Solid, useModels } from '@aerogel/plugin-solid';
+import { Solid, useModels, useSingletonModel } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import type { ListenersManager } from '@noeldemartin/utils';
@@ -319,6 +319,178 @@ describe('Cloud', () => {
         );
     });
 
+    it('reads singleton models from registered instances', async () => {
+        // Arrange
+        logIn();
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        const registeredPost = await new Post({ title: 'Registered' }).save('https://alice.example/blog/');
+        const typeIndex = fakeTypeIndex();
+
+        typeIndex.relatedRegistrations.related = [
+            new TypeRegistration({
+                forClass: Post.schema.rdfClasses.map((rdfClass) => rdfClass.value),
+                instance: registeredPost.url,
+            }),
+        ];
+
+        fakeSync({ typeIndexes: [typeIndex] });
+
+        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+
+        await cloud.track(Post, { register: { singleton: true } });
+
+        const { model: singletonPost } = useSingletonModel(Post);
+
+        await vi.waitFor(() => expect(singletonPost.value?.url).toEqual(post.url));
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(Post.defaultContainerUrl).toEqual('https://alice.example/posts/');
+        expect(cloud.registeredContainerUrls).toEqual({ Post: [] });
+        expect(cloud.registeredInstanceUrls).toEqual({ Post: [registeredPost.url] });
+
+        await vi.waitFor(() => expect(singletonPost.value?.url).toEqual(registeredPost.url));
+    });
+
+    it('reads singleton models from the default container before they are registered', async () => {
+        // Arrange
+        logIn();
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+
+        // Act
+        await cloud.track(Post, { register: { singleton: true } });
+
+        const { model: singletonPost } = useSingletonModel(Post);
+
+        // Assert
+        await vi.waitFor(() => expect(singletonPost.value?.url).toEqual(post.url));
+        expect(cloud.registeredInstanceUrls).toEqual({});
+    });
+
+    it('reads singleton models from registered containers', async () => {
+        // Arrange
+        logIn();
+        fakeSync({ typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        const post = await new Post({ title: 'Post' }).save('https://alice.example/blog/');
+
+        await cloud.track(Post, { register: { singleton: true } });
+
+        const { model: singletonPost } = useSingletonModel(Post);
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(cloud.registeredContainerUrls).toEqual({ Post: ['https://alice.example/blog/'] });
+        expect(cloud.registeredInstanceUrls).toEqual({ Post: [] });
+
+        await vi.waitFor(() => expect(singletonPost.value?.url).toEqual(post.url));
+    });
+
+    it('reads models from registered instances', async () => {
+        // Arrange
+        logIn();
+
+        const registeredPost = await new Post({ title: 'Registered' }).save('https://alice.example/blog/');
+        const unregisteredPost = await new Post({ title: 'Unregistered' }).save('https://alice.example/drafts/');
+        const post = await new Post({ title: 'Default' }).save('https://alice.example/posts/');
+        const typeIndex = fakeTypeIndex();
+
+        typeIndex.relatedRegistrations.related = [
+            new TypeRegistration({
+                forClass: Post.schema.rdfClasses.map((rdfClass) => rdfClass.value),
+                instance: registeredPost.url,
+            }),
+        ];
+
+        fakeSync({ typeIndexes: [typeIndex] });
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+            unregisteredContainerUrls: { Post: ['https://alice.example/drafts/'] },
+        });
+
+        await cloud.track(Post, { register: true });
+
+        const { models: posts } = useModels(Post);
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(cloud.registeredInstanceUrls).toEqual({ Post: [registeredPost.url] });
+
+        await vi.waitFor(() =>
+            expect(posts.value.map((model) => model.url).sort()).toEqual(
+                [registeredPost.url, unregisteredPost.url, post.url].sort(),
+            ),
+        );
+    });
+
+    it('reads singleton models that have not been registered yet', async () => {
+        // Arrange
+        logIn();
+
+        const registeredPost = await new Post({ title: 'Registered' }).save('https://alice.example/blog/');
+        const typeIndex = fakeTypeIndex();
+
+        typeIndex.relatedRegistrations.related = [
+            new TypeRegistration({
+                forClass: Post.schema.rdfClasses.map((rdfClass) => rdfClass.value),
+                instance: registeredPost.url,
+            }),
+        ];
+
+        fakeSync({ typeIndexes: [typeIndex] });
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            autoPush: false,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+            registeredInstanceUrls: { Post: [registeredPost.url] },
+        });
+
+        await cloud.track(Post, { register: { singleton: true } });
+
+        const { models: posts } = useModels(Post);
+        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(cloud.registeredInstanceUrls).toEqual({ Post: [registeredPost.url] });
+
+        await vi.waitFor(() =>
+            expect(posts.value.map((model) => model.url).sort()).toEqual([registeredPost.url, post.url].sort()),
+        );
+    });
+
     it('reads models from registered containers before syncing', async () => {
         // Arrange
         cloud.setState({
@@ -364,6 +536,27 @@ describe('Cloud', () => {
         // Assert
         expect(cloud.unregisteredContainerUrls).toEqual({ Post: ['https://alice.example/blog/'] });
         expect(posts.value.map((model) => model.url)).toEqual([post.url]);
+    });
+
+    it('ignores containers of models created in registered instances', async () => {
+        // Arrange
+        const post = new Post({ title: 'Registered' });
+        const instanceUrl = post.mintUrl({ containerUrl: 'https://alice.example/blog/' });
+
+        cloud.setState({
+            ready: true,
+            autoPush: false,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+            registeredInstanceUrls: { Post: [instanceUrl] },
+        });
+
+        await cloud.track(Post, { register: { singleton: true } });
+
+        // Act
+        await post.save();
+
+        // Assert
+        expect(cloud.unregisteredContainerUrls).toEqual({});
     });
 
     it('reads models from unregistered containers before syncing', async () => {
@@ -436,7 +629,7 @@ describe('Cloud', () => {
         logIn();
 
         await cloud.track(Post, { register: { public: true } });
-        await cloud.track(PostsCollection, { register: true });
+        await cloud.track(PostsCollection, { register: { singleton: true } });
 
         // Act
         const config = await cloud.getSyncConfig();
@@ -445,8 +638,8 @@ describe('Cloud', () => {
         expect(config.userProfile).toEqual(user);
         expect(config.applicationModels).toEqual(
             expect.arrayContaining([
-                { model: Post, registration: { path: undefined, public: true } },
-                { model: PostsCollection, registration: { path: undefined, public: undefined } },
+                { model: Post, registration: { path: undefined, public: true, mode: 'container' } },
+                { model: PostsCollection, registration: { path: undefined, public: undefined, mode: 'instance' } },
             ]),
         );
     });

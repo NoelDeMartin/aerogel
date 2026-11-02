@@ -1,7 +1,7 @@
 import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
 import { getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
-import { Solid, refreshTrackedModels, setTrackedModelsContainerUrls, trackModels } from '@aerogel/plugin-solid';
+import { Solid, refreshTrackedModels, setTrackedModelsUrls, trackModels } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import {
     Semaphore,
@@ -38,6 +38,7 @@ export interface RegisterOptions {
     path?: string;
     depth?: number;
     public?: boolean;
+    singleton?: boolean;
 }
 
 export interface SyncOptions extends JobListener {
@@ -53,6 +54,7 @@ export interface ModelContainerUrls {
     default: string;
     registered: string[];
     unregistered: string[];
+    instances: string[];
 }
 
 export class CloudService extends Service {
@@ -230,11 +232,11 @@ export class CloudService extends Service {
         }
 
         if (options.register) {
-            const { path, public: isPublic } = typeof options.register === 'object' ? options.register : {};
+            const { path, public: isPublic, singleton } = typeof options.register === 'object' ? options.register : {};
 
             this.setupRemoteCollection(modelClass, path);
 
-            this.registeredModels.push({ modelClass, path, public: isPublic });
+            this.registeredModels.push({ modelClass, path, public: isPublic, singleton });
 
             await this.initializeTrackedModels(modelClass, options.register);
         }
@@ -304,7 +306,13 @@ export class CloudService extends Service {
 
                 return {
                     model: modelClass as ModelConstructor,
-                    registration: registration ? { path: registration.path, public: registration.public } : false,
+                    registration: registration
+                        ? {
+                              path: registration.path,
+                              public: registration.public,
+                              mode: registration.singleton ? 'instance' : 'container',
+                          }
+                        : false,
                 };
             }),
         };
@@ -358,11 +366,12 @@ export class CloudService extends Service {
 
         return objectFromEntries(
             this.registeredModels.map(({ modelClass, path }) => {
+                const modelRegistrations = registrations.filter((registration) => registration.registers(modelClass));
                 const registeredContainerUrls = arrayUnique(
-                    registrations
-                        .filter((registration) => registration.registers(modelClass))
-                        .map((registration) => registration.instanceContainer)
-                        .filter(isTruthy),
+                    modelRegistrations.map((registration) => registration.instanceContainer).filter(isTruthy),
+                );
+                const registeredInstanceUrls = arrayUnique(
+                    modelRegistrations.map((registration) => registration.instance).filter(isTruthy),
                 );
                 const defaultContainerUrl = this.pickDefaultContainerUrl(modelClass, path, registeredContainerUrls, {
                     keepCurrent: options.keepDefaults?.has(modelClass),
@@ -378,6 +387,7 @@ export class CloudService extends Service {
                         default: defaultContainerUrl,
                         registered: registeredContainerUrls,
                         unregistered: unregisteredContainerUrls,
+                        instances: registeredInstanceUrls,
                     },
                 ];
             }),
@@ -432,6 +442,10 @@ export class CloudService extends Service {
                 ...this.unregisteredContainerUrls,
                 ...objectFromEntries(entries.map(([modelName, { unregistered }]) => [modelName, unregistered])),
             },
+            registeredInstanceUrls: {
+                ...this.registeredInstanceUrls,
+                ...objectFromEntries(entries.map(([modelName, { instances }]) => [modelName, instances])),
+            },
         });
     }
 
@@ -472,6 +486,7 @@ export class CloudService extends Service {
             defaultContainerUrls: {},
             registeredContainerUrls: {},
             unregisteredContainerUrls: {},
+            registeredInstanceUrls: {},
             pollingEnabled: true,
             pollingMinutes: 10,
             ready: false,
@@ -484,7 +499,7 @@ export class CloudService extends Service {
         });
 
         for (const { modelClass } of this.registeredModels) {
-            setTrackedModelsContainerUrls(modelClass, null);
+            setTrackedModelsUrls(modelClass, null);
         }
 
         this.dirtyModelClasses.clear();
@@ -536,6 +551,7 @@ export class CloudService extends Service {
                 default: defaultContainerUrl,
                 registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
                 unregistered: this.unregisteredContainerUrls[modelClass.modelName] ?? [],
+                instances: this.registeredInstanceUrls[modelClass.modelName] ?? [],
             });
 
             return;
@@ -550,6 +566,7 @@ export class CloudService extends Service {
                     default: remoteContainerUrl,
                     registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
                     unregistered: this.unregisteredContainerUrls[modelClass.modelName] ?? [],
+                    instances: this.registeredInstanceUrls[modelClass.modelName] ?? [],
                 },
             });
         });
@@ -558,7 +575,8 @@ export class CloudService extends Service {
     private useContainerUrls(modelClass: ModelConstructor, containerUrls: ModelContainerUrls): void {
         modelClass.defaultContainerUrl = containerUrls.default;
 
-        setTrackedModelsContainerUrls(modelClass, [
+        setTrackedModelsUrls(modelClass, [
+            ...containerUrls.instances,
             containerUrls.default,
             ...containerUrls.registered,
             ...containerUrls.unregistered,
@@ -573,10 +591,12 @@ export class CloudService extends Service {
             default: this.defaultContainerUrls[modelName] ?? modelClass.defaultContainerUrl,
             registered: this.registeredContainerUrls[modelName] ?? [],
             unregistered: this.unregisteredContainerUrls[modelName] ?? [],
+            instances: this.registeredInstanceUrls[modelName] ?? [],
         };
 
         if (
             !containerUrl ||
+            containerUrls.instances.includes(model.requireUrl()) ||
             !this.registeredModels.some((registration) => registration.modelClass === modelClass) ||
             [containerUrls.default, ...containerUrls.registered, ...containerUrls.unregistered].includes(containerUrl)
         ) {

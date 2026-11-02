@@ -14,6 +14,7 @@ export interface ModelRegistration {
     modelClass: ModelConstructor;
     path?: string;
     public?: boolean;
+    singleton?: boolean;
 }
 
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
@@ -27,6 +28,7 @@ export default defineServiceState({
         'defaultContainerUrls',
         'registeredContainerUrls',
         'unregisteredContainerUrls',
+        'registeredInstanceUrls',
         'pollingEnabled',
         'pollingMinutes',
         'ready',
@@ -38,6 +40,7 @@ export default defineServiceState({
         defaultContainerUrls: {} as Record<string, string>,
         registeredContainerUrls: {} as Record<string, string[]>,
         unregisteredContainerUrls: {} as Record<string, string[]>,
+        registeredInstanceUrls: {} as Record<string, string[]>,
         pollingEnabled: true,
         pollingMinutes: 10,
         ready: false,
