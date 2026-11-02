@@ -63,7 +63,7 @@ describe('Model bindings', () => {
         await trackModels(Post, { bypassServicesCheck: true, lazy: true });
 
         // Act
-        const binding = await resolveModelBinding(Post, 'missing', routeWithUrl('solid://posts/missing#it'));
+        const binding = await resolveModelBinding(Post, 'missing', routeWithUrl('local://posts/missing#it'));
 
         // Assert
         expect(binding).toBeInstanceOf(BindingNotFound);

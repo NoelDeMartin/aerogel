@@ -76,7 +76,7 @@ describe('Services helpers', () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });
 
-        const bob = await new User({ name: 'Bob', age: 30 }).save('solid://others/');
+        const bob = await new User({ name: 'Bob', age: 30 }).save('local://others/');
 
         await loadTrackedModels(User);
 

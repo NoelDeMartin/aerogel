@@ -95,7 +95,7 @@ export function useAccountState(args: Partial<AccountStoryArgs>): void {
                 status: arg('cloudStatus'),
                 ready: arg('cloudReady'),
                 localModelUpdates:
-                    arg('localChanges') > 0 ? { 'solid://storybook/fake-model': arg('localChanges') } : {},
+                    arg('localChanges') > 0 ? { 'local://storybook/fake-model': arg('localChanges') } : {},
                 syncError: arg('syncError') || null,
             });
         },
