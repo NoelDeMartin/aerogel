@@ -1,4 +1,4 @@
-import { Cache, Errors, Events, onCleanMounted } from '@aerogel/core';
+import { Cache, Errors, Events } from '@aerogel/core';
 import { debounce, fail, isArray, isInstanceOf, isNullable, isPlainObject, tap, throttle } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
 import { Model, getRelatedClasses, hydrateModel } from 'soukai-bis';
@@ -180,7 +180,7 @@ function reactiveComputedModels<T>(
         const value = shallowModels.value;
 
         return tap(
-            toReactiveModels(isNullable(value) && cachedValue.value ? cachedValue.value.value : value),
+            toReactiveModels(isNullable(value) && cachedValue.value ? cachedValue.value.value : value, options),
             (models) => (reactiveModelsMap = mapModels(models)),
         );
     });
@@ -293,8 +293,13 @@ function watchCachedValue(
     getCurrentScope() && onScopeDispose(stopListeners);
 }
 
-function toReactiveModels<T>(value: T): T {
-    return mapNestedValues(value, isModel, shallowReactive, (model) => !isSoftDeleted(model)) as T;
+function toReactiveModels<T>(value: T, options: ComputedModelsOptions = {}): T {
+    return mapNestedValues(
+        value,
+        isModel,
+        shallowReactive,
+        options.includeSoftDeleted ? undefined : (model) => !isSoftDeleted(model),
+    ) as T;
 }
 
 function createModelProxy<T extends object>(model: T, track: () => void, trigger: () => void): T {
@@ -332,6 +337,7 @@ export type ComputedAttributeName<T extends ModelConstructor> = T extends ModelC
 export interface ComputedModelsOptions<TAttribute extends string = string> {
     watch?: TAttribute[];
     cache?: string;
+    includeSoftDeleted?: boolean;
 }
 
 export interface UseModelsResult<T extends Model> {
@@ -341,7 +347,7 @@ export interface UseModelsResult<T extends Model> {
 }
 
 export interface UseSingletonModelResult<T extends Model> {
-    model: ComputedRef<ModelWithUrl<T> | null>;
+    model: Readonly<Ref<ModelWithUrl<T> | null>>;
     loading: ComputedRef<boolean>;
     refreshing: Readonly<Ref<boolean>>;
 }
@@ -461,16 +467,9 @@ export function useModels<T extends Model>(
     const modelData = _getTrackedModelsData<T>(modelClass, { load: true, depth: options.depth });
 
     watchEffect(() => (models.value = modelData.modelsArray.value));
-    onCleanMounted(() => modelClass.on('updated', () => (models.value = models.value.slice(0))));
 
     return {
-        models: computed(() => {
-            if (options.includeSoftDeleted) {
-                return models.value;
-            }
-
-            return models.value.filter((model) => !isSoftDeleted(model));
-        }),
+        models: computedModels(modelClass, () => models.value, { includeSoftDeleted: options.includeSoftDeleted }),
         loading: computed(() => modelData.loading.value && !modelData.loaded.value),
         refreshing: readonly(modelData.loading),
     };
@@ -483,7 +482,7 @@ export function useSingletonModel<T extends Model>(
     const { models, loading, refreshing } = useModels(modelClass, options);
 
     return {
-        model: computed(() => models.value[0] ?? null),
+        model: computedModel(() => models.value[0] ?? null),
         loading,
         refreshing,
     };

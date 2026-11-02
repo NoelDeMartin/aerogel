@@ -2,11 +2,13 @@ import { Cache } from '@aerogel/core';
 import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { after, arrayGroupBy } from '@noeldemartin/utils';
+import { belongsToOne, bootModels, defineSchema, hasMany, requireBootedModel } from 'soukai-bis';
 import type { SerializedModel } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
+import { z } from 'zod';
 
-import { computedModel, computedModels, useModels } from './composition';
+import { computedModel, computedModels, useModels, useSingletonModel } from './composition';
 import { getTrackedModels, loadTrackedModels, refreshTrackedModels, resetModelsState, trackModels } from './services';
 
 describe('Composition helpers', () => {
@@ -148,6 +150,106 @@ describe('Composition helpers', () => {
         await User.create({ name: 'Bob', age: 30 });
 
         expect(users.value).toHaveLength(2);
+    });
+
+    it('Reacts to relation changes in singleton models', async () => {
+        // Arrange
+        const Book = defineSchema({
+            rdfContext: 'https://schema.org/',
+            rdfClass: 'Book',
+            fields: { title: z.string() },
+            relations: { chapters: hasMany(() => requireBootedModel('Chapter'), 'bookUrl') },
+        });
+        const Chapter = defineSchema({
+            rdfContext: 'https://schema.org/',
+            rdfClass: 'Chapter',
+            fields: { name: z.string(), bookUrl: z.url().optional() },
+            relations: { book: belongsToOne(Book, 'bookUrl') },
+        });
+
+        bootModels({ Book, Chapter });
+
+        const chaptersCount: number[] = [];
+        const book = await Book.create({ title: 'Lorem ipsum' });
+
+        await Chapter.create({ name: 'Chapter 1', bookUrl: book.url });
+
+        const { model, loading } = useSingletonModel(Book);
+
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        watchEffect(() => chaptersCount.push(model.value?.getRelation('chapters').getLoadedModels().length ?? 0));
+
+        // Act
+        await toRaw(model.value)?.loadRelation('chapters');
+
+        // Assert
+        await vi.waitFor(() => expect(chaptersCount).toEqual([0, 1]));
+    });
+
+    it('Includes soft-deleted models on demand', async () => {
+        // Arrange
+        const TaskSchema = defineSchema({
+            rdfContext: 'https://schema.org/',
+            rdfClass: 'Action',
+            fields: { name: z.string(), done: z.boolean().optional() },
+        });
+
+        class Task extends TaskSchema {
+            public isSoftDeleted(): boolean {
+                return !!this.done;
+            }
+        }
+
+        bootModels({ Task });
+
+        await Task.create({ name: 'Active' });
+        await Task.create({ name: 'Soft-deleted', done: true });
+
+        // Act
+        const { models: activeTasks, loading } = useModels(Task);
+        const { models: allTasks } = useModels(Task, { includeSoftDeleted: true });
+
+        // Assert
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        expect(activeTasks.value.map(({ name }) => name)).toEqual(['Active']);
+        expect(allTasks.value.map(({ name }) => name)).toEqual(['Active', 'Soft-deleted']);
+    });
+
+    it('Reacts to relation changes in model collections', async () => {
+        // Arrange
+        const Shelf = defineSchema({
+            rdfContext: 'https://schema.org/',
+            rdfClass: 'Collection',
+            fields: { name: z.string() },
+            relations: { items: hasMany(() => requireBootedModel('Item'), 'shelfUrl') },
+        });
+        const Item = defineSchema({
+            rdfContext: 'https://schema.org/',
+            rdfClass: 'Thing',
+            fields: { name: z.string(), shelfUrl: z.url().optional() },
+            relations: { shelf: belongsToOne(Shelf, 'shelfUrl') },
+        });
+
+        bootModels({ Shelf, Item });
+
+        const itemsCount: number[] = [];
+        const shelf = await Shelf.create({ name: 'Shelf' });
+
+        await Item.create({ name: 'Item', shelfUrl: shelf.url });
+
+        const { models: shelves, loading } = useModels(Shelf);
+
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        watchEffect(() => itemsCount.push(shelves.value[0]?.getRelation('items').getLoadedModels().length ?? 0));
+
+        // Act
+        await toRaw(shelves.value[0])?.loadRelation('items');
+
+        // Assert
+        await vi.waitFor(() => expect(itemsCount.at(-1)).toBe(1));
     });
 
     it('Refreshes model collections without loading', async () => {
