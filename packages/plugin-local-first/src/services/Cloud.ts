@@ -12,6 +12,7 @@ import {
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isArray,
+    isInstanceOf,
     isTesting,
     isTruthy,
     objectFromEntries,
@@ -20,16 +21,27 @@ import {
     urlRoute,
 } from '@noeldemartin/utils';
 import {
+    DocumentNotFound,
     MigrateLocalUrls,
     Model,
     Sync,
     dispatch,
     getBootedModels,
+    getExternalSourceUrl,
     isCoreModel,
+    isInExternalSource,
     requireEngine,
     isLocalUrl,
 } from 'soukai-bis';
-import type { Engine, IndexedDBEngine, JobListener, ModelConstructor, SyncConfig, TypeIndex } from 'soukai-bis';
+import type {
+    Engine,
+    IndexedDBEngine,
+    JobListener,
+    ModelConstructor,
+    SyncConfig,
+    ExternalSource,
+    TypeIndex,
+} from 'soukai-bis';
 import { watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
@@ -55,6 +67,11 @@ export interface ModelContainerUrls {
     registered: string[];
     unregistered: string[];
     instances: string[];
+}
+
+export interface ExternalSourceFailedPayload {
+    source: ExternalSource;
+    error: unknown;
 }
 
 export class CloudService extends Service {
@@ -163,6 +180,8 @@ export class CloudService extends Service {
                             registrationError ??= error;
                             failedModels.forEach((modelClass) => modelsWithFailedRegistration.add(modelClass));
                         },
+                        onExternalSourceFailed: (source, error) =>
+                            Events.emit('cloud:sync-external-source-failed', { source, error }),
                         onFinished: (result) =>
                             this.clearLocalModelUpdates({
                                 syncedDocumentUrls: result.syncedDocumentUrls,
@@ -246,6 +265,70 @@ export class CloudService extends Service {
         modelClass.on('deleted', (model) => this.ready && this.onModelUpdated(model, { reset: true }));
     }
 
+    public addExternalSource(source: ExternalSource): void {
+        if (this.hasExternalSource(source)) {
+            return;
+        }
+
+        for (const model of source.models) {
+            if (getBootedModels().get(model.modelName) !== model) {
+                throw new Error(
+                    `Can't add external source ${getExternalSourceUrl(source)}, ` +
+                        `the '${model.modelName}' model class isn't booted`,
+                );
+            }
+        }
+
+        this.externalSources = [...this.externalSources, source];
+    }
+
+    public hasExternalSource(source: ExternalSource): boolean {
+        const sourceUrl = getExternalSourceUrl(source);
+
+        return this.externalSources.some((externalSource) => getExternalSourceUrl(externalSource) === sourceUrl);
+    }
+
+    public getExternalSources(): ExternalSource[] {
+        return this.externalSources.slice(0);
+    }
+
+    public isInExternalSource(url: string): boolean {
+        return this.externalSources.some((source) => isInExternalSource(source, url));
+    }
+
+    public async removeExternalSource(source: ExternalSource): Promise<void> {
+        await this.asyncLock.run(async () => {
+            const engine = requireEngine();
+            const sourceUrl = getExternalSourceUrl(source);
+            const documentUrls = source.containerUrl
+                ? [...(await this.readExternalContainerDocumentUrls(source.containerUrl)), source.containerUrl]
+                : [sourceUrl];
+
+            this.externalSources = this.externalSources.filter(
+                (externalSource) => getExternalSourceUrl(externalSource) !== sourceUrl,
+            );
+
+            for (const documentUrl of documentUrls) {
+                await engine.deleteDocument(documentUrl);
+            }
+
+            const localModelUpdates = { ...this.localModelUpdates };
+
+            for (const url of Object.keys(localModelUpdates)) {
+                if (!isInExternalSource(source, url)) {
+                    continue;
+                }
+
+                delete localModelUpdates[url];
+                this.dirtyModelClasses.delete(url);
+            }
+
+            this.localModelUpdates = localModelUpdates;
+
+            await this.refreshTrackedModels();
+        });
+    }
+
     public requireRemoteContainerUrl(modelClass: ModelConstructor): string {
         for (const registration of this.registeredModels) {
             if (modelClass !== registration.modelClass) {
@@ -296,6 +379,7 @@ export class CloudService extends Service {
 
         return {
             ...(await Solid.findTypeIndexes()),
+            externalSources: this.getExternalSources(),
             userProfile: Solid.requireUser(),
             localEngine: requireEngine(),
             remoteEngine: Solid.requireEngine(),
@@ -493,6 +577,7 @@ export class CloudService extends Service {
             setupDismissed: false,
             setupOngoing: false,
             startupSync: true,
+            externalSources: [],
             status: CloudStatus.Disconnected,
             syncError: null,
             syncJob: null,
@@ -596,6 +681,7 @@ export class CloudService extends Service {
 
         if (
             !containerUrl ||
+            this.isInExternalSource(model.requireUrl()) ||
             containerUrls.instances.includes(model.requireUrl()) ||
             !this.registeredModels.some((registration) => registration.modelClass === modelClass) ||
             [containerUrls.default, ...containerUrls.registered, ...containerUrls.unregistered].includes(containerUrl)
@@ -657,6 +743,20 @@ export class CloudService extends Service {
             }
 
             await refreshTrackedModels(modelClass);
+        }
+    }
+
+    private async readExternalContainerDocumentUrls(containerUrl: string): Promise<string[]> {
+        try {
+            const documents = await requireEngine().readDocuments({ containerUrl, deep: true });
+
+            return Object.keys(documents);
+        } catch (error) {
+            if (!isInstanceOf(error, DocumentNotFound)) {
+                throw error;
+            }
+
+            return [];
         }
     }
 
@@ -726,6 +826,7 @@ declare module '@aerogel/core' {
         'cloud:backup-completed': void;
         'cloud:sync-started': Model[] | undefined;
         'cloud:sync-completed': Model[] | undefined;
+        'cloud:sync-external-source-failed': ExternalSourceFailedPayload;
     }
 }
 

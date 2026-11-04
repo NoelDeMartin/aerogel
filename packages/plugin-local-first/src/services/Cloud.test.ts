@@ -1,4 +1,4 @@
-import { Errors } from '@aerogel/core';
+import { Errors, Events } from '@aerogel/core';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
 import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
@@ -7,9 +7,18 @@ import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/Po
 import { Solid, useModels, useSingletonModel } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
+import { after } from '@noeldemartin/utils';
 import type { ListenersManager } from '@noeldemartin/utils';
-import { Sync, TypeIndex, TypeRegistration } from 'soukai-bis';
-import type { Model, ModelConstructor, ModelWithUrl, SyncConfig, SyncJobListener, SyncJobResult } from 'soukai-bis';
+import { Sync, TypeIndex, TypeRegistration, requireEngine } from 'soukai-bis';
+import type {
+    Model,
+    ModelConstructor,
+    ModelWithUrl,
+    SyncConfig,
+    ExternalSource,
+    SyncJobListener,
+    SyncJobResult,
+} from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 class TestCloudService extends CloudService {
@@ -23,6 +32,14 @@ class TestCloudService extends CloudService {
 
     public override migrateLocalUrls(): Promise<void> {
         return super.migrateLocalUrls();
+    }
+
+    public override serializePersistedState(state: Parameters<CloudService['serializePersistedState']>[0]) {
+        return super.serializePersistedState(state);
+    }
+
+    public override deserializePersistedState(state: Parameters<CloudService['deserializePersistedState']>[0]) {
+        return super.deserializePersistedState(state);
     }
 }
 
@@ -69,6 +86,7 @@ describe('Cloud', () => {
             typeIndexes?: TypeIndex[];
             createdTypeIndex?: TypeIndex;
             failedRegistrations?: ModelConstructor[];
+            failedExternalSources?: [ExternalSource, unknown][];
             onRun?: () => Promise<unknown>;
         } = {},
     ): void {
@@ -93,6 +111,10 @@ describe('Cloud', () => {
                         options.failedRegistrations,
                         new Error('Registration failed'),
                     );
+                }
+
+                for (const [source, error] of options.failedExternalSources ?? []) {
+                    await listeners.emit('onExternalSourceFailed', source, error);
                 }
 
                 return { syncedDocumentUrls: new Set(), documentsWithErrors: new Set() };
@@ -642,5 +664,199 @@ describe('Cloud', () => {
                 { model: PostsCollection, registration: { path: undefined, public: undefined, mode: 'instance' } },
             ]),
         );
+    });
+
+    describe('external sources', () => {
+        const source: ExternalSource = { containerUrl: 'https://bob.example/posts/', models: [Post] };
+
+        it('passes external sources to sync', async () => {
+            // Arrange
+            logIn();
+
+            await cloud.track(Post, { register: true });
+            cloud.addExternalSource(source);
+
+            // Act
+            const config = await cloud.getSyncConfig();
+
+            // Assert
+            expect(config.externalSources).toEqual([source]);
+        });
+
+        it('adds external sources once', () => {
+            // Act
+            cloud.addExternalSource(source);
+            cloud.addExternalSource({ ...source });
+
+            // Assert
+            expect(cloud.getExternalSources()).toEqual([source]);
+            expect(cloud.hasExternalSource(source)).toBe(true);
+        });
+
+        it('serializes external sources', () => {
+            // Arrange
+            const instanceSource: ExternalSource = { instanceUrl: 'https://bob.example/profile#it', models: [Post] };
+
+            cloud.addExternalSource(source);
+            cloud.addExternalSource(instanceSource);
+
+            // Act
+            const storage = cloud.serializePersistedState({ externalSources: cloud.externalSources });
+            const restored = cloud.deserializePersistedState(storage);
+
+            // Assert
+            expect(storage).toEqual({
+                externalSources: [
+                    { containerUrl: source.containerUrl, modelNames: ['Post'] },
+                    { instanceUrl: instanceSource.instanceUrl, modelNames: ['Post'] },
+                ],
+            });
+            expect(restored).toEqual({ externalSources: [source, instanceSource] });
+        });
+
+        it('fails adding external sources with models that are not booted', () => {
+            // Arrange
+            const UnbootedPost = class extends Post {};
+
+            // Act & Assert
+            expect(() => cloud.addExternalSource({ ...source, models: [UnbootedPost] })).toThrow(/class isn't booted/);
+            expect(cloud.externalSources).toEqual([]);
+        });
+
+        it('drops external sources with unknown models when restoring', () => {
+            // Arrange
+            const report = vi.spyOn(Errors.requireInstance(), 'report').mockResolvedValue();
+
+            // Act
+            const restored = cloud.deserializePersistedState({
+                externalSources: [
+                    { containerUrl: source.containerUrl, modelNames: ['Post'] },
+                    { containerUrl: 'https://carol.example/notes/', modelNames: ['Note'] },
+                ],
+            });
+
+            // Assert
+            expect(restored).toEqual({ externalSources: [source] });
+            expect(report).toHaveBeenCalledWith(
+                expect.objectContaining({ message: expect.stringContaining('https://carol.example/notes/') }),
+            );
+        });
+
+        it('forwards external source errors', async () => {
+            // Arrange
+            const error = new Error('Forbidden');
+            const listener = vi.fn();
+
+            logIn();
+            fakeSync({ failedExternalSources: [[source, error]] });
+            Events.on('cloud:sync-external-source-failed', listener);
+
+            cloud.setState({ ready: true, status: CloudStatus.Online });
+
+            cloud.addExternalSource(source);
+
+            // Act
+            await cloud.sync();
+
+            // Assert
+            expect(listener).toHaveBeenCalledWith({ source, error });
+        });
+
+        it('does not track containers of models created in external sources', async () => {
+            // Arrange
+            cloud.setState({
+                ready: true,
+                autoPush: false,
+                defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+            });
+
+            await cloud.track(Post, { register: true });
+            cloud.addExternalSource(source);
+
+            // Act
+            await new Post({ title: 'Managed' }).save(source.containerUrl);
+
+            // Assert
+            expect(cloud.unregisteredContainerUrls).toEqual({});
+            expect(Object.keys(cloud.localModelUpdates)).toHaveLength(1);
+        });
+
+        it('removes external sources discarding unsynced changes', async () => {
+            // Arrange
+            cloud.setState({
+                ready: true,
+                autoPush: false,
+                defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+            });
+
+            await cloud.track(Post, { register: true });
+            cloud.addExternalSource(source);
+
+            const ownPost = await Post.create({ title: 'Mine' });
+            const externalPost = await new Post({ title: 'Managed' }).save(source.containerUrl);
+
+            // Act
+            await cloud.removeExternalSource(source);
+
+            // Assert
+            await expect(requireEngine().readDocumentIfExists(externalPost.requireDocumentUrl())).resolves.toBeNull();
+            await expect(requireEngine().readDocumentIfExists(ownPost.requireDocumentUrl())).resolves.not.toBeNull();
+            expect(Object.keys(cloud.localModelUpdates)).toEqual([ownPost.url]);
+            expect(cloud.getExternalSources()).toEqual([]);
+        });
+
+        it('removes external sources without local documents', async () => {
+            // Arrange
+            const otherSource: ExternalSource = { containerUrl: 'https://carol.example/posts/', models: [Post] };
+
+            cloud.setState({ ready: true, autoPush: false });
+            cloud.addExternalSource(source);
+            cloud.addExternalSource(otherSource);
+
+            // Act
+            await cloud.removeExternalSource(otherSource);
+
+            // Assert
+            expect(cloud.getExternalSources()).toEqual([source]);
+        });
+
+        it('removes external sources after running syncs', async () => {
+            // Arrange
+            let pulledPost: Post | null = null;
+            let resumeSync!: () => void;
+            const syncPaused = new Promise<void>((resolve) => (resumeSync = resolve));
+
+            logIn();
+            fakeSync({
+                onRun: async () => {
+                    await syncPaused;
+
+                    pulledPost = await new Post({ title: 'Pulled' }).save(source.containerUrl);
+                },
+            });
+
+            cloud.setState({ ready: true, autoPush: false, status: CloudStatus.Online });
+
+            await cloud.track(Post, { register: true });
+            cloud.addExternalSource(source);
+
+            // Act
+            const syncing = cloud.sync({ syncDirty: false });
+            const removing = cloud.removeExternalSource(source);
+
+            await after({ milliseconds: 10 });
+
+            resumeSync();
+
+            await Promise.all([syncing, removing]);
+
+            // Assert
+            expect(pulledPost).not.toBeNull();
+            await expect(
+                requireEngine().readDocumentIfExists((pulledPost as unknown as Post).requireDocumentUrl()),
+            ).resolves.toBeNull();
+            expect(cloud.localModelUpdates).toEqual({});
+            expect(cloud.getExternalSources()).toEqual([]);
+        });
     });
 });

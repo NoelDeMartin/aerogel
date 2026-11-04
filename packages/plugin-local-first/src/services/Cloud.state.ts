@@ -1,7 +1,43 @@
-import { defineServiceState } from '@aerogel/core';
+import { Errors, defineServiceState } from '@aerogel/core';
 import type { ErrorSource } from '@aerogel/core';
+import { arrayFilter } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
-import type { ModelConstructor, Sync } from 'soukai-bis';
+import { getBootedModels, getExternalSourceUrl } from 'soukai-bis';
+import type { ExternalSource, ModelConstructor, Sync } from 'soukai-bis';
+
+type PersistedExternalSource =
+    | { containerUrl: string; instanceUrl?: undefined; modelNames: string[] }
+    | { instanceUrl: string; containerUrl?: undefined; modelNames: string[] };
+
+function serializeExternalSource(source: ExternalSource): PersistedExternalSource {
+    const modelNames = source.models.map((model) => model.modelName);
+
+    return source.containerUrl !== undefined
+        ? { containerUrl: source.containerUrl, modelNames }
+        : { instanceUrl: source.instanceUrl, modelNames };
+}
+
+function restoreExternalSource(source: PersistedExternalSource): ExternalSource | null {
+    const bootedModels = getBootedModels();
+    const models = arrayFilter(source.modelNames.map((modelName) => bootedModels.get(modelName)));
+    const externalSource: ExternalSource =
+        source.containerUrl !== undefined
+            ? { containerUrl: source.containerUrl, models }
+            : { instanceUrl: source.instanceUrl, models };
+
+    if (models.length !== source.modelNames.length) {
+        void Errors.report(
+            new Error(
+                `Dropping external source ${getExternalSourceUrl(externalSource)}, some of its models aren't booted ` +
+                    `(${source.modelNames.join(', ')})`,
+            ),
+        );
+
+        return null;
+    }
+
+    return externalSource;
+}
 
 export const CloudStatus = {
     Disconnected: 'disconnected',
@@ -33,6 +69,7 @@ export default defineServiceState({
         'pollingMinutes',
         'ready',
         'startupSync',
+        'externalSources',
     ],
     initialState: () => ({
         autoPush: true,
@@ -49,6 +86,7 @@ export default defineServiceState({
         setupDismissed: false,
         setupOngoing: false,
         startupSync: true,
+        externalSources: [] as ExternalSource[],
         status: CloudStatus.Disconnected as TCloudStatus,
         syncError: null as Nullable<ErrorSource>,
         syncJob: null as Nullable<Sync>,
@@ -65,4 +103,12 @@ export default defineServiceState({
             return this.localChanges > 0;
         },
     },
+    serialize: ({ externalSources, ...state }) => ({
+        ...state,
+        ...(externalSources && { externalSources: externalSources.map(serializeExternalSource) }),
+    }),
+    restore: ({ externalSources, ...state }) => ({
+        ...state,
+        ...(externalSources && { externalSources: arrayFilter(externalSources.map(restoreExternalSource)) }),
+    }),
 });
