@@ -62,6 +62,8 @@ export function configureTests(config: UserConfig, options: Options): void {
         config.test.server.deps ??= {};
         config.test.server.deps.inline = [
             '@aerogel/core',
+            '@aerogel/plugin-i18n',
+            '@aerogel/plugin-local-first',
             '@aerogel/plugin-routing',
             '@aerogel/plugin-solid',
             ...(testInlineDeps ?? []),
