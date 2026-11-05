@@ -1,17 +1,13 @@
-import { resolve } from 'node:path';
-
-import type { AppInfo, Options } from '@aerogel/vite/lib/options';
+import type { Options } from '@aerogel/vite/lib/options';
 import I18n from '@intlify/unplugin-vue-i18n/vite';
 import type { Plugin } from 'vite';
 
-export function buildI18nPlugin(options: Options, app: AppInfo): Plugin | Plugin[] | false {
+export function buildI18nPlugin(options: Options): Plugin | Plugin[] | false {
     if (options.lib) {
         return false;
     }
 
-    return I18n({
-        include: [resolve(app.root, 'src/lang/**/*.yaml'), resolve(app.root, 'src/modules/*/lang/**/*.yaml')],
-    });
+    return I18n({ include: ['**/src/lang/**/*.yaml', '**/src/modules/*/lang/**/*.yaml'] });
 }
 
 export function generateMessagesVirtualModule(): string {

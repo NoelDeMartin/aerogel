@@ -235,16 +235,31 @@ export function buildIconsPlugin(options: Options, app: AppInfo): Plugin | Plugi
 
     let appIconsLoader: ReturnType<typeof FileSystemIconLoader> | undefined;
 
-    return Icons({
-        customCollections: {
-            app(name) {
-                appIconsLoader ??= FileSystemIconLoader(resolve(app.root, 'src/assets/icons'));
+    // This relies on an implementation detail: the array is filled once the config is resolved, which only works
+    // because unplugin-icons and @iconify/utils use it by reference (rather than copying it) every time they load an icon.
+    const collectionsNodeResolvePath: string[] = [];
+    const rootPlugin: Plugin = {
+        name: 'aerogel:icons-root',
+        configResolved() {
+            collectionsNodeResolvePath.splice(0, collectionsNodeResolvePath.length, app.root);
+        },
+    };
 
-                return appIconsLoader(name);
+    return [
+        rootPlugin,
+        Icons({
+            compiler: 'vue3',
+            collectionsNodeResolvePath,
+            customCollections: {
+                app(name) {
+                    appIconsLoader ??= FileSystemIconLoader(resolve(app.root, 'src/assets/icons'));
+
+                    return appIconsLoader(name);
+                },
             },
-        },
-        iconCustomizer(_, __, props) {
-            props['aria-hidden'] = 'true';
-        },
-    });
+            iconCustomizer(_, __, props) {
+                props['aria-hidden'] = 'true';
+            },
+        }),
+    ].flat();
 }

@@ -210,7 +210,7 @@ export default function Aerogel(options: Options = {}): Plugin[] {
         TailwindCSS(),
         buildIconsPlugin(options, app),
         buildComponentsPlugin(options),
-        buildI18nPlugin(options, app),
+        buildI18nPlugin(options),
         buildPWAPlugin(options, app, manifest),
         AerogelPlugin,
     ]).flat();
