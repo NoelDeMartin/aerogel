@@ -175,6 +175,14 @@ export class SolidService extends Service {
                 ...this.session,
                 user,
             },
+            ...(this.previousSession?.profile?.webId === user.webId
+                ? {
+                      previousSession: {
+                          ...this.previousSession,
+                          profile: user,
+                      },
+                  }
+                : {}),
         });
     }
 
@@ -448,6 +456,8 @@ export class SolidService extends Service {
             });
         }
 
+        this.prepareEngines();
+
         await this.restorePreviousSession();
         await this.startupReconnect();
     }
@@ -554,6 +564,13 @@ export class SolidService extends Service {
                 loginStale: false,
             });
         }
+    }
+
+    private prepareEngines(): void {
+        const publicEngine = new SolidEngine();
+
+        TypeIndex.setEngine(publicEngine);
+        TypeRegistration.setEngine(publicEngine);
     }
 
     private async restorePreviousSession(): Promise<void> {

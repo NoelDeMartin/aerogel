@@ -1,8 +1,8 @@
 <template>
     <div class="relative flex items-center justify-center rounded-full bg-gray-200">
         <SolidImage
-            v-if="$solid.user?.avatarUrl"
-            :src="$solid.user?.avatarUrl"
+            v-if="profile?.avatarUrl"
+            :src="profile?.avatarUrl"
             alt=""
             class="absolute inset-0 size-full rounded-full"
         />
@@ -15,13 +15,17 @@
 
 <script setup lang="ts">
 import Solid from '@aerogel/plugin-solid/services/Solid';
+import type { SolidUserProfile } from '@noeldemartin/solid-utils';
 import { computed } from 'vue';
 import IconAnonymous from '~icons/ooui/user-anonymous';
 
 import SolidImage from './SolidImage.vue';
 
+const { user } = defineProps<{ user?: SolidUserProfile }>();
+const profile = computed(() => user ?? Solid.user);
+
 const userInitials = computed(() => {
-    const name = Solid.user?.name ?? '';
+    const name = profile.value?.name ?? '';
 
     return name
         .trim()
