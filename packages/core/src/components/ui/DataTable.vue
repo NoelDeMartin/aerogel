@@ -139,7 +139,7 @@ import IconSortSmallestFirst from '~icons/ph/sort-descending-bold';
 import IconCheveronLeft from '~icons/zondicons/cheveron-left';
 import IconCheveronRight from '~icons/zondicons/cheveron-right';
 
-import type { SortedColumn } from './DataTable.ts';
+import type { SortedColumn } from './DataTable';
 
 const ARIA_SORT = {
     asc: 'ascending',

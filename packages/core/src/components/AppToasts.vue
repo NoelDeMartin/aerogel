@@ -8,7 +8,8 @@
             v-bind="toast.properties"
         />
         <ToastViewport
-            class="pointer-events-auto fixed right-0 bottom-0 z-50 flex flex-col items-end space-y-4 px-4 py-6 sm:p-6"
+            class="fixed right-0 bottom-0 z-50 flex flex-col items-end space-y-4 px-4 py-6 sm:p-6"
+            :class="{ 'pointer-events-auto': $ui.toasts.length > 0 }"
         />
     </ToastProvider>
 </template>
