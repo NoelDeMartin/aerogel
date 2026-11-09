@@ -61,7 +61,7 @@ export default function solid(options: Options = {}): Plugin {
                 getAuthenticator(
                     typeof options.defaultAuthenticator === 'function'
                         ? options.defaultAuthenticator()
-                        : (options.defaultAuthenticator ?? 'inrupt'),
+                        : (options.defaultAuthenticator ?? 'uvdsl'),
                 ),
             );
             registerErrorHandler((error) => {

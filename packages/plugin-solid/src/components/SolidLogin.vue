@@ -61,7 +61,7 @@
             </Button>
         </div>
         <Link
-            v-if="allowLegacyAuthenticator && showInput && !form.authenticator"
+            v-if="showInput && !form.authenticator"
             class="text-sm font-normal text-gray-700"
             @click="form.authenticator = 'inrupt'"
         >
@@ -80,8 +80,8 @@ import { z } from 'zod';
 import IconLogin from '~icons/ic/baseline-log-in';
 
 const AUTHENTICATOR_LABELS = {
+    uvdsl: "Log in using uvdsl's authentication library",
     inrupt: "Log in using Inrupt's authentication library",
-    legacy: 'Log in using the legacy authentication library',
 } satisfies Partial<Record<AuthenticatorName, string>>;
 
 const {
@@ -89,13 +89,11 @@ const {
     layout = 'horizontal',
     buttonClass,
     noLoading,
-    allowLegacyAuthenticator,
 } = defineProps<{
     class?: HTMLAttributes['class'];
     buttonClass?: HTMLAttributes['class'];
     layout?: 'vertical' | 'horizontal';
     noLoading?: boolean;
-    allowLegacyAuthenticator?: boolean;
 }>();
 const form = useForm({
     url: z.string(),
@@ -121,12 +119,14 @@ function renderAuthenticator(option: keyof typeof AUTHENTICATOR_LABELS) {
 }
 
 async function submit() {
+    const login = Solid.login(form.url, { authenticator: form.authenticator as AuthenticatorName });
+
     if (noLoading) {
-        await Solid.login(form.url, { authenticator: form.authenticator as AuthenticatorName });
+        await login;
 
         return;
     }
 
-    await UI.loading(translateWithDefault('solid.loginOngoing', 'Logging in...'), Solid.login(form.url));
+    await UI.loading(translateWithDefault('solid.loginOngoing', 'Logging in...'), login);
 }
 </script>
