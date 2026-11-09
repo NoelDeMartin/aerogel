@@ -29,6 +29,10 @@ export interface AuthenticatorListener {
     onAuthenticatedFetchReady?: (fetch: Fetch) => Promise<void> | void;
 }
 
+export interface AuthenticatorBootOptions {
+    reconnect: boolean;
+}
+
 export default abstract class Authenticator {
     public name!: AuthenticatorName;
 
@@ -69,19 +73,19 @@ export default abstract class Authenticator {
         this.listeners.remove(listener);
     }
 
-    public async boot(): Promise<void> {
+    public async boot(options: AuthenticatorBootOptions): Promise<void> {
         if (this.booted) {
             return this.booted;
         }
 
         this.booted = new PromisedValue();
 
-        await this.restoreSession();
+        await this.restoreSession(options);
 
         this.booted.resolve();
     }
 
-    protected abstract restoreSession(): Promise<void>;
+    protected abstract restoreSession(options: AuthenticatorBootOptions): Promise<void>;
 
     protected async initAuthenticatedFetch(fetch: Fetch): Promise<void> {
         this.authenticatedFetch = fetch;

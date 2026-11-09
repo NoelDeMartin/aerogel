@@ -3,7 +3,7 @@ import type { ErrorSource } from '@aerogel/core';
 import { getAuthenticator } from '@aerogel/plugin-solid/auth';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
 import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
-import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthenticatorBootOptions, AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
 import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
 import { SolidDocumentPermissions, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
@@ -514,7 +514,7 @@ export class SolidService extends Service {
                 ? null
                 : await this.getUserProfile(loginUrl, { markStale: true, shallow: true });
             const oidcIssuerUrl = profile?.oidcIssuerUrl ?? urlRoot(profile?.webId ?? loginUrl);
-            const authenticator = await this.bootAuthenticator(authenticatorName);
+            const authenticator = await this.bootAuthenticator(authenticatorName, { reconnect: false });
             const { domain: loginDomain } = requireUrlParse(loginUrl);
 
             this.setState({
@@ -578,7 +578,7 @@ export class SolidService extends Service {
             return;
         }
 
-        await this.bootAuthenticator(this.previousSession.authenticator);
+        await this.bootAuthenticator(this.previousSession.authenticator, { reconnect: this.reconnectOnStartup() });
     }
 
     private async startupReconnect(): Promise<void> {
@@ -601,7 +601,10 @@ export class SolidService extends Service {
         return hasLocationQueryParameter('autoReconnect') && parseBoolean(getLocationQueryParameter('autoReconnect'));
     }
 
-    private async bootAuthenticator(name: AuthenticatorName): Promise<Authenticator> {
+    private async bootAuthenticator(
+        name: AuthenticatorName,
+        options: AuthenticatorBootOptions,
+    ): Promise<Authenticator> {
         const authenticator = getAuthenticator(name);
 
         authenticator.addListener({
@@ -644,7 +647,7 @@ export class SolidService extends Service {
             onAuthenticatedFetchReady: (fetch) => Events.emit('auth:fetch-ready', fetch),
         });
 
-        await authenticator.boot();
+        await authenticator.boot(options);
 
         return authenticator;
     }

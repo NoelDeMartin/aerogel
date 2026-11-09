@@ -1,5 +1,5 @@
 import Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
-import type { AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
+import type { AuthenticatorBootOptions, AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 import AuthenticationFailedError from '@aerogel/plugin-solid/errors/AuthenticationFailedError';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import { after, fail, required } from '@noeldemartin/utils';
@@ -25,7 +25,7 @@ export default class UvdslAuthenticator extends Authenticator {
         await this.requireSession().logout();
     }
 
-    protected async restoreSession(): Promise<void> {
+    protected async restoreSession(options: AuthenticatorBootOptions): Promise<void> {
         const { default: Session } = await import('./UvdslAuthenticator.lazy');
         const session = (this.session = new Session({
             onSessionStateChange: () => session.isActive || this.endSession(),
@@ -46,7 +46,7 @@ export default class UvdslAuthenticator extends Authenticator {
             return;
         }
 
-        if (!session.isActive) {
+        if (!session.isActive && options.reconnect) {
             await session.restore().catch(() => null);
         }
 
