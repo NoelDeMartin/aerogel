@@ -142,6 +142,9 @@ solid:
         switchAuthenticatorLabel: Authentication method
         manualUrl: Enter url
         dev: Log in to dev server
+        switchAuthenticators:
+            uvdsl: Log in using uvdsl's authentication library
+            inrupt: Log in using Inrupt's authentication library
     stuckConnecting: "We didn't hear back from the identity provider at `{domain}`, maybe try reconnecting?"
     disconnectConfirmTitle: Disconnect account?
     disconnectConfirmMessage: "You'll need to introduce your credentials again to connect to your Solid POD."

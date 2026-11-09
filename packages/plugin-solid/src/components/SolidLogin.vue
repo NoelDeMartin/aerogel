@@ -80,8 +80,14 @@ import { z } from 'zod';
 import IconLogin from '~icons/ic/baseline-log-in';
 
 const AUTHENTICATOR_LABELS = {
-    uvdsl: "Log in using uvdsl's authentication library",
-    inrupt: "Log in using Inrupt's authentication library",
+    uvdsl: translateWithDefault(
+        'solid.logIn.switchAuthenticators.uvdsl',
+        "Log in using uvdsl's authentication library",
+    ),
+    inrupt: translateWithDefault(
+        'solid.logIn.switchAuthenticators.inrupt',
+        "Log in using Inrupt's authentication library",
+    ),
 } satisfies Partial<Record<AuthenticatorName, string>>;
 
 const {
