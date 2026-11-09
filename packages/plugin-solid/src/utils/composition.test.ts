@@ -1,12 +1,15 @@
 import { Cache } from '@aerogel/core';
+import Book from '@aerogel/plugin-solid/testing/stubs/models/Book';
+import Chapter from '@aerogel/plugin-solid/testing/stubs/models/Chapter';
+import Item from '@aerogel/plugin-solid/testing/stubs/models/Item';
 import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
+import Shelf from '@aerogel/plugin-solid/testing/stubs/models/Shelf';
+import Task from '@aerogel/plugin-solid/testing/stubs/models/Task';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { after, arrayGroupBy } from '@noeldemartin/utils';
-import { belongsToOne, bootModels, defineSchema, hasMany, requireBootedModel } from 'soukai-bis';
 import type { SerializedModel } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
-import { z } from 'zod';
 
 import { computedModel, computedModels, useModels, useSingletonModel } from './composition';
 import { getTrackedModels, loadTrackedModels, refreshTrackedModels, resetModelsState, trackModels } from './services';
@@ -154,21 +157,6 @@ describe('Composition helpers', () => {
 
     it('Reacts to relation changes in singleton models', async () => {
         // Arrange
-        const Book = defineSchema({
-            rdfContext: 'https://schema.org/',
-            rdfClass: 'Book',
-            fields: { title: z.string() },
-            relations: { chapters: hasMany(() => requireBootedModel('Chapter'), 'bookUrl') },
-        });
-        const Chapter = defineSchema({
-            rdfContext: 'https://schema.org/',
-            rdfClass: 'Chapter',
-            fields: { name: z.string(), bookUrl: z.url().optional() },
-            relations: { book: belongsToOne(Book, 'bookUrl') },
-        });
-
-        bootModels({ Book, Chapter });
-
         const chaptersCount: number[] = [];
         const book = await Book.create({ title: 'Lorem ipsum' });
 
@@ -189,20 +177,6 @@ describe('Composition helpers', () => {
 
     it('Includes soft-deleted models on demand', async () => {
         // Arrange
-        const TaskSchema = defineSchema({
-            rdfContext: 'https://schema.org/',
-            rdfClass: 'Action',
-            fields: { name: z.string(), done: z.boolean().optional() },
-        });
-
-        class Task extends TaskSchema {
-            public isSoftDeleted(): boolean {
-                return !!this.done;
-            }
-        }
-
-        bootModels({ Task });
-
         await Task.create({ name: 'Active' });
         await Task.create({ name: 'Soft-deleted', done: true });
 
@@ -219,21 +193,6 @@ describe('Composition helpers', () => {
 
     it('Reacts to relation changes in model collections', async () => {
         // Arrange
-        const Shelf = defineSchema({
-            rdfContext: 'https://schema.org/',
-            rdfClass: 'Collection',
-            fields: { name: z.string() },
-            relations: { items: hasMany(() => requireBootedModel('Item'), 'shelfUrl') },
-        });
-        const Item = defineSchema({
-            rdfContext: 'https://schema.org/',
-            rdfClass: 'Thing',
-            fields: { name: z.string(), shelfUrl: z.url().optional() },
-            relations: { shelf: belongsToOne(Shelf, 'shelfUrl') },
-        });
-
-        bootModels({ Shelf, Item });
-
         const itemsCount: number[] = [];
         const shelf = await Shelf.create({ name: 'Shelf' });
 

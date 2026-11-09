@@ -1,6 +1,11 @@
 import 'fake-indexeddb/auto';
 import { Cache, Events } from '@aerogel/core';
+import Book from '@aerogel/plugin-solid/testing/stubs/models/Book';
+import Chapter from '@aerogel/plugin-solid/testing/stubs/models/Chapter';
+import Item from '@aerogel/plugin-solid/testing/stubs/models/Item';
 import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
+import Shelf from '@aerogel/plugin-solid/testing/stubs/models/Shelf';
+import Task from '@aerogel/plugin-solid/testing/stubs/models/Task';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
@@ -21,6 +26,6 @@ beforeEach(async () => {
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });
-    bootModels({ Post, User }, { reset: true });
+    bootModels({ Book, Chapter, Item, Post, Shelf, Task, User }, { reset: true });
     setEngine(new InMemoryEngine());
 });
