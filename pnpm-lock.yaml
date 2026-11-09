@@ -628,6 +628,9 @@ importers:
       '@noeldemartin/utils':
         specifier: next
         version: 0.8.0-next.12721f6e93a8933c59e9345963bd5363f73cd35d
+      '@uvdsl/solid-oidc-client-browser':
+        specifier: 0.2.3
+        version: 0.2.3
       solid-auth-client:
         specifier: 2.4.1
         version: 2.4.1(encoding@0.1.14)
@@ -4326,6 +4329,9 @@ packages:
 
   '@ungap/structured-clone@1.4.0':
     resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
+
+  '@uvdsl/solid-oidc-client-browser@0.2.3':
+    resolution: {integrity: sha512-WzVlxv46EUSoqm7ovsWJRZq8KEI/CdpA9O1fXoiP8bihs2cNxPnet3YcqvIYWYMsTrf0zsR031l5s/BzQ9MEgA==}
 
   '@vitejs/plugin-vue-jsx@5.1.6':
     resolution: {integrity: sha512-YXvi4as2clxt6DFw5+a0tTA97ntiQXm/raR8ofNj3aNwwdlVGTiG2gp7EvfZW17P50acL/9bP0ccF4XnqNmlgA==}
@@ -12954,6 +12960,10 @@ snapshots:
       eslint-visitor-keys: 5.0.1
 
   '@ungap/structured-clone@1.4.0': {}
+
+  '@uvdsl/solid-oidc-client-browser@0.2.3':
+    dependencies:
+      jose: 5.10.0
 
   '@vitejs/plugin-vue-jsx@5.1.6(@voidzero-dev/vite-plus-core@1.5.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(@volar/typescript@2.4.28(typescript@5.9.3))(@vue/language-core@3.3.14)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.9.3)(vue-tsc@3.3.11(typescript@5.9.3))(yaml@2.9.1))(supports-color@8.1.1)(vue@3.5.45(typescript@5.9.3))':
     dependencies:

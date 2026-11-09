@@ -1,6 +1,7 @@
 import type Authenticator from './Authenticator';
 import InruptAuthenticator from './authenticators/InruptAuthenticator';
 import LegacyAuthenticator from './authenticators/LegacyAuthenticator';
+import UvdslAuthenticator from './authenticators/UvdslAuthenticator';
 
 const _authenticators = {} as Authenticators;
 
@@ -11,6 +12,7 @@ export { default as Authenticator } from './Authenticator';
 
 export const authenticators = {
     inrupt: new InruptAuthenticator(),
+    uvdsl: new UvdslAuthenticator(),
     legacy: new LegacyAuthenticator(),
 };
 
