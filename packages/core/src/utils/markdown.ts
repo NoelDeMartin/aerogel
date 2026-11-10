@@ -118,8 +118,20 @@ export function renderMarkdown(markdown: string): string {
     return html;
 }
 
-export function renderMarkdownAsText(markdown: string): string {
-    return renderBlockTokensAsText(marked.lexer(markdown)).trim();
+export function renderMarkdownAsText(markdown: string, options: { maxLength?: number } = {}): string {
+    const text = renderBlockTokensAsText(marked.lexer(markdown)).trim();
+
+    if (!options.maxLength) {
+        return text;
+    }
+
+    const characters = Array.from(text);
+
+    if (characters.length > options.maxLength) {
+        return `${characters.slice(0, options.maxLength).join('').trimEnd()}…`;
+    }
+
+    return text;
 }
 
 export function safeHtml(html: string): string {

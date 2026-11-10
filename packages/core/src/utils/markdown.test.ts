@@ -77,6 +77,12 @@ describe('Markdown utils', () => {
             ].join('\n'),
         );
     });
+
+    it('Truncates markdown text', () => {
+        const text = renderMarkdownAsText(`${'a'.repeat(299)}🍿🍿`, { maxLength: 300 });
+
+        expect(text).toBe(`${'a'.repeat(299)}🍿…`);
+    });
 });
 
 function normalizeHTML(html: string): string {
