@@ -16,6 +16,7 @@ type Story = StoryObj<typeof meta>;
 const meta: Meta<AccountStoryArgs> = {
     title: 'Local First/AccountModal',
     component: AccountModal,
+    tags: ['!autodocs'],
     parameters: accountStoryParameters,
     argTypes: accountStoryArgTypes,
     args: {

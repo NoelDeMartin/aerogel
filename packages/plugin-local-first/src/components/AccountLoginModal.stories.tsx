@@ -17,6 +17,7 @@ type StoryArgs = Pick<AccountStoryArgs, 'environment' | 'loginOngoing'>;
 const meta: Meta<StoryArgs> = {
     title: 'Local First/AccountLoginModal',
     component: AccountLoginModal,
+    tags: ['!autodocs'],
     parameters: accountStoryParameters,
     argTypes: {
         environment: accountStoryArgTypes.environment,
