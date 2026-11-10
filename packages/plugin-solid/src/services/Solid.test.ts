@@ -146,6 +146,77 @@ describe('Solid', () => {
         expect(solid.profiles[webId]?.privateTypeIndexUrls).toEqual(fullProfile.privateTypeIndexUrls);
     });
 
+    describe('registered models', () => {
+        let publicTypeIndex: ModelWithUrl<TypeIndex>;
+        let privateTypeIndex: ModelWithUrl<TypeIndex>;
+        let publicContainer: ModelWithUrl<Container>;
+        let privateContainer: ModelWithUrl<Container>;
+
+        beforeEach(() => {
+            publicTypeIndex = new TypeIndex({ url: 'https://alice.example/settings/publicTypeIndex' }) as ModelWithUrl<TypeIndex>; // prettier-ignore
+            privateTypeIndex = new TypeIndex({ url: 'https://alice.example/settings/privateTypeIndex' }) as ModelWithUrl<TypeIndex>; // prettier-ignore
+            publicContainer = new Container({ url: 'https://alice.example/public/' }) as ModelWithUrl<Container>;
+            privateContainer = new Container({ url: 'https://alice.example/private/' }) as ModelWithUrl<Container>;
+
+            vi.spyOn(solid, 'findPublicTypeIndexes').mockResolvedValue([publicTypeIndex]);
+            vi.spyOn(solid, 'findPrivateTypeIndexes').mockResolvedValue([privateTypeIndex]);
+        });
+
+        it('finds registered containers in all type indexes', async () => {
+            // Arrange
+            const duplicatedContainer = new Container({ url: publicContainer.url }) as ModelWithUrl<Container>;
+
+            vi.spyOn(publicTypeIndex, 'findContainers').mockResolvedValue([publicContainer]);
+            vi.spyOn(privateTypeIndex, 'findContainers').mockResolvedValue([privateContainer, duplicatedContainer]);
+
+            // Act
+            const containers = await solid.findRegisteredContainers(Container);
+
+            // Assert
+            expect(containers).toEqual([publicContainer, privateContainer]);
+        });
+
+        it.each(['public', 'private'] as const)(
+            'finds registered containers in %s type indexes',
+            async (registration) => {
+                // Arrange
+                const publicFindContainers = vi.spyOn(publicTypeIndex, 'findContainers').mockResolvedValue([publicContainer]); // prettier-ignore
+                const privateFindContainers = vi.spyOn(privateTypeIndex, 'findContainers').mockResolvedValue([privateContainer]); // prettier-ignore
+
+                // Act
+                const containers = await solid.findRegisteredContainers(Container, {
+                    registration,
+                    containerModelClass: Container,
+                });
+
+                // Assert
+                if (registration === 'public') {
+                    expect(containers).toEqual([publicContainer]);
+                    expect(publicFindContainers).toHaveBeenCalledWith(Container, Container);
+                    expect(privateFindContainers).not.toHaveBeenCalled();
+                } else {
+                    expect(containers).toEqual([privateContainer]);
+                    expect(privateFindContainers).toHaveBeenCalledWith(Container, Container);
+                    expect(publicFindContainers).not.toHaveBeenCalled();
+                }
+            },
+        );
+
+        it('finds registered instances', async () => {
+            // Arrange
+            vi.spyOn(publicTypeIndex, 'findInstances').mockResolvedValue([publicContainer]);
+            vi.spyOn(privateTypeIndex, 'findInstances').mockResolvedValue([privateContainer]);
+
+            // Act
+            const instances = await solid.findRegisteredInstances(Container);
+            const privateInstances = await solid.findRegisteredInstances(Container, { registration: 'private' });
+
+            // Assert
+            expect(instances).toEqual([publicContainer, privateContainer]);
+            expect(privateInstances).toEqual([privateContainer]);
+        });
+    });
+
     it.each(['public', 'private'] as const)('creates %s containers', async (visibility) => {
         // Arrange
         const containerUrl = 'https://alice.example/tasks/';
@@ -167,8 +238,8 @@ describe('Solid', () => {
         // Act
         const container =
             visibility === 'public'
-                ? await solid.createPublicContainer({ url: containerUrl, registerFor: Container })
-                : await solid.createPrivateContainer({ url: containerUrl, registerFor: Container });
+                ? await solid.createPublicContainer({ url: containerUrl, register: Container })
+                : await solid.createPrivateContainer({ url: containerUrl, register: Container });
 
         // Assert
         expect(container.url).toEqual(containerUrl);

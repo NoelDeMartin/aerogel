@@ -102,15 +102,19 @@ describe('Cloud', () => {
                 await options.onRun?.();
 
                 if (options.createdTypeIndex) {
-                    await listeners.emit('onModelsRegistered', options.createdTypeIndex, [Post]);
+                    await listeners.emit('onModelsRegistered', {
+                        typeIndex: options.createdTypeIndex,
+                        models: [Post],
+                        mode: 'container',
+                    });
                 }
 
                 if (options.failedRegistrations) {
-                    await listeners.emit(
-                        'onModelsRegistrationFailed',
-                        options.failedRegistrations,
-                        new Error('Registration failed'),
-                    );
+                    await listeners.emit('onModelsRegistrationFailed', {
+                        models: options.failedRegistrations,
+                        error: new Error('Registration failed'),
+                        mode: 'container',
+                    });
                 }
 
                 for (const [source, error] of options.failedExternalSources ?? []) {
@@ -436,7 +440,7 @@ describe('Cloud', () => {
         logIn();
 
         const registeredPost = await new Post({ title: 'Registered' }).save('https://alice.example/blog/');
-        const unregisteredPost = await new Post({ title: 'Unregistered' }).save('https://alice.example/drafts/');
+        const unlistedPost = await new Post({ title: 'Unlisted' }).save('https://alice.example/drafts/');
         const post = await new Post({ title: 'Default' }).save('https://alice.example/posts/');
         const typeIndex = fakeTypeIndex();
 
@@ -453,7 +457,7 @@ describe('Cloud', () => {
             ready: true,
             status: CloudStatus.Online,
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
-            unregisteredContainerUrls: { Post: ['https://alice.example/drafts/'] },
+            unlistedContainerUrls: { Post: ['https://alice.example/drafts/'] },
         });
 
         await cloud.track(Post, { register: true });
@@ -468,7 +472,7 @@ describe('Cloud', () => {
 
         await vi.waitFor(() =>
             expect(posts.value.map((model) => model.url).sort()).toEqual(
-                [registeredPost.url, unregisteredPost.url, post.url].sort(),
+                [registeredPost.url, unlistedPost.url, post.url].sort(),
             ),
         );
     });
@@ -535,7 +539,7 @@ describe('Cloud', () => {
         );
     });
 
-    it('reads models created in unregistered containers', async () => {
+    it('reads models created in unlisted containers', async () => {
         // Arrange
         logIn();
         fakeSync();
@@ -556,7 +560,7 @@ describe('Cloud', () => {
         await cloud.sync();
 
         // Assert
-        expect(cloud.unregisteredContainerUrls).toEqual({ Post: ['https://alice.example/blog/'] });
+        expect(cloud.unlistedContainerUrls).toEqual({ Post: ['https://alice.example/blog/'] });
         expect(posts.value.map((model) => model.url)).toEqual([post.url]);
     });
 
@@ -578,15 +582,15 @@ describe('Cloud', () => {
         await post.save();
 
         // Assert
-        expect(cloud.unregisteredContainerUrls).toEqual({});
+        expect(cloud.unlistedContainerUrls).toEqual({});
     });
 
-    it('reads models from unregistered containers before syncing', async () => {
+    it('reads models from unlisted containers before syncing', async () => {
         // Arrange
         cloud.setState({
             ready: true,
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
-            unregisteredContainerUrls: { Post: ['https://alice.example/blog/'] },
+            unlistedContainerUrls: { Post: ['https://alice.example/blog/'] },
         });
 
         const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
@@ -600,7 +604,7 @@ describe('Cloud', () => {
         await vi.waitFor(() => expect(posts.value.map((model) => model.url)).toEqual([blogPost.url]));
     });
 
-    it('forgets unregistered containers once they are registered', async () => {
+    it('forgets unlisted containers once they are registered', async () => {
         // Arrange
         logIn();
         fakeSync({ typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
@@ -609,7 +613,7 @@ describe('Cloud', () => {
             ready: true,
             status: CloudStatus.Online,
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
-            unregisteredContainerUrls: { Post: ['https://alice.example/blog/'] },
+            unlistedContainerUrls: { Post: ['https://alice.example/blog/'] },
         });
 
         await cloud.track(Post, { register: true });
@@ -619,7 +623,7 @@ describe('Cloud', () => {
 
         // Assert
         expect(cloud.registeredContainerUrls).toEqual({ Post: ['https://alice.example/blog/'] });
-        expect(cloud.unregisteredContainerUrls).toEqual({ Post: [] });
+        expect(cloud.unlistedContainerUrls).toEqual({ Post: [] });
     });
 
     it('pushes models created during sync', async () => {
@@ -777,7 +781,7 @@ describe('Cloud', () => {
             await new Post({ title: 'Managed' }).save(source.containerUrl);
 
             // Assert
-            expect(cloud.unregisteredContainerUrls).toEqual({});
+            expect(cloud.unlistedContainerUrls).toEqual({});
             expect(Object.keys(cloud.localModelUpdates)).toHaveLength(1);
         });
 

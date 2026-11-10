@@ -46,7 +46,7 @@ export const CloudStatus = {
     Syncing: 'syncing',
 } as const;
 
-export interface ModelRegistration {
+export interface CloudModelRegistration {
     modelClass: ModelConstructor;
     path?: string;
     public?: boolean;
@@ -63,7 +63,7 @@ export default defineServiceState({
         'localModelUpdates',
         'defaultContainerUrls',
         'registeredContainerUrls',
-        'unregisteredContainerUrls',
+        'unlistedContainerUrls',
         'registeredInstanceUrls',
         'pollingEnabled',
         'pollingMinutes',
@@ -76,13 +76,13 @@ export default defineServiceState({
         localModelUpdates: {} as Record<string, number>,
         defaultContainerUrls: {} as Record<string, string>,
         registeredContainerUrls: {} as Record<string, string[]>,
-        unregisteredContainerUrls: {} as Record<string, string[]>,
+        unlistedContainerUrls: {} as Record<string, string[]>,
         registeredInstanceUrls: {} as Record<string, string[]>,
         pollingEnabled: true,
         pollingMinutes: 10,
         ready: false,
         manualSetup: DEFAULT_STATE.manualSetup,
-        registeredModels: [] as ModelRegistration[],
+        modelRegistrations: [] as CloudModelRegistration[],
         setupDismissed: false,
         setupOngoing: false,
         startupSync: true,

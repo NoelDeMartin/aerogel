@@ -31,7 +31,7 @@ import {
 } from '@noeldemartin/utils';
 import type { NullablePartial } from '@noeldemartin/utils';
 import { Container, SolidEngine, TypeIndex, TypeRegistration, defineSchema, setEngine } from 'soukai-bis';
-import type { ContainerConstructor, ModelConstructor, ModelWithUrl } from 'soukai-bis';
+import type { ContainerConstructor, Model, ModelConstructor, ModelWithUrl, TypeIndexRegistration } from 'soukai-bis';
 
 import Service, { DEFAULT_STATE } from './Solid.state';
 
@@ -62,8 +62,18 @@ export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
 export interface CreateContainerOptions {
     url: string;
     name?: string;
-    registerFor?: ModelConstructor;
+    register?: ModelConstructor;
     reuseExisting?: boolean;
+}
+
+export interface FindRegisteredInstancesOptions {
+    registration?: TypeIndexRegistration;
+}
+
+export interface FindRegisteredContainersOptions<
+    T extends Container = Container,
+> extends FindRegisteredInstancesOptions {
+    containerModelClass?: ContainerConstructor<T>;
 }
 
 export class SolidService extends Service {
@@ -167,6 +177,7 @@ export class SolidService extends Service {
         }
 
         this.setState({ profiles: objectWithout(this.profiles, [this.user.webId]) });
+        this.clearTypeIndexesCache();
 
         const user = await this.requireUserProfile(this.user.webId);
 
@@ -330,31 +341,35 @@ export class SolidService extends Service {
         this.setState({ dismissed: true });
     }
 
-    public async findRegisteredContainer<T extends Container = Container>(
+    public async findRegisteredContainers<T extends Container = Container>(
         modelClass: ModelConstructor,
-        containerClass?: ContainerConstructor<T>,
-    ): Promise<T | null> {
-        const [publicTypeIndexes, privateTypeIndexes] = await Promise.all([
-            this.findPublicTypeIndexes(),
-            this.findPrivateTypeIndexes(),
-        ]);
+        options: FindRegisteredContainersOptions<T> = {},
+    ): Promise<ModelWithUrl<T>[]> {
+        const typeIndexes = await this.findTypeIndexesForRegistration(options.registration);
         const containers = await Promise.all(
-            [...publicTypeIndexes, ...privateTypeIndexes].map((typeIndex) =>
-                typeIndex.findContainer(modelClass, containerClass),
-            ),
+            typeIndexes.map((typeIndex) => typeIndex.findContainers(modelClass, options.containerModelClass)),
         );
 
-        return containers.find((model) => !!model) ?? null;
+        return arrayUnique(containers.flat(), (container) => container.url);
     }
 
-    public async findTypeIndexes(): Promise<{
+    public async findRegisteredInstances<T extends Model>(
+        modelClass: ModelConstructor<T>,
+        options: FindRegisteredInstancesOptions = {},
+    ): Promise<ModelWithUrl<T>[]> {
+        const typeIndexes = await this.findTypeIndexesForRegistration(options.registration);
+        const instances = await Promise.all(typeIndexes.map((typeIndex) => typeIndex.findInstances(modelClass)));
+
+        return arrayUnique(instances.flat(), (instance) => instance.url);
+    }
+
+    public async findTypeIndexes(options: { fresh?: boolean } = {}): Promise<{
         publicTypeIndexes: ModelWithUrl<TypeIndex>[];
         privateTypeIndexes: ModelWithUrl<TypeIndex>[];
     }> {
-        const { publicTypeIndexUrls, privateTypeIndexUrls } = this.requireUser();
         const [publicTypeIndexes, privateTypeIndexes] = await Promise.all([
-            this.findTypeIndexesByUrl(publicTypeIndexUrls),
-            this.findTypeIndexesByUrl(privateTypeIndexUrls),
+            this.findPublicTypeIndexes(options),
+            this.findPrivateTypeIndexes(options),
         ]);
 
         return { publicTypeIndexes, privateTypeIndexes };
@@ -375,7 +390,9 @@ export class SolidService extends Service {
             resetAsyncMemo(`${webId}-privateTypeIndexes`);
         }
 
-        return asyncMemo(`${webId}-privateTypeIndexes`, () => this.findTypeIndexesByUrl(privateTypeIndexUrls));
+        return asyncMemo(`${webId}-privateTypeIndexes`, () =>
+            this.findTypeIndexesByUrl(privateTypeIndexUrls, 'private'),
+        );
     }
 
     public async findPublicTypeIndexes(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex>[]> {
@@ -385,7 +402,7 @@ export class SolidService extends Service {
             resetAsyncMemo(`${webId}-publicTypeIndexes`);
         }
 
-        return asyncMemo(`${webId}-publicTypeIndexes`, () => this.findTypeIndexesByUrl(publicTypeIndexUrls));
+        return asyncMemo(`${webId}-publicTypeIndexes`, () => this.findTypeIndexesByUrl(publicTypeIndexUrls, 'public'));
     }
 
     public clearTypeIndexesCache(): void {
@@ -405,7 +422,7 @@ export class SolidService extends Service {
 
     protected async createContainer(
         options: CreateContainerOptions,
-        visibility: 'public' | 'private',
+        visibility: TypeIndexRegistration,
     ): Promise<ModelWithUrl<Container>> {
         const engine = this.requireAuthenticator().engine;
         const RemoteContainer = tap(defineSchema(Container), (model) => model.setEngine(engine));
@@ -423,13 +440,13 @@ export class SolidService extends Service {
             await remoteContainer.updatePublicPermissions([SolidDocumentPermissions.Read]);
         }
 
-        if (options.registerFor) {
+        if (options.register) {
             const typeIndex =
                 visibility === 'public'
                     ? await this.findOrCreatePublicTypeIndex()
                     : await this.findOrCreatePrivateTypeIndex();
 
-            await remoteContainer.register(typeIndex, options.registerFor);
+            await remoteContainer.register(typeIndex, options.register);
         }
 
         const container = await Container.createFromJsonLD(await remoteContainer.toJsonLD(), {
@@ -462,8 +479,30 @@ export class SolidService extends Service {
         await this.startupReconnect();
     }
 
-    protected async findTypeIndexesByUrl(urls: string[]): Promise<ModelWithUrl<TypeIndex>[]> {
-        const typeIndexes = await Promise.all(urls.map((url) => TypeIndex.find(url)));
+    protected async findTypeIndexesForRegistration(
+        registration?: TypeIndexRegistration,
+    ): Promise<ModelWithUrl<TypeIndex>[]> {
+        const [publicTypeIndexes, privateTypeIndexes] = await Promise.all([
+            registration === 'private' ? [] : this.findPublicTypeIndexes(),
+            registration === 'public' ? [] : this.findPrivateTypeIndexes(),
+        ]);
+
+        return [...publicTypeIndexes, ...privateTypeIndexes];
+    }
+
+    protected async findTypeIndexesByUrl(
+        urls: string[],
+        registration: TypeIndexRegistration,
+    ): Promise<ModelWithUrl<TypeIndex>[]> {
+        const typeIndexes = await Promise.all(
+            urls.map(async (url) => {
+                const typeIndex = await TypeIndex.find(url);
+
+                typeIndex?.setRegistration(registration);
+
+                return typeIndex;
+            }),
+        );
 
         return arrayFilter(typeIndexes);
     }
