@@ -42,6 +42,7 @@
         "@noeldemartin/solid-utils": "catalog:",
         "@noeldemartin/utils": "catalog:",
         "@uvdsl/solid-oidc-client-browser": "0.2.3",
+        "fake-indexeddb": "catalog:",
         "solid-auth-client": "2.4.1",
         "soukai-bis": "catalog:"
     },
@@ -51,7 +52,6 @@
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
-        "fake-indexeddb": "catalog:",
         "publint": "catalog:",
         "zod": "catalog:"
     },

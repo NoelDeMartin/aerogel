@@ -631,6 +631,9 @@ importers:
       '@uvdsl/solid-oidc-client-browser':
         specifier: 0.2.3
         version: 0.2.3
+      fake-indexeddb:
+        specifier: 'catalog:'
+        version: 6.2.8
       solid-auth-client:
         specifier: 2.4.1
         version: 2.4.1(encoding@0.1.14)
@@ -659,9 +662,6 @@ importers:
       '@noeldemartin/scripts':
         specifier: 'catalog:'
         version: 0.4.0-next.2e40ae3fd460e91f231c8b77d0614f3dad972f6a
-      fake-indexeddb:
-        specifier: 'catalog:'
-        version: 6.2.8
       publint:
         specifier: 'catalog:'
         version: 0.3.25
