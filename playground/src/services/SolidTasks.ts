@@ -1,8 +1,8 @@
 import { Events } from '@aerogel/core';
 import { Solid } from '@aerogel/plugin-solid';
 import type { AuthSession } from '@aerogel/plugin-solid';
-import { facade, required, stringToSlug, tap, urlResolveDirectory } from '@noeldemartin/utils';
-import { Container, type ModelWithUrl, defineSchema } from 'soukai-bis';
+import { facade, required, stringToSlug, urlResolveDirectory } from '@noeldemartin/utils';
+import { Container, type ModelWithUrl, remote } from 'soukai-bis';
 
 import SolidTask from '@/models/SolidTask';
 
@@ -13,7 +13,6 @@ export class SolidTasksService extends Service {
         Events.on('auth:login', async (session) => {
             const container = await this.findOrCreateTasksContainer(session);
 
-            SolidTask.setEngine(Solid.requireAuthenticator().engine);
             SolidTask.defaultContainerUrl = container.url;
 
             this.tasksContainer.resolve(container);
@@ -23,7 +22,7 @@ export class SolidTasksService extends Service {
 
     private async findOrCreateTasksContainer(session: AuthSession): Promise<ModelWithUrl<Container>> {
         const typeIndex = await Solid.findOrCreatePrivateTypeIndex();
-        const RemoteContainer = tap(defineSchema(Container), (model) => model.setEngine(session.authenticator.engine));
+        const RemoteContainer = remote(Container);
         const [remoteContainer] = await RemoteContainer.createFromTypeIndex(typeIndex, SolidTask);
 
         if (remoteContainer) {
@@ -42,7 +41,7 @@ export class SolidTasksService extends Service {
         return Solid.createPrivateContainer({
             url,
             name,
-            register: SolidTask,
+            registerFor: SolidTask,
             reuseExisting: true,
         });
     }
