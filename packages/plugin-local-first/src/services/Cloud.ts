@@ -380,8 +380,6 @@ export class CloudService extends Service {
             ...(await Solid.findTypeIndexes()),
             externalSources: this.getExternalSources(),
             userProfile: Solid.requireUser(),
-            localEngine: requireEngine(),
-            remoteEngine: Solid.requireEngine(),
             createPublicTypeIndex: () => Solid.findOrCreatePublicTypeIndex(),
             createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
             applicationModels: applicationModels.map((modelClass) => {

@@ -30,7 +30,7 @@ import {
     urlRoot,
 } from '@noeldemartin/utils';
 import type { NullablePartial } from '@noeldemartin/utils';
-import { Container, SolidEngine, TypeIndex, TypeRegistration, defineSchema, setEngine } from 'soukai-bis';
+import { Container, SolidEngine, TypeIndex, remote, setEngine, setRemoteEngine } from 'soukai-bis';
 import type { ContainerConstructor, Model, ModelConstructor, ModelWithUrl, TypeIndexRegistration } from 'soukai-bis';
 
 import Service, { DEFAULT_STATE } from './Solid.state';
@@ -424,8 +424,7 @@ export class SolidService extends Service {
         options: CreateContainerOptions,
         visibility: TypeIndexRegistration,
     ): Promise<ModelWithUrl<Container>> {
-        const engine = this.requireAuthenticator().engine;
-        const RemoteContainer = tap(defineSchema(Container), (model) => model.setEngine(engine));
+        const RemoteContainer = remote(Container);
         const existingContainer = await RemoteContainer.find(options.url);
 
         if (existingContainer && !options.reuseExisting) {
@@ -608,8 +607,7 @@ export class SolidService extends Service {
     private prepareEngines(): void {
         const publicEngine = new SolidEngine();
 
-        TypeIndex.setEngine(publicEngine);
-        TypeRegistration.setEngine(publicEngine);
+        setRemoteEngine(publicEngine);
     }
 
     private async restorePreviousSession(): Promise<void> {
@@ -666,8 +664,7 @@ export class SolidService extends Service {
                     setEngine(this.requireEngine());
                 }
 
-                TypeIndex.setEngine(this.requireEngine());
-                TypeRegistration.setEngine(this.requireEngine());
+                setRemoteEngine(this.requireEngine());
 
                 await Events.emit('auth:login', session);
             },
