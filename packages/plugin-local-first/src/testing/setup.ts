@@ -4,9 +4,16 @@ import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
 import { resetModelsState } from '@aerogel/plugin-solid';
 import { FakeLocalStorage, FakeServer } from '@noeldemartin/testing';
-import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine, setRemoteEngine } from 'soukai-bis';
-import { beforeEach, vi } from 'vite-plus/test';
+import {
+    InMemoryEngine,
+    bootCoreModels,
+    bootModels,
+    resetModelListeners,
+    setEngine,
+    setRemoteEngine,
+} from 'soukai-bis';
 import { SolidEngine } from 'soukai-bis';
+import { beforeEach, vi } from 'vite-plus/test';
 
 vi.mock('@aerogel/core', async () => {
     const { FakeLocalStorage } = await import('@noeldemartin/testing');
