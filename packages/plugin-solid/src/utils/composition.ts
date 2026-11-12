@@ -76,7 +76,7 @@ function mapModels(value: unknown): Map<string, Model> {
 }
 
 function watchComputedAttributes(modelClass: ModelConstructor, attributes: string[], callback: () => void) {
-    const modelAttributes = attributes.filter((attribute) => attribute in modelClass.schema.computed);
+    const modelAttributes = attributes.filter((attribute) => modelClass.hasComputedAttribute(attribute));
 
     if (modelAttributes.length === 0) {
         return;
@@ -122,7 +122,7 @@ function shallowComputedModels<T>(
 ): ComputedRef<T> {
     const watchedAttributes = options.watch ?? [];
     const unknownAttribute = watchedAttributes.find(
-        (attribute) => !modelClasses.some((modelClass) => attribute in modelClass.schema.computed),
+        (attribute) => !modelClasses.some((modelClass) => modelClass.hasComputedAttribute(attribute)),
     );
 
     if (unknownAttribute) {

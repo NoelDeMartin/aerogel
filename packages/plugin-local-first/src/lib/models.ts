@@ -1,5 +1,5 @@
 import { Solid } from '@aerogel/plugin-solid';
-import { arrayFrom, isSubclassOf, objectEntries, required, urlResolveDirectory } from '@noeldemartin/utils';
+import { arrayFrom, isSubclassOf, objectEntries, urlResolveDirectory } from '@noeldemartin/utils';
 import { ContainsRelation, getRelatedClass, isContainerClass, isCoreRelation } from 'soukai-bis';
 import type { GetModelRelationName, Model, ModelConstructor, RelationConstructor } from 'soukai-bis';
 
@@ -13,7 +13,7 @@ function getContainerRelations<T extends ModelConstructor>(modelClass: T): GetMo
     if (!containerRelations.has(modelClass)) {
         containerRelations.set(
             modelClass,
-            objectEntries(modelClass.schema.relations)
+            objectEntries(modelClass.getRelations())
                 .filter(([relationName, relationDefinition]) => {
                     if (isCoreRelation(relationName)) {
                         return false;
@@ -46,7 +46,10 @@ export function getRemoteContainerUrl(modelClass: ModelConstructor, path?: strin
         isContainerClass(modelClass) &&
         getContainerRelations(modelClass)
             .map((relation) => {
-                const relatedClass = getRelatedClass(modelClass, required(modelClass.schema.relations[relation]));
+                const relatedClass = getRelatedClass(
+                    modelClass,
+                    (modelClass as ModelConstructor).getRelation(relation),
+                );
 
                 if (isContainerClass(relatedClass)) {
                     return null;
