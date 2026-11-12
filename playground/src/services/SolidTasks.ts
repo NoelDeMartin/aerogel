@@ -41,7 +41,7 @@ export class SolidTasksService extends Service {
         return Solid.createPrivateContainer({
             url,
             name,
-            registerFor: SolidTask,
+            register: SolidTask,
             reuseExisting: true,
         });
     }
