@@ -23,6 +23,7 @@ vi.mock('@aerogel/core', async () => {
 beforeEach(async () => {
     await Cache.clear();
 
+    vi.restoreAllMocks();
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });

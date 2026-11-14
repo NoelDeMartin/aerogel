@@ -2,13 +2,7 @@ import { App, type Service } from '@aerogel/core';
 import type { Model, ModelConstructor, ModelEvents, ModelListener, ModelWithUrl } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
-import {
-    _getTrackedModels,
-    _getTrackedModelsData,
-    _resetModelsState,
-    _setTrackedUrls,
-    isSoftDeleted,
-} from './internal';
+import { _getTrackedModels, _getTrackedModelsData, _resetModelsState, _setTrackedUrls } from './internal';
 
 export interface TrackCollectionsOptions {
     refresh?: boolean;
@@ -39,7 +33,7 @@ export function getTrackedModels<T extends Model>(
         return models;
     }
 
-    return models.filter((model) => !isSoftDeleted(model));
+    return models.filter((model) => !model.isSoftDeleted());
 }
 
 export function isTrackingModel(modelClass: ModelConstructor): boolean {
@@ -50,7 +44,7 @@ export function resetModelsState(): void {
     _resetModelsState();
 }
 
-export function setTrackedModelsUrls(modelClass: ModelConstructor, urls: string[] | null): void {
+export function setTrackedModelsDiscoveryUrls(modelClass: ModelConstructor, urls: string[] | null): void {
     _setTrackedUrls(modelClass, urls);
 }
 
@@ -96,7 +90,7 @@ export async function findTrackedModel<T extends Model>(
         return trackedModel;
     }
 
-    const model = await modelClass.find(url);
+    const model = await modelClass.find(url, { includeSoftDeleted: true });
 
     if (!model || modelData.loaded.value) {
         return model;

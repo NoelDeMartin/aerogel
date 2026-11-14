@@ -13,7 +13,7 @@ interface TrackedModelData<T extends Model = Model> {
     modelsArray: ComputedRef<ModelWithUrl<T>[]>;
     loading: Ref<boolean>;
     loaded: Ref<boolean>;
-    load(): Promise<void>;
+    load(urls?: string[]): Promise<void>;
     refresh(): Promise<void>;
 }
 
@@ -74,7 +74,7 @@ async function loadModelsByUrl<T extends Model>(
     const models = await Promise.all(
         modelUrls.map(async (modelUrl) => {
             try {
-                return await modelClass.find(modelUrl);
+                return await modelClass.find(modelUrl, { includeSoftDeleted: true });
             } catch (error) {
                 await options.onDocumentError?.(error, urlRoute(modelUrl));
 
@@ -90,19 +90,23 @@ function uniqueModels<T extends Model>(models: ModelWithUrl<T>[]): ModelWithUrl<
     return Array.from(new Map(models.map((model) => [model.url, model])).values());
 }
 
-async function fetchModels<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    options: { depth?: number; onChunk(models: ModelWithUrl<T>[]): unknown },
-): Promise<ModelWithUrl<T>[]> {
-    const loadOptions: LoadAllOptions = {
-        depth: options.depth,
+function createLoadOptions<T extends Model>(modelClass: ModelConstructor<T>, depth?: number): LoadAllOptions {
+    return {
+        depth,
+        includeSoftDeleted: true,
         async onDocumentError(error, documentUrl) {
             await Errors.report(
                 new Error(`Failed loading ${modelClass.modelName} from ${documentUrl}`, { cause: error }),
             );
         },
     };
+}
 
+async function fetchModels<T extends Model>(
+    modelClass: ModelConstructor<T>,
+    options: { depth?: number; onChunk(models: ModelWithUrl<T>[]): unknown },
+): Promise<ModelWithUrl<T>[]> {
+    const loadOptions = createLoadOptions(modelClass, options.depth);
     const urls = _getTrackedUrls(modelClass);
     const containerUrls = urls.filter((url) => url.endsWith('/'));
     const modelUrls = urls.filter((url) => !url.endsWith('/'));
@@ -152,6 +156,7 @@ function initializedTrackedModelsData<T extends Model>(
     options: TrackedModelOptions = {},
 ): TrackedModelData<T> {
     let pendingRefresh: Promise<void> | null = null;
+    const pendingUrls = new Map<string, Promise<void>>();
     const modelsSet = reactiveSet<ModelWithUrl<T>>(undefined, { key: (model) => model.url });
     const modelsArray = computed(() => modelsSet.values());
     const loading = ref(false);
@@ -162,8 +167,14 @@ function initializedTrackedModelsData<T extends Model>(
         modelsArray,
         loading,
         loaded,
-        async load() {
+        async load(urls?: string[]) {
             if (loaded.value) {
+                return;
+            }
+
+            if (urls) {
+                await performLoadUrls(urls);
+
                 return;
             }
 
@@ -175,6 +186,50 @@ function initializedTrackedModelsData<T extends Model>(
             return (pendingRefresh = refresh);
         },
     };
+
+    async function performLoadUrls(urls: string[]): Promise<void> {
+        const loadedUrls = new Set(modelsSet.values().map((model) => model.url));
+        const pendingUrlPromises: Promise<void>[] = [];
+        const missingUrls: string[] = [];
+
+        for (const url of arrayUnique(urls)) {
+            if (loadedUrls.has(url)) {
+                continue;
+            }
+
+            const pendingUrlPromise = pendingUrls.get(url);
+
+            if (pendingUrlPromise) {
+                pendingUrlPromises.push(pendingUrlPromise);
+                continue;
+            }
+
+            missingUrls.push(url);
+        }
+
+        if (missingUrls.length > 0) {
+            const loadOptions = createLoadOptions(modelClass, data.depth);
+            const fetchPromise = loadModelsByUrl(modelClass, missingUrls, loadOptions)
+                .then((models) => mergeTrackedInstances(models))
+                .finally(() => {
+                    for (const url of missingUrls) {
+                        if (pendingUrls.get(url) !== fetchPromise) {
+                            continue;
+                        }
+
+                        pendingUrls.delete(url);
+                    }
+                });
+
+            for (const url of missingUrls) {
+                pendingUrls.set(url, fetchPromise);
+            }
+
+            pendingUrlPromises.push(fetchPromise);
+        }
+
+        await Promise.all(pendingUrlPromises);
+    }
 
     async function performRefresh(): Promise<void> {
         loading.value = true;
@@ -193,6 +248,20 @@ function initializedTrackedModelsData<T extends Model>(
             loaded.value = true;
         } finally {
             loading.value = false;
+        }
+    }
+
+    function mergeTrackedInstances(models: ModelWithUrl<T>[]): void {
+        const trackedInstances = new Map(modelsSet.values().map((model) => [model.url, model]));
+
+        for (const model of models) {
+            const trackedInstance = trackedInstances.get(model.url);
+
+            if (trackedInstance && !isNewerModel(model, trackedInstance)) {
+                continue;
+            }
+
+            modelsSet.add(model);
         }
     }
 
@@ -229,14 +298,6 @@ function initializedTrackedModelsData<T extends Model>(
 
 function isNewerModel(model: Model, otherModel: Model): boolean {
     return (model.updatedAt?.getTime() ?? 0) > (otherModel.updatedAt?.getTime() ?? 0);
-}
-
-export function isSoftDeleted(model: Model): boolean {
-    if (!('isSoftDeleted' in model)) {
-        return false;
-    }
-
-    return (model as { isSoftDeleted(): boolean }).isSoftDeleted();
 }
 
 export function _getTrackedModels(): WeakMap<ModelConstructor, TrackedModelData> {

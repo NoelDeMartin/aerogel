@@ -17,6 +17,7 @@ import {
     getCurrentScope,
     onScopeDispose,
     readonly,
+    ref,
     shallowReactive,
     shallowRef,
     toRaw,
@@ -24,10 +25,10 @@ import {
     watch,
     watchEffect,
 } from 'vue';
-import type { ComputedRef, MaybeRefOrGetter, Ref } from 'vue';
+import type { ComputedRef, MaybeRef, MaybeRefOrGetter, Ref } from 'vue';
 
 import { IS_REACTIVE, RAW } from './flags';
-import { _getTrackedModelsData, isSoftDeleted } from './internal';
+import { _getTrackedModelsData } from './internal';
 
 const SERIALIZED_MODEL_KEY = '@model';
 
@@ -298,7 +299,7 @@ function toReactiveModels<T>(value: T, options: ComputedModelsOptions = {}): T {
         value,
         isModel,
         shallowReactive,
-        options.includeSoftDeleted ? undefined : (model) => !isSoftDeleted(model),
+        options.includeSoftDeleted ? undefined : (model) => !model.isSoftDeleted(),
     ) as T;
 }
 
@@ -461,17 +462,65 @@ export function computedModelAttribute<TModel extends Model, TAttribute extends 
 
 export function useModels<T extends Model>(
     modelClass: ModelConstructor<T>,
-    options: { includeSoftDeleted?: boolean; depth?: number } = {},
+    options: { includeSoftDeleted?: boolean; depth?: number; urls?: MaybeRef<string[]> } = {},
 ): UseModelsResult<T> {
+    let lastLoadId = 0;
+    const hasUrls = options.urls !== undefined;
+    const urlsLoading = ref(false);
     const models = shallowRef([]) as Ref<ModelWithUrl<T>[]>;
-    const modelData = _getTrackedModelsData<T>(modelClass, { load: true, depth: options.depth });
+    const modelData = _getTrackedModelsData<T>(modelClass, { load: !hasUrls, depth: options.depth });
 
-    watchEffect(() => (models.value = modelData.modelsArray.value));
+    watch(
+        () => toValue(options.urls),
+        (urls) => {
+            if (!urls) {
+                return;
+            }
+
+            const loadId = ++lastLoadId;
+
+            if (urls.length === 0) {
+                urlsLoading.value = false;
+
+                return;
+            }
+
+            urlsLoading.value = true;
+
+            modelData
+                .load(urls)
+                .catch((error) => Errors.report(error))
+                .finally(() => {
+                    if (loadId !== lastLoadId) {
+                        return;
+                    }
+
+                    urlsLoading.value = false;
+                });
+        },
+        { immediate: true, deep: true, flush: 'sync' },
+    );
+
+    watchEffect(() => {
+        if (!hasUrls) {
+            models.value = modelData.modelsArray.value;
+
+            return;
+        }
+
+        const urlsSet = new Set(toValue(options.urls));
+
+        models.value = modelData.modelsArray.value.filter((model) => urlsSet.has(model.url));
+    });
 
     return {
         models: computedModels(modelClass, () => models.value, { includeSoftDeleted: options.includeSoftDeleted }),
-        loading: computed(() => modelData.loading.value && !modelData.loaded.value),
-        refreshing: readonly(modelData.loading),
+        loading: hasUrls
+            ? computed(() => urlsLoading.value)
+            : computed(() => modelData.loading.value && !modelData.loaded.value),
+        refreshing: hasUrls
+            ? computed(() => urlsLoading.value || modelData.loading.value)
+            : readonly(modelData.loading),
     };
 }
 

@@ -1,7 +1,7 @@
 import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
 import { getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
-import { Solid, refreshTrackedModels, setTrackedModelsUrls, trackModels } from '@aerogel/plugin-solid';
+import { Solid, refreshTrackedModels, setTrackedModelsDiscoveryUrls, trackModels } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import {
     Semaphore,
@@ -587,7 +587,7 @@ export class CloudService extends Service {
         });
 
         for (const { modelClass } of this.modelRegistrations) {
-            setTrackedModelsUrls(modelClass, null);
+            setTrackedModelsDiscoveryUrls(modelClass, null);
         }
 
         this.dirtyModelClasses.clear();
@@ -663,7 +663,7 @@ export class CloudService extends Service {
     private useContainerUrls(modelClass: ModelConstructor, containerUrls: ModelContainerUrls): void {
         modelClass.defaultContainerUrl = containerUrls.default;
 
-        setTrackedModelsUrls(modelClass, [
+        setTrackedModelsDiscoveryUrls(modelClass, [
             ...containerUrls.instances,
             containerUrls.default,
             ...containerUrls.registered,

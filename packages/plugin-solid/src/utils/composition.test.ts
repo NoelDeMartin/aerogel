@@ -12,6 +12,7 @@ import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 import { computedModel, computedModels, useModels, useSingletonModel } from './composition';
+import { _getTrackedModelsData } from './internal';
 import { getTrackedModels, loadTrackedModels, refreshTrackedModels, resetModelsState, trackModels } from './services';
 
 describe('Composition helpers', () => {
@@ -177,8 +178,10 @@ describe('Composition helpers', () => {
 
     it('Includes soft-deleted models on demand', async () => {
         // Arrange
+        const task = await Task.create({ name: 'Soft-deleted' });
+
         await Task.create({ name: 'Active' });
-        await Task.create({ name: 'Soft-deleted', done: true });
+        await task.softDelete();
 
         // Act
         const { models: activeTasks, loading } = useModels(Task);
@@ -188,7 +191,7 @@ describe('Composition helpers', () => {
         await vi.waitFor(() => expect(loading.value).toBe(false));
 
         expect(activeTasks.value.map(({ name }) => name)).toEqual(['Active']);
-        expect(allTasks.value.map(({ name }) => name)).toEqual(['Active', 'Soft-deleted']);
+        expect(allTasks.value.map(({ name }) => name)).toEqual(['Soft-deleted', 'Active']);
     });
 
     it('Reacts to relation changes in model collections', async () => {
@@ -406,5 +409,165 @@ describe('Composition helpers', () => {
 
         // Assert
         expect(toRaw(users.value?.[0])).toBe(getTrackedModels(User)[0]);
+    });
+
+    it('Loads specified urls without loading the full collection', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const bob = await User.create({ name: 'Bob', age: 30 });
+        const findSpy = vi.spyOn(User, 'find');
+        const allSpy = vi.spyOn(User, 'all');
+
+        // Act - Initial call
+        const { models: users, loading } = useModels(User, { urls: [alice.requireUrl()] });
+
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        // Assert
+        expect(users.value.map((user) => user.url)).toEqual([alice.url]);
+        expect(_getTrackedModelsData(User).loaded.value).toBe(false);
+        expect(getTrackedModels(User).map((user) => user.url)).toEqual([alice.url]);
+        expect(findSpy).toHaveBeenCalledTimes(1);
+        expect(findSpy).toHaveBeenCalledWith(alice.url, { includeSoftDeleted: true });
+        expect(allSpy).not.toHaveBeenCalled();
+
+        // Act - Call with a new url
+        const { models: bothUsers, loading: loadingBoth } = useModels(User, {
+            urls: [alice.requireUrl(), bob.requireUrl()],
+        });
+
+        await vi.waitFor(() => expect(loadingBoth.value).toBe(false));
+
+        // Assert
+        expect(bothUsers.value.map((user) => user.url)).toEqual([alice.url, bob.url]);
+        expect(findSpy).toHaveBeenCalledTimes(2);
+        expect(findSpy).toHaveBeenLastCalledWith(bob.url, { includeSoftDeleted: true });
+    });
+
+    it('Keeps separate loading states for filtered useModels calls', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const bob = await User.create({ name: 'Bob', age: 30 });
+        let resolveBob!: () => void;
+        const originalFind = User.find.bind(User);
+
+        vi.spyOn(User, 'find').mockImplementation((url: string, options) => {
+            if (url === bob.url) {
+                return new Promise((resolve) => {
+                    resolveBob = () => resolve(originalFind(url, options));
+                });
+            }
+
+            return originalFind(url, options);
+        });
+
+        // Act
+        const { models: aliceModels, loading: loadingAlice } = useModels(User, { urls: [alice.requireUrl()] });
+        const { models: bobModels, loading: loadingBob } = useModels(User, { urls: [bob.requireUrl()] });
+
+        await vi.waitFor(() => expect(loadingAlice.value).toBe(false));
+
+        // Assert
+        expect(aliceModels.value.map((user) => user.url)).toEqual([alice.url]);
+        expect(loadingBob.value).toBe(true);
+        expect(bobModels.value).toHaveLength(0);
+
+        resolveBob();
+
+        await vi.waitFor(() => expect(loadingBob.value).toBe(false));
+        expect(bobModels.value.map((user) => user.url)).toEqual([bob.url]);
+    });
+
+    it('Reacts to changes in a urls ref', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const bob = await User.create({ name: 'Bob', age: 30 });
+        const findSpy = vi.spyOn(User, 'find');
+        const allSpy = vi.spyOn(User, 'all');
+        const urls = ref<string[]>([]);
+
+        // Act - Initial empty ref
+        const { models: users, loading } = useModels(User, { urls });
+
+        // Assert
+        expect(loading.value).toBe(false);
+        expect(users.value).toEqual([]);
+        expect(findSpy).not.toHaveBeenCalled();
+        expect(allSpy).not.toHaveBeenCalled();
+
+        // Act - Add first url
+        urls.value = [alice.requireUrl()];
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        // Assert
+        expect(users.value.map((user) => user.url)).toEqual([alice.url]);
+        expect(findSpy).toHaveBeenCalledTimes(1);
+        expect(findSpy).toHaveBeenCalledWith(alice.url, { includeSoftDeleted: true });
+
+        // Act - Mutate array in-place to add second url
+        urls.value.push(bob.requireUrl());
+        await nextTick();
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        // Assert
+        expect(users.value.map((user) => user.url)).toEqual([alice.url, bob.url]);
+        expect(findSpy).toHaveBeenCalledTimes(2);
+        expect(findSpy).toHaveBeenLastCalledWith(bob.url, { includeSoftDeleted: true });
+
+        // Act - Shrink urls ref to already-loaded model
+        urls.value = [bob.requireUrl()];
+        await nextTick();
+
+        // Assert
+        expect(users.value.map((user) => user.url)).toEqual([bob.url]);
+        expect(findSpy).toHaveBeenCalledTimes(2);
+        expect(allSpy).not.toHaveBeenCalled();
+    });
+
+    it('Keeps loading true until the latest urls ref update finishes', async () => {
+        // Arrange
+        const alice = await User.create({ name: 'Alice', age: 23 });
+        const bob = await User.create({ name: 'Bob', age: 30 });
+        let resolveAlice!: () => void;
+        let resolveBob!: () => void;
+        const originalFind = User.find.bind(User);
+        const findSpy = vi.spyOn(User, 'find').mockImplementation((url: string, options) => {
+            if (url === alice.url) {
+                return new Promise((resolve) => {
+                    resolveAlice = () => resolve(originalFind(url, options));
+                });
+            }
+
+            if (url === bob.url) {
+                return new Promise((resolve) => {
+                    resolveBob = () => resolve(originalFind(url, options));
+                });
+            }
+
+            return originalFind(url, options);
+        });
+        const urls = ref([alice.requireUrl()]);
+
+        // Act
+        const { models: users, loading } = useModels(User, { urls });
+
+        expect(loading.value).toBe(true);
+
+        urls.value = [bob.requireUrl()];
+        await nextTick();
+
+        expect(loading.value).toBe(true);
+
+        // Resolve the first request while the second is still pending
+        resolveAlice();
+        await findSpy.mock.results[0]?.value;
+        await after(0);
+
+        expect(loading.value).toBe(true);
+
+        resolveBob();
+        await vi.waitFor(() => expect(loading.value).toBe(false));
+
+        expect(users.value.map((user) => user.url)).toEqual([bob.url]);
     });
 });

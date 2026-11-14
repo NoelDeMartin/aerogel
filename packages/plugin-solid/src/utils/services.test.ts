@@ -11,7 +11,7 @@ import {
     loadTrackedSingletonModel,
     refreshTrackedModels,
     resetModelsState,
-    setTrackedModelsUrls,
+    setTrackedModelsDiscoveryUrls,
     trackModels,
 } from './services';
 
@@ -37,7 +37,7 @@ describe('Services helpers', () => {
 
         await User.create({ name: 'Charlie', age: 40 });
 
-        setTrackedModelsUrls(User, ['https://alice.example/users/', 'https://alice.example/people/']);
+        setTrackedModelsDiscoveryUrls(User, ['https://alice.example/users/', 'https://alice.example/people/']);
 
         // Act
         await trackModels(User, { bypassServicesCheck: true });
@@ -53,7 +53,7 @@ describe('Services helpers', () => {
 
         await User.create({ name: 'Charlie', age: 40 });
 
-        setTrackedModelsUrls(User, ['https://alice.example/people/', alice.requireUrl()]);
+        setTrackedModelsDiscoveryUrls(User, ['https://alice.example/people/', alice.requireUrl()]);
 
         // Act
         await trackModels(User, { bypassServicesCheck: true });
@@ -68,7 +68,7 @@ describe('Services helpers', () => {
 
         const bob = await new User({ name: 'Bob', age: 30 }).save('https://alice.example/people/');
 
-        setTrackedModelsUrls(User, ['https://alice.example/users/', bob.requireUrl()]);
+        setTrackedModelsDiscoveryUrls(User, ['https://alice.example/users/', bob.requireUrl()]);
 
         // Act
         const singleton = await loadTrackedSingletonModel(User);
