@@ -11,7 +11,7 @@ export function computedRouteParams(path: string, exclude: string): ComputedRef<
             const newParams = objectWithout(Router.routesParams.value[path] ?? {}, exclude);
 
             for (const [paramName, paramValue] of Object.entries(newParams)) {
-                if (paramValue !== value[paramName as keyof typeof value]) {
+                if (paramValue === value[paramName as keyof typeof value]) {
                     continue;
                 }
 
