@@ -1,4 +1,6 @@
 import { Events } from '@aerogel/core';
+import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
+import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
 import { resetModelsState } from '@aerogel/plugin-solid';
 import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
@@ -19,6 +21,6 @@ beforeEach(() => {
     resetModelListeners();
     resetModelsState();
     bootCoreModels({ reset: true });
-    bootModels({ Post }, { reset: true });
+    bootModels({ Book, Chapter, Post }, { reset: true });
     setEngine(new InMemoryEngine());
 });

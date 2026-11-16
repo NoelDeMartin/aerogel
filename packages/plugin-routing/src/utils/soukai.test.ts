@@ -1,3 +1,5 @@
+import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
+import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
 import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
 import { getTrackedModels, loadTrackedModels, trackModels } from '@aerogel/plugin-solid';
@@ -67,5 +69,45 @@ describe('Model bindings', () => {
 
         // Assert
         expect(binding).toBeInstanceOf(BindingNotFound);
+    });
+
+    it('resolves related models from parent relations', async () => {
+        // Arrange
+        const book = await Book.create({});
+        const chapter = await book.relatedChapters.create({});
+
+        await book.relatedChapters.create({});
+        await trackModels(Chapter, { bypassServicesCheck: true, lazy: true });
+
+        // Act
+        const resolved = await resolveModelBinding(Chapter, chapter.requireSlug(), null, { book });
+        const missing = await resolveModelBinding(Chapter, '999', null, { book });
+
+        // Assert
+        expect(resolved.url).toEqual(chapter.url);
+        expect(getTrackedModels(Chapter)).toEqual([resolved]);
+        expect(missing).toBeInstanceOf(BindingNotFound);
+    });
+
+    it('resolves related models from parent relations using url query', async () => {
+        // Arrange
+        const book = await Book.create({});
+        const chapter = await book.relatedChapters.create({});
+        const otherChapter = await book.relatedChapters.create({});
+
+        await trackModels(Chapter, { bypassServicesCheck: true, lazy: true });
+
+        // Act
+        const byUrl = await resolveModelBinding(Chapter, 'chapter', routeWithUrl(chapter.requireUrl()), { book });
+        const bySlug = await resolveModelBinding(
+            Chapter,
+            otherChapter.requireSlug(),
+            routeWithUrl('local://chapters/missing#it'),
+            { book },
+        );
+
+        // Assert
+        expect(byUrl.url).toEqual(chapter.url);
+        expect(bySlug.url).toEqual(otherChapter.url);
     });
 });

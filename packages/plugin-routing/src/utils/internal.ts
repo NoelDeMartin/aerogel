@@ -1,14 +1,19 @@
-import Router from '@aerogel/plugin-routing/services/Router';
-import { objectWithout, tap } from '@noeldemartin/utils';
+import { objectOnly, tap } from '@noeldemartin/utils';
 import { customRef, watch } from 'vue';
-import type { ComputedRef } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 
-export function computedRouteParams(path: string, exclude: string): ComputedRef<Record<string, unknown>> {
+export function computedRouteParams(
+    path: string,
+    paramNames: string[],
+    routesParams: Ref<Record<string, Record<string, unknown>>>,
+    initialParams: Record<string, unknown> = {},
+): ComputedRef<Record<string, unknown>> {
     return customRef((track, trigger) => {
-        let value = objectWithout(Router.routesParams.value[path] ?? {}, exclude);
+        const getParams = () => objectOnly({ ...initialParams, ...routesParams.value[path] }, paramNames);
+        let value = getParams();
 
-        watch(Router.routesParams, () => {
-            const newParams = objectWithout(Router.routesParams.value[path] ?? {}, exclude);
+        watch(routesParams, () => {
+            const newParams = getParams();
 
             for (const [paramName, paramValue] of Object.entries(newParams)) {
                 if (paramValue === value[paramName as keyof typeof value]) {

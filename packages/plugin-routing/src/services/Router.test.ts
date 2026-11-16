@@ -1,7 +1,11 @@
 import { App } from '@aerogel/core';
+import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
+import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
+import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
+import { trackModels } from '@aerogel/plugin-solid';
 import { noop } from '@noeldemartin/utils';
-import { describe, expect, it } from 'vite-plus/test';
+import { describe, expect, it, vi } from 'vite-plus/test';
 import { createMemoryHistory, createRouter } from 'vue-router';
 
 import { RouterService } from './Router';
@@ -29,5 +33,106 @@ describe('Router', () => {
 
         // Assert
         expect((router.routesParams.value[`/posts/${slug}`]?.post as Post | undefined)?.url).toEqual(post.url);
+    });
+
+    it('resolves parent bindings before child bindings without calling children twice', async () => {
+        // Arrange
+        const post = await Post.create({});
+        const slug = post.requireSlug();
+        const childBinding = vi.fn((childSlug: string, params: { post?: Post }) => ({
+            childSlug,
+            postUrl: params.post?.url,
+        }));
+        const router = new RouterService();
+
+        App.ready.resolve();
+        router.use(
+            createRouter({
+                history: createMemoryHistory(),
+                routes: [{ path: '/posts/:post/:child', component: { render: noop } }],
+            }),
+            {
+                bindings: {
+                    post: Post,
+                    child: childBinding,
+                },
+            },
+        );
+
+        // Act
+        await router.push(`/posts/${slug}/hello`);
+
+        // Assert
+        expect(childBinding).toHaveBeenCalledTimes(1);
+        expect(childBinding.mock.calls[0]?.[0]).toEqual('hello');
+        expect((childBinding.mock.calls[0]?.[1] as { post?: Post })?.post?.url).toEqual(post.url);
+        expect(router.routesParams.value[`/posts/${slug}/hello`]?.child).toEqual({
+            childSlug: 'hello',
+            postUrl: post.url,
+        });
+    });
+
+    it('skips child bindings when a parent binding is not found', async () => {
+        // Arrange
+        const childBinding = vi.fn();
+        const router = new RouterService();
+
+        App.ready.resolve();
+        router.use(
+            createRouter({
+                history: createMemoryHistory(),
+                routes: [{ path: '/posts/:post/:child', component: { render: noop } }],
+            }),
+            {
+                bindings: {
+                    post: Post,
+                    child: childBinding,
+                },
+            },
+        );
+
+        // Act
+        await router.push('/posts/missing/hello');
+
+        // Assert
+        expect(childBinding).not.toHaveBeenCalled();
+        expect(router.routesParams.value['/posts/missing/hello']?.post).toBeInstanceOf(BindingNotFound);
+        expect(router.routesParams.value['/posts/missing/hello']?.child).toBeInstanceOf(BindingNotFound);
+    });
+
+    it('resolves nested model bindings automatically via parent relations', async () => {
+        // Arrange
+        await trackModels(Book, { bypassServicesCheck: true, lazy: true });
+
+        const book = await Book.create({});
+        const chapter = await book.relatedChapters.create({});
+        const bookSlug = book.requireSlug();
+        const chapterSlug = chapter.requireSlug();
+        const router = new RouterService();
+
+        App.ready.resolve();
+        router.use(
+            createRouter({
+                history: createMemoryHistory(),
+                routes: [{ path: '/books/:book/:chapter', component: { render: noop } }],
+            }),
+            {
+                bindings: {
+                    book: Book,
+                    chapter: Chapter,
+                },
+            },
+        );
+
+        // Act
+        await router.push(`/books/${bookSlug}/${chapterSlug}`);
+
+        // Assert
+        expect((router.routesParams.value[`/books/${bookSlug}/${chapterSlug}`]?.book as Book | undefined)?.url).toEqual(
+            book.url,
+        );
+        expect(
+            (router.routesParams.value[`/books/${bookSlug}/${chapterSlug}`]?.chapter as Chapter | undefined)?.url,
+        ).toEqual(chapter.url);
     });
 });

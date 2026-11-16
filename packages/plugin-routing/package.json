@@ -39,7 +39,8 @@
         "publint": "catalog:",
         "soukai-bis": "catalog:",
         "vite": "catalog:",
-        "vite-plus": "catalog:"
+        "vite-plus": "catalog:",
+        "zod": "catalog:"
     },
     "peerDependencies": {
         "@aerogel/core": "*",

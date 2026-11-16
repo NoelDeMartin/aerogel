@@ -1,8 +1,10 @@
 import { App, Events, computedAsync } from '@aerogel/core';
+import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
 import { computedRouteParams } from '@aerogel/plugin-routing/utils/internal';
+import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
 import { resolveModelBinding } from '@aerogel/plugin-routing/utils/soukai';
 import { computedModel } from '@aerogel/plugin-solid';
-import { Storage, facade, objectOnly, once } from '@noeldemartin/utils';
+import { PromisedValue, Storage, facade, objectOnly, once, toError } from '@noeldemartin/utils';
 import { isModelClass } from 'soukai-bis';
 import type { ModelConstructor } from 'soukai-bis';
 import { computed, ref, shallowRef, unref, watch } from 'vue';
@@ -86,11 +88,11 @@ export class RouterService extends Service {
             return;
         }
 
-        const resolvedParams: Record<string, unknown> = { ...params };
+        const resolvedParams: Record<string, unknown> = {};
         const stopWatchers: WatchStopHandle[] = [];
 
         for (const [paramName, paramValue] of Object.entries(params)) {
-            const resolvedValue = await this.resolveBinding(route, paramName, paramValue);
+            const resolvedValue = await this.resolveBinding(route, paramName, paramValue, resolvedParams);
             const stopWatcher = watch(resolvedValue, (newValue) => {
                 this.routesParams.value = {
                     ...this.routesParams.value,
@@ -105,6 +107,8 @@ export class RouterService extends Service {
 
             resolvedParams[paramName] = resolvedValue.value;
         }
+
+        this.routesStopWatchers[path] = stopWatchers;
 
         this.history = this.history.slice(0, 3);
         this.history.unshift(path);
@@ -159,6 +163,7 @@ export class RouterService extends Service {
         route: RouteLocationNormalized,
         name: string,
         value: RouteParamValue | RouteParamValue[],
+        resolvedParams: Record<string, unknown>,
     ): Promise<Ref<unknown>> {
         const binding = this.bindings[name];
 
@@ -168,13 +173,30 @@ export class RouterService extends Service {
 
         await App.ready;
 
-        const otherParams = computedRouteParams(route.path, name);
-        const initialValue = isModelClass(binding) ? await resolveModelBinding(binding, value, route) : undefined;
-        const computedBinding = isModelClass(binding)
-            ? computedAsync(() => resolveModelBinding(binding, value, route))
-            : computedAsync(() => Promise.resolve(binding(value, otherParams.value)));
+        const parentNames = Object.keys(resolvedParams);
+        const otherParams = computedRouteParams(route.path, parentNames, this.routesParams, resolvedParams);
+        const initialValue = new PromisedValue<unknown>();
+        const computedBinding = computedAsync(async () => {
+            try {
+                const result = Object.values(otherParams.value).some((param) => param instanceof BindingNotFound)
+                    ? bindingNotFound(value)
+                    : isModelClass(binding)
+                      ? await resolveModelBinding(binding, value, route, otherParams.value)
+                      : await binding(value, otherParams.value);
 
-        return computedModel(() => computedBinding.value ?? initialValue);
+                initialValue.isSettled() || initialValue.resolve(result);
+
+                return result;
+            } catch (error) {
+                initialValue.isSettled() || initialValue.reject(toError(error));
+
+                throw error;
+            }
+        });
+
+        const resolvedInitialValue = await initialValue;
+
+        return computedModel(() => computedBinding.value ?? resolvedInitialValue);
     }
 }
 
