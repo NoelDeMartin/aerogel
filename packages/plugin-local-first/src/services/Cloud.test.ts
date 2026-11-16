@@ -66,7 +66,7 @@ describe('Cloud', () => {
         typeIndex.relatedRegistrations.related = registrations.map(
             ([modelClass, instanceContainer]) =>
                 new TypeRegistration({
-                    forClass: modelClass.getRdfClasses(),
+                    forClass: modelClass.getRDFClasses(),
                     instanceContainer,
                 }),
         );
@@ -360,7 +360,7 @@ describe('Cloud', () => {
 
         typeIndex.relatedRegistrations.related = [
             new TypeRegistration({
-                forClass: Post.getRdfClasses(),
+                forClass: Post.getRDFClasses(),
                 instance: registeredPost.url,
             }),
         ];
@@ -446,7 +446,7 @@ describe('Cloud', () => {
 
         typeIndex.relatedRegistrations.related = [
             new TypeRegistration({
-                forClass: Post.getRdfClasses(),
+                forClass: Post.getRDFClasses(),
                 instance: registeredPost.url,
             }),
         ];
@@ -486,7 +486,7 @@ describe('Cloud', () => {
 
         typeIndex.relatedRegistrations.related = [
             new TypeRegistration({
-                forClass: Post.getRdfClasses(),
+                forClass: Post.getRDFClasses(),
                 instance: registeredPost.url,
             }),
         ];
