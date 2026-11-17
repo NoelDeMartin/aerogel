@@ -30,17 +30,11 @@ import {
     isCoreModel,
     isInExternalSource,
     requireEngine,
+    requireLocalEngine,
     isLocalUrl,
+    trackLocalChanges,
 } from 'soukai-bis';
-import type {
-    Engine,
-    IndexedDBEngine,
-    JobListener,
-    ModelConstructor,
-    SyncConfig,
-    ExternalSource,
-    TypeIndex,
-} from 'soukai-bis';
+import type { Engine, JobListener, ModelConstructor, SyncConfig, ExternalSource, TypeIndex } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
@@ -249,6 +243,8 @@ export class CloudService extends Service {
             return;
         }
 
+        trackLocalChanges(modelClass);
+
         if (options.register) {
             const { path, public: isPublic, singleton } = typeof options.register === 'object' ? options.register : {};
 
@@ -427,7 +423,7 @@ export class CloudService extends Service {
         const { publicTypeIndexes, privateTypeIndexes } = await Solid.findTypeIndexes();
         const containerUrls = this.findContainerUrls([...publicTypeIndexes, ...privateTypeIndexes]);
         const job = new MigrateLocalUrls({
-            engine: requireEngine('ManagesContainers'),
+            engine: requireLocalEngine(),
             migrations: objectFromEntries(
                 this.modelRegistrations.map(({ modelClass }) => [
                     modelClass.defaultContainerUrl,
@@ -541,8 +537,7 @@ export class CloudService extends Service {
             return;
         }
 
-        const engine = requireEngine() as IndexedDBEngine;
-        const containerUrls = await engine.getContainerUrls();
+        const containerUrls = await requireLocalEngine().getContainerUrls();
 
         await this.setReady(!containerUrls.some(isLocalUrl));
     }
