@@ -282,9 +282,9 @@ function initializedTrackedModelsData<T extends Model>(
     }
 
     trackedModels.set(modelClass, data);
-    modelClass.on('created', (model) => model.hasUrl() && modelsSet.add(toRaw(model)));
-    modelClass.on('deleted', (model) => model.hasUrl() && modelsSet.delete(toRaw(model)));
-    modelClass.on('updated', (model) => model.hasUrl() && modelsSet.add(toRaw(model)));
+    modelClass.on('created', ({ model }) => model.hasUrl() && modelsSet.add(toRaw(model)));
+    modelClass.on('deleted', ({ model }) => model.hasUrl() && modelsSet.delete(toRaw(model)));
+    modelClass.on('updated', ({ model }) => model.hasUrl() && modelsSet.add(toRaw(model)));
     Events.on('cloud:backup-completed', () => (loaded.value || loading.value) && data.refresh());
     Events.on('purge-storage', () => {
         loaded.value = false;

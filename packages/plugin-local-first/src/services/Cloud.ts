@@ -1,4 +1,6 @@
-import { Browser, Errors, Events, translateWithDefault } from '@aerogel/core';
+import { Browser, Errors, Events, UI, translateWithDefault } from '@aerogel/core';
+import type { ButtonVariant } from '@aerogel/core';
+import DeletionConflictModal from '@aerogel/plugin-local-first/components/DeletionConflictModal.vue';
 import { getRemoteContainerUrl } from '@aerogel/plugin-local-first/lib/models';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
 import { Solid, refreshTrackedModels, setTrackedModelsDiscoveryUrls, trackModels } from '@aerogel/plugin-solid';
@@ -17,6 +19,7 @@ import {
     objectFromEntries,
     parseBoolean,
     required,
+    silenced,
     urlRoute,
 } from '@noeldemartin/utils';
 import {
@@ -34,7 +37,16 @@ import {
     isLocalUrl,
     trackLocalChanges,
 } from 'soukai-bis';
-import type { Engine, JobListener, ModelConstructor, SyncConfig, ExternalSource, TypeIndex } from 'soukai-bis';
+import type {
+    DeletionConflict,
+    DeletionConflictResolution,
+    Engine,
+    JobListener,
+    ModelConstructor,
+    SyncConfig,
+    ExternalSource,
+    TypeIndex,
+} from 'soukai-bis';
 import { watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
@@ -55,6 +67,22 @@ export interface SyncOptions extends JobListener {
 
 export type CloudRegistration = boolean | RegisterOptions | undefined;
 
+export interface DeletionConflictPrompt {
+    title?: string;
+    message?: string;
+    deleteText?: string;
+    deleteVariant?: ButtonVariant;
+    restoreText?: string;
+    restoreVariant?: ButtonVariant;
+}
+
+export type ConflictHandlerResult = DeletionConflictResolution | DeletionConflictPrompt | undefined;
+
+export type ConflictHandler = (
+    conflict: DeletionConflict,
+    model: Model | null,
+) => ConflictHandlerResult | Promise<ConflictHandlerResult>;
+
 export interface ModelContainerUrls {
     default: string;
     registered: string[];
@@ -68,6 +96,7 @@ export interface ExternalSourceFailedPayload {
 }
 
 export class CloudService extends Service {
+    public conflictHandler: ConflictHandler | null = null;
     protected asyncLock: Semaphore = new Semaphore();
     protected engine: Engine | null = null;
     protected pollingInterval: ReturnType<typeof setInterval> | null = null;
@@ -255,9 +284,9 @@ export class CloudService extends Service {
             await this.initializeTrackedModels(modelClass, options.register);
         }
 
-        modelClass.on('created', (model) => this.ready && this.onModelCreated(model));
-        modelClass.on('updated', (model) => this.ready && this.onModelUpdated(model));
-        modelClass.on('deleted', (model) => this.ready && this.onModelUpdated(model, { reset: true }));
+        modelClass.on('created', ({ model }) => this.ready && this.onModelCreated(model));
+        modelClass.on('updated', ({ model }) => this.ready && this.onModelUpdated(model));
+        modelClass.on('deleted', ({ model }) => this.ready && this.onModelUpdated(model, { reset: true }));
     }
 
     public addExternalSource(source: ExternalSource): void {
@@ -304,7 +333,7 @@ export class CloudService extends Service {
             );
 
             for (const documentUrl of documentUrls) {
-                await engine.deleteDocument(documentUrl);
+                await silenced(engine.deleteDocument(documentUrl), { ignore: DocumentNotFound });
             }
 
             const localModelUpdates = { ...this.localModelUpdates };
@@ -378,6 +407,8 @@ export class CloudService extends Service {
             userProfile: Solid.requireUser(),
             createPublicTypeIndex: () => Solid.findOrCreatePublicTypeIndex(),
             createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
+            resolveDeletionConflict: (conflict) =>
+                this.resolveDeletionConflict(conflict, applicationModels as ModelConstructor[]),
             applicationModels: applicationModels.map((modelClass) => {
                 const registration = this.modelRegistrations.find(
                     (modelRegistration) => modelRegistration.modelClass === modelClass,
@@ -395,6 +426,38 @@ export class CloudService extends Service {
                 };
             }),
         };
+    }
+
+    protected async resolveDeletionConflict(
+        conflict: DeletionConflict,
+        applicationModels: ModelConstructor[],
+    ): Promise<DeletionConflictResolution> {
+        const document = conflict.type === 'deleted-remotely' ? conflict.localDocument : conflict.remoteDocument;
+        const models = await Promise.all(
+            applicationModels.map((modelClass) =>
+                modelClass.createFromDocument(document, { url: conflict.resourceUrl, includeSoftDeleted: true }),
+            ),
+        );
+        const model = models.find((documentModel) => !!documentModel) ?? null;
+        const result = await this.conflictHandler?.(conflict, model);
+
+        if (result === 'delete' || result === 'restore') {
+            return result;
+        }
+
+        return this.promptDeletionConflict(conflict, model, result ?? null);
+    }
+
+    protected async promptDeletionConflict(
+        conflict: DeletionConflict,
+        model: Model | null,
+        prompt: DeletionConflictPrompt | null,
+    ): Promise<DeletionConflictResolution> {
+        const { response } = (await UI.modal(DeletionConflictModal, { conflict, model, prompt })) as unknown as {
+            response: DeletionConflictResolution | null;
+        };
+
+        return response ?? 'delete';
     }
 
     protected async getDirtyLocalModels(): Promise<Model[]> {

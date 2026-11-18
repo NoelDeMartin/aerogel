@@ -131,6 +131,14 @@ cloud:
         startupSync: Synchronize on startup
         polling: Synchronize every {minutes} minutes
         pollingMinutes: Synchronization interval (in minutes)
+    deletionConflict:
+        deletedRemotelyTitle: Deleted on another device
+        deletedLocallyTitle: Changed on another device
+        deletedRemotely: The {item} was deleted on another device, but it has changes on this device that have not been synchronized yet. Do you want to delete it, or restore it with your changes?
+        deletedLocally: You deleted the {item} on this device, but it was changed on another device in the meantime. Do you want to delete it, or restore it with those changes?
+        resource: resource
+        delete: Delete
+        restore: Restore
 
 solid:
     loginOngoing: Logging in...

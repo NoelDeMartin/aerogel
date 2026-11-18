@@ -5,4 +5,7 @@ export default defineSchema({
     fields: {
         title: z.string(),
     },
+    computed: {
+        titleLength: (post) => post.title.length,
+    },
 });

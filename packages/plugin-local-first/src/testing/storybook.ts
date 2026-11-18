@@ -52,16 +52,6 @@ export const accountStoryArgTypes = {
     syncError: { control: 'text' },
 } satisfies ArgTypes<AccountStoryArgs>;
 
-export const accountStoryParameters = {
-    layout: 'fullscreen',
-    docs: {
-        story: {
-            inline: false,
-            iframeHeight: '500px',
-        },
-    },
-};
-
 export function useAccountState(args: Partial<AccountStoryArgs>): void {
     const arg = <T extends keyof AccountStoryArgs>(name: T): AccountStoryArgs[T] =>
         args[name] ?? accountStoryArgs[name];

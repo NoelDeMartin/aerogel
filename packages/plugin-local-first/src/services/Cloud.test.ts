@@ -1,11 +1,13 @@
-import { Errors, Events } from '@aerogel/core';
+import { Errors, Events, UI } from '@aerogel/core';
 import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
 import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
+import type { ConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
 import { Solid, useModels, useSingletonModel } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
+import { SolidDocument } from '@noeldemartin/solid-utils';
 import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import { after } from '@noeldemartin/utils';
 import type { ListenersManager } from '@noeldemartin/utils';
@@ -668,6 +670,108 @@ describe('Cloud', () => {
                 { model: PostsCollection, registration: { path: undefined, public: undefined, mode: 'instance' } },
             ]),
         );
+    });
+
+    it('asks how to resolve deletion conflicts', async () => {
+        // Arrange
+        logIn();
+
+        await cloud.track(Post, { register: true });
+
+        const post = await Post.create({ title: 'Hello World' });
+        const localDocument = await requireEngine().readDocument(post.requireDocumentUrl());
+        const remoteDocument = new SolidDocument(localDocument.url, []);
+        const modal = vi
+            .spyOn(UI.requireInstance(), 'modal')
+            .mockResolvedValue({ dismissed: false, response: 'restore' } as { dismissed: boolean });
+        const config = await cloud.getSyncConfig();
+
+        // Act
+        const resolution = await config.resolveDeletionConflict?.({
+            type: 'deleted-remotely',
+            resourceUrl: post.url,
+            localDocument,
+            remoteDocument,
+        });
+
+        // Assert
+        const [component, props] = modal.mock.calls[0] ?? [];
+        const { model } = props as { model?: Model };
+
+        expect(resolution).toEqual('restore');
+        expect(component).toMatchObject({ __name: 'DeletionConflictModal' });
+        expect(props).toMatchObject({ conflict: { type: 'deleted-remotely', resourceUrl: post.url } });
+        expect(model?.url).toEqual(post.url);
+    });
+
+    it('prompts deletion conflicts with conflict handlers', async () => {
+        // Arrange
+        logIn();
+
+        await cloud.track(Post, { register: true });
+
+        const post = await Post.create({ title: 'Hello World' });
+        const localDocument = await requireEngine().readDocument(post.requireDocumentUrl());
+        const remoteDocument = new SolidDocument(localDocument.url, []);
+        const modal = vi
+            .spyOn(UI.requireInstance(), 'modal')
+            .mockResolvedValue({ dismissed: false, response: 'delete' } as { dismissed: boolean });
+        const config = await cloud.getSyncConfig();
+
+        cloud.conflictHandler = (_, model) => ({
+            title: 'Post deleted',
+            message: `*${(model as Post).title}* was deleted on another device.`,
+            restoreText: 'Keep it',
+        });
+
+        // Act
+        const resolution = await config.resolveDeletionConflict?.({
+            type: 'deleted-remotely',
+            resourceUrl: post.url,
+            localDocument,
+            remoteDocument,
+        });
+
+        // Assert
+        const [, props] = modal.mock.calls[0] ?? [];
+
+        expect(resolution).toEqual('delete');
+        expect(props).toMatchObject({
+            prompt: {
+                title: 'Post deleted',
+                message: '*Hello World* was deleted on another device.',
+                restoreText: 'Keep it',
+            },
+        });
+    });
+
+    it('resolves deletion conflicts with conflict handlers', async () => {
+        // Arrange
+        logIn();
+
+        await cloud.track(Post, { register: true });
+
+        const post = await Post.create({ title: 'Hello World' });
+        const localDocument = await requireEngine().readDocument(post.requireDocumentUrl());
+        const remoteDocument = new SolidDocument(localDocument.url, []);
+        const modal = vi.spyOn(UI.requireInstance(), 'modal');
+        const config = await cloud.getSyncConfig();
+        const handler = vi.fn<ConflictHandler>(async () => 'restore' as const);
+
+        cloud.conflictHandler = handler;
+
+        // Act
+        const resolution = await config.resolveDeletionConflict?.({
+            type: 'deleted-remotely',
+            resourceUrl: post.url,
+            localDocument,
+            remoteDocument,
+        });
+
+        // Assert
+        expect(resolution).toEqual('restore');
+        expect(modal).not.toHaveBeenCalled();
+        expect(handler.mock.calls[0]?.[1]?.url).toEqual(post.url);
     });
 
     describe('external sources', () => {

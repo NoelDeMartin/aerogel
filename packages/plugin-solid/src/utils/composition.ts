@@ -5,7 +5,7 @@ import { Model, getRelatedClasses, hydrateModel } from 'soukai-bis';
 import type {
     ComputedAttribute,
     ModelConstructor,
-    ModelEvents,
+    ModelInstanceEvent,
     ModelListener,
     ModelWithUrl,
     SerializedModel,
@@ -187,7 +187,7 @@ function reactiveComputedModels<T>(
     });
 
     const listeners = modelClasses.map((modelClass) =>
-        modelClass.on('modified', (updatedModel, field) => {
+        modelClass.on('modified', ({ model: updatedModel, field }) => {
             if (!updatedModel.url) {
                 return;
             }
@@ -329,11 +329,13 @@ function createModelProxy<T extends object>(model: T, track: () => void, trigger
 
 export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
 
-export type ComputedAttributeName<T extends ModelConstructor> = T extends ModelConstructor
-    ? string extends keyof T['computed']
-        ? never
-        : string & keyof T['computed']
-    : never;
+export type ComputedAttributeName<T extends ModelConstructor> =
+    T extends ModelConstructor<infer TModel>
+        ? {
+              [K in keyof TModel]: TModel[K] extends ComputedAttribute ? K : never;
+          }[keyof TModel] &
+              string
+        : never;
 
 export interface ComputedModelsOptions<TAttribute extends string = string> {
     watch?: TAttribute[];
@@ -537,7 +539,7 @@ export function useSingletonModel<T extends Model>(
     };
 }
 
-export function useModelEvent<TModel extends Model, TEvent extends keyof ModelEvents>(
+export function useModelEvent<TModel extends Model, TEvent extends ModelInstanceEvent>(
     modelClass: ModelConstructor<TModel>,
     event: TEvent,
     listener: ModelListener<TModel, TEvent>,

@@ -26,10 +26,10 @@ catalog:
     tailwindcss: ^4.1.4
     unplugin-icons: ^22.1.0
     unplugin-vue-components: ^28.4.1
-    vite-plus: ^1.0.0
-    vite: npm:@voidzero-dev/vite-plus-core@^1.0.0
+    vite-plus: 1.7.0
+    vite: npm:@voidzero-dev/vite-plus-core@8.3.8000
     vue-i18n: ^11.1.2
-    vue-tsc: 3.3.11 # unpin once https://github.com/vuejs/language-tools/issues/6237 is fixed.
+    vue-tsc: 3.3.11 # unpin once https://github.com/vuejs/language-tools/issues/6352 is fixed.
     vue: ^3.5.0
     zod: ^4.3.4
 
@@ -40,7 +40,7 @@ overrides:
     '@noeldemartin/utils': 'catalog:'
     '@types/node': 'catalog:'
     soukai-bis: 'catalog:'
-    vite: 'catalog:'
+    vite@*: 'catalog:'
     'vitepress@1>vite': ^5.4.14
     vue: 'catalog:'
     vue-tsc: 'catalog:'

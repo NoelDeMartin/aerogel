@@ -1,5 +1,5 @@
 import { App, type Service } from '@aerogel/core';
-import type { Model, ModelConstructor, ModelEvents, ModelListener, ModelWithUrl } from 'soukai-bis';
+import type { Model, ModelConstructor, ModelInstanceEvent, ModelListener, ModelWithUrl } from 'soukai-bis';
 import { watchEffect } from 'vue';
 
 import { _getTrackedModels, _getTrackedModelsData, _resetModelsState, _setTrackedUrls } from './internal';
@@ -16,7 +16,7 @@ export type TrackOptions<TModel extends Model = Model, TKey extends string = str
     lazy?: boolean;
     bypassServicesCheck?: boolean;
 } & {
-    [K in keyof ModelEvents]?: ModelListener<TModel, K>;
+    [K in ModelInstanceEvent]?: ModelListener<TModel, K>;
 };
 
 export type ModelService<TModel extends Model = Model, TKey extends string = string> = Service<{
@@ -118,7 +118,7 @@ export async function trackModels<TModel extends Model, TKey extends string>(
     const modelData = _getTrackedModelsData<TModel>(modelClass, { depth });
 
     for (const [event, listener] of Object.entries(eventListeners)) {
-        modelClass.on(event as keyof ModelEvents, listener as ModelListener<TModel, keyof ModelEvents>);
+        modelClass.on(event as ModelInstanceEvent, listener as ModelListener<TModel, ModelInstanceEvent>);
     }
 
     if (service && stateKey) {

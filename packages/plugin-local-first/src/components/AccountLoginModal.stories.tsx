@@ -1,11 +1,10 @@
 import {
     accountStoryArgTypes,
-    accountStoryParameters,
     accountStoryArgs,
     useAccountState,
     type AccountStoryArgs,
 } from '@aerogel/plugin-local-first/testing/storybook';
-import { ModalStory } from '@aerogel/storybook';
+import { ModalStory, modalStoryParameters } from '@aerogel/storybook';
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import AccountLoginModal from './AccountLoginModal.vue';
@@ -18,7 +17,7 @@ const meta: Meta<StoryArgs> = {
     title: 'Local First/AccountLoginModal',
     component: AccountLoginModal,
     tags: ['!autodocs'],
-    parameters: accountStoryParameters,
+    parameters: modalStoryParameters,
     argTypes: {
         environment: accountStoryArgTypes.environment,
         loginOngoing: accountStoryArgTypes.loginOngoing,
