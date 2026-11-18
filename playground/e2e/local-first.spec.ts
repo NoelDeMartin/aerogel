@@ -1,4 +1,6 @@
 import {
+    authenticate,
+    createModel,
     dontSee,
     expect,
     input,
@@ -8,10 +10,23 @@ import {
     podUrl,
     press,
     see,
+    setupPage,
     solidReset,
     test,
     waitSync,
 } from '@aerogel/playwright';
+import { urlRoute } from '@noeldemartin/utils';
+import type { Browser, Page } from '@playwright/test';
+
+async function openAnotherDevice(browser: Browser): Promise<Page> {
+    const context = await browser.newContext({ baseURL: test.info().project.use.baseURL });
+    const page = await context.newPage();
+
+    await setupPage(page);
+    await page.goto('/local-first');
+
+    return page;
+}
 
 test.beforeEach(async ({ page }) => {
     await solidReset();
@@ -61,4 +76,46 @@ test('Manipulates Tasks', async ({ page }) => {
     expect(deleteTask.all).toHaveLength(0);
     expect(updateTask.all).toHaveLength(4);
     expect(updateTask.nth(4)?.body).toContain('Tombstone');
+});
+
+test('Restores tasks deleted on another device', async ({ page, browser }) => {
+    // Create task
+    await localFirstLogin(page);
+
+    const task = await createModel(page, 'LocalTask', { name: 'Hello World!' });
+
+    await see(page, 'Hello World!');
+    await waitSync(page);
+
+    // Rename offline while it's deleted on another device
+    await page.context().setOffline(true);
+    await task.update({ name: 'Hello Conflicts!' });
+    await see(page, 'Hello Conflicts!');
+
+    const anotherDevice = await openAnotherDevice(browser);
+
+    await localFirstLogin(anotherDevice);
+    await press(anotherDevice, "Delete 'Hello World!'");
+    await dontSee(anotherDevice, 'Hello World!');
+    await waitSync(anotherDevice);
+    await anotherDevice.context().close();
+
+    // Restore
+    await page.context().setOffline(false);
+    await press(page, 'Open account');
+    await press(page, 'Synchronize', { role: 'button' });
+
+    const conflict = page.getByRole('dialog', { name: 'Deleted on another device' });
+
+    await expect(conflict).toContainText('was deleted on another device, but it has changes on this device');
+    await conflict.getByRole('button', { name: 'Restore' }).click();
+    await waitSync(page);
+    await page.keyboard.press('Escape');
+
+    await see(page, 'Hello Conflicts!');
+
+    const fetch = await authenticate();
+    const response = await fetch(urlRoute(task.url));
+
+    expect(await response.text()).not.toContain('Tombstone');
 });
