@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto';
 import { Cache, Events } from '@aerogel/core';
 import Book from '@aerogel/plugin-solid/testing/stubs/models/Book';
 import Chapter from '@aerogel/plugin-solid/testing/stubs/models/Chapter';
+import Gallery from '@aerogel/plugin-solid/testing/stubs/models/Gallery';
 import Item from '@aerogel/plugin-solid/testing/stubs/models/Item';
 import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
 import Shelf from '@aerogel/plugin-solid/testing/stubs/models/Shelf';
@@ -27,6 +28,6 @@ beforeEach(async () => {
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });
-    bootModels({ Book, Chapter, Item, Post, Shelf, Task, User }, { reset: true });
+    bootModels({ Book, Chapter, Gallery, Item, Post, Shelf, Task, User }, { reset: true });
     setEngine(new InMemoryEngine());
 });

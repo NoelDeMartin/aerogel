@@ -3,30 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { NetworkCache, computedAsync } from '@aerogel/core';
-import Solid from '@aerogel/plugin-solid/services/Solid';
+import { useSolidFile } from '@aerogel/plugin-solid/composables/useSolidFile';
+import { isLocalUrl } from 'soukai-bis';
+import { computed } from 'vue';
 
 const { src } = defineProps<{ src: string }>();
-const sourceUrl = computedAsync(async () => {
-    const cachedResponse = (await NetworkCache.get(src)) ?? (await downloadImage(src));
-    const blob = await cachedResponse?.blob();
-
-    return (blob && URL.createObjectURL(blob)) || src;
-});
-
-async function downloadImage(url: string) {
-    try {
-        const response = await Solid.fetch(url);
-
-        if (response.status !== 200) {
-            return null;
-        }
-
-        await NetworkCache.store(url, response);
-
-        return NetworkCache.get(url);
-    } catch (error) {
-        return null;
+const file = useSolidFile(() => src);
+const sourceUrl = computed(() => {
+    if (file.url.value) {
+        return file.url.value;
     }
-}
+
+    return file.loading.value || isLocalUrl(src) ? undefined : src;
+});
 </script>

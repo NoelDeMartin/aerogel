@@ -1,4 +1,4 @@
-import { App, Errors, Events, Storage, UI, translateWithDefault } from '@aerogel/core';
+import { App, Errors, Events, NetworkCache, Storage, UI, translateWithDefault } from '@aerogel/core';
 import type { ErrorSource } from '@aerogel/core';
 import { getAuthenticator } from '@aerogel/plugin-solid/auth';
 import type { AuthenticatorName } from '@aerogel/plugin-solid/auth';
@@ -6,6 +6,7 @@ import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import type { AuthenticatorBootOptions, AuthSession } from '@aerogel/plugin-solid/auth/Authenticator';
 import { ContainerAlreadyInUse } from '@aerogel/plugin-solid/errors';
 import AuthenticationCancelledError from '@aerogel/plugin-solid/errors/AuthenticationCancelledError';
+import { fileResponse } from '@aerogel/plugin-solid/utils/internal';
 import { SolidDocumentPermissions, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import type { SolidUserProfile, Fetch, SolidStore, CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import {
@@ -30,7 +31,18 @@ import {
     urlRoot,
 } from '@noeldemartin/utils';
 import type { NullablePartial } from '@noeldemartin/utils';
-import { Container, SolidEngine, TypeIndex, remote, setEngine, setRemoteEngine } from 'soukai-bis';
+import {
+    Container,
+    SolidEngine,
+    TypeIndex,
+    DocumentNotFound,
+    getLocalEngine,
+    getRemoteEngine,
+    isLocalUrl,
+    remote,
+    setEngine,
+    setRemoteEngine,
+} from 'soukai-bis';
 import type { ContainerConstructor, Model, ModelConstructor, ModelWithUrl, TypeIndexRegistration } from 'soukai-bis';
 
 import Service, { DEFAULT_STATE } from './Solid.state';
@@ -58,6 +70,14 @@ export type RequiredUserProfileOptions = { required: true };
 export type ReconnectOptions = Omit<LoginOptions, 'authenticator'> & {
     force?: boolean;
 };
+
+export interface ReadFileOptions {
+    cache?: boolean;
+}
+
+export interface SolidFileEventPayload {
+    url: string;
+}
 
 export interface CreateContainerOptions {
     url: string;
@@ -412,6 +432,47 @@ export class SolidService extends Service {
         resetAsyncMemo(`${webId}-privateTypeIndexes`);
     }
 
+    public async readFileIfExists(url: string, options: ReadFileOptions = {}): Promise<Blob | null> {
+        const localFile = await getLocalEngine()?.getFile(url);
+
+        if (localFile?.deleted) {
+            return null;
+        }
+
+        if (localFile?.blob) {
+            return localFile.blob;
+        }
+
+        if (isLocalUrl(url)) {
+            return null;
+        }
+
+        const useCache = options.cache ?? true;
+        const cachedResponse = useCache ? await NetworkCache.get(url) : null;
+
+        if (cachedResponse) {
+            return cachedResponse.blob();
+        }
+
+        const blob = await getRemoteEngine()?.readFileIfExists(url);
+
+        if (blob && useCache) {
+            await NetworkCache.store(url, fileResponse(blob));
+        }
+
+        return blob ?? null;
+    }
+
+    public async readFile(url: string, options: ReadFileOptions = {}): Promise<Blob> {
+        const blob = await this.readFileIfExists(url, options);
+
+        if (!blob) {
+            throw new DocumentNotFound(url);
+        }
+
+        return blob;
+    }
+
     public async createPrivateContainer(options: CreateContainerOptions): Promise<ModelWithUrl<Container>> {
         return this.createContainer(options, 'private');
     }
@@ -709,5 +770,7 @@ declare module '@aerogel/core' {
         'auth:logout': void;
         'auth:after-logout': void;
         'solid:user-profile-loaded': [SolidUserProfile, SolidStore];
+        'solid:file-uploaded': SolidFileEventPayload;
+        'solid:file-deleted': SolidFileEventPayload;
     }
 }

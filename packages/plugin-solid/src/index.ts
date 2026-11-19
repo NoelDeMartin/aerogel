@@ -13,6 +13,7 @@ import { services } from '@aerogel/plugin-solid/services';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import SolidFake from '@aerogel/plugin-solid/services/Solid.fake';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
+import { watchContainerFiles } from '@aerogel/plugin-solid/utils/internal';
 import { resetModelsState } from '@aerogel/plugin-solid/utils/services';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
 import type { SolidUserProfile, SolidStore } from '@noeldemartin/solid-utils';
@@ -31,6 +32,7 @@ function setupTestingRuntime(): void {
 
 export * from './auth';
 export * from './components';
+export * from './composables';
 export * from './errors';
 export * from './forms';
 export * from './services';
@@ -85,6 +87,7 @@ export default function solid(options: Options = {}): Plugin {
             Events.on('purge-storage', () => engine instanceof IndexedDBEngine && engine.clear());
             Events.on('clear-cache', () => engine.purgeMetadata());
             Events.on('clear-cache', () => ComputedAttributesCache.clear());
+            watchContainerFiles();
 
             await bootServices(app, services);
         },

@@ -4,3 +4,4 @@ export { default as AccountLoggedOut } from './AccountLoggedOut.vue';
 export { default as AccountLoginModal } from './AccountLoginModal.vue';
 export { default as AccountModal } from './AccountModal.vue';
 export { default as DeletionConflictModal } from './DeletionConflictModal.vue';
+export { default as FileConflictModal } from './FileConflictModal.vue';

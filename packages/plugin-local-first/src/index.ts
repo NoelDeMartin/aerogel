@@ -1,7 +1,7 @@
 import { App, bootServices, registerFakeService } from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
 import Cloud from '@aerogel/plugin-local-first/services/Cloud';
-import type { ConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
+import type { ConflictHandler, FileConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
 import CloudFake from '@aerogel/plugin-local-first/services/Cloud.fake';
 import { DEFAULT_STATE } from '@aerogel/plugin-local-first/services/Cloud.state';
 
@@ -17,6 +17,7 @@ export * from './services/Cloud.fake';
 export interface Options {
     manualSetup?: boolean;
     handleConflict?: ConflictHandler;
+    handleFileConflict?: FileConflictHandler;
 }
 
 export type LocalFirstServices = typeof services;
@@ -35,6 +36,7 @@ export default function localFirst(options: Options = {}): Plugin {
             }
 
             Cloud.conflictHandler = options.handleConflict ?? null;
+            Cloud.fileConflictHandler = options.handleFileConflict ?? null;
 
             await bootServices(app, services);
         },

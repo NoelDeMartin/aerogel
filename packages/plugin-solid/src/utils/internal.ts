@@ -1,8 +1,8 @@
-import { Errors, Events, appNamespace, reactiveSet } from '@aerogel/core';
+import { Errors, Events, NetworkCache, appNamespace, reactiveSet } from '@aerogel/core';
 import type { ReactiveSet } from '@aerogel/core';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
 import { arrayUnique, isDevelopment, isInstanceOf, isTruthy, throttle, urlRoute } from '@noeldemartin/utils';
-import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
+import { Container, DocumentNotFound, IndexedDBEngine, getEngine, getLocalEngine } from 'soukai-bis';
 import type { LoadAllOptions, Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
@@ -298,6 +298,27 @@ function initializedTrackedModelsData<T extends Model>(
 
 function isNewerModel(model: Model, otherModel: Model): boolean {
     return (model.updatedAt?.getTime() ?? 0) > (otherModel.updatedAt?.getTime() ?? 0);
+}
+
+export function fileResponse(blob: Blob, mimeType?: string | null): Response {
+    const contentType = mimeType || blob.type;
+
+    return new Response(blob, contentType ? { headers: { 'Content-Type': contentType } } : undefined);
+}
+
+export function watchContainerFiles(): void {
+    Container.on('file-uploaded', async ({ url, blob }) => {
+        if (!getLocalEngine()) {
+            await NetworkCache.store(url, fileResponse(blob));
+        }
+
+        await Events.emit('solid:file-uploaded', { url });
+    });
+
+    Container.on('file-deleted', async ({ url }) => {
+        await NetworkCache.delete(url);
+        await Events.emit('solid:file-deleted', { url });
+    });
 }
 
 export function _getTrackedModels(): WeakMap<ModelConstructor, TrackedModelData> {

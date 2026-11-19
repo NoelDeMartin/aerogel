@@ -1,6 +1,6 @@
-import { Errors, Events, UI } from '@aerogel/core';
-import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
-import type { ConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
+import { Errors, Events, NetworkCache, UI } from '@aerogel/core';
+import { CloudService, FilesStrategies, normalizeCloudFiles } from '@aerogel/plugin-local-first/services/Cloud';
+import type { ConflictHandler, FileConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
@@ -10,8 +10,10 @@ import { SolidDocument } from '@noeldemartin/solid-utils';
 import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import { after, invade } from '@noeldemartin/utils';
 import type { ListenersManager } from '@noeldemartin/utils';
-import { Sync, TypeIndex, TypeRegistration, requireEngine } from 'soukai-bis';
+import { Sync, TypeIndex, TypeRegistration, requireEngine, requireLocalEngine } from 'soukai-bis';
 import type {
+    FileConflict,
+    FilePushedEvent,
     Model,
     ModelConstructor,
     ModelWithUrl,
@@ -77,6 +79,7 @@ describe('Cloud', () => {
             failedRegistrations?: ModelConstructor[];
             failedExternalSources?: [ExternalSource, unknown][];
             onRun?: () => Promise<unknown>;
+            pushedFiles?: FilePushedEvent[];
         } = {},
     ): void {
         vi.spyOn(cloud, 'getSyncConfig').mockResolvedValue({
@@ -110,7 +113,11 @@ describe('Cloud', () => {
                     await listeners.emit('onExternalSourceFailed', source, error);
                 }
 
-                return { syncedDocumentUrls: new Set(), documentsWithErrors: new Set() };
+                for (const pushedFile of options.pushedFiles ?? []) {
+                    await listeners.emit('onFilePushed', pushedFile);
+                }
+
+                return { syncedDocumentUrls: new Set(), documentsWithErrors: new Set(), syncedFileUrls: new Set() };
             },
         );
     }
@@ -882,6 +889,160 @@ describe('Cloud', () => {
         expect(resolution).toEqual('restore');
         expect(modal).not.toHaveBeenCalled();
         expect(handler.mock.calls[0]?.[1]?.url).toEqual(post.url);
+    });
+
+    describe('files', () => {
+        it('asks how to resolve file conflicts', async () => {
+            // Arrange
+            const url = 'https://alice.example/posts/image.png';
+            const conflict: FileConflict = {
+                type: 'modified-remotely',
+                url,
+                localFile: { url, containerUrl: 'https://alice.example/posts/' },
+                remoteUpdatedAt: new Date(),
+            };
+            const modal = vi
+                .spyOn(UI.requireInstance(), 'modal')
+                .mockResolvedValue({ dismissed: false, response: 'keep-remote' } as { dismissed: boolean });
+
+            logIn();
+
+            const config = await cloud.getSyncConfig();
+
+            // Act
+            const resolution = await config.resolveFileConflict?.(conflict);
+
+            // Assert
+            const [component, props] = modal.mock.calls[0] ?? [];
+
+            expect(resolution).toEqual('keep-remote');
+            expect(component).toMatchObject({ __name: 'FileConflictModal' });
+            expect(props).toMatchObject({ conflict: { type: 'modified-remotely', url } });
+        });
+
+        it('resolves file conflicts with file conflict handlers', async () => {
+            // Arrange
+            const url = 'https://alice.example/posts/image.png';
+            const modal = vi.spyOn(UI.requireInstance(), 'modal');
+            const handler = vi.fn<FileConflictHandler>(async () => 'keep-local' as const);
+
+            logIn();
+
+            const config = await cloud.getSyncConfig();
+
+            cloud.fileConflictHandler = handler;
+
+            // Act
+            const resolution = await config.resolveFileConflict?.({
+                type: 'deleted-remotely',
+                url,
+                localFile: { url, containerUrl: 'https://alice.example/posts/' },
+                remoteUpdatedAt: null,
+            });
+
+            // Assert
+            expect(resolution).toEqual('keep-local');
+            expect(modal).not.toHaveBeenCalled();
+            expect(handler).toHaveBeenCalledWith(expect.objectContaining({ type: 'deleted-remotely', url }));
+        });
+
+        it('normalizes files configuration', () => {
+            expect(normalizeCloudFiles(undefined)).toEqual([]);
+            expect(normalizeCloudFiles(true)).toEqual([{ strategy: 'container' }]);
+            expect(normalizeCloudFiles(FilesStrategies.Container)).toEqual([{ strategy: 'container' }]);
+            expect(normalizeCloudFiles({ fields: ['coverUrl'], availableOffline: true })).toEqual([
+                { strategy: 'document', fields: ['coverUrl'], availableOffline: true },
+            ]);
+            expect(
+                normalizeCloudFiles([{ availableOffline: true }, { strategy: 'document', fields: ['imageUrl'] }]),
+            ).toEqual([
+                { strategy: 'container', availableOffline: true },
+                { strategy: 'document', fields: ['imageUrl'] },
+            ]);
+        });
+
+        it('configures files in sync config', async () => {
+            // Arrange
+            const originalCloud = Post.cloud;
+
+            logIn();
+
+            (Post as { cloud: unknown }).cloud = { files: FilesStrategies.Container };
+
+            try {
+                await cloud.track(Post, { register: true });
+
+                // Act
+                const config = await cloud.getSyncConfig();
+
+                // Assert
+                expect(config.applicationModels).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({ model: Post, files: [{ strategy: 'container' }] }),
+                    ]),
+                );
+            } finally {
+                (Post as { cloud: unknown }).cloud = originalCloud;
+            }
+        });
+
+        it('caches pushed files', async () => {
+            // Arrange
+            const url = 'https://alice.example/posts/image.png';
+            const store = vi.spyOn(NetworkCache.requireInstance(), 'store').mockResolvedValue();
+
+            logIn();
+            fakeSync({
+                pushedFiles: [{ url, blob: new Blob(['image'], { type: 'image/png' }) }],
+            });
+            cloud.setState({ ready: true, status: CloudStatus.Online });
+
+            // Act
+            await cloud.sync();
+
+            // Assert
+            expect(store).toHaveBeenCalledExactlyOnceWith(url, expect.any(Response));
+            expect(await store.mock.calls[0]?.[1].text()).toEqual('image');
+        });
+
+        it('tracks local file changes', async () => {
+            // Arrange
+            const url = 'https://alice.example/posts/image.png';
+
+            cloud.setState({ ready: true, autoPush: false, status: CloudStatus.Online });
+
+            // Act
+            await requireLocalEngine().writeFile(url, new Blob(['image']), {
+                localChanges: () => ({ resources: { [url]: { createdAt: new Date() } } }),
+            });
+            await cloud.refreshLocalChanges();
+
+            // Assert
+            expect(cloud.localChanges).toBe(1);
+            expect(cloud.dirty).toBe(true);
+        });
+
+        it('forgets local file changes that were discarded', async () => {
+            // Arrange
+            const url = 'https://alice.example/posts/image.png';
+
+            cloud.setState({ ready: true, autoPush: false, status: CloudStatus.Online });
+
+            await requireLocalEngine().writeFile(url, new Blob(['image']), {
+                localChanges: () => ({ resources: { [url]: { createdAt: new Date() } } }),
+            });
+            await cloud.refreshLocalChanges();
+
+            expect(cloud.localChanges).toBe(1);
+
+            // Act
+            await requireLocalEngine().deleteFile(url);
+            await cloud.refreshLocalChanges();
+
+            // Assert
+            expect(cloud.localChanges).toBe(0);
+            expect(cloud.dirty).toBe(false);
+        });
     });
 
     describe('external sources', () => {
