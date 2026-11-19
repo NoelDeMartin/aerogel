@@ -14,6 +14,8 @@ import {
 } from '@aerogel/playwright';
 import { urlClean } from '@noeldemartin/utils';
 
+test.describe.configure({ mode: 'serial' });
+
 test.beforeEach(async ({ page }) => {
     await solidReset();
     await page.goto('/solid');

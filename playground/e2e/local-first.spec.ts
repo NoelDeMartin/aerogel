@@ -28,6 +28,8 @@ async function openAnotherDevice(browser: Browser): Promise<Page> {
     return page;
 }
 
+test.describe.configure({ mode: 'serial' });
+
 test.beforeEach(async ({ page }) => {
     await solidReset();
     await page.goto('/local-first');
@@ -118,4 +120,40 @@ test('Restores tasks deleted on another device', async ({ page, browser }) => {
     const response = await fetch(urlRoute(task.url));
 
     expect(await response.text()).not.toContain('Tombstone');
+});
+
+test('Counts local changes by user action', async ({ page }) => {
+    // Make changes offline
+    await localFirstLogin(page);
+    await page.context().setOffline(true);
+
+    await input(page, 'Task name').fill('Hello World!');
+    await input(page, 'Task name').press('Enter');
+    await see(page, 'Hello World!');
+
+    await input(page, 'Task name').fill('Discarded');
+    await input(page, 'Task name').press('Enter');
+    await see(page, 'Discarded');
+    await press(page, "Delete 'Discarded'");
+    await dontSee(page, 'Discarded');
+
+    const task = await createModel(page, 'LocalTask', { name: 'It works!' });
+
+    await press(page, 'Open account');
+    await see(page, 'There are 2 local changes.');
+    await page.keyboard.press('Escape');
+
+    // Comment on a task (one change, even if it saves the comment and the task)
+    await task.comment('Commented together with its task');
+
+    await press(page, 'Open account');
+    await see(page, 'There are 3 local changes.');
+    await page.keyboard.press('Escape');
+
+    // Sync
+    await page.context().setOffline(false);
+    await press(page, 'Open account');
+    await press(page, 'Synchronize', { role: 'button' });
+    await waitSync(page);
+    await see(page, 'Everything is up to date.');
 });

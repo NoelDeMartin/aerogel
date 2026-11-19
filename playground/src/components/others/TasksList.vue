@@ -32,16 +32,16 @@
     </Form>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends ITask">
 import { useForm } from '@aerogel/core';
 import { z } from 'zod';
 
-import type SolidTask from '@/models/SolidTask';
+import type ITask from '@/models/Task';
 
-defineProps<{ tasks: SolidTask[] }>();
+defineProps<{ tasks: T[] }>();
 defineEmits<{
     create: [value: string];
-    delete: [task: SolidTask];
+    delete: [task: T];
 }>();
 
 const form = useForm({ draft: z.string() });

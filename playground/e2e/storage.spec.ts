@@ -1,5 +1,7 @@
 import { dontSee, input, matchImageSnapshot, press, see, test } from '@aerogel/playwright';
 
+test.describe.configure({ mode: 'serial' });
+
 test.beforeEach(async ({ page }) => {
     await page.goto('/storage');
 });
