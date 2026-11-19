@@ -1,5 +1,4 @@
 import { Errors, Events, UI } from '@aerogel/core';
-import SyncQueue from '@aerogel/plugin-local-first/lib/SyncQueue';
 import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
 import type { ConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
@@ -9,7 +8,7 @@ import { Solid, useModels, useSingletonModel } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import { SolidDocument } from '@noeldemartin/solid-utils';
 import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
-import { after } from '@noeldemartin/utils';
+import { after, invade } from '@noeldemartin/utils';
 import type { ListenersManager } from '@noeldemartin/utils';
 import { Sync, TypeIndex, TypeRegistration, requireEngine } from 'soukai-bis';
 import type {
@@ -23,30 +22,18 @@ import type {
 } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
-class TestCloudService extends CloudService {
-    public override getDirtyLocalModels(): Promise<Model[]> {
-        return super.getDirtyLocalModels();
-    }
-
-    public override getSyncConfig(): Promise<SyncConfig> {
-        return super.getSyncConfig();
-    }
-
-    public override migrateLocalUrls(): Promise<void> {
-        return super.migrateLocalUrls();
-    }
-
-    public override serializePersistedState(state: Parameters<CloudService['serializePersistedState']>[0]) {
-        return super.serializePersistedState(state);
-    }
-
-    public override deserializePersistedState(state: Parameters<CloudService['deserializePersistedState']>[0]) {
-        return super.deserializePersistedState(state);
-    }
+function invadedCloud(cloud: CloudService) {
+    return invade(cloud, [
+        'getSyncConfig',
+        'migrateLocalUrls',
+        'refreshLocalChanges',
+        'serializePersistedState',
+        'deserializePersistedState',
+    ]);
 }
 
 describe('Cloud', () => {
-    let cloud: TestCloudService;
+    let cloud: ReturnType<typeof invadedCloud>;
 
     const user: CompleteSolidUserProfile = {
         webId: 'https://alice.example/profile/card#me',
@@ -128,9 +115,9 @@ describe('Cloud', () => {
         );
     }
 
-    beforeEach(() => (cloud = new TestCloudService()));
+    beforeEach(() => (cloud = invadedCloud(new CloudService())));
 
-    it('finds dirty models in registered containers', async () => {
+    it('counts local changes in registered containers', async () => {
         // Arrange
         await cloud.track(PostsCollection, { register: true });
         await cloud.track(Post);
@@ -138,19 +125,20 @@ describe('Cloud', () => {
         cloud.setState({ ready: true, autoPush: false });
 
         const collection = await PostsCollection.create({ name: 'Drafts' });
-        const post = await collection.relatedPosts.create({ title: 'Hello' });
+
+        vi.advanceTimersByTime(1000);
+
+        await collection.relatedPosts.create({ title: 'Hello' });
 
         // Act
-        const models = await cloud.getDirtyLocalModels();
+        await cloud.refreshLocalChanges();
 
         // Assert
-        expect(models.map((model) => [model.static().modelName, model.url])).toEqual([
-            ['PostsCollection', collection.url],
-            ['Post', post.url],
-        ]);
+        expect(cloud.localChanges).toBe(2);
+        expect(cloud.dirty).toBe(true);
     });
 
-    it('ignores dirty models whose documents were deleted', async () => {
+    it('ignores local changes of models deleted before syncing', async () => {
         // Arrange
         await cloud.track(Post);
 
@@ -161,15 +149,101 @@ describe('Cloud', () => {
         await post.delete();
 
         // Act
-        const models = await cloud.getDirtyLocalModels();
+        await cloud.refreshLocalChanges();
 
         // Assert
-        expect(models).toHaveLength(0);
+        expect(cloud.localChanges).toBe(0);
+        expect(cloud.dirty).toBe(false);
+    });
+
+    it('counts local changes', async () => {
+        // Arrange
+        await cloud.track(Post);
+
+        cloud.setState({ ready: true, autoPush: false });
+
+        const first = await Post.create({ title: 'First' });
+
+        vi.advanceTimersByTime(1000);
+
+        await Post.create({ title: 'Second' });
+
+        await cloud.refreshLocalChanges();
+
+        expect(cloud.localChanges).toBe(2);
+
+        // Act
+        await first.delete();
+        await cloud.refreshLocalChanges();
+
+        // Assert
+        expect(cloud.localChanges).toBe(1);
+    });
+
+    it('pushes local changes automatically', async () => {
+        // Arrange
+        logIn();
+        fakeSync();
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        await cloud.track(Post, { register: true });
+
+        const sync = vi.spyOn(cloud, 'sync');
+
+        vi.useFakeTimers();
+
+        // Act
+        await Post.create({ title: 'Hello' });
+        await cloud.refreshLocalChanges();
+        await vi.advanceTimersByTimeAsync(1000);
+
+        // Assert
+        expect(sync).toHaveBeenCalledOnce();
+    });
+
+    it('does not push local changes left by the previous sync', async () => {
+        // Arrange
+        logIn();
+        fakeSync();
+
+        cloud.setState({
+            ready: true,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        await cloud.track(Post, { register: true });
+
+        vi.useFakeTimers();
+
+        await Post.create({ title: 'Unsynced' });
+        await cloud.sync();
+
+        const sync = vi.spyOn(cloud, 'sync');
+
+        // Act
+        await cloud.refreshLocalChanges();
+        await vi.advanceTimersByTimeAsync(1000);
+
+        const syncsWithoutNewChanges = sync.mock.calls.length;
+
+        await Post.create({ title: 'New' });
+        await cloud.refreshLocalChanges();
+        await vi.advanceTimersByTimeAsync(1000);
+
+        // Assert
+        expect(syncsWithoutNewChanges).toBe(0);
+        expect(sync).toHaveBeenCalledOnce();
     });
 
     it('loads registered collections with their depth', async () => {
         // Arrange
-        const post = await new Post({ title: 'Nested' }).save(`${Post.defaultContainerUrl}nested/`);
+        const post = await new Post({ title: 'Nested' }).save({ containerUrl: `${Post.defaultContainerUrl}nested/` });
 
         await cloud.track(Post, { register: { depth: 1 } });
 
@@ -227,7 +301,7 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        const post = await new Post({ title: 'Elsewhere' }).save('https://alice.example/blog/');
+        const post = await new Post({ title: 'Elsewhere' }).save({ containerUrl: 'https://alice.example/blog/' });
 
         await cloud.track(Post, { register: true });
 
@@ -283,8 +357,8 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
-        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+        const blogPost = await new Post({ title: 'Blog' }).save({ containerUrl: 'https://alice.example/blog/' });
+        const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/posts/' });
 
         await cloud.track(Post, { register: true });
 
@@ -323,8 +397,8 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
-        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+        const blogPost = await new Post({ title: 'Blog' }).save({ containerUrl: 'https://alice.example/blog/' });
+        const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/posts/' });
 
         await cloud.track(Post, { register: true });
 
@@ -357,7 +431,9 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        const registeredPost = await new Post({ title: 'Registered' }).save('https://alice.example/blog/');
+        const registeredPost = await new Post({ title: 'Registered' }).save({
+            containerUrl: 'https://alice.example/blog/',
+        });
         const typeIndex = fakeTypeIndex();
 
         typeIndex.relatedRegistrations.related = [
@@ -369,7 +445,7 @@ describe('Cloud', () => {
 
         fakeSync({ typeIndexes: [typeIndex] });
 
-        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+        const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/posts/' });
 
         await cloud.track(Post, { register: { singleton: true } });
 
@@ -398,7 +474,7 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+        const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/posts/' });
 
         // Act
         await cloud.track(Post, { register: { singleton: true } });
@@ -421,7 +497,7 @@ describe('Cloud', () => {
             defaultContainerUrls: { Post: 'https://alice.example/posts/' },
         });
 
-        const post = await new Post({ title: 'Post' }).save('https://alice.example/blog/');
+        const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/blog/' });
 
         await cloud.track(Post, { register: { singleton: true } });
 
@@ -441,9 +517,13 @@ describe('Cloud', () => {
         // Arrange
         logIn();
 
-        const registeredPost = await new Post({ title: 'Registered' }).save('https://alice.example/blog/');
-        const unlistedPost = await new Post({ title: 'Unlisted' }).save('https://alice.example/drafts/');
-        const post = await new Post({ title: 'Default' }).save('https://alice.example/posts/');
+        const registeredPost = await new Post({ title: 'Registered' }).save({
+            containerUrl: 'https://alice.example/blog/',
+        });
+        const unlistedPost = await new Post({ title: 'Unlisted' }).save({
+            containerUrl: 'https://alice.example/drafts/',
+        });
+        const post = await new Post({ title: 'Default' }).save({ containerUrl: 'https://alice.example/posts/' });
         const typeIndex = fakeTypeIndex();
 
         typeIndex.relatedRegistrations.related = [
@@ -483,7 +563,9 @@ describe('Cloud', () => {
         // Arrange
         logIn();
 
-        const registeredPost = await new Post({ title: 'Registered' }).save('https://alice.example/blog/');
+        const registeredPost = await new Post({ title: 'Registered' }).save({
+            containerUrl: 'https://alice.example/blog/',
+        });
         const typeIndex = fakeTypeIndex();
 
         typeIndex.relatedRegistrations.related = [
@@ -506,7 +588,7 @@ describe('Cloud', () => {
         await cloud.track(Post, { register: { singleton: true } });
 
         const { models: posts } = useModels(Post);
-        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+        const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/posts/' });
 
         // Act
         await cloud.sync();
@@ -527,8 +609,8 @@ describe('Cloud', () => {
             registeredContainerUrls: { Post: ['https://alice.example/blog/'] },
         });
 
-        const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
-        const post = await new Post({ title: 'Post' }).save('https://alice.example/posts/');
+        const blogPost = await new Post({ title: 'Blog' }).save({ containerUrl: 'https://alice.example/blog/' });
+        const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/posts/' });
 
         await cloud.track(Post, { register: true });
 
@@ -556,7 +638,7 @@ describe('Cloud', () => {
         await cloud.track(Post, { register: true });
 
         const { models: posts } = useModels(Post);
-        const post = await new Post({ title: 'Elsewhere' }).save('https://alice.example/blog/');
+        const post = await new Post({ title: 'Elsewhere' }).save({ containerUrl: 'https://alice.example/blog/' });
 
         // Act
         await cloud.sync();
@@ -595,7 +677,7 @@ describe('Cloud', () => {
             unlistedContainerUrls: { Post: ['https://alice.example/blog/'] },
         });
 
-        const blogPost = await new Post({ title: 'Blog' }).save('https://alice.example/blog/');
+        const blogPost = await new Post({ title: 'Blog' }).save({ containerUrl: 'https://alice.example/blog/' });
 
         await cloud.track(Post, { register: true });
 
@@ -628,14 +710,18 @@ describe('Cloud', () => {
         expect(cloud.unlistedContainerUrls).toEqual({ Post: [] });
     });
 
-    it('pushes models created during sync', async () => {
+    it('syncs again when local changes are made during sync', async () => {
         // Arrange
+        let runs = 0;
         let post: Post | null = null;
 
         logIn();
-        fakeSync({ onRun: async () => (post ??= await Post.create({ title: 'During sync' })) });
-
-        const push = vi.spyOn(SyncQueue.requireInstance(), 'push').mockReturnValue();
+        fakeSync({
+            onRun: async () => {
+                runs++;
+                post ??= await Post.create({ title: 'During sync' });
+            },
+        });
 
         cloud.setState({
             ready: true,
@@ -649,7 +735,31 @@ describe('Cloud', () => {
         await cloud.sync();
 
         // Assert
-        expect(push).toHaveBeenCalledExactlyOnceWith(post);
+        expect(runs).toBe(2);
+    });
+
+    it('does not sync again when local changes could not be synced', async () => {
+        // Arrange
+        let runs = 0;
+
+        logIn();
+        fakeSync({ onRun: async () => runs++ });
+
+        cloud.setState({
+            ready: true,
+            autoPush: false,
+            status: CloudStatus.Online,
+            defaultContainerUrls: { Post: 'https://alice.example/posts/' },
+        });
+
+        await cloud.track(Post, { register: true });
+        await Post.create({ title: 'Unsynced' });
+
+        // Act
+        await cloud.sync();
+
+        // Assert
+        expect(runs).toBe(1);
     });
 
     it('configures type index registrations', async () => {
@@ -882,11 +992,13 @@ describe('Cloud', () => {
             cloud.addExternalSource(source);
 
             // Act
-            await new Post({ title: 'Managed' }).save(source.containerUrl);
+            await new Post({ title: 'Managed' }).save({ containerUrl: source.containerUrl });
 
             // Assert
+            await cloud.refreshLocalChanges();
+
             expect(cloud.unlistedContainerUrls).toEqual({});
-            expect(Object.keys(cloud.localModelUpdates)).toHaveLength(1);
+            expect(cloud.localChanges).toBe(1);
         });
 
         it('removes external sources discarding unsynced changes', async () => {
@@ -901,7 +1013,7 @@ describe('Cloud', () => {
             cloud.addExternalSource(source);
 
             const ownPost = await Post.create({ title: 'Mine' });
-            const externalPost = await new Post({ title: 'Managed' }).save(source.containerUrl);
+            const externalPost = await new Post({ title: 'Managed' }).save({ containerUrl: source.containerUrl });
 
             // Act
             await cloud.removeExternalSource(source);
@@ -909,7 +1021,7 @@ describe('Cloud', () => {
             // Assert
             await expect(requireEngine().readDocumentIfExists(externalPost.requireDocumentUrl())).resolves.toBeNull();
             await expect(requireEngine().readDocumentIfExists(ownPost.requireDocumentUrl())).resolves.not.toBeNull();
-            expect(Object.keys(cloud.localModelUpdates)).toEqual([ownPost.url]);
+            expect(cloud.localChanges).toBe(1);
             expect(cloud.getExternalSources()).toEqual([]);
         });
 
@@ -939,7 +1051,7 @@ describe('Cloud', () => {
                 onRun: async () => {
                     await syncPaused;
 
-                    pulledPost = await new Post({ title: 'Pulled' }).save(source.containerUrl);
+                    pulledPost ??= await new Post({ title: 'Pulled' }).save({ containerUrl: source.containerUrl });
                 },
             });
 
@@ -949,7 +1061,7 @@ describe('Cloud', () => {
             cloud.addExternalSource(source);
 
             // Act
-            const syncing = cloud.sync({ syncDirty: false });
+            const syncing = cloud.sync();
             const removing = cloud.removeExternalSource(source);
 
             await after({ milliseconds: 10 });
@@ -963,7 +1075,7 @@ describe('Cloud', () => {
             await expect(
                 requireEngine().readDocumentIfExists((pulledPost as unknown as Post).requireDocumentUrl()),
             ).resolves.toBeNull();
-            expect(cloud.localModelUpdates).toEqual({});
+            expect(cloud.localChanges).toBe(0);
             expect(cloud.getExternalSources()).toEqual([]);
         });
     });

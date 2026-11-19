@@ -84,8 +84,7 @@ export function useAccountState(args: Partial<AccountStoryArgs>): void {
             CloudFake.setState({
                 status: arg('cloudStatus'),
                 ready: arg('cloudReady'),
-                localModelUpdates:
-                    arg('localChanges') > 0 ? { 'local://storybook/fake-model': arg('localChanges') } : {},
+                localChanges: arg('localChanges'),
                 syncError: arg('syncError') || null,
             });
         },

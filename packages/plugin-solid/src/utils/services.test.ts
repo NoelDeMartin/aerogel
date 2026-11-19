@@ -32,8 +32,8 @@ describe('Services helpers', () => {
 
     it('Loads tracked models from all their containers', async () => {
         // Arrange
-        const alice = await new User({ name: 'Alice', age: 23 }).save('https://alice.example/users/');
-        const bob = await new User({ name: 'Bob', age: 30 }).save('https://alice.example/people/');
+        const alice = await new User({ name: 'Alice', age: 23 }).save({ containerUrl: 'https://alice.example/users/' });
+        const bob = await new User({ name: 'Bob', age: 30 }).save({ containerUrl: 'https://alice.example/people/' });
 
         await User.create({ name: 'Charlie', age: 40 });
 
@@ -48,8 +48,8 @@ describe('Services helpers', () => {
 
     it('Loads tracked models from containers and model urls', async () => {
         // Arrange
-        const alice = await new User({ name: 'Alice', age: 23 }).save('https://alice.example/users/');
-        const bob = await new User({ name: 'Bob', age: 30 }).save('https://alice.example/people/');
+        const alice = await new User({ name: 'Alice', age: 23 }).save({ containerUrl: 'https://alice.example/users/' });
+        const bob = await new User({ name: 'Bob', age: 30 }).save({ containerUrl: 'https://alice.example/people/' });
 
         await User.create({ name: 'Charlie', age: 40 });
 
@@ -64,9 +64,9 @@ describe('Services helpers', () => {
 
     it('Loads singleton models from their urls first', async () => {
         // Arrange
-        await new User({ name: 'Alice', age: 23 }).save('https://alice.example/users/');
+        await new User({ name: 'Alice', age: 23 }).save({ containerUrl: 'https://alice.example/users/' });
 
-        const bob = await new User({ name: 'Bob', age: 30 }).save('https://alice.example/people/');
+        const bob = await new User({ name: 'Bob', age: 30 }).save({ containerUrl: 'https://alice.example/people/' });
 
         setTrackedModelsDiscoveryUrls(User, ['https://alice.example/users/', bob.requireUrl()]);
 
@@ -108,7 +108,7 @@ describe('Services helpers', () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });
 
-        const bob = await new User({ name: 'Bob', age: 30 }).save('local://others/');
+        const bob = await new User({ name: 'Bob', age: 30 }).save({ containerUrl: 'local://others/' });
 
         await loadTrackedModels(User);
 

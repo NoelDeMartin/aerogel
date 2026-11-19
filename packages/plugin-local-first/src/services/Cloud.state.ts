@@ -60,7 +60,6 @@ export const DEFAULT_STATE = { manualSetup: false };
 export default defineServiceState({
     name: 'cloud',
     persist: [
-        'localModelUpdates',
         'defaultContainerUrls',
         'registeredContainerUrls',
         'unlistedContainerUrls',
@@ -73,7 +72,7 @@ export default defineServiceState({
     ],
     initialState: () => ({
         autoPush: true,
-        localModelUpdates: {} as Record<string, number>,
+        localChanges: 0,
         defaultContainerUrls: {} as Record<string, string>,
         registeredContainerUrls: {} as Record<string, string[]>,
         unlistedContainerUrls: {} as Record<string, string[]>,
@@ -96,12 +95,7 @@ export default defineServiceState({
         online: ({ status }) => status === CloudStatus.Online,
         offline: ({ status }) => status === CloudStatus.Offline,
         syncing: ({ status }) => status === CloudStatus.Syncing,
-        localChanges({ localModelUpdates }) {
-            return Object.values(localModelUpdates).reduce((total, count) => total + count, 0);
-        },
-        dirty(): boolean {
-            return this.localChanges > 0;
-        },
+        dirty: ({ localChanges }) => localChanges > 0,
     },
     serialize: ({ externalSources, ...state }) => ({
         ...state,

@@ -26,6 +26,7 @@ vi.mock('@aerogel/core', async () => {
 });
 
 beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
     Events.reset();
     FakeLocalStorage.reset();
     FakeServer.reset();

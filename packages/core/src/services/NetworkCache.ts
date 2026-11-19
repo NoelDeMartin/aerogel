@@ -1,8 +1,8 @@
 import Service from '@aerogel/core/services/Service';
-import { PromisedValue, facade, tap } from '@noeldemartin/utils';
+import { facade } from '@noeldemartin/utils';
 
 export class NetworkCacheService extends Service {
-    private cache?: PromisedValue<Cache> = undefined;
+    private cache?: Promise<Cache> = undefined;
 
     public async get(url: string): Promise<Response | null> {
         const cache = await this.open();
@@ -29,11 +29,7 @@ export class NetworkCacheService extends Service {
     }
 
     protected async open(): Promise<Cache> {
-        return (this.cache =
-            this.cache ??
-            tap(new PromisedValue<Cache>(), (cache) => {
-                void caches.open('app').then((instance) => cache.resolve(instance));
-            }));
+        return (this.cache ??= caches.open('app'));
     }
 }
 
