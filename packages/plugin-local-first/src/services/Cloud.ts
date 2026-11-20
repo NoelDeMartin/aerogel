@@ -37,7 +37,7 @@ import {
 } from '@noeldemartin/utils';
 import {
     DocumentNotFound,
-    FilesStrategies,
+    FilesSyncStrategies,
     MigrateLocalUrls,
     Model,
     Sync,
@@ -861,7 +861,7 @@ export class CloudService extends Service {
         }
 
         if (files === true) {
-            return [{ strategy: FilesStrategies.Container }];
+            return [{ strategy: FilesSyncStrategies.Container }];
         }
 
         if (typeof files === 'string') {
@@ -870,7 +870,7 @@ export class CloudService extends Service {
 
         return (isArray(files) ? files : [files]).map((config) => ({
             ...config,
-            strategy: config.strategy ?? (config.fields ? FilesStrategies.Document : FilesStrategies.Container),
+            strategy: config.strategy ?? (config.fields ? FilesSyncStrategies.Document : FilesSyncStrategies.Container),
         }));
     }
 

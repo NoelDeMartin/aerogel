@@ -4,7 +4,7 @@ import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
 import { fakeSync, invadedCloud, logIn } from '@aerogel/plugin-local-first/services/testing/helpers';
 import type { InvadedCloud } from '@aerogel/plugin-local-first/services/testing/helpers';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
-import { bootModels, FilesStrategies, requireLocalEngine } from 'soukai-bis';
+import { bootModels, FilesSyncStrategies, requireLocalEngine } from 'soukai-bis';
 import type { FileConflict, SyncFilesConfig } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -71,7 +71,7 @@ describe('Cloud files', () => {
 
     it.each<[CloudFiles, SyncFilesConfig[]]>([
         [true, [{ strategy: 'container' }]],
-        [FilesStrategies.Container, [{ strategy: 'container' }]],
+        [FilesSyncStrategies.Container, [{ strategy: 'container' }]],
         [
             { fields: ['coverUrl'], availableOffline: true },
             [{ strategy: 'document', fields: ['coverUrl'], availableOffline: true }],

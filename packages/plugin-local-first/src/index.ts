@@ -13,6 +13,7 @@ export { Cloud, CloudFake };
 export * from './components';
 export * from './services/Cloud';
 export * from './services/Cloud.fake';
+export * from './utils';
 
 export interface Options {
     manualSetup?: boolean;
