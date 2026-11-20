@@ -23,6 +23,7 @@ vi.mock('@aerogel/core', async () => {
 beforeEach(async () => {
     await Cache.clear();
 
+    vi.useFakeTimers({ toFake: ['Date'] });
     vi.restoreAllMocks();
     Events.reset();
     resetModelListeners();

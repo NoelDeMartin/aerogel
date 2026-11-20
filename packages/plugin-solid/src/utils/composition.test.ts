@@ -424,7 +424,7 @@ describe('Composition helpers', () => {
         await vi.waitFor(() => expect(loading.value).toBe(false));
 
         // Assert
-        expect(users.value.map((user) => user.url)).toEqual([alice.url]);
+        expect(modelUrls(users)).toEqual([alice.url]);
         expect(_getTrackedModelsData(User).loaded.value).toBe(false);
         expect(getTrackedModels(User).map((user) => user.url)).toEqual([alice.url]);
         expect(findSpy).toHaveBeenCalledTimes(1);
@@ -439,7 +439,7 @@ describe('Composition helpers', () => {
         await vi.waitFor(() => expect(loadingBoth.value).toBe(false));
 
         // Assert
-        expect(bothUsers.value.map((user) => user.url)).toEqual([alice.url, bob.url]);
+        expect(modelUrls(bothUsers)).toEqual([alice.url, bob.url]);
         expect(findSpy).toHaveBeenCalledTimes(2);
         expect(findSpy).toHaveBeenLastCalledWith(bob.url, { includeSoftDeleted: true });
     });
@@ -448,18 +448,7 @@ describe('Composition helpers', () => {
         // Arrange
         const alice = await User.create({ name: 'Alice', age: 23 });
         const bob = await User.create({ name: 'Bob', age: 30 });
-        let resolveBob!: () => void;
-        const originalFind = User.find.bind(User);
-
-        vi.spyOn(User, 'find').mockImplementation((url: string, options) => {
-            if (url === bob.url) {
-                return new Promise((resolve) => {
-                    resolveBob = () => resolve(originalFind(url, options));
-                });
-            }
-
-            return originalFind(url, options);
-        });
+        const { resolve } = deferUserFind([bob.requireUrl()]);
 
         // Act
         const { models: aliceModels, loading: loadingAlice } = useModels(User, { urls: [alice.requireUrl()] });
@@ -468,14 +457,14 @@ describe('Composition helpers', () => {
         await vi.waitFor(() => expect(loadingAlice.value).toBe(false));
 
         // Assert
-        expect(aliceModels.value.map((user) => user.url)).toEqual([alice.url]);
+        expect(modelUrls(aliceModels)).toEqual([alice.url]);
         expect(loadingBob.value).toBe(true);
         expect(bobModels.value).toHaveLength(0);
 
-        resolveBob();
+        resolve(bob.requireUrl());
 
         await vi.waitFor(() => expect(loadingBob.value).toBe(false));
-        expect(bobModels.value.map((user) => user.url)).toEqual([bob.url]);
+        expect(modelUrls(bobModels)).toEqual([bob.url]);
     });
 
     it('Reacts to changes in a urls ref', async () => {
@@ -500,7 +489,7 @@ describe('Composition helpers', () => {
         await vi.waitFor(() => expect(loading.value).toBe(false));
 
         // Assert
-        expect(users.value.map((user) => user.url)).toEqual([alice.url]);
+        expect(modelUrls(users)).toEqual([alice.url]);
         expect(findSpy).toHaveBeenCalledTimes(1);
         expect(findSpy).toHaveBeenCalledWith(alice.url, { includeSoftDeleted: true });
 
@@ -510,7 +499,7 @@ describe('Composition helpers', () => {
         await vi.waitFor(() => expect(loading.value).toBe(false));
 
         // Assert
-        expect(users.value.map((user) => user.url)).toEqual([alice.url, bob.url]);
+        expect(modelUrls(users)).toEqual([alice.url, bob.url]);
         expect(findSpy).toHaveBeenCalledTimes(2);
         expect(findSpy).toHaveBeenLastCalledWith(bob.url, { includeSoftDeleted: true });
 
@@ -519,7 +508,7 @@ describe('Composition helpers', () => {
         await nextTick();
 
         // Assert
-        expect(users.value.map((user) => user.url)).toEqual([bob.url]);
+        expect(modelUrls(users)).toEqual([bob.url]);
         expect(findSpy).toHaveBeenCalledTimes(2);
         expect(allSpy).not.toHaveBeenCalled();
     });
@@ -528,24 +517,7 @@ describe('Composition helpers', () => {
         // Arrange
         const alice = await User.create({ name: 'Alice', age: 23 });
         const bob = await User.create({ name: 'Bob', age: 30 });
-        let resolveAlice!: () => void;
-        let resolveBob!: () => void;
-        const originalFind = User.find.bind(User);
-        const findSpy = vi.spyOn(User, 'find').mockImplementation((url: string, options) => {
-            if (url === alice.url) {
-                return new Promise((resolve) => {
-                    resolveAlice = () => resolve(originalFind(url, options));
-                });
-            }
-
-            if (url === bob.url) {
-                return new Promise((resolve) => {
-                    resolveBob = () => resolve(originalFind(url, options));
-                });
-            }
-
-            return originalFind(url, options);
-        });
+        const { findSpy, resolve } = deferUserFind([alice.requireUrl(), bob.requireUrl()]);
         const urls = ref([alice.requireUrl()]);
 
         // Act
@@ -559,15 +531,38 @@ describe('Composition helpers', () => {
         expect(loading.value).toBe(true);
 
         // Resolve the first request while the second is still pending
-        resolveAlice();
+        resolve(alice.requireUrl());
         await findSpy.mock.results[0]?.value;
         await after(0);
 
         expect(loading.value).toBe(true);
 
-        resolveBob();
+        resolve(bob.requireUrl());
         await vi.waitFor(() => expect(loading.value).toBe(false));
 
-        expect(users.value.map((user) => user.url)).toEqual([bob.url]);
+        expect(modelUrls(users)).toEqual([bob.url]);
     });
+
+    function modelUrls(models: { value: Array<{ url: string }> }): string[] {
+        return models.value.map((model) => model.url);
+    }
+
+    function deferUserFind(urls: string[]) {
+        const resolvers = new Map<string, () => void>();
+        const originalFind = User.find.bind(User);
+        const findSpy = vi.spyOn(User, 'find').mockImplementation((url: string, options) => {
+            if (!urls.includes(url)) {
+                return originalFind(url, options);
+            }
+
+            return new Promise((resolve) => {
+                resolvers.set(url, () => resolve(originalFind(url, options)));
+            });
+        });
+
+        return {
+            findSpy,
+            resolve: (url: string) => resolvers.get(url)?.(),
+        };
+    }
 });

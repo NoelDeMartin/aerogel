@@ -31,6 +31,11 @@ import { IS_REACTIVE, RAW } from './flags';
 import { _getTrackedModelsData } from './internal';
 
 const SERIALIZED_MODEL_KEY = '@model';
+const MODEL_CHANGE_EVENTS: ModelInstanceEvent[] = ['created', 'updated', 'deleted', 'modified', 'relation-loaded'];
+
+function listenToModelChanges(modelClass: ModelConstructor, listener: () => void): Array<() => void> {
+    return MODEL_CHANGE_EVENTS.map((event) => modelClass.on(event, listener));
+}
 
 function isSerializedModelReference(value: unknown): value is { [SERIALIZED_MODEL_KEY]: SerializedModel } {
     return isPlainObject(value) && SERIALIZED_MODEL_KEY in value;
@@ -136,13 +141,9 @@ function shallowComputedModels<T>(
         const invalidate = () => dirty || ((dirty = true), trigger());
         const invalidateComputedAttributes = throttle(invalidate);
         const computeEffect = new ReactiveEffect(compute);
-        const listeners: Array<() => void> = modelClasses.flatMap((modelClass) => [
-            modelClass.on('deleted', invalidate),
-            modelClass.on('created', invalidate),
-            modelClass.on('updated', invalidate),
-            modelClass.on('modified', invalidate),
-            modelClass.on('relation-loaded', invalidate),
-        ]);
+        const listeners: Array<() => void> = modelClasses.flatMap((modelClass) =>
+            listenToModelChanges(modelClass, invalidate),
+        );
 
         computeEffect.scheduler = invalidate;
 
@@ -398,11 +399,7 @@ export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
             }
 
             for (const modelClass of getRelatedClasses(rawValue.static())) {
-                listeners.push(modelClass.on('modified', onModelUpdated));
-                listeners.push(modelClass.on('created', onModelUpdated));
-                listeners.push(modelClass.on('updated', onModelUpdated));
-                listeners.push(modelClass.on('deleted', onModelUpdated));
-                listeners.push(modelClass.on('relation-loaded', onModelUpdated));
+                listeners.push(...listenToModelChanges(modelClass, onModelUpdated));
             }
         });
 
@@ -457,7 +454,7 @@ export function computedModelAttribute<TModel extends Model, TAttribute extends 
 
                 return computedAttribute?.value;
             },
-            set: () => fail('Pending episode dates are read-only'),
+            set: () => fail('Computed model attribute ref is read-only'),
         };
     }) as TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never;
 }

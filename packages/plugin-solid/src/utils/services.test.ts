@@ -135,7 +135,6 @@ describe('Services helpers', () => {
 
     it('Replaces outdated tracked instances when loading collections', async () => {
         // Arrange
-        vi.useFakeTimers({ toFake: ['Date'] });
         vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
 
         const alice = await User.create({ name: 'Alice', age: 23 });
@@ -152,8 +151,6 @@ describe('Services helpers', () => {
         expect(getTrackedModels(User)).toHaveLength(1);
         expect(getTrackedModels(User)[0]).not.toBe(trackedAlice);
         expect(getTrackedModels(User)[0]?.name).toEqual('Alicia');
-
-        vi.useRealTimers();
     });
 
     it('Restores cached models before collections are loaded', async () => {

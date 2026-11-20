@@ -238,69 +238,9 @@ export class SolidService extends Service {
     }
 
     public async logout(force: boolean = false): Promise<void> {
-        const isCloudReady = !App.plugin('@aerogel/local-first') || !!App.service('$cloud')?.ready;
-        const hasLocalChanges = !!App.plugin('@aerogel/local-first') && !!App.service('$cloud')?.dirty;
-        const [confirmLogout, options] = !App.plugin('@aerogel/local-first')
-            ? [true, { wipeLocalData: false }]
-            : force
-              ? [true, { wipeLocalData: isCloudReady }]
-              : await UI.confirm(
-                    isCloudReady
-                        ? translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?')
-                        : translateWithDefault('solid.disconnectConfirmTitle', 'Disconnect account?'),
-                    isCloudReady
-                        ? hasLocalChanges
-                            ? translateWithDefault(
-                                  'solid.logoutConfirmMessageWithLocalChanges',
-                                  "There are some changes that haven't been synchronized and will be lost, " +
-                                      'but the rest of the data will remain in your Solid POD.',
-                              )
-                            : translateWithDefault(
-                                  'solid.logoutConfirmMessage',
-                                  'Logging out will remove all the data from this device, ' +
-                                      "but you'll still have it in your Solid POD.",
-                              )
-                        : translateWithDefault(
-                              'solid.disconnectConfirmMessage',
-                              "You'll need to introduce your credentials again to connect to your Solid POD.",
-                          ),
-                    {
-                        acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
-                        acceptVariant: 'danger',
-                        cancelText: translateWithDefault(
-                            'solid.logoutConfirmCancel',
-                            translateWithDefault('ui.cancel', 'Cancel'),
-                        ),
-                        checkboxes: isCloudReady
-                            ? hasLocalChanges
-                                ? {
-                                      wipeLocalData: {
-                                          label: translateWithDefault(
-                                              'solid.logoutConfirmWipeNotice',
-                                              "I understand that changes that haven't been synchronized will be lost.",
-                                          ),
-                                          default: false,
-                                          required: true,
-                                      },
-                                  }
-                                : undefined
-                            : {
-                                  wipeLocalData: {
-                                      label: translateWithDefault(
-                                          'solid.logoutConfirmWipe',
-                                          'Also remove all existing data',
-                                      ),
-                                      default: false,
-                                  },
-                              },
-                    },
-                );
+        const [confirmLogout, options] = await this.confirmLogout(force);
 
-        if (!confirmLogout) {
-            return;
-        }
-
-        if (!this.previousSession) {
+        if (!confirmLogout || !this.previousSession) {
             return;
         }
 
@@ -384,32 +324,18 @@ export class SolidService extends Service {
     }
 
     public async findPrivateTypeIndexes(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex>[]> {
-        const { webId, privateTypeIndexUrls } = this.requireUser();
-
-        if (options.fresh) {
-            resetAsyncMemo(`${webId}-privateTypeIndexes`);
-        }
-
-        return asyncMemo(`${webId}-privateTypeIndexes`, () =>
-            this.findTypeIndexesByUrl(privateTypeIndexUrls, 'private'),
-        );
+        return this.findTypeIndexesByVisibility('private', options);
     }
 
     public async findPublicTypeIndexes(options: { fresh?: boolean } = {}): Promise<ModelWithUrl<TypeIndex>[]> {
-        const { webId, publicTypeIndexUrls } = this.requireUser();
-
-        if (options.fresh) {
-            resetAsyncMemo(`${webId}-publicTypeIndexes`);
-        }
-
-        return asyncMemo(`${webId}-publicTypeIndexes`, () => this.findTypeIndexesByUrl(publicTypeIndexUrls, 'public'));
+        return this.findTypeIndexesByVisibility('public', options);
     }
 
     public clearTypeIndexesCache(): void {
         const { webId } = this.requireUser();
 
-        resetAsyncMemo(`${webId}-publicTypeIndexes`);
-        resetAsyncMemo(`${webId}-privateTypeIndexes`);
+        resetAsyncMemo(this.typeIndexesCacheKey(webId, 'public'));
+        resetAsyncMemo(this.typeIndexesCacheKey(webId, 'private'));
     }
 
     public async createPrivateContainer(options: CreateContainerOptions): Promise<ModelWithUrl<Container>> {
@@ -507,29 +433,115 @@ export class SolidService extends Service {
     }
 
     protected async createPublicTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
+        return this.createTypeIndex('public');
+    }
+
+    protected async createPrivateTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
+        return this.createTypeIndex('private');
+    }
+
+    private typeIndexesCacheKey(webId: string, visibility: TypeIndexRegistration): string {
+        return `${webId}-${visibility}TypeIndexes`;
+    }
+
+    private async findTypeIndexesByVisibility(
+        visibility: TypeIndexRegistration,
+        options: { fresh?: boolean } = {},
+    ): Promise<ModelWithUrl<TypeIndex>[]> {
         const user = this.requireUser();
-        const typeIndex = await TypeIndex.createPublic(user);
+        const cacheKey = this.typeIndexesCacheKey(user.webId, visibility);
+        const urls = visibility === 'public' ? user.publicTypeIndexUrls : user.privateTypeIndexUrls;
+
+        if (options.fresh) {
+            resetAsyncMemo(cacheKey);
+        }
+
+        return asyncMemo(cacheKey, () => this.findTypeIndexesByUrl(urls, visibility));
+    }
+
+    private async createTypeIndex(visibility: TypeIndexRegistration): Promise<ModelWithUrl<TypeIndex>> {
+        const user = this.requireUser();
+        const typeIndex =
+            visibility === 'public' ? await TypeIndex.createPublic(user) : await TypeIndex.createPrivate(user);
 
         return tap(typeIndex, () => {
-            user.publicTypeIndexUrls = arrayUnique([...user.publicTypeIndexUrls, typeIndex.url]);
+            if (visibility === 'public') {
+                user.publicTypeIndexUrls = arrayUnique([...user.publicTypeIndexUrls, typeIndex.url]);
+            } else {
+                user.privateTypeIndexUrls = arrayUnique([...user.privateTypeIndexUrls, typeIndex.url]);
+            }
 
-            setAsyncMemo(`${user.webId}-publicTypeIndexes`, [typeIndex]);
+            setAsyncMemo(this.typeIndexesCacheKey(user.webId, visibility), [typeIndex]);
 
             this.rememberProfile(user);
         });
     }
 
-    protected async createPrivateTypeIndex(): Promise<ModelWithUrl<TypeIndex>> {
-        const user = this.requireUser();
-        const typeIndex = await TypeIndex.createPrivate(user);
+    private async confirmLogout(force: boolean): Promise<[boolean, { wipeLocalData?: boolean }]> {
+        if (!App.plugin('@aerogel/local-first')) {
+            return [true, { wipeLocalData: false }];
+        }
 
-        return tap(typeIndex, () => {
-            user.privateTypeIndexUrls = arrayUnique([...user.privateTypeIndexUrls, typeIndex.url]);
+        const isCloudReady = !!App.service('$cloud')?.ready;
 
-            setAsyncMemo(`${user.webId}-privateTypeIndexes`, [typeIndex]);
+        if (force) {
+            return [true, { wipeLocalData: isCloudReady }];
+        }
 
-            this.rememberProfile(user);
+        const hasLocalChanges = !!App.service('$cloud')?.dirty;
+        const { title, message, checkboxes } = this.getLogoutPromptOptions(isCloudReady, hasLocalChanges);
+
+        return UI.confirm(title, message, {
+            acceptText: translateWithDefault('solid.logoutConfirmAccept', 'Log out'),
+            acceptVariant: 'danger',
+            cancelText: translateWithDefault('solid.logoutConfirmCancel', translateWithDefault('ui.cancel', 'Cancel')),
+            checkboxes,
         });
+    }
+
+    private getLogoutPromptOptions(isCloudReady: boolean, hasLocalChanges: boolean) {
+        if (!isCloudReady) {
+            return {
+                title: translateWithDefault('solid.disconnectConfirmTitle', 'Disconnect account?'),
+                message: translateWithDefault(
+                    'solid.disconnectConfirmMessage',
+                    "You'll need to introduce your credentials again to connect to your Solid POD.",
+                ),
+                checkboxes: {
+                    wipeLocalData: {
+                        label: translateWithDefault('solid.logoutConfirmWipe', 'Also remove all existing data'),
+                        default: false,
+                    },
+                },
+            };
+        }
+
+        return {
+            title: translateWithDefault('solid.logoutConfirmTitle', 'Log out from this device?'),
+            message: hasLocalChanges
+                ? translateWithDefault(
+                      'solid.logoutConfirmMessageWithLocalChanges',
+                      "There are some changes that haven't been synchronized and will be lost, " +
+                          'but the rest of the data will remain in your Solid POD.',
+                  )
+                : translateWithDefault(
+                      'solid.logoutConfirmMessage',
+                      'Logging out will remove all the data from this device, ' +
+                          "but you'll still have it in your Solid POD.",
+                  ),
+            checkboxes: hasLocalChanges
+                ? {
+                      wipeLocalData: {
+                          label: translateWithDefault(
+                              'solid.logoutConfirmWipeNotice',
+                              "I understand that changes that haven't been synchronized will be lost.",
+                          ),
+                          default: false,
+                          required: true,
+                      },
+                  }
+                : undefined,
+        };
     }
 
     protected async attemptLogin(loginUrl: string, options: LoginOptions): Promise<boolean> {
@@ -626,16 +638,18 @@ export class SolidService extends Service {
         await this.reconnect({ force: this.forcingReconnect() });
     }
 
-    private reconnectOnStartup(): boolean {
-        if (hasLocationQueryParameter('autoReconnect')) {
-            return parseBoolean(getLocationQueryParameter('autoReconnect'));
-        }
+    private getAutoReconnectParam(): boolean | null {
+        return hasLocationQueryParameter('autoReconnect')
+            ? parseBoolean(getLocationQueryParameter('autoReconnect'))
+            : null;
+    }
 
-        return this.autoReconnect;
+    private reconnectOnStartup(): boolean {
+        return this.getAutoReconnectParam() ?? this.autoReconnect;
     }
 
     private forcingReconnect(): boolean {
-        return hasLocationQueryParameter('autoReconnect') && parseBoolean(getLocationQueryParameter('autoReconnect'));
+        return this.getAutoReconnectParam() === true;
     }
 
     private async bootAuthenticator(

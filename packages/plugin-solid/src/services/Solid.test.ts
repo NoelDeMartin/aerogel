@@ -146,75 +146,59 @@ describe('Solid', () => {
         expect(solid.profiles[webId]?.privateTypeIndexUrls).toEqual(fullProfile.privateTypeIndexUrls);
     });
 
-    describe('registered models', () => {
-        let publicTypeIndex: ModelWithUrl<TypeIndex>;
-        let privateTypeIndex: ModelWithUrl<TypeIndex>;
-        let publicContainer: ModelWithUrl<Container>;
-        let privateContainer: ModelWithUrl<Container>;
+    it('finds registered containers in all type indexes', async () => {
+        // Arrange
+        const { publicTypeIndex, privateTypeIndex, publicContainer, privateContainer } = setupRegisteredModels();
+        const duplicatedContainer = new Container({ url: publicContainer.url }) as ModelWithUrl<Container>;
 
-        beforeEach(() => {
-            publicTypeIndex = new TypeIndex({ url: 'https://alice.example/settings/publicTypeIndex' }) as ModelWithUrl<TypeIndex>; // prettier-ignore
-            privateTypeIndex = new TypeIndex({ url: 'https://alice.example/settings/privateTypeIndex' }) as ModelWithUrl<TypeIndex>; // prettier-ignore
-            publicContainer = new Container({ url: 'https://alice.example/public/' }) as ModelWithUrl<Container>;
-            privateContainer = new Container({ url: 'https://alice.example/private/' }) as ModelWithUrl<Container>;
+        vi.spyOn(publicTypeIndex, 'findContainers').mockResolvedValue([publicContainer]);
+        vi.spyOn(privateTypeIndex, 'findContainers').mockResolvedValue([privateContainer, duplicatedContainer]);
 
-            vi.spyOn(solid, 'findPublicTypeIndexes').mockResolvedValue([publicTypeIndex]);
-            vi.spyOn(solid, 'findPrivateTypeIndexes').mockResolvedValue([privateTypeIndex]);
+        // Act
+        const containers = await solid.findRegisteredContainers(Container);
+
+        // Assert
+        expect(containers).toEqual([publicContainer, privateContainer]);
+    });
+
+    it.each(['public', 'private'] as const)('finds registered containers in %s type indexes', async (registration) => {
+        // Arrange
+        const { publicTypeIndex, privateTypeIndex, publicContainer, privateContainer } = setupRegisteredModels();
+        const publicFindContainers = vi.spyOn(publicTypeIndex, 'findContainers').mockResolvedValue([publicContainer]); // prettier-ignore
+        const privateFindContainers = vi.spyOn(privateTypeIndex, 'findContainers').mockResolvedValue([privateContainer]); // prettier-ignore
+
+        // Act
+        const containers = await solid.findRegisteredContainers(Container, {
+            registration,
+            containerModelClass: Container,
         });
 
-        it('finds registered containers in all type indexes', async () => {
-            // Arrange
-            const duplicatedContainer = new Container({ url: publicContainer.url }) as ModelWithUrl<Container>;
+        // Assert
+        if (registration === 'public') {
+            expect(containers).toEqual([publicContainer]);
+            expect(publicFindContainers).toHaveBeenCalledWith(Container, Container);
+            expect(privateFindContainers).not.toHaveBeenCalled();
+        } else {
+            expect(containers).toEqual([privateContainer]);
+            expect(privateFindContainers).toHaveBeenCalledWith(Container, Container);
+            expect(publicFindContainers).not.toHaveBeenCalled();
+        }
+    });
 
-            vi.spyOn(publicTypeIndex, 'findContainers').mockResolvedValue([publicContainer]);
-            vi.spyOn(privateTypeIndex, 'findContainers').mockResolvedValue([privateContainer, duplicatedContainer]);
+    it('finds registered instances', async () => {
+        // Arrange
+        const { publicTypeIndex, privateTypeIndex, publicContainer, privateContainer } = setupRegisteredModels();
 
-            // Act
-            const containers = await solid.findRegisteredContainers(Container);
+        vi.spyOn(publicTypeIndex, 'findInstances').mockResolvedValue([publicContainer]);
+        vi.spyOn(privateTypeIndex, 'findInstances').mockResolvedValue([privateContainer]);
 
-            // Assert
-            expect(containers).toEqual([publicContainer, privateContainer]);
-        });
+        // Act
+        const instances = await solid.findRegisteredInstances(Container);
+        const privateInstances = await solid.findRegisteredInstances(Container, { registration: 'private' });
 
-        it.each(['public', 'private'] as const)(
-            'finds registered containers in %s type indexes',
-            async (registration) => {
-                // Arrange
-                const publicFindContainers = vi.spyOn(publicTypeIndex, 'findContainers').mockResolvedValue([publicContainer]); // prettier-ignore
-                const privateFindContainers = vi.spyOn(privateTypeIndex, 'findContainers').mockResolvedValue([privateContainer]); // prettier-ignore
-
-                // Act
-                const containers = await solid.findRegisteredContainers(Container, {
-                    registration,
-                    containerModelClass: Container,
-                });
-
-                // Assert
-                if (registration === 'public') {
-                    expect(containers).toEqual([publicContainer]);
-                    expect(publicFindContainers).toHaveBeenCalledWith(Container, Container);
-                    expect(privateFindContainers).not.toHaveBeenCalled();
-                } else {
-                    expect(containers).toEqual([privateContainer]);
-                    expect(privateFindContainers).toHaveBeenCalledWith(Container, Container);
-                    expect(publicFindContainers).not.toHaveBeenCalled();
-                }
-            },
-        );
-
-        it('finds registered instances', async () => {
-            // Arrange
-            vi.spyOn(publicTypeIndex, 'findInstances').mockResolvedValue([publicContainer]);
-            vi.spyOn(privateTypeIndex, 'findInstances').mockResolvedValue([privateContainer]);
-
-            // Act
-            const instances = await solid.findRegisteredInstances(Container);
-            const privateInstances = await solid.findRegisteredInstances(Container, { registration: 'private' });
-
-            // Assert
-            expect(instances).toEqual([publicContainer, privateContainer]);
-            expect(privateInstances).toEqual([privateContainer]);
-        });
+        // Assert
+        expect(instances).toEqual([publicContainer, privateContainer]);
+        expect(privateInstances).toEqual([privateContainer]);
     });
 
     it.each(['public', 'private'] as const)('creates %s containers', async (visibility) => {
@@ -251,4 +235,20 @@ describe('Solid', () => {
             expect(updatePublicPermissions).not.toHaveBeenCalled();
         }
     });
+
+    function setupRegisteredModels() {
+        const publicTypeIndex = new TypeIndex({
+            url: 'https://alice.example/settings/publicTypeIndex',
+        }) as ModelWithUrl<TypeIndex>;
+        const privateTypeIndex = new TypeIndex({
+            url: 'https://alice.example/settings/privateTypeIndex',
+        }) as ModelWithUrl<TypeIndex>;
+        const publicContainer = new Container({ url: 'https://alice.example/public/' }) as ModelWithUrl<Container>;
+        const privateContainer = new Container({ url: 'https://alice.example/private/' }) as ModelWithUrl<Container>;
+
+        vi.spyOn(solid, 'findPublicTypeIndexes').mockResolvedValue([publicTypeIndex]);
+        vi.spyOn(solid, 'findPrivateTypeIndexes').mockResolvedValue([privateTypeIndex]);
+
+        return { publicTypeIndex, privateTypeIndex, publicContainer, privateContainer };
+    }
 });

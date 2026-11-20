@@ -9,24 +9,14 @@ import { describe, expect, it, vi } from 'vite-plus/test';
 import { createMemoryHistory, createRouter } from 'vue-router';
 
 import { RouterService } from './Router';
+import type { RouteBindings } from './Router';
 
 describe('Router', () => {
     it('resolves model bindings before entering routes', async () => {
         // Arrange
         const post = await Post.create({});
         const slug = post.requireSlug();
-        const router = new RouterService();
-
-        App.ready.resolve();
-        router.use(
-            createRouter({
-                history: createMemoryHistory(),
-                routes: [{ path: '/posts/:post', component: { render: noop } }],
-            }),
-            {
-                bindings: { post: Post },
-            },
-        );
+        const router = createTestRouter('/posts/:post', { post: Post });
 
         // Act
         await router.push(`/posts/${slug}`);
@@ -43,21 +33,10 @@ describe('Router', () => {
             childSlug,
             postUrl: params.post?.url,
         }));
-        const router = new RouterService();
-
-        App.ready.resolve();
-        router.use(
-            createRouter({
-                history: createMemoryHistory(),
-                routes: [{ path: '/posts/:post/:child', component: { render: noop } }],
-            }),
-            {
-                bindings: {
-                    post: Post,
-                    child: childBinding,
-                },
-            },
-        );
+        const router = createTestRouter('/posts/:post/:child', {
+            post: Post,
+            child: childBinding,
+        });
 
         // Act
         await router.push(`/posts/${slug}/hello`);
@@ -75,21 +54,10 @@ describe('Router', () => {
     it('skips child bindings when a parent binding is not found', async () => {
         // Arrange
         const childBinding = vi.fn();
-        const router = new RouterService();
-
-        App.ready.resolve();
-        router.use(
-            createRouter({
-                history: createMemoryHistory(),
-                routes: [{ path: '/posts/:post/:child', component: { render: noop } }],
-            }),
-            {
-                bindings: {
-                    post: Post,
-                    child: childBinding,
-                },
-            },
-        );
+        const router = createTestRouter('/posts/:post/:child', {
+            post: Post,
+            child: childBinding,
+        });
 
         // Act
         await router.push('/posts/missing/hello');
@@ -108,21 +76,10 @@ describe('Router', () => {
         const chapter = await book.relatedChapters.create({});
         const bookSlug = book.requireSlug();
         const chapterSlug = chapter.requireSlug();
-        const router = new RouterService();
-
-        App.ready.resolve();
-        router.use(
-            createRouter({
-                history: createMemoryHistory(),
-                routes: [{ path: '/books/:book/:chapter', component: { render: noop } }],
-            }),
-            {
-                bindings: {
-                    book: Book,
-                    chapter: Chapter,
-                },
-            },
-        );
+        const router = createTestRouter('/books/:book/:chapter', {
+            book: Book,
+            chapter: Chapter,
+        });
 
         // Act
         await router.push(`/books/${bookSlug}/${chapterSlug}`);
@@ -135,4 +92,19 @@ describe('Router', () => {
             (router.routesParams.value[`/books/${bookSlug}/${chapterSlug}`]?.chapter as Chapter | undefined)?.url,
         ).toEqual(chapter.url);
     });
+
+    function createTestRouter(path: string, bindings: RouteBindings): RouterService {
+        const router = new RouterService();
+
+        App.ready.resolve();
+        router.use(
+            createRouter({
+                history: createMemoryHistory(),
+                routes: [{ path, component: { render: noop } }],
+            }),
+            { bindings },
+        );
+
+        return router;
+    }
 });
