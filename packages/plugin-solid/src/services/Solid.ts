@@ -359,14 +359,19 @@ export class SolidService extends Service {
     }
 
     public async readFileIfExists(url: string, options: ReadFileOptions = {}): Promise<Blob | null> {
-        const localFile = await getLocalEngine()?.getFile(url);
+        const localEngine = getLocalEngine();
+        const localFile = await localEngine?.getLocalFile(url);
 
         if (localFile?.deleted) {
             return null;
         }
 
-        if (localFile?.blob) {
-            return localFile.blob;
+        if (localEngine && localFile?.hasLocalContents) {
+            const blob = await localEngine.readFileIfExists(url);
+
+            if (blob) {
+                return blob;
+            }
         }
 
         if (isLocalUrl(url)) {

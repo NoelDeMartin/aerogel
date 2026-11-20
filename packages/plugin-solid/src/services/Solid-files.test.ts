@@ -174,7 +174,7 @@ describe('Solid files', () => {
         await gallery.relatedContainer.deleteFile(url);
 
         // Assert
-        expect(await engine.getFile(url)).toBeNull();
+        expect(await engine.getLocalFile(url)).toBeNull();
         expect(await NetworkCache.get(url)).toBeNull();
         expect(deletedUrls).toEqual([url]);
     });
