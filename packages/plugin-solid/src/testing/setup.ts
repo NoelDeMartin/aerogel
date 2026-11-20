@@ -1,13 +1,22 @@
 import 'fake-indexeddb/auto';
-import { Cache, Events } from '@aerogel/core';
+import { Cache, Events, NetworkCache } from '@aerogel/core';
+import FakeCacheStorage from '@aerogel/plugin-solid/testing/stubs/FakeCacheStorage';
 import Book from '@aerogel/plugin-solid/testing/stubs/models/Book';
 import Chapter from '@aerogel/plugin-solid/testing/stubs/models/Chapter';
+import Gallery from '@aerogel/plugin-solid/testing/stubs/models/Gallery';
 import Item from '@aerogel/plugin-solid/testing/stubs/models/Item';
 import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
 import Shelf from '@aerogel/plugin-solid/testing/stubs/models/Shelf';
 import Task from '@aerogel/plugin-solid/testing/stubs/models/Task';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
-import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
+import {
+    InMemoryEngine,
+    bootCoreModels,
+    bootModels,
+    resetModelListeners,
+    setEngine,
+    setRemoteEngine,
+} from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
 
 vi.mock('@aerogel/core', async () => {
@@ -21,13 +30,16 @@ vi.mock('@aerogel/core', async () => {
 });
 
 beforeEach(async () => {
-    await Cache.clear();
-
+    vi.stubGlobal('caches', new FakeCacheStorage());
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.restoreAllMocks();
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });
-    bootModels({ Book, Chapter, Item, Post, Shelf, Task, User }, { reset: true });
+    bootModels({ Book, Chapter, Gallery, Item, Post, Shelf, Task, User }, { reset: true });
     setEngine(new InMemoryEngine());
+    setRemoteEngine(null);
+
+    await Cache.clear();
+    await NetworkCache.clear();
 });

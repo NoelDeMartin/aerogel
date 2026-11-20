@@ -139,6 +139,22 @@ cloud:
         resource: resource
         delete: Delete
         restore: Restore
+    fileConflict:
+        modifiedRemotelyTitle: Changed on another device
+        deletedRemotelyTitle: Deleted on another device
+        modifiedRemotely: The file at {file} was changed on another device, but it also has changes on this device that have not been synchronized yet. Which version do you want to keep?
+        deletedRemotely: The file at {file} was deleted on another device, but it has changes on this device that have not been synchronized yet. Do you want to delete it, or restore it with your changes?
+        deletedLocally: You deleted the file at {file} on this device, but it was changed on another device in the meantime. Do you want to delete it, or restore it with those changes?
+        keepLocal: Keep this version
+        keepRemote: Keep the other version
+        download: Download file
+        downloadLocal: Download this version
+        downloadRemote: Download the other version
+        downloadFailed: Download failed
+        localSuffix: this device
+        remoteSuffix: other device
+        delete: Delete
+        restore: Restore
 
 solid:
     loginOngoing: Logging in...

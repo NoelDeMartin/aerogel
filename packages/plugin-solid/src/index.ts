@@ -31,6 +31,7 @@ function setupTestingRuntime(): void {
 
 export * from './auth';
 export * from './components';
+export * from './composables';
 export * from './errors';
 export * from './forms';
 export * from './services';

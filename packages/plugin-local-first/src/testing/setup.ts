@@ -1,5 +1,6 @@
 import 'soukai-bis/patch-zod';
-import { Events, resetPiniaStore } from '@aerogel/core';
+import { Events, NetworkCache, resetPiniaStore } from '@aerogel/core';
+import FakeCacheStorage from '@aerogel/plugin-local-first/testing/stubs/FakeCacheStorage';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
 import { resetModelsState } from '@aerogel/plugin-solid';
@@ -25,7 +26,8 @@ vi.mock('@aerogel/core', async () => {
     return original;
 });
 
-beforeEach(() => {
+beforeEach(async () => {
+    vi.stubGlobal('caches', new FakeCacheStorage());
     vi.useFakeTimers({ toFake: ['Date'] });
     Events.reset();
     FakeLocalStorage.reset();
@@ -37,4 +39,6 @@ beforeEach(() => {
     bootModels({ Post, PostsCollection }, { reset: true });
     setEngine(new InMemoryEngine());
     setRemoteEngine(new SolidEngine({ fetch: FakeServer.fetch }));
+
+    await NetworkCache.clear();
 });

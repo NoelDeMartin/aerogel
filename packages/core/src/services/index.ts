@@ -32,6 +32,7 @@ const defaultServices = {
     $browser: Browser,
     $cache: Cache,
     $events: Events,
+    $networkCache: NetworkCache,
     $storage: Storage,
 };
 

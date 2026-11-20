@@ -1,53 +1,19 @@
 import { Errors, Events, UI } from '@aerogel/core';
-import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
-import type { ConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
+import type { ConflictHandler, DocumentConflict } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
+import { fakeSync, invadedCloud, logIn, user } from '@aerogel/plugin-local-first/services/testing/helpers';
+import type { InvadedCloud } from '@aerogel/plugin-local-first/services/testing/helpers';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
 import { Solid, useModels, useSingletonModel } from '@aerogel/plugin-solid';
-import type { Authenticator } from '@aerogel/plugin-solid';
 import { SolidDocument } from '@noeldemartin/solid-utils';
-import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
-import { after, invade } from '@noeldemartin/utils';
-import type { ListenersManager } from '@noeldemartin/utils';
-import { Sync, TypeIndex, TypeRegistration, requireEngine } from 'soukai-bis';
-import type {
-    Model,
-    ModelConstructor,
-    ModelWithUrl,
-    SyncConfig,
-    ExternalSource,
-    SyncJobListener,
-    SyncJobResult,
-} from 'soukai-bis';
+import { after } from '@noeldemartin/utils';
+import { TypeIndex, TypeRegistration, requireEngine } from 'soukai-bis';
+import type { ExternalSource, Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
-function invadedCloud(cloud: CloudService) {
-    return invade(cloud, [
-        'getSyncConfig',
-        'migrateLocalUrls',
-        'refreshLocalChanges',
-        'serializePersistedState',
-        'deserializePersistedState',
-    ]);
-}
-
 describe('Cloud', () => {
-    let cloud: ReturnType<typeof invadedCloud>;
-
-    const user: CompleteSolidUserProfile = {
-        webId: 'https://alice.example/profile/card#me',
-        shallow: false,
-        cloakedDocumentUrls: [],
-        publicTypeIndexUrls: [],
-        privateTypeIndexUrls: [],
-        storageUrls: ['https://alice.example/'],
-        writableProfileUrl: 'https://alice.example/profile/card',
-    };
-
-    function logIn(): void {
-        Solid.setState({ session: { user, loginUrl: user.webId, authenticator: {} as Authenticator } });
-    }
+    let cloud: InvadedCloud;
 
     function fakeTypeIndex(registrations: [ModelConstructor, string][] = []): ModelWithUrl<TypeIndex> {
         const typeIndex = new TypeIndex({ url: 'https://alice.example/settings/privateTypeIndex' }, { exists: true });
@@ -70,52 +36,7 @@ describe('Cloud', () => {
         });
     }
 
-    function fakeSync(
-        options: {
-            typeIndexes?: TypeIndex[];
-            createdTypeIndex?: TypeIndex;
-            failedRegistrations?: ModelConstructor[];
-            failedExternalSources?: [ExternalSource, unknown][];
-            onRun?: () => Promise<unknown>;
-        } = {},
-    ): void {
-        vi.spyOn(cloud, 'getSyncConfig').mockResolvedValue({
-            userProfile: user,
-            applicationModels: [],
-            privateTypeIndexes: options.typeIndexes ?? [],
-        } as unknown as SyncConfig);
-        vi.spyOn(Sync.prototype as unknown as { run(): Promise<SyncJobResult> }, 'run').mockImplementation(
-            async function (this: Sync) {
-                const { _listeners: listeners } = this as unknown as { _listeners: ListenersManager<SyncJobListener> };
-
-                await options.onRun?.();
-
-                if (options.createdTypeIndex) {
-                    await listeners.emit('onModelsRegistered', {
-                        typeIndex: options.createdTypeIndex,
-                        models: [Post],
-                        mode: 'container',
-                    });
-                }
-
-                if (options.failedRegistrations) {
-                    await listeners.emit('onModelsRegistrationFailed', {
-                        models: options.failedRegistrations,
-                        error: new Error('Registration failed'),
-                        mode: 'container',
-                    });
-                }
-
-                for (const [source, error] of options.failedExternalSources ?? []) {
-                    await listeners.emit('onExternalSourceFailed', source, error);
-                }
-
-                return { syncedDocumentUrls: new Set(), documentsWithErrors: new Set() };
-            },
-        );
-    }
-
-    beforeEach(() => (cloud = invadedCloud(new CloudService())));
+    beforeEach(() => (cloud = invadedCloud()));
 
     it('counts local changes in registered containers', async () => {
         // Arrange
@@ -183,7 +104,7 @@ describe('Cloud', () => {
     it('pushes local changes automatically', async () => {
         // Arrange
         logIn();
-        fakeSync();
+        fakeSync(cloud);
 
         cloud.setState({
             ready: true,
@@ -209,7 +130,7 @@ describe('Cloud', () => {
     it('does not push local changes left by the previous sync', async () => {
         // Arrange
         logIn();
-        fakeSync();
+        fakeSync(cloud);
 
         cloud.setState({
             ready: true,
@@ -293,7 +214,7 @@ describe('Cloud', () => {
     it('reads models from containers registered during sync', async () => {
         // Arrange
         logIn();
-        fakeSync({ typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
+        fakeSync(cloud, { typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
 
         cloud.setState({
             ready: true,
@@ -324,7 +245,7 @@ describe('Cloud', () => {
     it('reads models from type indexes created during sync', async () => {
         // Arrange
         logIn();
-        fakeSync({ createdTypeIndex: fakeTypeIndex([[Post, 'https://alice.example/blog/']]) });
+        fakeSync(cloud, { createdTypeIndex: fakeTypeIndex([[Post, 'https://alice.example/blog/']]) });
 
         cloud.setState({
             ready: true,
@@ -345,7 +266,7 @@ describe('Cloud', () => {
     it('keeps the default container when registration fails', async () => {
         // Arrange
         logIn();
-        fakeSync({
+        fakeSync(cloud, {
             typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])],
             failedRegistrations: [Post],
         });
@@ -382,7 +303,7 @@ describe('Cloud', () => {
     it('reads models from all registered containers', async () => {
         // Arrange
         logIn();
-        fakeSync({
+        fakeSync(cloud, {
             typeIndexes: [
                 fakeTypeIndex([
                     [Post, 'https://alice.example/blog/'],
@@ -443,7 +364,7 @@ describe('Cloud', () => {
             }),
         ];
 
-        fakeSync({ typeIndexes: [typeIndex] });
+        fakeSync(cloud, { typeIndexes: [typeIndex] });
 
         const post = await new Post({ title: 'Post' }).save({ containerUrl: 'https://alice.example/posts/' });
 
@@ -489,7 +410,7 @@ describe('Cloud', () => {
     it('reads singleton models from registered containers', async () => {
         // Arrange
         logIn();
-        fakeSync({ typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
+        fakeSync(cloud, { typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
 
         cloud.setState({
             ready: true,
@@ -533,7 +454,7 @@ describe('Cloud', () => {
             }),
         ];
 
-        fakeSync({ typeIndexes: [typeIndex] });
+        fakeSync(cloud, { typeIndexes: [typeIndex] });
 
         cloud.setState({
             ready: true,
@@ -575,7 +496,7 @@ describe('Cloud', () => {
             }),
         ];
 
-        fakeSync({ typeIndexes: [typeIndex] });
+        fakeSync(cloud, { typeIndexes: [typeIndex] });
 
         cloud.setState({
             ready: true,
@@ -626,7 +547,7 @@ describe('Cloud', () => {
     it('reads models created in unlisted containers', async () => {
         // Arrange
         logIn();
-        fakeSync();
+        fakeSync(cloud);
 
         cloud.setState({
             ready: true,
@@ -691,7 +612,7 @@ describe('Cloud', () => {
     it('forgets unlisted containers once they are registered', async () => {
         // Arrange
         logIn();
-        fakeSync({ typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
+        fakeSync(cloud, { typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
 
         cloud.setState({
             ready: true,
@@ -716,7 +637,7 @@ describe('Cloud', () => {
         let post: Post | null = null;
 
         logIn();
-        fakeSync({
+        fakeSync(cloud, {
             onRun: async () => {
                 runs++;
                 post ??= await Post.create({ title: 'During sync' });
@@ -743,7 +664,7 @@ describe('Cloud', () => {
         let runs = 0;
 
         logIn();
-        fakeSync({ onRun: async () => runs++ });
+        fakeSync(cloud, { onRun: async () => runs++ });
 
         cloud.setState({
             ready: true,
@@ -828,11 +749,14 @@ describe('Cloud', () => {
             .mockResolvedValue({ dismissed: false, response: 'delete' } as { dismissed: boolean });
         const config = await cloud.getSyncConfig();
 
-        cloud.conflictHandler = (_, model) => ({
-            title: 'Post deleted',
-            message: `*${(model as Post).title}* was deleted on another device.`,
-            restoreText: 'Keep it',
-        });
+        cloud.conflictHandler = (conflict) =>
+            conflict.resourceType === 'document'
+                ? {
+                      title: 'Post deleted',
+                      message: `*${(conflict.model as Post).title}* was deleted on another device.`,
+                      restoreText: 'Keep it',
+                  }
+                : undefined;
 
         // Act
         const resolution = await config.resolveDeletionConflict?.({
@@ -879,9 +803,12 @@ describe('Cloud', () => {
         });
 
         // Assert
+        const [conflict] = handler.mock.calls[0] ?? [];
+
         expect(resolution).toEqual('restore');
         expect(modal).not.toHaveBeenCalled();
-        expect(handler.mock.calls[0]?.[1]?.url).toEqual(post.url);
+        expect(conflict).toMatchObject({ resourceType: 'document', type: 'deleted-remotely', resourceUrl: post.url });
+        expect((conflict as DocumentConflict | undefined)?.model?.url).toEqual(post.url);
     });
 
     describe('external sources', () => {
@@ -966,7 +893,7 @@ describe('Cloud', () => {
             const listener = vi.fn();
 
             logIn();
-            fakeSync({ failedExternalSources: [[source, error]] });
+            fakeSync(cloud, { failedExternalSources: [[source, error]] });
             Events.on('cloud:sync-external-source-failed', listener);
 
             cloud.setState({ ready: true, status: CloudStatus.Online });
@@ -1047,7 +974,7 @@ describe('Cloud', () => {
             const syncPaused = new Promise<void>((resolve) => (resumeSync = resolve));
 
             logIn();
-            fakeSync({
+            fakeSync(cloud, {
                 onRun: async () => {
                     await syncPaused;
 

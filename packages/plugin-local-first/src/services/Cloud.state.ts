@@ -3,7 +3,7 @@ import type { ErrorSource } from '@aerogel/core';
 import { arrayFilter } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
 import { getBootedModels, getExternalSourceUrl } from 'soukai-bis';
-import type { ExternalSource, ModelConstructor, Sync } from 'soukai-bis';
+import type { ExternalSource, FilesStrategy, ModelConstructor, Sync } from 'soukai-bis';
 
 type PersistedExternalSource =
     | { containerUrl: string; instanceUrl?: undefined; modelNames: string[] }
@@ -46,11 +46,20 @@ export const CloudStatus = {
     Syncing: 'syncing',
 } as const;
 
+export interface CloudFilesConfig {
+    strategy?: FilesStrategy;
+    fields?: string[];
+    availableOffline?: boolean;
+}
+
+export type CloudFiles = boolean | FilesStrategy | CloudFilesConfig | CloudFilesConfig[];
+
 export interface CloudModelRegistration {
     modelClass: ModelConstructor;
     path?: string;
     public?: boolean;
     singleton?: boolean;
+    files?: CloudFiles;
 }
 
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];

@@ -1,10 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vite-plus/test';
+import { describe, expect, it } from 'vite-plus/test';
 
 import Events, { EventListenerPriorities } from './Events';
 
 describe('Events', () => {
-    beforeEach(() => void Events.reset());
-
     it('registers listeners', async () => {
         // Arrange
         let counter = 0;

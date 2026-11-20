@@ -1,7 +1,22 @@
-import { Browser, Errors, EventListenerPriorities, Events, UI, translateWithDefault } from '@aerogel/core';
+import {
+    Browser,
+    Errors,
+    EventListenerPriorities,
+    Events,
+    NetworkCache,
+    UI,
+    translateWithDefault,
+} from '@aerogel/core';
 import type { ButtonVariant } from '@aerogel/core';
 import DeletionConflictModal from '@aerogel/plugin-local-first/components/DeletionConflictModal.vue';
-import { Solid, refreshTrackedModels, setTrackedModelsDiscoveryUrls, trackModels } from '@aerogel/plugin-solid';
+import FileConflictModal from '@aerogel/plugin-local-first/components/FileConflictModal.vue';
+import {
+    Solid,
+    fileResponse,
+    refreshTrackedModels,
+    setTrackedModelsDiscoveryUrls,
+    trackModels,
+} from '@aerogel/plugin-solid';
 import {
     Semaphore,
     after,
@@ -13,6 +28,7 @@ import {
     hasLocationQueryParameter,
     isArray,
     isInstanceOf,
+    isObject,
     isTesting,
     objectFromEntries,
     parseBoolean,
@@ -21,6 +37,7 @@ import {
 } from '@noeldemartin/utils';
 import {
     DocumentNotFound,
+    FilesStrategies,
     MigrateLocalUrls,
     Model,
     Sync,
@@ -37,9 +54,13 @@ import {
 import type {
     DeletionConflict,
     DeletionConflictResolution,
+    FileConflict,
+    FileConflictResolution,
+    FilePushedEvent,
     JobListener,
     ModelConstructor,
     SyncConfig,
+    SyncFilesConfig,
     ExternalSource,
     LocalChangeset,
     TypeIndex,
@@ -47,12 +68,16 @@ import type {
 import { watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
+import type { CloudFiles } from './Cloud.state';
+
+export type { CloudFiles, CloudFilesConfig } from './Cloud.state';
 
 export interface RegisterOptions {
     path?: string;
     depth?: number;
     public?: boolean;
     singleton?: boolean;
+    files?: CloudFiles;
 }
 
 export interface SyncOptions extends JobListener {
@@ -72,12 +97,36 @@ export interface DeletionConflictPrompt {
     restoreVariant?: ButtonVariant;
 }
 
-export type ConflictHandlerResult = DeletionConflictResolution | DeletionConflictPrompt | undefined;
+export interface FileConflictPrompt {
+    title?: string;
+    message?: string;
+    keepLocalText?: string;
+    keepLocalVariant?: ButtonVariant;
+    keepRemoteText?: string;
+    keepRemoteVariant?: ButtonVariant;
+    downloadLocalText?: string;
+    downloadRemoteText?: string;
+}
 
-export type ConflictHandler = (
-    conflict: DeletionConflict,
-    model: Model | null,
-) => ConflictHandlerResult | Promise<ConflictHandlerResult>;
+export interface DocumentConflict extends DeletionConflict {
+    resourceType: 'document';
+    model: Model | null;
+}
+
+export interface CloudFileConflict extends FileConflict {
+    resourceType: 'file';
+}
+
+export type CloudConflict = DocumentConflict | CloudFileConflict;
+
+export type ConflictHandlerResult =
+    | DeletionConflictResolution
+    | DeletionConflictPrompt
+    | FileConflictResolution
+    | FileConflictPrompt
+    | undefined;
+
+export type ConflictHandler = (conflict: CloudConflict) => ConflictHandlerResult | Promise<ConflictHandlerResult>;
 
 export interface ModelContainerUrls {
     default: string;
@@ -179,9 +228,13 @@ export class CloudService extends Service {
 
                     typeIndexes = [...(config.publicTypeIndexes ?? []), ...(config.privateTypeIndexes ?? [])];
 
-                    this.syncJob = new Sync(config);
+                    const pushedFileUrls = new Set<string>();
 
-                    this.syncJob.listeners.add({
+                    const syncJob = new Sync(config);
+
+                    this.syncJob = syncJob;
+
+                    syncJob.listeners.add({
                         ...options,
                         onModelsRegistered: ({ typeIndex }) => {
                             Solid.clearTypeIndexesCache();
@@ -193,11 +246,20 @@ export class CloudService extends Service {
                         },
                         onExternalSourceFailed: (source, error) =>
                             Events.emit('cloud:sync-external-source-failed', { source, error }),
+                        onFilePushed: (event) => {
+                            pushedFileUrls.add(event.url);
+
+                            return this.onFilePushed(event);
+                        },
                     });
 
-                    await dispatch(this.syncJob);
+                    try {
+                        await dispatch(syncJob);
+                    } finally {
+                        await this.forgetSyncedFiles(syncJob.syncedFileUrls, pushedFileUrls);
+                    }
 
-                    if (this.syncJob.cancelled) {
+                    if (syncJob.cancelled) {
                         this.previousSyncPendingChangesets = await this.getLocalChangesets();
 
                         return;
@@ -267,11 +329,16 @@ export class CloudService extends Service {
         trackLocalChanges(modelClass);
 
         if (options.register) {
-            const { path, public: isPublic, singleton } = typeof options.register === 'object' ? options.register : {};
+            const {
+                path,
+                public: isPublic,
+                singleton,
+                files,
+            } = typeof options.register === 'object' ? options.register : {};
 
             this.setupRemoteCollection(modelClass, path);
 
-            this.modelRegistrations.push({ modelClass, path, public: isPublic, singleton });
+            this.modelRegistrations.push({ modelClass, path, public: isPublic, singleton, files });
 
             await this.initializeTrackedModels(modelClass, options.register);
         }
@@ -389,13 +456,19 @@ export class CloudService extends Service {
             createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
             resolveDeletionConflict: (conflict) =>
                 this.resolveDeletionConflict(conflict, applicationModels as ModelConstructor[]),
+            resolveFileConflict: (conflict) => this.resolveFileConflict(conflict),
             applicationModels: applicationModels.map((modelClass) => {
                 const registration = this.modelRegistrations.find(
                     (modelRegistration) => modelRegistration.modelClass === modelClass,
                 );
 
+                const files = this.normalizeCloudFiles(
+                    registration?.files ?? (typeof modelClass.cloud === 'object' ? modelClass.cloud.files : undefined),
+                );
+
                 return {
                     model: modelClass as ModelConstructor,
+                    files: files.length > 0 ? files : undefined,
                     registration: registration
                         ? {
                               path: registration.path,
@@ -431,13 +504,13 @@ export class CloudService extends Service {
             ),
         );
         const model = models.find((documentModel) => !!documentModel) ?? null;
-        const result = await this.conflictHandler?.(conflict, model);
+        const result = await this.conflictHandler?.({ resourceType: 'document', ...conflict, model });
 
         if (result === 'delete' || result === 'restore') {
             return result;
         }
 
-        return this.promptDeletionConflict(conflict, model, result ?? null);
+        return this.promptDeletionConflict(conflict, model, isObject(result) ? result : null);
     }
 
     protected async promptDeletionConflict(
@@ -450,6 +523,27 @@ export class CloudService extends Service {
         };
 
         return response ?? 'delete';
+    }
+
+    protected async resolveFileConflict(conflict: FileConflict): Promise<FileConflictResolution> {
+        const result = await this.conflictHandler?.({ resourceType: 'file', ...conflict });
+
+        if (result === 'keep-local' || result === 'keep-remote') {
+            return result;
+        }
+
+        return this.promptFileConflict(conflict, isObject(result) ? result : null);
+    }
+
+    protected async promptFileConflict(
+        conflict: FileConflict,
+        prompt: FileConflictPrompt | null,
+    ): Promise<FileConflictResolution> {
+        const { response } = (await UI.modal(FileConflictModal, { conflict, prompt })) as unknown as {
+            response: FileConflictResolution | null;
+        };
+
+        return response ?? 'keep-local';
     }
 
     protected async setReady(ready: boolean): Promise<void> {
@@ -761,6 +855,25 @@ export class CloudService extends Service {
         );
     }
 
+    private normalizeCloudFiles(files: CloudFiles | undefined): SyncFilesConfig[] {
+        if (!files) {
+            return [];
+        }
+
+        if (files === true) {
+            return [{ strategy: FilesStrategies.Container }];
+        }
+
+        if (typeof files === 'string') {
+            return [{ strategy: files }];
+        }
+
+        return (isArray(files) ? files : [files]).map((config) => ({
+            ...config,
+            strategy: config.strategy ?? (config.fields ? FilesStrategies.Document : FilesStrategies.Container),
+        }));
+    }
+
     private async trackModels(): Promise<void> {
         for (const modelClass of getBootedModels().values()) {
             if (isCoreModel(modelClass)) {
@@ -793,6 +906,21 @@ export class CloudService extends Service {
 
             return [];
         }
+    }
+
+    protected async forgetSyncedFiles(syncedFileUrls: Set<string>, pushedFileUrls: Set<string>): Promise<void> {
+        for (const url of syncedFileUrls) {
+            if (pushedFileUrls.has(url)) {
+                continue;
+            }
+
+            await NetworkCache.delete(url);
+            await Events.emit('solid:file-updated', { url });
+        }
+    }
+
+    protected async onFilePushed(event: FilePushedEvent): Promise<void> {
+        await NetworkCache.store(event.url, fileResponse(event.blob));
     }
 
     private onModelCreated(model: Model): void {
