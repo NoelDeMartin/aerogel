@@ -36,7 +36,7 @@ const meta: Meta<AccountStoryArgs> = {
 export const UpToDate: Story = {};
 
 export const LocalChanges: Story = {
-    args: { localChanges: 3 },
+    args: { localChangesCount: 3 },
 };
 
 export const Syncing: Story = {

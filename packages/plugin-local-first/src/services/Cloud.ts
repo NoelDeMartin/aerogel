@@ -18,57 +18,46 @@ import {
     trackModels,
 } from '@aerogel/plugin-solid';
 import {
-    Semaphore,
     after,
     arrayUnique,
-    coalesce,
-    debounce,
     facade,
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isArray,
-    isInstanceOf,
     isObject,
     isTesting,
-    objectFromEntries,
     parseBoolean,
     required,
-    silenced,
 } from '@noeldemartin/utils';
 import {
-    DocumentNotFound,
     FilesSyncStrategies,
-    MigrateLocalUrls,
-    Model,
     Sync,
-    dispatch,
+    assertExternalSourceModelsBooted,
+    deleteExternalSourceData,
     getBootedModels,
     getExternalSourceUrl,
-    getRemoteContainerUrl,
     isCoreModel,
     isInExternalSource,
-    requireLocalEngine,
-    isLocalUrl,
-    trackLocalChanges,
 } from 'soukai-bis';
 import type {
     DeletionConflict,
     DeletionConflictResolution,
+    ExternalSource,
     FileConflict,
     FileConflictResolution,
     FilePushedEvent,
-    JobListener,
     ModelConstructor,
-    SyncConfig,
+    ModelsRegistrationFailedEvent,
+    SyncApplicationModel,
+    SyncCompletedEvent,
     SyncFilesConfig,
-    ExternalSource,
-    LocalChangeset,
-    TypeIndex,
+    SyncProperties,
+    SyncSession,
 } from 'soukai-bis';
-import { watchEffect } from 'vue';
+import { watch, watchEffect } from 'vue';
 
 import Service, { CloudStatus } from './Cloud.state';
-import type { CloudFiles } from './Cloud.state';
+import type { CloudFiles, TCloudStatus } from './Cloud.state';
 
 export type { CloudFiles, CloudFilesConfig } from './Cloud.state';
 
@@ -80,9 +69,7 @@ export interface RegisterOptions {
     files?: CloudFiles;
 }
 
-export interface SyncOptions extends JobListener {
-    model?: Model;
-    models?: Model[];
+export interface SyncOptions {
     refreshUserProfile?: boolean;
 }
 
@@ -110,7 +97,6 @@ export interface FileConflictPrompt {
 
 export interface DocumentConflict extends DeletionConflict {
     resourceType: 'document';
-    model: Model | null;
 }
 
 export interface CloudFileConflict extends FileConflict {
@@ -128,13 +114,6 @@ export type ConflictHandlerResult =
 
 export type ConflictHandler = (conflict: CloudConflict) => ConflictHandlerResult | Promise<ConflictHandlerResult>;
 
-export interface ModelContainerUrls {
-    default: string;
-    registered: string[];
-    unlisted: string[];
-    instances: string[];
-}
-
 export interface ExternalSourceFailedPayload {
     source: ExternalSource;
     error: unknown;
@@ -142,31 +121,19 @@ export interface ExternalSourceFailedPayload {
 
 export class CloudService extends Service {
     public conflictHandler: ConflictHandler | null = null;
-    protected asyncLock: Semaphore = new Semaphore();
     protected pollingInterval: ReturnType<typeof setInterval> | null = null;
-    protected previousSyncPendingChangesets: LocalChangeset[] = [];
-    private pushLocalChanges = debounce(() => this.syncIfOnline(), 1000);
-    private refreshLocalChanges = coalesce(() => this.performLocalChangesRefresh());
-
-    public async whenReady<T>(callback: () => T): Promise<T> {
-        if (this.ready) {
-            return callback();
-        }
-
-        return new Promise((resolve) => {
-            const onReady = () => resolve(callback());
-
-            Events.once('cloud:ready', onReady);
-        });
-    }
+    private registeredModels = new Set<ModelConstructor>();
+    private syncModels: SyncApplicationModel[] = [];
+    private syncStartedAt = 0;
+    private syncInProgress = false;
+    private registrationError: unknown = null;
 
     public async setup(): Promise<void> {
         this.setupOngoing = true;
 
         try {
             await Events.emit('cloud:backup-started');
-            await this.migrateLocalUrls();
-            await this.setReady(true);
+            await this.requireSyncSession().setup();
             await this.sync();
             await Events.emit('cloud:backup-completed');
         } finally {
@@ -178,187 +145,36 @@ export class CloudService extends Service {
         this.setupDismissed = true;
     }
 
-    public async syncIfOnline(options?: SyncOptions): Promise<void>;
-    public async syncIfOnline(model: Model): Promise<void>;
-    public async syncIfOnline(models: Model[]): Promise<void>;
-    public async syncIfOnline(config: SyncOptions | Model | Model[] = {}): Promise<void> {
-        if (!this.online) {
-            return;
-        }
-
-        await this.sync(config as SyncOptions);
-    }
-
-    public async sync(options?: SyncOptions): Promise<void>;
-    public async sync(model: Model): Promise<void>;
-    public async sync(models: Model[]): Promise<void>;
-    public async sync(config: SyncOptions | Model | Model[] = {}): Promise<void> {
-        const options = isArray(config) ? { models: config } : config instanceof Model ? { model: config } : config;
-
+    public async sync(options: SyncOptions = {}): Promise<void> {
         if (!Solid.isLoggedIn() || !this.ready || !this.online) {
             return;
         }
 
-        await this.asyncLock.run(async () => {
-            const models = options.model ? [options.model] : options.models;
-            const start = Date.now();
-
-            this.syncError = null;
-            this.status = CloudStatus.Syncing;
-
-            Browser.acquireScreenLock();
-            this.cancelPushedLocalChanges();
-
-            try {
-                await Events.emit('cloud:sync-started', models);
-
-                if (options.refreshUserProfile) {
-                    await Solid.refreshUserProfile();
-                }
-
-                let syncs = 0;
-                let changesets = await this.getLocalChangesets();
-                let previousChangesets: LocalChangeset[] = [];
-                let registrationError: unknown;
-                let typeIndexes: TypeIndex[] = [];
-                const modelsWithFailedRegistration = new Set<ModelConstructor>();
-
-                do {
-                    const config = await this.getSyncConfig();
-
-                    typeIndexes = [...(config.publicTypeIndexes ?? []), ...(config.privateTypeIndexes ?? [])];
-
-                    const pushedFileUrls = new Set<string>();
-
-                    const syncJob = new Sync(config);
-
-                    this.syncJob = syncJob;
-
-                    syncJob.listeners.add({
-                        ...options,
-                        onModelsRegistered: ({ typeIndex }) => {
-                            Solid.clearTypeIndexesCache();
-                            typeIndexes.includes(typeIndex) || typeIndexes.push(typeIndex);
-                        },
-                        onModelsRegistrationFailed: ({ models: failedModels, error }) => {
-                            registrationError ??= error;
-                            failedModels.forEach((modelClass) => modelsWithFailedRegistration.add(modelClass));
-                        },
-                        onExternalSourceFailed: (source, error) =>
-                            Events.emit('cloud:sync-external-source-failed', { source, error }),
-                        onFilePushed: (event) => {
-                            pushedFileUrls.add(event.url);
-
-                            return this.onFilePushed(event);
-                        },
-                    });
-
-                    try {
-                        await dispatch(syncJob);
-                    } finally {
-                        await this.forgetSyncedFiles(syncJob.syncedFileUrls, pushedFileUrls);
-                    }
-
-                    if (syncJob.cancelled) {
-                        this.previousSyncPendingChangesets = await this.getLocalChangesets();
-
-                        return;
-                    }
-
-                    previousChangesets = changesets;
-                    changesets = await this.getLocalChangesets();
-
-                    syncs++;
-                } while (
-                    changesets.length > 0 &&
-                    !this.haveSameChangesets(changesets, previousChangesets) &&
-                    syncs < 3
-                );
-
-                this.previousSyncPendingChangesets = changesets;
-
-                this.setContainerUrls(
-                    this.findContainerUrls(typeIndexes, { keepDefaults: modelsWithFailedRegistration }),
-                );
-
-                if (registrationError) {
-                    await Errors.report(
-                        registrationError,
-                        translateWithDefault(
-                            'cloud.registrationFailed',
-                            'Some data could not be registered in your Solid POD, other apps may not find it',
-                        ),
-                    );
-                }
-
-                if (!isTesting('unit')) {
-                    await after({ milliseconds: Math.max(500, 1000 - (Date.now() - start)) });
-                }
-
-                this.syncJob = null;
-            } catch (error) {
-                this.previousSyncPendingChangesets = await this.getLocalChangesets();
-
-                if (isTesting()) {
-                    throw error;
-                }
-
-                this.syncJob = null;
-                this.syncError = error;
-
-                await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
-            } finally {
-                this.status = CloudStatus.Online;
-
-                Browser.releaseScreenLock();
-                await this.refreshLocalChanges();
-                await this.refreshTrackedModels();
-                await Events.emit('cloud:sync-completed', models);
-            }
-        });
-    }
-
-    public async track(modelClass: ModelConstructor, options: { register?: CloudRegistration } = {}): Promise<void> {
-        if (
-            options.register === false ||
-            this.modelRegistrations.find((registration) => modelClass === registration.modelClass)
-        ) {
-            return;
+        if (options.refreshUserProfile) {
+            await Solid.refreshUserProfile();
         }
 
-        trackLocalChanges(modelClass);
+        await Sync.session?.synchronize();
 
-        if (options.register) {
-            const {
-                path,
-                public: isPublic,
-                singleton,
-                files,
-            } = typeof options.register === 'object' ? options.register : {};
-
-            this.setupRemoteCollection(modelClass, path);
-
-            this.modelRegistrations.push({ modelClass, path, public: isPublic, singleton, files });
-
-            await this.initializeTrackedModels(modelClass, options.register);
+        if (isTesting() && this.syncError) {
+            throw this.syncError;
         }
-
-        modelClass.on('created', ({ model }) => this.ready && this.onModelCreated(model));
     }
 
     public addExternalSource(source: ExternalSource): void {
+        const session = Sync.session;
+
+        if (session?.isActive()) {
+            session.addExternalSource(source);
+
+            return;
+        }
+
         if (this.hasExternalSource(source)) {
             return;
         }
 
-        for (const model of source.models) {
-            if (getBootedModels().get(model.modelName) !== model) {
-                throw new Error(
-                    `Can't add external source ${getExternalSourceUrl(source)}, ` +
-                        `the '${model.modelName}' model class isn't booted`,
-                );
-            }
-        }
+        assertExternalSourceModelsBooted(source);
 
         this.externalSources = [...this.externalSources, source];
     }
@@ -369,62 +185,61 @@ export class CloudService extends Service {
         return this.externalSources.some((externalSource) => getExternalSourceUrl(externalSource) === sourceUrl);
     }
 
-    public getExternalSources(): ExternalSource[] {
-        return this.externalSources.slice(0);
-    }
-
     public isInExternalSource(url: string): boolean {
         return this.externalSources.some((source) => isInExternalSource(source, url));
     }
 
     public async removeExternalSource(source: ExternalSource): Promise<void> {
-        await this.asyncLock.run(async () => {
+        const session = Sync.session;
+
+        if (session?.isActive()) {
+            await session.removeExternalSource(source);
+        } else {
             const sourceUrl = getExternalSourceUrl(source);
-            const documentUrls = source.containerUrl
-                ? [...(await this.readExternalContainerDocumentUrls(source.containerUrl)), source.containerUrl]
-                : [sourceUrl];
 
             this.externalSources = this.externalSources.filter(
                 (externalSource) => getExternalSourceUrl(externalSource) !== sourceUrl,
             );
 
-            for (const documentUrl of documentUrls) {
-                await silenced(requireLocalEngine().deleteDocument(documentUrl), { ignore: DocumentNotFound });
-            }
+            await deleteExternalSourceData(source);
+        }
 
-            await this.refreshLocalChanges();
-            await this.refreshTrackedModels();
-        });
+        await this.refreshTrackedModels();
     }
 
     public requireRemoteContainerUrl(modelClass: ModelConstructor): string {
-        for (const registration of this.modelRegistrations) {
-            if (modelClass !== registration.modelClass) {
-                continue;
-            }
-
-            return (
-                this.defaultContainerUrls[modelClass.modelName] ??
-                this.getDefaultRemoteContainerUrl(registration.modelClass, registration.path)
-            );
-        }
-
-        throw new Error(`Failed resolving remote collection for '${modelClass.modelName}' model`);
+        return this.requireSyncSession().requireRemoteContainerUrl(modelClass);
     }
 
     protected override async boot(): Promise<void> {
         await Solid.booted;
+        await this.trackModels();
 
-        Solid.isLoggedIn() && this.login();
+        Solid.isLoggedIn() && (await this.login());
+
+        globalThis.addEventListener('online', () => Sync.session?.setOnline(true));
+        globalThis.addEventListener('offline', () => Sync.session?.setOnline(false));
+
+        watch(
+            () => Solid.session?.user,
+            (user) => !user && Sync.session?.disconnect(),
+            { flush: 'sync' },
+        );
+
+        watch(
+            () => this.autoPush,
+            (autoPush) => Sync.session?.setAutoPush(autoPush),
+            { flush: 'sync' },
+        );
 
         Events.on('auth:login', () => this.login());
         Events.on('auth:logout', () => this.logout());
         Events.on('auth:after-logout', () => this.refreshTrackedModels());
         Events.on('purge-storage', () => this.refreshTrackedModels());
-        Events.on('purge-storage', { priority: EventListenerPriorities.Low }, () => this.refreshLocalChanges());
-        Events.once('application-ready', () => this.onApplicationReady());
+        Events.on('purge-storage', { priority: EventListenerPriorities.Low }, () =>
+            Sync.session?.refreshLocalChanges(),
+        );
         Events.once('application-mounted', () => this.onApplicationMounted());
-        requireLocalEngine().listeners.add({ onLocalChangesUpdated: () => this.refreshLocalChanges() });
 
         watchEffect(() => {
             this.pollingInterval && clearInterval(this.pollingInterval);
@@ -437,88 +252,59 @@ export class CloudService extends Service {
 
             this.pollingInterval = setInterval(() => this.sync(), this.pollingMinutes * 60 * 1000);
         });
-
-        this.watchNetworkStatus();
-        await this.trackModels();
-        await this.refreshLocalChanges();
     }
 
-    protected async getSyncConfig(): Promise<SyncConfig> {
-        const applicationModels = Array.from(getBootedModels().values()).filter(
-            (model) => !isCoreModel(model) && model.cloud !== false,
+    protected getSyncModel(modelClass: ModelConstructor, register: CloudRegistration): SyncApplicationModel {
+        const options = typeof register === 'object' ? register : {};
+        const files = this.normalizeCloudFiles(
+            options.files ?? (typeof modelClass.cloud === 'object' ? modelClass.cloud.files : undefined),
         );
 
         return {
-            ...(await Solid.findTypeIndexes()),
-            externalSources: this.getExternalSources(),
-            userProfile: Solid.requireUser(),
-            createPublicTypeIndex: () => Solid.findOrCreatePublicTypeIndex(),
-            createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
-            resolveDeletionConflict: (conflict) =>
-                this.resolveDeletionConflict(conflict, applicationModels as ModelConstructor[]),
-            resolveFileConflict: (conflict) => this.resolveFileConflict(conflict),
-            applicationModels: applicationModels.map((modelClass) => {
-                const registration = this.modelRegistrations.find(
-                    (modelRegistration) => modelRegistration.modelClass === modelClass,
-                );
-
-                const files = this.normalizeCloudFiles(
-                    registration?.files ?? (typeof modelClass.cloud === 'object' ? modelClass.cloud.files : undefined),
-                );
-
-                return {
-                    model: modelClass as ModelConstructor,
-                    files: files.length > 0 ? files : undefined,
-                    registration: registration
-                        ? {
-                              path: registration.path,
-                              public: registration.public,
-                              mode: registration.singleton ? 'instance' : 'container',
-                          }
-                        : false,
-                };
-            }),
+            model: modelClass,
+            files: files.length > 0 ? files : undefined,
+            registration: register
+                ? {
+                      path: options.path,
+                      public: options.public,
+                      mode: options.singleton ? 'instance' : 'container',
+                  }
+                : false,
         };
     }
 
-    protected async performLocalChangesRefresh(): Promise<void> {
-        const changesets = await this.getLocalChangesets();
-
-        this.localChanges = changesets.length;
-
-        if (!this.shouldPushLocalChanges(changesets)) {
+    protected async track(modelClass: ModelConstructor, options: { register?: CloudRegistration } = {}): Promise<void> {
+        if (options.register === false || this.syncModels.some(({ model }) => model === modelClass)) {
             return;
         }
 
-        this.pushLocalChanges();
+        Sync.trackLocalChanges(modelClass);
+
+        this.syncModels.push(this.getSyncModel(modelClass, options.register));
+
+        if (options.register) {
+            this.registeredModels.add(modelClass);
+            this.applySavedContainerUrls(modelClass);
+
+            await this.initializeTrackedModels(modelClass, options.register);
+        }
     }
 
-    protected async resolveDeletionConflict(
-        conflict: DeletionConflict,
-        applicationModels: ModelConstructor[],
-    ): Promise<DeletionConflictResolution> {
-        const document = conflict.type === 'deleted-remotely' ? conflict.localDocument : conflict.remoteDocument;
-        const models = await Promise.all(
-            applicationModels.map((modelClass) =>
-                modelClass.createFromDocument(document, { url: conflict.resourceUrl, includeSoftDeleted: true }),
-            ),
-        );
-        const model = models.find((documentModel) => !!documentModel) ?? null;
-        const result = await this.conflictHandler?.({ resourceType: 'document', ...conflict, model });
+    protected async resolveDeletionConflict(conflict: DeletionConflict): Promise<DeletionConflictResolution> {
+        const result = await this.conflictHandler?.({ resourceType: 'document', ...conflict });
 
         if (result === 'delete' || result === 'restore') {
             return result;
         }
 
-        return this.promptDeletionConflict(conflict, model, isObject(result) ? result : null);
+        return this.promptDeletionConflict(conflict, isObject(result) ? result : null);
     }
 
     protected async promptDeletionConflict(
         conflict: DeletionConflict,
-        model: Model | null,
         prompt: DeletionConflictPrompt | null,
     ): Promise<DeletionConflictResolution> {
-        const { response } = (await UI.modal(DeletionConflictModal, { conflict, model, prompt })) as unknown as {
+        const { response } = (await UI.modal(DeletionConflictModal, { conflict, prompt })) as unknown as {
             response: DeletionConflictResolution | null;
         };
 
@@ -546,138 +332,6 @@ export class CloudService extends Service {
         return response ?? 'keep-local';
     }
 
-    protected async setReady(ready: boolean): Promise<void> {
-        if (this.ready || !ready) {
-            return;
-        }
-
-        await Events.emit('cloud:ready');
-
-        this.ready = true;
-    }
-
-    protected async migrateLocalUrls(): Promise<void> {
-        const { publicTypeIndexes, privateTypeIndexes } = await Solid.findTypeIndexes();
-        const containerUrls = this.findContainerUrls([...publicTypeIndexes, ...privateTypeIndexes]);
-        const job = new MigrateLocalUrls({
-            migrations: objectFromEntries(
-                this.modelRegistrations.map(({ modelClass }) => [
-                    modelClass.defaultContainerUrl,
-                    required(containerUrls[modelClass.modelName]).default,
-                ]),
-            ),
-        });
-
-        await dispatch(job);
-
-        this.setContainerUrls(containerUrls);
-    }
-
-    protected findContainerUrls(
-        typeIndexes: TypeIndex[],
-        options: { keepDefaults?: Set<ModelConstructor> } = {},
-    ): Record<string, ModelContainerUrls> {
-        const registrations = typeIndexes.flatMap((typeIndex) => typeIndex.registrations ?? []);
-
-        return objectFromEntries(
-            this.modelRegistrations.map(({ modelClass, path }) => {
-                const typeRegistrations = registrations.filter((registration) => registration.registers(modelClass));
-                const registeredContainerUrls = arrayUnique(
-                    typeRegistrations
-                        .filter((registration) => registration.registersContainer())
-                        .map((registration) => registration.instanceContainer),
-                );
-                const registeredInstanceUrls = arrayUnique(
-                    typeRegistrations
-                        .filter((registration) => registration.registersInstance())
-                        .map((registration) => registration.instance),
-                );
-                const defaultContainerUrl = this.pickDefaultContainerUrl(modelClass, path, registeredContainerUrls, {
-                    keepCurrent: options.keepDefaults?.has(modelClass),
-                });
-                const unlistedContainerUrls = (this.unlistedContainerUrls[modelClass.modelName] ?? []).filter(
-                    (containerUrl) =>
-                        containerUrl !== defaultContainerUrl && !registeredContainerUrls.includes(containerUrl),
-                );
-
-                return [
-                    modelClass.modelName,
-                    {
-                        default: defaultContainerUrl,
-                        registered: registeredContainerUrls,
-                        unlisted: unlistedContainerUrls,
-                        instances: registeredInstanceUrls,
-                    },
-                ];
-            }),
-        );
-    }
-
-    protected pickDefaultContainerUrl(
-        modelClass: ModelConstructor,
-        path: string | undefined,
-        registeredContainerUrls: string[],
-        options: { keepCurrent?: boolean } = {},
-    ): string {
-        const currentContainerUrl = this.defaultContainerUrls[modelClass.modelName];
-
-        if (
-            currentContainerUrl &&
-            (options.keepCurrent ||
-                registeredContainerUrls.length === 0 ||
-                registeredContainerUrls.includes(currentContainerUrl))
-        ) {
-            return currentContainerUrl;
-        }
-
-        return registeredContainerUrls[0] ?? this.getDefaultRemoteContainerUrl(modelClass, path);
-    }
-
-    protected setContainerUrls(containerUrls: Record<string, ModelContainerUrls>): void {
-        for (const { modelClass } of this.modelRegistrations) {
-            const modelContainerUrls = containerUrls[modelClass.modelName];
-
-            if (!modelContainerUrls) {
-                continue;
-            }
-
-            this.useContainerUrls(modelClass, modelContainerUrls);
-        }
-
-        const entries = Object.entries(containerUrls);
-
-        this.setState({
-            defaultContainerUrls: {
-                ...this.defaultContainerUrls,
-                ...objectFromEntries(
-                    entries.map(([modelName, modelContainerUrls]) => [modelName, modelContainerUrls.default]),
-                ),
-            },
-            registeredContainerUrls: {
-                ...this.registeredContainerUrls,
-                ...objectFromEntries(entries.map(([modelName, { registered }]) => [modelName, registered])),
-            },
-            unlistedContainerUrls: {
-                ...this.unlistedContainerUrls,
-                ...objectFromEntries(entries.map(([modelName, { unlisted }]) => [modelName, unlisted])),
-            },
-            registeredInstanceUrls: {
-                ...this.registeredInstanceUrls,
-                ...objectFromEntries(entries.map(([modelName, { instances }]) => [modelName, instances])),
-            },
-        });
-    }
-
-    protected async onApplicationReady(): Promise<void> {
-        if (this.ready || !Solid.isLoggedIn()) {
-            return;
-        }
-
-        const containerUrls = await requireLocalEngine().getContainerUrls();
-
-        await this.setReady(!containerUrls.some(isLocalUrl));
-    }
-
     protected async onApplicationMounted(): Promise<void> {
         if (Solid.isLoggedIn() && !this.ready && !this.manualSetup) {
             await this.setup();
@@ -692,35 +346,43 @@ export class CloudService extends Service {
         await this.sync();
     }
 
-    protected login(): void {
-        this.status = CloudStatus.Online;
+    protected async login(): Promise<void> {
+        await Sync.session?.disconnect();
+        await Sync.connect({
+            online: navigator.onLine,
+            autoPush: this.autoPush,
+            profileManager: {
+                getProfile: () => Solid.requireUser(),
+                findTypeIndexes: () => Solid.findTypeIndexes(),
+                createPublicTypeIndex: () => Solid.findOrCreatePublicTypeIndex(),
+                createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
+            },
+            models: this.syncModels,
+            containerUrls: this.containerUrls,
+            externalSources: this.externalSources,
+            resolveDeletionConflict: this.resolveDeletionConflict.bind(this),
+            resolveFileConflict: this.resolveFileConflict.bind(this),
+            onModelsRegistered: () => Solid.clearTypeIndexesCache(),
+            onUpdated: this.onSyncUpdated.bind(this),
+            onContainersUpdated: this.onSyncContainersUpdated.bind(this),
+            onSyncStarted: this.onSyncStarted.bind(this),
+            onSyncCompleted: this.onSyncCompleted.bind(this),
+            onSyncFailed: this.onSyncFailed.bind(this),
+            onModelsRegistrationFailed: this.onSyncModelsRegistrationFailed.bind(this),
+            onExternalSourceFailed: this.onSyncExternalSourceFailed.bind(this),
+            onFilePushed: this.onSyncFilePushed.bind(this),
+            onFileUpdated: this.onSyncFileUpdated.bind(this),
+        });
     }
 
     protected async logout(): Promise<void> {
-        this.setState({
-            autoPush: true,
-            defaultContainerUrls: {},
-            registeredContainerUrls: {},
-            unlistedContainerUrls: {},
-            registeredInstanceUrls: {},
-            pollingEnabled: true,
-            pollingMinutes: 10,
-            ready: false,
-            setupDismissed: false,
-            setupOngoing: false,
-            startupSync: true,
-            externalSources: [],
-            status: CloudStatus.Disconnected,
-            syncError: null,
-            syncJob: null,
-        });
+        await Sync.session?.disconnect();
 
-        for (const { modelClass } of this.modelRegistrations) {
+        this.setState({ ...this.getInitialState(), manualSetup: this.manualSetup });
+
+        for (const modelClass of this.registeredModels) {
             setTrackedModelsDiscoveryUrls(modelClass, null);
         }
-
-        this.cancelPushedLocalChanges();
-        this.previousSyncPendingChangesets = [];
     }
 
     protected async initializeTrackedModels(
@@ -734,22 +396,125 @@ export class CloudService extends Service {
         });
     }
 
-    private watchNetworkStatus(): void {
-        globalThis.addEventListener('online', () => {
-            if (this.status !== CloudStatus.Offline) {
-                return;
+    private async onSyncUpdated(changes: Partial<SyncProperties>): Promise<void> {
+        if (changes.localChangesCount !== undefined) {
+            this.localChangesCount = changes.localChangesCount;
+        }
+
+        if (changes.containerUrls) {
+            this.containerUrls = changes.containerUrls;
+        }
+
+        if (changes.externalSources) {
+            this.externalSources = changes.externalSources;
+        }
+
+        if (changes.activeJob !== undefined) {
+            this.syncJob = changes.activeJob;
+        }
+
+        if ('error' in changes) {
+            this.syncError = changes.error;
+        }
+
+        if (changes.setupCompleted !== undefined) {
+            const becameReady = changes.setupCompleted && !this.ready;
+
+            this.ready = changes.setupCompleted;
+
+            if (becameReady) {
+                await Events.emit('cloud:ready');
             }
+        }
 
-            this.status = CloudStatus.Online;
-        });
+        if (!this.syncInProgress) {
+            this.status = this.getCloudStatus();
+        }
+    }
 
-        globalThis.addEventListener('offline', () => {
-            if (this.status !== CloudStatus.Online) {
-                return;
-            }
+    private async onSyncStarted(): Promise<void> {
+        this.syncInProgress = true;
+        this.syncStartedAt = Date.now();
+        this.status = CloudStatus.Syncing;
 
-            this.status = CloudStatus.Offline;
-        });
+        Browser.acquireScreenLock();
+
+        await Events.emit('cloud:sync-started');
+    }
+
+    private async onSyncCompleted({ cancelled, error }: SyncCompletedEvent): Promise<void> {
+        const succeeded = !cancelled && !error;
+        const registrationError = this.registrationError;
+
+        this.registrationError = null;
+
+        if (succeeded && registrationError) {
+            await Errors.report(
+                registrationError,
+                translateWithDefault(
+                    'cloud.registrationFailed',
+                    'Some data could not be registered in your Solid POD, other apps may not find it',
+                ),
+            );
+        }
+
+        if (succeeded && !isTesting('unit')) {
+            await after({ milliseconds: Math.max(500, 1000 - (Date.now() - this.syncStartedAt)) });
+        }
+
+        this.syncInProgress = false;
+        this.status = this.getCloudStatus();
+
+        Browser.releaseScreenLock();
+        await this.refreshTrackedModels();
+        await Events.emit('cloud:sync-completed');
+    }
+
+    private async onSyncFailed(error: unknown): Promise<void> {
+        if (isTesting()) {
+            return;
+        }
+
+        await Errors.report(error, translateWithDefault('cloud.syncFailed', 'Sync failed'));
+    }
+
+    private onSyncContainersUpdated(modelClass: ModelConstructor, containerUrls: string[]): void {
+        setTrackedModelsDiscoveryUrls(modelClass, containerUrls);
+    }
+
+    private onSyncModelsRegistrationFailed({ error }: ModelsRegistrationFailedEvent): void {
+        this.registrationError ??= error;
+    }
+
+    private async onSyncExternalSourceFailed(source: ExternalSource, error: unknown): Promise<void> {
+        await Events.emit('cloud:sync-external-source-failed', { source, error });
+    }
+
+    private async onSyncFilePushed({ url, blob }: FilePushedEvent): Promise<void> {
+        await NetworkCache.store(url, fileResponse(blob));
+    }
+
+    private async onSyncFileUpdated(url: string): Promise<void> {
+        await NetworkCache.delete(url);
+        await Events.emit('solid:file-updated', { url });
+    }
+
+    private getCloudStatus(): TCloudStatus {
+        const session = Sync.session;
+
+        if (!session?.connected) {
+            return CloudStatus.Disconnected;
+        }
+
+        if (session.syncing) {
+            return CloudStatus.Syncing;
+        }
+
+        return session.online ? CloudStatus.Online : CloudStatus.Offline;
+    }
+
+    private requireSyncSession(): SyncSession {
+        return required(Sync.session, "Cloud isn't connected, log in first");
     }
 
     private syncOnStartup(): boolean {
@@ -760,98 +525,25 @@ export class CloudService extends Service {
         return this.startupSync;
     }
 
-    private setupRemoteCollection(modelClass: ModelConstructor, path?: string): void {
-        const defaultContainerUrl = this.defaultContainerUrls[modelClass.modelName];
+    private applySavedContainerUrls(modelClass: ModelConstructor): void {
+        const containerUrls = this.containerUrls[modelClass.modelName];
 
-        if (defaultContainerUrl) {
-            this.useContainerUrls(modelClass, {
-                default: defaultContainerUrl,
-                registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
-                unlisted: this.unlistedContainerUrls[modelClass.modelName] ?? [],
-                instances: this.registeredInstanceUrls[modelClass.modelName] ?? [],
-            });
-
+        if (!containerUrls) {
             return;
         }
 
-        void this.whenReady(() => {
-            const remoteContainerUrl =
-                this.defaultContainerUrls[modelClass.modelName] ?? this.getDefaultRemoteContainerUrl(modelClass, path);
-
-            this.setContainerUrls({
-                [modelClass.modelName]: {
-                    default: remoteContainerUrl,
-                    registered: this.registeredContainerUrls[modelClass.modelName] ?? [],
-                    unlisted: this.unlistedContainerUrls[modelClass.modelName] ?? [],
-                    instances: this.registeredInstanceUrls[modelClass.modelName] ?? [],
-                },
-            });
-        });
-    }
-
-    private useContainerUrls(modelClass: ModelConstructor, containerUrls: ModelContainerUrls): void {
-        modelClass.defaultContainerUrl = containerUrls.default;
-
-        setTrackedModelsDiscoveryUrls(modelClass, [
-            ...containerUrls.instances,
-            containerUrls.default,
-            ...containerUrls.registered,
-            ...containerUrls.unlisted,
-        ]);
-    }
-
-    private useModelContainerUrl(model: Model): void {
-        const modelClass = model.static();
-        const modelName = modelClass.modelName;
-        const containerUrl = model.getContainerUrl();
-        const containerUrls: ModelContainerUrls = {
-            default: this.defaultContainerUrls[modelName] ?? modelClass.defaultContainerUrl,
-            registered: this.registeredContainerUrls[modelName] ?? [],
-            unlisted: this.unlistedContainerUrls[modelName] ?? [],
-            instances: this.registeredInstanceUrls[modelName] ?? [],
-        };
-
-        if (
-            !containerUrl ||
-            this.isInExternalSource(model.requireUrl()) ||
-            containerUrls.instances.includes(model.requireUrl()) ||
-            !this.modelRegistrations.some((registration) => registration.modelClass === modelClass) ||
-            [containerUrls.default, ...containerUrls.registered, ...containerUrls.unlisted].includes(containerUrl)
-        ) {
-            return;
+        if (this.ready) {
+            modelClass.defaultContainerUrl = containerUrls.default;
         }
 
-        this.setContainerUrls({
-            [modelName]: { ...containerUrls, unlisted: [...containerUrls.unlisted, containerUrl] },
-        });
-    }
-
-    private getDefaultRemoteContainerUrl(modelClass: ModelConstructor, path?: string): string {
-        return getRemoteContainerUrl(modelClass, Solid.requireUser().storageUrls[0], path);
-    }
-
-    private async getLocalChangesets(): Promise<LocalChangeset[]> {
-        return requireLocalEngine().getLocalChangesets();
-    }
-
-    private cancelPushedLocalChanges(): void {
-        this.pushLocalChanges.cancel();
-    }
-
-    private shouldPushLocalChanges(changesets: LocalChangeset[]): boolean {
-        return (
-            this.autoPush &&
-            this.ready &&
-            !this.syncing &&
-            changesets.length > 0 &&
-            !this.haveSameChangesets(changesets, this.previousSyncPendingChangesets)
-        );
-    }
-
-    private haveSameChangesets(changesets: LocalChangeset[], otherChangesets: LocalChangeset[]): boolean {
-        return (
-            changesets.length === otherChangesets.length &&
-            changesets.every((changeset, index) => changeset.date.getTime() === otherChangesets[index]?.date.getTime())
+        setTrackedModelsDiscoveryUrls(
+            modelClass,
+            arrayUnique([
+                containerUrls.default,
+                ...containerUrls.instances,
+                ...containerUrls.registered,
+                ...containerUrls.unlisted,
+            ]),
         );
     }
 
@@ -893,43 +585,6 @@ export class CloudService extends Service {
             await refreshTrackedModels(modelClass);
         }
     }
-
-    private async readExternalContainerDocumentUrls(containerUrl: string): Promise<string[]> {
-        try {
-            const documents = await requireLocalEngine().readDocuments({ containerUrl, deep: true });
-
-            return Object.keys(documents);
-        } catch (error) {
-            if (!isInstanceOf(error, DocumentNotFound)) {
-                throw error;
-            }
-
-            return [];
-        }
-    }
-
-    protected async forgetSyncedFiles(syncedFileUrls: Set<string>, pushedFileUrls: Set<string>): Promise<void> {
-        for (const url of syncedFileUrls) {
-            if (pushedFileUrls.has(url)) {
-                continue;
-            }
-
-            await NetworkCache.delete(url);
-            await Events.emit('solid:file-updated', { url });
-        }
-    }
-
-    protected async onFilePushed(event: FilePushedEvent): Promise<void> {
-        await NetworkCache.store(event.url, fileResponse(event.blob));
-    }
-
-    private onModelCreated(model: Model): void {
-        if (!model.url) {
-            return;
-        }
-
-        this.useModelContainerUrl(model);
-    }
 }
 
 export default facade(CloudService);
@@ -939,8 +594,8 @@ declare module '@aerogel/core' {
         'cloud:ready': void;
         'cloud:backup-started': void;
         'cloud:backup-completed': void;
-        'cloud:sync-started': Model[] | undefined;
-        'cloud:sync-completed': Model[] | undefined;
+        'cloud:sync-started': void;
+        'cloud:sync-completed': void;
         'cloud:sync-external-source-failed': ExternalSourceFailedPayload;
     }
 }

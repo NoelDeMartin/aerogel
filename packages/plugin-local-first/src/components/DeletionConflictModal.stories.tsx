@@ -59,8 +59,8 @@ const meta: Meta<StoryArgs> = {
                             resourceUrl,
                             localDocument: document,
                             remoteDocument: document,
+                            model: args.withModel ? new Movie({ url: resourceUrl, name: 'Spirited Away' }) : null,
                         },
-                        model: args.withModel ? new Movie({ url: resourceUrl, name: 'Spirited Away' }) : null,
                         prompt: {
                             title: args.title || undefined,
                             message: args.message || undefined,

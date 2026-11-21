@@ -7,6 +7,7 @@ import { resetModelsState } from '@aerogel/plugin-solid';
 import { FakeLocalStorage, FakeServer } from '@noeldemartin/testing';
 import {
     InMemoryEngine,
+    Sync,
     bootCoreModels,
     bootModels,
     resetModelListeners,
@@ -30,8 +31,9 @@ beforeEach(async () => {
     vi.stubGlobal('caches', new FakeCacheStorage());
     vi.useFakeTimers({ toFake: ['Date'] });
     Events.reset();
-    FakeLocalStorage.reset();
+    Sync.reset();
     FakeServer.reset();
+    FakeLocalStorage.reset();
     resetPiniaStore();
     resetModelListeners();
     resetModelsState();

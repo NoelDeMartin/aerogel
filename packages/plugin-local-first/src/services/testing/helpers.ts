@@ -1,29 +1,30 @@
 import { CloudService } from '@aerogel/plugin-local-first/services/Cloud';
-import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import { Solid } from '@aerogel/plugin-solid';
 import type { Authenticator } from '@aerogel/plugin-solid';
 import type { CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
 import { invade } from '@noeldemartin/utils';
 import type { ListenersManager } from '@noeldemartin/utils';
-import { Sync } from 'soukai-bis';
+import { SyncJob, TypeIndex, TypeRegistration } from 'soukai-bis';
 import type {
     ExternalSource,
     FilePushedEvent,
     ModelConstructor,
-    SyncConfig,
+    ModelContainerUrls,
+    ModelWithUrl,
     SyncJobListener,
     SyncJobResult,
-    TypeIndex,
 } from 'soukai-bis';
 import { vi } from 'vite-plus/test';
 
 const invadedMethods = [
-    'getSyncConfig',
-    'logout',
-    'migrateLocalUrls',
-    'refreshLocalChanges',
-    'serializePersistedState',
     'deserializePersistedState',
+    'getSyncModel',
+    'login',
+    'logout',
+    'resolveDeletionConflict',
+    'resolveFileConflict',
+    'serializePersistedState',
+    'track',
 ] as const;
 
 export type InvadedCloud = ReturnType<typeof invade<CloudService, (typeof invadedMethods)[number]>>;
@@ -46,60 +47,86 @@ export function logIn(): void {
     Solid.setState({ session: { user, loginUrl: user.webId, authenticator: {} as Authenticator } });
 }
 
-export function fakeSync(
+export async function connect(
     cloud: InvadedCloud,
+    state: { ready?: boolean; containerUrls?: Record<string, ModelContainerUrls> } = {},
+): Promise<void> {
+    logIn();
+    vi.stubGlobal('navigator', { userAgent: navigator.userAgent, onLine: true });
+
+    cloud.setState({
+        autoPush: false,
+        ready: true,
+        ...state,
+    });
+
+    await cloud.login();
+}
+
+export function fakeTypeIndex(registrations: [ModelConstructor, string][] = []): ModelWithUrl<TypeIndex> {
+    const typeIndex = new TypeIndex({ url: 'https://alice.example/settings/privateTypeIndex' }, { exists: true });
+
+    typeIndex.relatedRegistrations.related = registrations.map(
+        ([modelClass, instanceContainer]) =>
+            new TypeRegistration({
+                forClass: modelClass.getRDFClasses(),
+                instanceContainer,
+            }),
+    );
+
+    return typeIndex as ModelWithUrl<TypeIndex>;
+}
+
+export function fakeSync(
     options: {
         typeIndexes?: TypeIndex[];
-        createdTypeIndex?: TypeIndex;
-        failedRegistrations?: ModelConstructor[];
         failedExternalSources?: [ExternalSource, unknown][];
-        onRun?: () => Promise<unknown>;
+        failedRegistrations?: ModelConstructor[];
+        error?: Error;
         pushedFiles?: FilePushedEvent[];
         syncedFileUrls?: string[];
+        onRun?: () => unknown;
     } = {},
 ): void {
-    vi.spyOn(cloud, 'getSyncConfig').mockResolvedValue({
-        userProfile: user,
-        applicationModels: [],
-        privateTypeIndexes: options.typeIndexes ?? [],
-    } as unknown as SyncConfig);
-    vi.spyOn(Sync.prototype as unknown as { run(): Promise<SyncJobResult> }, 'run').mockImplementation(async function (
-        this: Sync,
-    ) {
-        const { _listeners: listeners } = this as unknown as { _listeners: ListenersManager<SyncJobListener> };
-
-        await options.onRun?.();
-
-        if (options.createdTypeIndex) {
-            await listeners.emit('onModelsRegistered', {
-                typeIndex: options.createdTypeIndex,
-                models: [Post],
-                mode: 'container',
-            });
-        }
-
-        if (options.failedRegistrations) {
-            await listeners.emit('onModelsRegistrationFailed', {
-                models: options.failedRegistrations,
-                error: new Error('Registration failed'),
-                mode: 'container',
-            });
-        }
-
-        for (const [source, error] of options.failedExternalSources ?? []) {
-            await listeners.emit('onExternalSourceFailed', source, error);
-        }
-
-        for (const pushedFile of options.pushedFiles ?? []) {
-            this.syncedFileUrls.add(pushedFile.url);
-
-            await listeners.emit('onFilePushed', pushedFile);
-        }
-
-        for (const url of options.syncedFileUrls ?? []) {
-            this.syncedFileUrls.add(url);
-        }
-
-        return { syncedDocumentUrls: new Set(), documentsWithErrors: new Set(), syncedFileUrls: new Set() };
+    vi.spyOn(Solid.requireInstance(), 'findTypeIndexes').mockResolvedValue({
+        publicTypeIndexes: [],
+        privateTypeIndexes: (options.typeIndexes ?? []) as ModelWithUrl<TypeIndex>[],
     });
+    vi.spyOn(SyncJob.prototype as unknown as { run(): Promise<SyncJobResult> }, 'run').mockImplementation(
+        async function (this: SyncJob) {
+            const { _listeners: listeners } = this as unknown as { _listeners: ListenersManager<SyncJobListener> };
+
+            await options.onRun?.();
+
+            if (options.failedRegistrations) {
+                await listeners.emit('onModelsRegistrationFailed', {
+                    models: options.failedRegistrations,
+                    error: new Error('Registration failed'),
+                    mode: 'container',
+                });
+            }
+
+            for (const [source, error] of options.failedExternalSources ?? []) {
+                await listeners.emit('onExternalSourceFailed', source, error);
+            }
+
+            for (const pushedFile of options.pushedFiles ?? []) {
+                this.syncedFileUrls.add(pushedFile.url);
+
+                await listeners.emit('onFilePushed', pushedFile);
+            }
+
+            for (const url of options.syncedFileUrls ?? []) {
+                this.syncedFileUrls.add(url);
+            }
+
+            if (options.error) {
+                this.completed.catch(() => null);
+
+                throw options.error;
+            }
+
+            return { syncedDocumentUrls: new Set(), documentsWithErrors: new Set(), syncedFileUrls: new Set() };
+        },
+    );
 }

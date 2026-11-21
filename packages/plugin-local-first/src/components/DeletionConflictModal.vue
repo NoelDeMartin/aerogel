@@ -18,23 +18,18 @@
 import { Button, Markdown, Modal, translateWithDefault } from '@aerogel/core';
 import type { DeletionConflictPrompt } from '@aerogel/plugin-local-first/services/Cloud';
 import { stringSplitWords } from '@noeldemartin/utils';
-import type { DeletionConflict, DeletionConflictResolution, Model } from 'soukai-bis';
+import type { DeletionConflict, DeletionConflictResolution } from 'soukai-bis';
 import { computed } from 'vue';
 
-const {
-    conflict,
-    model = null,
-    prompt = null,
-} = defineProps<{
+const { conflict, prompt = null } = defineProps<{
     conflict: DeletionConflict;
-    model?: Model | null;
     prompt?: DeletionConflictPrompt | null;
 }>();
 
 defineEmits<{ close: [result: DeletionConflictResolution] }>();
 
 const modelName = computed(() => {
-    const name = model?.static().modelName;
+    const name = conflict.model?.static().modelName;
 
     return name
         ? translateWithDefault(`models.${name}`, stringSplitWords(name).join(' ').toLowerCase())

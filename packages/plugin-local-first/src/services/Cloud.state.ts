@@ -2,41 +2,23 @@ import { Errors, defineServiceState } from '@aerogel/core';
 import type { ErrorSource } from '@aerogel/core';
 import { arrayFilter } from '@noeldemartin/utils';
 import type { Nullable } from '@noeldemartin/utils';
-import { getBootedModels, getExternalSourceUrl } from 'soukai-bis';
-import type { ExternalSource, FilesSyncStrategy, ModelConstructor, Sync } from 'soukai-bis';
+import { restoreExternalSource, serializeExternalSource } from 'soukai-bis';
+import type {
+    ExternalSource,
+    FilesSyncStrategy,
+    ModelContainerUrls,
+    SerializedExternalSource,
+    SyncJob,
+} from 'soukai-bis';
 
-type PersistedExternalSource =
-    | { containerUrl: string; instanceUrl?: undefined; modelNames: string[] }
-    | { instanceUrl: string; containerUrl?: undefined; modelNames: string[] };
-
-function serializeExternalSource(source: ExternalSource): PersistedExternalSource {
-    const modelNames = source.models.map((model) => model.modelName);
-
-    return source.containerUrl !== undefined
-        ? { containerUrl: source.containerUrl, modelNames }
-        : { instanceUrl: source.instanceUrl, modelNames };
-}
-
-function restoreExternalSource(source: PersistedExternalSource): ExternalSource | null {
-    const bootedModels = getBootedModels();
-    const models = arrayFilter(source.modelNames.map((modelName) => bootedModels.get(modelName)));
-    const externalSource: ExternalSource =
-        source.containerUrl !== undefined
-            ? { containerUrl: source.containerUrl, models }
-            : { instanceUrl: source.instanceUrl, models };
-
-    if (models.length !== source.modelNames.length) {
-        void Errors.report(
-            new Error(
-                `Dropping external source ${getExternalSourceUrl(externalSource)}, some of its models aren't booted ` +
-                    `(${source.modelNames.join(', ')})`,
-            ),
-        );
+function restoreExternalSourceOrReport(source: SerializedExternalSource): ExternalSource | null {
+    try {
+        return restoreExternalSource(source);
+    } catch (error) {
+        void Errors.report(error);
 
         return null;
     }
-
-    return externalSource;
 }
 
 export const CloudStatus = {
@@ -54,57 +36,35 @@ export interface CloudFilesConfig {
 
 export type CloudFiles = boolean | FilesSyncStrategy | CloudFilesConfig | CloudFilesConfig[];
 
-export interface CloudModelRegistration {
-    modelClass: ModelConstructor;
-    path?: string;
-    public?: boolean;
-    singleton?: boolean;
-    files?: CloudFiles;
-}
-
 export type TCloudStatus = (typeof CloudStatus)[keyof typeof CloudStatus];
 
 export const DEFAULT_STATE = { manualSetup: false };
 
 export default defineServiceState({
     name: 'cloud',
-    persist: [
-        'defaultContainerUrls',
-        'registeredContainerUrls',
-        'unlistedContainerUrls',
-        'registeredInstanceUrls',
-        'pollingEnabled',
-        'pollingMinutes',
-        'ready',
-        'startupSync',
-        'externalSources',
-    ],
+    persist: ['ready', 'containerUrls', 'externalSources', 'pollingEnabled', 'pollingMinutes', 'startupSync'],
     initialState: () => ({
         autoPush: true,
-        localChanges: 0,
-        defaultContainerUrls: {} as Record<string, string>,
-        registeredContainerUrls: {} as Record<string, string[]>,
-        unlistedContainerUrls: {} as Record<string, string[]>,
-        registeredInstanceUrls: {} as Record<string, string[]>,
+        localChangesCount: 0,
+        containerUrls: {} as Record<string, ModelContainerUrls>,
+        externalSources: [] as ExternalSource[],
         pollingEnabled: true,
         pollingMinutes: 10,
         ready: false,
         manualSetup: DEFAULT_STATE.manualSetup,
-        modelRegistrations: [] as CloudModelRegistration[],
         setupDismissed: false,
         setupOngoing: false,
         startupSync: true,
-        externalSources: [] as ExternalSource[],
         status: CloudStatus.Disconnected as TCloudStatus,
         syncError: null as Nullable<ErrorSource>,
-        syncJob: null as Nullable<Sync>,
+        syncJob: null as Nullable<SyncJob>,
     }),
     computed: {
         disconnected: ({ status }) => status === CloudStatus.Disconnected,
         online: ({ status }) => status === CloudStatus.Online,
         offline: ({ status }) => status === CloudStatus.Offline,
         syncing: ({ status }) => status === CloudStatus.Syncing,
-        dirty: ({ localChanges }) => localChanges > 0,
+        dirty: ({ localChangesCount }) => localChangesCount > 0,
     },
     serialize: ({ externalSources, ...state }) => ({
         ...state,
@@ -112,6 +72,6 @@ export default defineServiceState({
     }),
     restore: ({ externalSources, ...state }) => ({
         ...state,
-        ...(externalSources && { externalSources: arrayFilter(externalSources.map(restoreExternalSource)) }),
+        ...(externalSources && { externalSources: arrayFilter(externalSources.map(restoreExternalSourceOrReport)) }),
     }),
 });

@@ -54,7 +54,7 @@
                 <Markdown
                     lang-key="cloud.info.changes"
                     lang-default="Everything is up to date. | There is one local change. | There are {n} local changes."
-                    :lang-params="$cloud.localChanges"
+                    :lang-params="$cloud.localChangesCount"
                 />
             </div>
             <div v-else-if="$cloud.online || $cloud.offline" class="mt-4 flex items-center gap-2">

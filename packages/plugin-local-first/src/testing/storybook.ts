@@ -17,7 +17,7 @@ export interface AccountStoryArgs {
     loginOngoing: boolean;
     cloudStatus: TCloudStatus;
     cloudReady: boolean;
-    localChanges: number;
+    localChangesCount: number;
     syncError: string;
 }
 
@@ -28,7 +28,7 @@ export const accountStoryArgs: AccountStoryArgs = {
     loginOngoing: false,
     cloudStatus: CloudStatus.Disconnected,
     cloudReady: false,
-    localChanges: 0,
+    localChangesCount: 0,
     syncError: '',
 };
 
@@ -48,7 +48,7 @@ export const accountStoryArgTypes = {
     loginOngoing: { control: 'boolean' },
     cloudStatus: { control: 'select', options: Object.values(CloudStatus) },
     cloudReady: { control: 'boolean', description: 'Whether data has been backed up to the Solid POD.' },
-    localChanges: { control: { type: 'number', min: 0 } },
+    localChangesCount: { control: { type: 'number', min: 0 } },
     syncError: { control: 'text' },
 } satisfies ArgTypes<AccountStoryArgs>;
 
@@ -84,7 +84,7 @@ export function useAccountState(args: Partial<AccountStoryArgs>): void {
             CloudFake.setState({
                 status: arg('cloudStatus'),
                 ready: arg('cloudReady'),
-                localChanges: arg('localChanges'),
+                localChangesCount: arg('localChangesCount'),
                 syncError: arg('syncError') || null,
             });
         },
