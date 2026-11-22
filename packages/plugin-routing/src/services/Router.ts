@@ -55,7 +55,7 @@ export class RouterService extends Service {
 
             return {
                 ...route,
-                params: routesParams?.[route.path],
+                params: routesParams?.[route.fullPath],
                 rawParams: route.params,
             };
         });
@@ -82,9 +82,9 @@ export class RouterService extends Service {
     }
 
     protected async onEnterRoute(route: RouteLocationNormalized): Promise<void> {
-        const { path, params } = route;
+        const { fullPath, params } = route;
 
-        if (path in this.routesParams.value) {
+        if (fullPath in this.routesParams.value) {
             return;
         }
 
@@ -96,8 +96,8 @@ export class RouterService extends Service {
             const stopWatcher = watch(resolvedValue, (newValue) => {
                 this.routesParams.value = {
                     ...this.routesParams.value,
-                    [path]: {
-                        ...this.routesParams.value[path],
+                    [fullPath]: {
+                        ...this.routesParams.value[fullPath],
                         [paramName]: newValue,
                     },
                 };
@@ -108,16 +108,16 @@ export class RouterService extends Service {
             resolvedParams[paramName] = resolvedValue.value;
         }
 
-        this.routesStopWatchers[path] = stopWatchers;
+        this.routesStopWatchers[fullPath] = stopWatchers;
 
         this.history = this.history.slice(0, 3);
-        this.history.unshift(path);
+        this.history.unshift(fullPath);
 
         const routesParams = {
             ...this.routesParams.value,
-            [path]: {
+            [fullPath]: {
                 ...resolvedParams,
-                ...this.routesParams.value[path],
+                ...this.routesParams.value[fullPath],
             },
         };
 
@@ -174,7 +174,7 @@ export class RouterService extends Service {
         await App.ready;
 
         const parentNames = Object.keys(resolvedParams);
-        const otherParams = computedRouteParams(route.path, parentNames, this.routesParams, resolvedParams);
+        const otherParams = computedRouteParams(route.fullPath, parentNames, this.routesParams, resolvedParams);
         const initialValue = new PromisedValue<unknown>();
         const computedBinding = computedAsync(async () => {
             try {

@@ -11,11 +11,12 @@ import type { NavigationGuardWithThis, RouteRecordRaw } from 'vue-router';
 
 export type AerogelRoute = RouteRecordRaw & {
     title?: string | ((params: Record<string, unknown>) => string | undefined | null);
+    notFound?: Component;
 };
 
 function setupPageComponent(pageComponent: ConcreteComponent, routeConfig: AerogelRoute) {
     const route = useRoute();
-    const pageParams = computed(() => Router.routesParams?.value[route.path]);
+    const pageParams = computed(() => Router.routesParams?.value[route.fullPath]);
     const routeTitle = computed(() => {
         if (!routeConfig?.title || !pageParams.value) {
             return null;
@@ -32,7 +33,7 @@ function setupPageComponent(pageComponent: ConcreteComponent, routeConfig: Aerog
 
     return () =>
         Object.values(pageParams.value ?? {}).some((value) => value instanceof BindingNotFound)
-            ? h(NotFound)
+            ? h(routeConfig.notFound ?? NotFound)
             : h(pageComponent, pageParams.value);
 }
 

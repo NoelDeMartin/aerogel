@@ -1,14 +1,13 @@
 import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
 import { findTrackedModel, getTrackedModels, loadTrackedModels } from '@aerogel/plugin-solid';
+import { silenced } from '@noeldemartin/utils';
 import { arrayFrom, isInstanceOf } from '@noeldemartin/utils';
-import { BelongsToManyRelation, Model } from 'soukai-bis';
+import { BelongsToManyRelation, Model, isLocalUrl, remote } from 'soukai-bis';
 import type { ModelConstructor } from 'soukai-bis';
 import type { RouteLocationNormalized } from 'vue-router';
 
 function findModel<T extends Model>(modelClass: ModelConstructor<T>, slug: string, url: string | null): T | undefined {
-    return getTrackedModels(modelClass).find(
-        (instance) => (url && instance.url === url) || instance.getSlug() === slug,
-    );
+    return getTrackedModels(modelClass).find((instance) => (url ? instance.url === url : instance.getSlug() === slug));
 }
 
 function findRelatedRelation<T extends Model>(
@@ -83,6 +82,10 @@ export async function resolveModelBinding<T extends Model>(
 
     if (model && (url || model.getSlug() === slug)) {
         return model;
+    }
+
+    if (url && !isLocalUrl(url)) {
+        return (await silenced(remote(modelClass).find(url))) ?? (bindingNotFound(slug) as unknown as T);
     }
 
     await loadTrackedModels(modelClass);

@@ -12,6 +12,7 @@ const services = { $router: Router };
 export * from './services/Router';
 export * from './utils';
 export * from './components';
+export * from './pages';
 export { default as Router } from './services/Router';
 
 export interface Options {

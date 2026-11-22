@@ -3,7 +3,14 @@ import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
 import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
 import { resetModelsState } from '@aerogel/plugin-solid';
-import { InMemoryEngine, bootCoreModels, bootModels, resetModelListeners, setEngine } from 'soukai-bis';
+import {
+    InMemoryEngine,
+    bootCoreModels,
+    bootModels,
+    resetModelListeners,
+    setEngine,
+    setRemoteEngine,
+} from 'soukai-bis';
 import { beforeEach, vi } from 'vite-plus/test';
 
 vi.mock('@aerogel/core', async () => {
@@ -23,4 +30,5 @@ beforeEach(() => {
     bootCoreModels({ reset: true });
     bootModels({ Book, Chapter, Post }, { reset: true });
     setEngine(new InMemoryEngine());
+    setRemoteEngine(null);
 });

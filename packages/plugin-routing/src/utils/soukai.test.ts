@@ -3,6 +3,8 @@ import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
 import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
 import { getTrackedModels, loadTrackedModels, trackModels } from '@aerogel/plugin-solid';
+import { InMemoryEngine, remote, setRemoteEngine } from 'soukai-bis';
+import type { SolidEngine } from 'soukai-bis';
 import { describe, expect, it } from 'vite-plus/test';
 import type { RouteLocationNormalized } from 'vue-router';
 
@@ -58,6 +60,38 @@ describe('Model bindings', () => {
         // Assert
         expect(getTrackedModels(Post)).toHaveLength(2);
         expect(getTrackedModels(Post).find((model) => model.url === post.url)).toBe(binding);
+    });
+
+    it('resolves remote models by url before falling back to slugs', async () => {
+        // Arrange
+        setRemoteEngine(new InMemoryEngine() as unknown as SolidEngine);
+
+        const post = await Post.create({ url: 'local://posts/hello#it' });
+        const remotePost = await remote(Post).create({ url: 'https://bob.example/posts/hello#it' });
+
+        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+        await loadTrackedModels(Post);
+
+        // Act
+        const binding = await resolveModelBinding(Post, 'hello', routeWithUrl(remotePost.requireUrl()));
+
+        // Assert
+        expect(binding.url).toEqual(remotePost.url);
+        expect(getTrackedModels(Post).map((model) => model.url)).toEqual([post.url]);
+    });
+
+    it('does not fall back to slugs for unreachable remote urls', async () => {
+        // Arrange
+        setRemoteEngine(new InMemoryEngine() as unknown as SolidEngine);
+
+        await Post.create({ url: 'local://posts/hello#it' });
+        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+
+        // Act
+        const binding = await resolveModelBinding(Post, 'hello', routeWithUrl('https://bob.example/posts/hello#it'));
+
+        // Assert
+        expect(binding).toBeInstanceOf(BindingNotFound);
     });
 
     it('resolves missing models as not found', async () => {
