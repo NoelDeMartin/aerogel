@@ -2,7 +2,15 @@ import { Events, NetworkCache } from '@aerogel/core';
 import Gallery from '@aerogel/plugin-solid/testing/stubs/models/Gallery';
 import { computedModelAttribute, getTrackedModels, resetModelsState, trackModels } from '@aerogel/reactivity';
 import { invade } from '@noeldemartin/utils';
-import { Container, DocumentNotFound, InMemoryEngine, SolidEngine, setEngine, setRemoteEngine } from 'soukai-bis';
+import {
+    Container,
+    DocumentNotFound,
+    InMemoryEngine,
+    SolidEngine,
+    setEngine,
+    setRemoteEngine,
+    trackLocalChanges,
+} from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { effectScope } from 'vue';
 
@@ -27,6 +35,8 @@ describe('Solid files', () => {
         const containerUrl = 'https://alice.example/gallery/';
         const gallery = await new Gallery({ name: 'Holidays' }).save({ containerUrl });
         const uploadedUrls: string[] = [];
+
+        trackLocalChanges(Gallery);
 
         await gallery.loadRelation('container');
 

@@ -10,6 +10,7 @@ import User from '@aerogel/reactivity/testing/stubs/models/User';
 import TestingComputedModelsCache from '@aerogel/reactivity/testing/TestingComputedModelsCache';
 import {
     InMemoryEngine,
+    Sync,
     bootCoreModels,
     bootModels,
     resetModelListeners,
@@ -29,5 +30,6 @@ beforeEach(async () => {
     setEngine(new InMemoryEngine());
     setRemoteEngine(null);
 
+    Sync.reset();
     await TestingComputedModelsCache.clear();
 });

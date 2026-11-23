@@ -13,7 +13,7 @@ import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
 import { useModels } from '@aerogel/reactivity';
 import { SolidDocument } from '@noeldemartin/solid-utils';
-import { Sync, requireEngine } from 'soukai-bis';
+import { Sync, requireEngine, tracksLocalChanges } from 'soukai-bis';
 import type { DeletionConflict, ExternalSource, ModelContainerUrls } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -46,6 +46,7 @@ describe('Cloud', () => {
 
         // Act
         await cloud.track(Post, { register: true });
+        await cloud.restoreSyncState();
 
         // Assert
         const { models: posts } = useModels(Post);
@@ -66,6 +67,7 @@ describe('Cloud', () => {
 
         // Act
         await cloud.track(Post, { register: true });
+        await cloud.restoreSyncState();
 
         // Assert
         const { models: posts } = useModels(Post);
@@ -109,6 +111,49 @@ describe('Cloud', () => {
         expect(cloud.status).toEqual(CloudStatus.Online);
     });
 
+    it('tracks local changes after setup', async () => {
+        // Arrange
+        fakeSync();
+
+        await cloud.track(Post, { register: true });
+        await Post.create({ title: 'Offline' });
+        await connect(cloud, { ready: false });
+
+        const trackedBeforeSetup = tracksLocalChanges(Post);
+
+        // Act
+        await cloud.setup();
+
+        // Assert
+        expect(trackedBeforeSetup).toBe(false);
+        expect(tracksLocalChanges(Post)).toBe(true);
+    });
+
+    it('tracks local changes when booting after setup', async () => {
+        // Arrange
+        cloud.setState({ ready: true });
+
+        // Act
+        await cloud.track(Post, { register: true });
+        await cloud.restoreSyncState();
+
+        // Assert
+        expect(tracksLocalChanges(Post)).toBe(true);
+    });
+
+    it('counts local changes from the local engine', async () => {
+        // Arrange
+        Sync.trackLocalChanges(Post);
+        cloud.watchLocalChanges();
+
+        // Act
+        await Post.create({ title: 'Offline' });
+
+        // Assert
+        await vi.waitFor(() => expect(cloud.localChangesCount).toBe(1));
+        expect(cloud.dirty).toBe(true);
+    });
+
     it('reads models from containers registered during sync', async () => {
         // Arrange
         fakeSync({ typeIndexes: [fakeTypeIndex([[Post, 'https://alice.example/blog/']])] });
@@ -133,7 +178,7 @@ describe('Cloud', () => {
 
     it('configures type index registrations', async () => {
         // Arrange
-        const connectSync = vi.spyOn(Sync.requireInstance(), 'connect');
+        const bootSync = vi.spyOn(Sync.requireInstance(), 'boot');
 
         await cloud.track(Post, { register: { public: true } });
         await cloud.track(PostsCollection, { register: { singleton: true } });
@@ -142,7 +187,7 @@ describe('Cloud', () => {
         await connect(cloud);
 
         // Assert
-        expect(connectSync).toHaveBeenCalledWith(
+        expect(bootSync).toHaveBeenCalledWith(
             expect.objectContaining({
                 models: [
                     {
@@ -256,6 +301,8 @@ describe('Cloud', () => {
             containerUrls: { Post: modelContainerUrls('https://alice.example/posts/') },
         });
 
+        const discoveryUrls = Sync.getDiscoveryUrls(Post);
+
         // Act
         await cloud.logout();
 
@@ -264,6 +311,10 @@ describe('Cloud', () => {
         expect(cloud.containerUrls).toEqual({});
         expect(cloud.externalSources).toEqual([]);
         expect(cloud.status).toEqual(CloudStatus.Disconnected);
+        expect(discoveryUrls).toEqual(['https://alice.example/posts/']);
+        expect(Sync.setupCompleted).toBe(false);
+        expect(Sync.containerUrls).toEqual({});
+        expect(Sync.getDiscoveryUrls(Post)).toEqual([Post.defaultContainerUrl]);
     });
 
     it('manages external sources when disconnected', async () => {
@@ -271,7 +322,8 @@ describe('Cloud', () => {
         const source: ExternalSource = { containerUrl: 'https://bob.example/posts/', models: [Post] };
         const post = await new Post({ title: 'Shared' }).save({ containerUrl: source.containerUrl });
 
-        cloud.addExternalSource(source);
+        await cloud.restoreSyncState();
+        await cloud.addExternalSource(source);
 
         const addedSources = cloud.externalSources;
         const isInSource = cloud.isInExternalSource(post.requireUrl());
@@ -344,7 +396,7 @@ describe('Cloud', () => {
         await connect(cloud);
 
         // Act
-        cloud.addExternalSource(source);
+        await cloud.addExternalSource(source);
 
         // Assert
         await vi.waitFor(() => expect(cloud.externalSources).toEqual([source]));
@@ -425,8 +477,7 @@ describe('Cloud', () => {
         Events.on('cloud:sync-external-source-failed', listener);
 
         await connect(cloud);
-
-        cloud.addExternalSource(source);
+        await cloud.addExternalSource(source);
 
         // Act
         await cloud.sync();

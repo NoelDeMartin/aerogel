@@ -7,10 +7,10 @@ import {
     loadTrackedSingletonModel,
     refreshTrackedModels,
     resetModelsState,
-    setTrackedModelsDiscoveryUrls,
     trackModels,
 } from '@aerogel/reactivity/lib/tracking';
 import User from '@aerogel/reactivity/testing/stubs/models/User';
+import { bootTestingSync } from '@aerogel/reactivity/testing/sync';
 import TestingComputedModelsCache from '@aerogel/reactivity/testing/TestingComputedModelsCache';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -50,7 +50,10 @@ describe('Tracking helpers', () => {
 
         await User.create({ name: 'Charlie', age: 40 });
 
-        setTrackedModelsDiscoveryUrls(User, ['https://alice.example/users/', 'https://alice.example/people/']);
+        await bootTestingSync(User, {
+            default: 'https://alice.example/users/',
+            registered: ['https://alice.example/people/'],
+        });
 
         // Act
         await loadTrackedModels(User);
@@ -66,7 +69,7 @@ describe('Tracking helpers', () => {
 
         await User.create({ name: 'Charlie', age: 40 });
 
-        setTrackedModelsDiscoveryUrls(User, ['https://alice.example/people/', alice.requireUrl()]);
+        await bootTestingSync(User, { default: 'https://alice.example/people/', instances: [alice.requireUrl()] });
 
         // Act
         await loadTrackedModels(User);
@@ -81,7 +84,7 @@ describe('Tracking helpers', () => {
 
         const bob = await new User({ name: 'Bob', age: 30 }).save({ containerUrl: 'https://alice.example/people/' });
 
-        setTrackedModelsDiscoveryUrls(User, ['https://alice.example/users/', bob.requireUrl()]);
+        await bootTestingSync(User, { default: 'https://alice.example/users/', instances: [bob.requireUrl()] });
 
         // Act
         const singleton = await loadTrackedSingletonModel(User);

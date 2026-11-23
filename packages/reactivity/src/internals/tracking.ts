@@ -1,9 +1,11 @@
 import { config } from '@aerogel/reactivity/internals/config';
+import { resetLocalChanges } from '@aerogel/reactivity/internals/local-changes';
+import { resetSyncSession } from '@aerogel/reactivity/internals/sync';
 import type { ModelsWorker } from '@aerogel/reactivity/lib/config';
 import { arrayUnique, isDevelopment, isInstanceOf, isTruthy, throttle, urlRoute } from '@noeldemartin/utils';
 import { reactiveMap } from '@noeldemartin/utils/vue';
 import type { ReactiveMap } from '@noeldemartin/utils/vue';
-import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
+import { DocumentNotFound, IndexedDBEngine, Sync, getEngine } from 'soukai-bis';
 import type { LoadAllOptions, Model, ModelConstructor, ModelInstanceEvent, ModelWithUrl } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
@@ -24,8 +26,8 @@ type TrackedModelOptions = {
 };
 
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
-let trackedUrls: WeakMap<ModelConstructor, string[]> = new WeakMap();
 let modelsWorker: ModelsWorker | null = null;
+let stopListeningSync: (() => void) | null = null;
 const clearListeners = new Set<() => void>();
 
 const WORKER_THRESHOLD = 100;
@@ -153,6 +155,26 @@ async function fetchModels<T extends Model>(
 
         return uniqueModels([...urlModels, ...(await loadModelsByContainer(modelClass, containerUrls, loadOptions))]);
     }
+}
+
+async function refreshRegisteredModels(): Promise<void> {
+    for (const { model, registration } of Sync.models) {
+        const data = trackedModels.get(model);
+
+        if (!registration || !data || (!data.loaded.value && !data.loading.value)) {
+            continue;
+        }
+
+        await data.refresh();
+    }
+}
+
+export function listenSync(): void {
+    if (stopListeningSync) {
+        return;
+    }
+
+    stopListeningSync = Sync.listeners.add({ onSyncCompleted: () => refreshRegisteredModels() });
 }
 
 function initializedTrackedModelsData<T extends Model>(
@@ -305,17 +327,7 @@ export function getTrackedModelsMap(): WeakMap<ModelConstructor, TrackedModelDat
 }
 
 export function getTrackedUrls(modelClass: ModelConstructor): string[] {
-    return trackedUrls.get(modelClass) ?? [modelClass.defaultContainerUrl];
-}
-
-export function setTrackedUrls(modelClass: ModelConstructor, urls: string[] | null): void {
-    if (!urls || urls.length === 0) {
-        trackedUrls.delete(modelClass);
-
-        return;
-    }
-
-    trackedUrls.set(modelClass, arrayUnique(urls));
+    return Sync.getDiscoveryUrls(modelClass);
 }
 
 export function onTrackedModelsCleared(listener: () => void): () => void {
@@ -330,12 +342,16 @@ export function clearTrackedModels(): void {
 
 export function resetModelsState(): void {
     trackedModels = new WeakMap();
-    trackedUrls = new WeakMap();
-
-    clearListeners.clear();
 
     modelsWorker?.terminate();
     modelsWorker = null;
+
+    stopListeningSync?.();
+    stopListeningSync = null;
+
+    clearListeners.clear();
+    resetLocalChanges();
+    resetSyncSession();
 }
 
 export function getTrackedModelsData<T extends Model>(

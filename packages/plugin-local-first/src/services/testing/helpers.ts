@@ -23,8 +23,10 @@ const invadedMethods = [
     'logout',
     'resolveDeletionConflict',
     'resolveFileConflict',
+    'restoreSyncState',
     'serializePersistedState',
     'track',
+    'watchLocalChanges',
 ] as const;
 
 export type InvadedCloud = ReturnType<typeof invade<CloudService, (typeof invadedMethods)[number]>>;
@@ -60,6 +62,7 @@ export async function connect(
         ...state,
     });
 
+    await cloud.restoreSyncState();
     await cloud.login();
 }
 

@@ -305,7 +305,7 @@ importers:
         version: 0.9.1(typescript@5.9.3)(vue@3.5.46(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
@@ -396,7 +396,7 @@ importers:
         version: 2.1.1
       dompurify:
         specifier: ^3.2.4
-        version: 3.4.18
+        version: 3.5.0
       eruda:
         specifier: ^3.4.1
         version: 3.4.3
@@ -414,7 +414,7 @@ importers:
         version: 2.11.0(vue@3.5.46(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       tailwind-merge:
         specifier: ^3.1.0
         version: 3.7.1
@@ -473,7 +473,7 @@ importers:
         version: 0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
     devDependencies:
       '@aerogel/core':
         specifier: workspace:*
@@ -541,7 +541,7 @@ importers:
         version: 8.0.4
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       vue:
         specifier: ^3.5.0
         version: 3.5.46(typescript@5.9.3)
@@ -590,7 +590,7 @@ importers:
         version: 0.8.0-next.d2aa97aabd73e5c9222907a3cfc01b0c65c683d2(vue@3.5.46(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       vue:
         specifier: ^3.5.0
         version: 3.5.46(typescript@5.9.3)
@@ -651,7 +651,7 @@ importers:
         version: 2.4.1(encoding@0.1.14)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       vite-plus:
         specifier: 'catalog:'
         version: 1.7.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(@vitest/ui@5.1.0)(@volar/typescript@2.4.28(typescript@5.9.3))(@vue/language-core@3.3.14)(esbuild@0.28.2)(happy-dom@20.14.6)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.4)(typescript@5.9.3)(vue-tsc@3.3.11(typescript@5.9.3))(yaml@2.9.1)
@@ -691,7 +691,7 @@ importers:
         version: 0.8.0-next.d2aa97aabd73e5c9222907a3cfc01b0c65c683d2(vue@3.5.46(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
     devDependencies:
       '@arethetypeswrong/core':
         specifier: 'catalog:'
@@ -719,7 +719,7 @@ importers:
         version: 0.8.0-next.d2aa97aabd73e5c9222907a3cfc01b0c65c683d2(vue@3.5.46(typescript@5.9.3))
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       vue:
         specifier: ^3.5.0
         version: 3.5.46(typescript@5.9.3)
@@ -850,7 +850,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.5)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.5
@@ -926,7 +926,7 @@ importers:
         version: 0.5.20(tailwindcss@4.3.5)
       soukai-bis:
         specifier: next
-        version: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+        version: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.5
@@ -4061,11 +4061,11 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7 || ^8
 
-  '@tanstack/virtual-core@3.19.11':
-    resolution: {integrity: sha512-/5iHb0RHBvj8Di59FDs4ESNm45jls33aZAi4zccVXZjc/6ZvwQP6nzEYeT6weXjTf9E6/vrp2JhYWRyO+ZP13A==}
+  '@tanstack/virtual-core@3.19.12':
+    resolution: {integrity: sha512-yxdda+JeX5DcVQAA3FO8oICcfF8Z6aU+M/eYUla4eRV3MIk3tCFUEwufhQsVnQMW4iscfnEAesMKjixmUjb3bQ==}
 
-  '@tanstack/vue-virtual@3.13.52':
-    resolution: {integrity: sha512-qTwG7HNr5o+FPd/u+T05N73A8howtkB9FgQI71VcBzx6J2KsYzlVugRz/0ji17kl26D8SAdKux1Wmk3yhTI1Kw==}
+  '@tanstack/vue-virtual@3.13.53':
+    resolution: {integrity: sha512-BeQqAxQTG82769go37vZCXxaJ65/H8GP+plTd/mN23mKjiZLN1VXr86YLYiwV7SuVLfPj4up6sPheCOS45rmFA==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -5550,8 +5550,8 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
-  dompurify@3.4.18:
-    resolution: {integrity: sha512-ofe3wI/uNm68HInABYFJYqQxRw1EaKAjNdrFVKqjUY+UZurvNd2L/HuQe097s/4RivWiZyP6tT7aoT8atjfhwg==}
+  dompurify@3.5.0:
+    resolution: {integrity: sha512-LYC0ZkE8P1V42JsRYTwMdme/2ET8SpOc5AA2eOFjP/IadvRd2fwiT4TVz5vkfy0XUx12aS2UaRkTnfVPNOv9vw==}
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
@@ -7567,8 +7567,8 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  soukai-bis@0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5:
-    resolution: {integrity: sha512-wtaS/P8ek3KclQrMK0q09XmCbbEKL+53oNZHOYs1B1g86/HyIjGduwplvXKfrbHJA5wNOwVz9B9FQF0Q7yVbOg==}
+  soukai-bis@0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d:
+    resolution: {integrity: sha512-gEo7rM55IPur+Ey/6iBLag+rfwlSAM1hPiiF3rALYApgqElBBLMg5roQUFC9KqbZ4r0A9ju8gjUtYLArReWo4Q==}
     peerDependencies:
       zod: ^4.3.4
 
@@ -12688,11 +12688,11 @@ snapshots:
       tailwindcss: 4.3.5
       vite: '@voidzero-dev/vite-plus-core@8.3.8000(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(@volar/typescript@2.4.28(typescript@5.9.3))(@vue/language-core@3.3.14)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.4)(typescript@5.9.3)(vue-tsc@3.3.11(typescript@5.9.3))(yaml@2.9.1)'
 
-  '@tanstack/virtual-core@3.19.11': {}
+  '@tanstack/virtual-core@3.19.12': {}
 
-  '@tanstack/vue-virtual@3.13.52(vue@3.5.46(typescript@5.9.3))':
+  '@tanstack/vue-virtual@3.13.53(vue@3.5.46(typescript@5.9.3))':
     dependencies:
-      '@tanstack/virtual-core': 3.19.11
+      '@tanstack/virtual-core': 3.19.12
       vue: 3.5.46(typescript@5.9.3)
 
   '@testing-library/dom@10.4.2':
@@ -14259,7 +14259,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.4.18:
+  dompurify@3.5.0:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -16030,7 +16030,7 @@ snapshots:
       '@noeldemartin/utils': 0.8.0-next.d2aa97aabd73e5c9222907a3cfc01b0c65c683d2(vue@3.5.46(typescript@5.9.3))
       '@playwright/test': 1.65.1
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
+      soukai-bis: 0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       zod: 4.6.7
     transitivePeerDependencies:
       - vitest
@@ -16512,7 +16512,7 @@ snapshots:
       '@floating-ui/vue': 2.0.1(vue@3.5.46(typescript@5.9.3))
       '@internationalized/date': 3.12.4
       '@internationalized/number': 3.6.9
-      '@tanstack/vue-virtual': 3.13.52(vue@3.5.46(typescript@5.9.3))
+      '@tanstack/vue-virtual': 3.13.53(vue@3.5.46(typescript@5.9.3))
       '@vueuse/core': 14.4.0(vue@3.5.46(typescript@5.9.3))
       '@vueuse/shared': 14.4.0(vue@3.5.46(typescript@5.9.3))
       aria-hidden: 1.2.6
@@ -16791,7 +16791,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  soukai-bis@0.0.0-next.3bfbbc91b03a7e7e853b14c08ff951f434340ac5(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7):
+  soukai-bis@0.0.0-next.41ff3a5aa3da602b5bcb98947690f1c9d6855d9d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7):
     dependencies:
       '@noeldemartin/solid-utils': 0.6.1-next.8a70b025a1f0b87a89167e4d07fa8ba406bd8509(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.8.0-next.d2aa97aabd73e5c9222907a3cfc01b0c65c683d2(vue@3.5.46(typescript@5.9.3))

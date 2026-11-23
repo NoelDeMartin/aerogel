@@ -1,4 +1,4 @@
-import { getTrackedModelsData, getTrackedModelsMap, setTrackedUrls } from '@aerogel/reactivity/internals/tracking';
+import { getTrackedModelsData, getTrackedModelsMap } from '@aerogel/reactivity/internals/tracking';
 import type { Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 
 export { clearTrackedModels, resetModelsState } from '@aerogel/reactivity/internals/tracking';
@@ -18,10 +18,6 @@ export function getTrackedModels<T extends Model>(
     }
 
     return models.filter((model) => !model.isSoftDeleted());
-}
-
-export function setTrackedModelsDiscoveryUrls(modelClass: ModelConstructor, urls: string[] | null): void {
-    setTrackedUrls(modelClass, urls);
 }
 
 export function getTrackedSingletonModel<T extends Model>(
