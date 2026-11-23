@@ -16,7 +16,7 @@ For the same reason, `playwright`, `storybook` and the playground's `tsconfig.no
 - `vp build` doesn't run publint and attw like `vp pack` does, so they have a `verify` script for that.
 - Their plugins are wrapped in `lazyPlugins`, so that commands that only read the config (like `vp check`) don't instantiate them.
 
-The other packages (`cli`, `vite`, `playwright` and `storybook`) use `vp pack`, and `create-aerogel` has nothing to build.
+The other packages (`cli`, `vite`, `playwright`, `reactivity` and `storybook`) use `vp pack`, and `create-aerogel` has nothing to build.
 
 ## Build order
 

@@ -65,16 +65,16 @@ import Markdown from '@aerogel/core/components/ui/Markdown.vue';
 import { injectModal, modals, useModal } from '@aerogel/core/ui/modals';
 import type { ModalController } from '@aerogel/core/ui/modals';
 import UI from '@aerogel/core/ui/UI';
-import { reactiveSet } from '@aerogel/core/utils';
 import { classes } from '@aerogel/core/utils/classes';
 import { useForwardExpose } from '@aerogel/core/utils/composition/expose';
 import type { AcceptRefs } from '@aerogel/core/utils/vue';
 import { after } from '@noeldemartin/utils';
+import { reactiveMap } from '@noeldemartin/utils/vue';
 import { computed, onMounted } from 'vue';
 import type { ComponentPublicInstance, HTMLAttributes } from 'vue';
 import IconClose from '~icons/zondicons/close';
 
-const renderedModals = reactiveSet<ModalController>();
+const renderedModals = reactiveMap<ModalController>();
 </script>
 
 <script setup lang="ts" generic="T = void">

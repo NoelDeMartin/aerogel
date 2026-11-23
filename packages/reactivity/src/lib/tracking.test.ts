@@ -1,9 +1,5 @@
-import { Cache } from '@aerogel/core';
-import User from '@aerogel/plugin-solid/testing/stubs/models/User';
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
-
-import { computedModels } from './composition';
-import { _getTrackedModelsData } from './internal';
+import { computedModels } from '@aerogel/reactivity/composables/computedModels';
+import { getTrackedModelsData } from '@aerogel/reactivity/internals/tracking';
 import {
     findTrackedModel,
     getTrackedModels,
@@ -13,21 +9,38 @@ import {
     resetModelsState,
     setTrackedModelsDiscoveryUrls,
     trackModels,
-} from './services';
+} from '@aerogel/reactivity/lib/tracking';
+import User from '@aerogel/reactivity/testing/stubs/models/User';
+import TestingComputedModelsCache from '@aerogel/reactivity/testing/TestingComputedModelsCache';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
-describe('Services helpers', () => {
+describe('Tracking helpers', () => {
     beforeEach(resetModelsState);
 
-    it('Loads lazily tracked models when they are tracked again', async () => {
+    it('Loads tracked models on demand', async () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });
-        await trackModels(User, { bypassServicesCheck: true, lazy: true });
+        trackModels(User);
+
+        const trackedBeforeLoading = getTrackedModels(User);
 
         // Act
-        await trackModels(User, { bypassServicesCheck: true });
+        await loadTrackedModels(User);
 
         // Assert
+        expect(trackedBeforeLoading).toHaveLength(0);
         expect(getTrackedModels(User).map((user) => user.name)).toEqual(['Alice']);
+    });
+
+    it('Tracks models with a single depth', () => {
+        // Arrange
+        trackModels(User, { depth: 1 });
+
+        // Act
+        const trackWithOtherDepth = () => trackModels(User, { depth: 2 });
+
+        // Assert
+        expect(trackWithOtherDepth).toThrow('Model collection is already being tracked with a different depth');
     });
 
     it('Loads tracked models from all their containers', async () => {
@@ -40,7 +53,7 @@ describe('Services helpers', () => {
         setTrackedModelsDiscoveryUrls(User, ['https://alice.example/users/', 'https://alice.example/people/']);
 
         // Act
-        await trackModels(User, { bypassServicesCheck: true });
+        await loadTrackedModels(User);
 
         // Assert
         expect(getTrackedModels(User).map((user) => user.url)).toEqual([alice.url, bob.url]);
@@ -56,7 +69,7 @@ describe('Services helpers', () => {
         setTrackedModelsDiscoveryUrls(User, ['https://alice.example/people/', alice.requireUrl()]);
 
         // Act
-        await trackModels(User, { bypassServicesCheck: true });
+        await loadTrackedModels(User);
 
         // Assert
         expect(getTrackedModels(User).map((user) => user.url)).toEqual([alice.url, bob.url]);
@@ -80,7 +93,7 @@ describe('Services helpers', () => {
     it('Loads tracked models once', async () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });
-        await trackModels(User, { bypassServicesCheck: true, lazy: true });
+        trackModels(User);
 
         // Act
         await Promise.all([loadTrackedModels(User), loadTrackedModels(User)]);
@@ -94,13 +107,13 @@ describe('Services helpers', () => {
     it('Skips refreshing models that have not been loaded', async () => {
         // Arrange
         await User.create({ name: 'Alice', age: 23 });
-        await trackModels(User, { bypassServicesCheck: true, lazy: true });
+        trackModels(User);
 
         // Act
         await refreshTrackedModels(User);
 
         // Assert
-        expect(_getTrackedModelsData(User).loaded.value).toBe(false);
+        expect(getTrackedModelsData(User).loaded.value).toBe(false);
         expect(getTrackedModels(User)).toHaveLength(0);
     });
 
@@ -157,11 +170,11 @@ describe('Services helpers', () => {
         // Arrange
         const alice = await User.create({ name: 'Alice', age: 23 });
 
-        await Cache.set('users', [{ '@model': alice.serialize() }]);
-        await trackModels(User, { bypassServicesCheck: true, lazy: true });
+        await TestingComputedModelsCache.set('users', [{ '@model': alice.serialize() }]);
+        trackModels(User);
 
         // Act
-        const users = computedModels(User, () => getTrackedModels(User), { cache: 'users' });
+        const users = computedModels(User, () => getTrackedModels(User), { cacheKey: 'users' });
 
         await vi.waitFor(() => expect(users.value).toHaveLength(1));
 

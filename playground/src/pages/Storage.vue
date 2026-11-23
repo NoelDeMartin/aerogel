@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { useModels } from '@aerogel/plugin-solid';
+import { useModels } from '@aerogel/reactivity';
 
 import LocalTask from '@/models/LocalTask';
 

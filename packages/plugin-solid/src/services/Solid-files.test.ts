@@ -1,7 +1,6 @@
 import { Events, NetworkCache } from '@aerogel/core';
 import Gallery from '@aerogel/plugin-solid/testing/stubs/models/Gallery';
-import { computedModelAttribute } from '@aerogel/plugin-solid/utils/composition';
-import { getTrackedModels, resetModelsState, trackModels } from '@aerogel/plugin-solid/utils/services';
+import { computedModelAttribute, getTrackedModels, resetModelsState, trackModels } from '@aerogel/reactivity';
 import { invade } from '@noeldemartin/utils';
 import { Container, DocumentNotFound, InMemoryEngine, SolidEngine, setEngine, setRemoteEngine } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
@@ -77,7 +76,7 @@ describe('Solid files', () => {
         // Arrange
         const containerUrl = 'https://alice.example/gallery/';
 
-        await trackModels(Gallery, { bypassServicesCheck: true, lazy: true });
+        trackModels(Gallery);
         await new Gallery({ name: 'Holidays' }).save({ containerUrl });
 
         const gallery = getTrackedModels(Gallery)[0];

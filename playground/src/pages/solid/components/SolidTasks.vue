@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useModels } from '@aerogel/plugin-solid';
+import { useModels } from '@aerogel/reactivity';
 
 import SolidTask from '@/models/SolidTask';
 

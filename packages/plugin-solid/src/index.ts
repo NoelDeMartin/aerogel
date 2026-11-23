@@ -1,4 +1,12 @@
-import { Events, appNamespace, bootServices, registerErrorHandler, registerFakeService } from '@aerogel/core';
+import {
+    Cache,
+    Errors,
+    Events,
+    appNamespace,
+    bootServices,
+    registerErrorHandler,
+    registerFakeService,
+} from '@aerogel/core';
 import type { Plugin } from '@aerogel/core';
 import {
     authenticators as baseAuthenticators,
@@ -13,8 +21,15 @@ import { services } from '@aerogel/plugin-solid/services';
 import Solid from '@aerogel/plugin-solid/services/Solid';
 import SolidFake from '@aerogel/plugin-solid/services/Solid.fake';
 import { DEFAULT_STATE } from '@aerogel/plugin-solid/services/Solid.state';
-import { resetModelsState } from '@aerogel/plugin-solid/utils/services';
 import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
+import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
+import {
+    clearTrackedModels,
+    resetModelsState,
+    setComputedModelsCache,
+    setErrorReporter,
+    setModelsWorkerLoader,
+} from '@aerogel/reactivity';
 import type { SolidUserProfile, SolidStore } from '@noeldemartin/solid-utils';
 import { ComputedAttributesCache, InMemoryEngine, IndexedDBEngine } from 'soukai-bis';
 import appModels from 'virtual:aerogel-models';
@@ -53,6 +68,9 @@ export default function solid(options: Options = {}): Plugin {
             const engine = globalThis.__aerogelStorybook__ ? new InMemoryEngine() : new IndexedDBEngine();
 
             setupSoukai({ engine, namespace: appNamespace(), models: appModels });
+            setErrorReporter((error) => Errors.report(error));
+            setComputedModelsCache(Cache);
+            setModelsWorkerLoader(() => new ModelsWorker(appNamespace()));
 
             globalThis.__aerogelStorybook__ && resetModelsState();
 
@@ -84,6 +102,7 @@ export default function solid(options: Options = {}): Plugin {
             }
 
             Events.on('purge-storage', () => engine instanceof IndexedDBEngine && engine.clear());
+            Events.on('purge-storage', () => clearTrackedModels());
             Events.on('clear-cache', () => engine.purgeMetadata());
             Events.on('clear-cache', () => ComputedAttributesCache.clear());
 

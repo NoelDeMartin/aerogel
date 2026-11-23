@@ -1,0 +1,9 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "@aerogel/reactivity/*": ["./src/*"]
+        }
+    },
+    "include": ["src/**/*.ts"]
+}

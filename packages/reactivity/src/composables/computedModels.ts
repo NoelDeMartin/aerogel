@@ -1,41 +1,29 @@
-import { Cache, Errors, Events } from '@aerogel/core';
+import { config } from '@aerogel/reactivity/internals/config';
+import { reportDevelopmentError } from '@aerogel/reactivity/internals/errors';
+import {
+    getTrackedModelsData,
+    listenToModelChanges,
+    onTrackedModelsCleared,
+} from '@aerogel/reactivity/internals/tracking';
+import type { ComputedModelsCache } from '@aerogel/reactivity/lib/config';
 import { debounce, fail, isArray, isInstanceOf, isNullable, isPlainObject, tap, throttle } from '@noeldemartin/utils';
-import type { Nullable } from '@noeldemartin/utils';
-import { Model, getRelatedClasses, hydrateModel } from 'soukai-bis';
-import type {
-    ComputedAttribute,
-    ModelConstructor,
-    ModelInstanceEvent,
-    ModelListener,
-    ModelWithUrl,
-    SerializedModel,
-} from 'soukai-bis';
+import { Model, hydrateModel } from 'soukai-bis';
+import type { ComputedAttribute, ModelConstructor, SerializedModel } from 'soukai-bis';
 import {
     ReactiveEffect,
     computed,
     customRef,
     getCurrentScope,
     onScopeDispose,
-    readonly,
-    ref,
     shallowReactive,
     shallowRef,
     toRaw,
-    toValue,
     watch,
     watchEffect,
 } from 'vue';
-import type { ComputedRef, MaybeRef, MaybeRefOrGetter, Ref } from 'vue';
-
-import { IS_REACTIVE, RAW } from './flags';
-import { _getTrackedModelsData } from './internal';
+import type { ComputedRef, Ref } from 'vue';
 
 const SERIALIZED_MODEL_KEY = '@model';
-const MODEL_CHANGE_EVENTS: ModelInstanceEvent[] = ['created', 'updated', 'deleted', 'modified', 'relation-loaded'];
-
-function listenToModelChanges(modelClass: ModelConstructor, listener: () => void): Array<() => void> {
-    return MODEL_CHANGE_EVENTS.map((event) => modelClass.on(event, listener));
-}
 
 function isSerializedModelReference(value: unknown): value is { [SERIALIZED_MODEL_KEY]: SerializedModel } {
     return isPlainObject(value) && SERIALIZED_MODEL_KEY in value;
@@ -88,7 +76,7 @@ function watchComputedAttributes(modelClass: ModelConstructor, attributes: strin
         return;
     }
 
-    const modelData = _getTrackedModelsData(modelClass);
+    const modelData = getTrackedModelsData(modelClass);
     const subscriptions = new Map<Model, () => void>();
 
     watchEffect(() => {
@@ -126,7 +114,7 @@ function shallowComputedModels<T>(
     compute: () => T,
     options: ComputedModelsOptions = {},
 ): ComputedRef<T> {
-    const watchedAttributes = options.watch ?? [];
+    const watchedAttributes = options.watchComputedAttributes ?? [];
     const unknownAttribute = watchedAttributes.find(
         (attribute) => !modelClasses.some((modelClass) => modelClass.hasComputedAttribute(attribute)),
     );
@@ -201,18 +189,20 @@ function reactiveComputedModels<T>(
 
     getCurrentScope() && onScopeDispose(() => listeners.forEach((stop) => stop()));
 
-    if (options.cache) {
-        void restoreCachedValue<T>(options.cache).then((value) => value && (cachedValue.value ??= value));
+    if (options.cacheKey) {
+        const cache = config.computedModelsCache ?? fail<ComputedModelsCache>('Computed models cache is missing');
 
-        watchCachedValue(options.cache, reactiveModels, shallowModels, cachedValue);
+        void restoreCachedValue<T>(cache, options.cacheKey).then((value) => value && (cachedValue.value ??= value));
+
+        watchCachedValue(cache, options.cacheKey, reactiveModels, shallowModels, cachedValue);
     }
 
     return reactiveModels;
 }
 
-async function restoreCachedValue<T>(key: string): Promise<{ value: T } | null> {
+async function restoreCachedValue<T>(cache: ComputedModelsCache, key: string): Promise<{ value: T } | null> {
     try {
-        const cached = await Cache.get(key);
+        const cached = await cache.get(key);
 
         if (cached === undefined) {
             return null;
@@ -220,7 +210,7 @@ async function restoreCachedValue<T>(key: string): Promise<{ value: T } | null> 
 
         return { value: (await hydrateCachedValue(cached)) as T };
     } catch (error) {
-        Errors.reportDevelopmentError(error, `Failed restoring cached value '${key}'`);
+        reportDevelopmentError(error, `Failed restoring cached value '${key}'`);
 
         return null;
     }
@@ -233,15 +223,15 @@ async function hydrateCachedModel(serializedModel: SerializedModel): Promise<Mod
         return model;
     }
 
-    const trackedModelsData = _getTrackedModelsData(model.static());
-    const trackedModel = trackedModelsData.modelsSet.values().find(({ url }) => url === model.url);
+    const trackedModelsData = getTrackedModelsData(model.static());
+    const trackedModel = trackedModelsData.modelsMap.get(model.url);
 
     if (trackedModel) {
         return trackedModel;
     }
 
     if (!trackedModelsData.loaded.value) {
-        trackedModelsData.modelsSet.add(model);
+        trackedModelsData.modelsMap.add(model);
     }
 
     return model;
@@ -264,21 +254,22 @@ function serializeCachedValue(value: unknown): unknown {
 }
 
 function watchCachedValue(
+    cache: ComputedModelsCache,
     key: string,
     reactiveModels: ComputedRef<unknown>,
     shallowModels: ComputedRef<unknown>,
     cachedValue: Ref<{ value: unknown } | null>,
 ): void {
-    const stopListeners = Events.on('purge-storage', () => {
+    const stopListeners = onTrackedModelsCleared(() => {
         saveValue.cancel();
 
         cachedValue.value = null;
     });
     const saveValue = debounce(async (value: unknown) => {
         try {
-            await Cache.set(key, serializeCachedValue(value));
+            await cache.set(key, serializeCachedValue(value));
         } catch (error) {
-            Errors.reportDevelopmentError(error, `Failed caching value '${key}'`);
+            reportDevelopmentError(error, `Failed caching value '${key}'`);
         }
     }, 500);
 
@@ -304,32 +295,6 @@ function toReactiveModels<T>(value: T, options: ComputedModelsOptions = {}): T {
     ) as T;
 }
 
-function createModelProxy<T extends object>(model: T, track: () => void, trigger: () => void): T {
-    return new Proxy(model, {
-        get(target, prop, receiver) {
-            if (prop === RAW) {
-                return target;
-            }
-
-            if (prop === IS_REACTIVE) {
-                return true;
-            }
-
-            track();
-            return Reflect.get(target, prop, receiver);
-        },
-        set(target, prop, val, receiver) {
-            const result = Reflect.set(target, prop, val, receiver);
-
-            trigger();
-
-            return result;
-        },
-    });
-}
-
-export type RefValue<T> = T extends Ref<infer TValue> ? TValue : never;
-
 export type ComputedAttributeName<T extends ModelConstructor> =
     T extends ModelConstructor<infer TModel>
         ? {
@@ -339,77 +304,9 @@ export type ComputedAttributeName<T extends ModelConstructor> =
         : never;
 
 export interface ComputedModelsOptions<TAttribute extends string = string> {
-    watch?: TAttribute[];
-    cache?: string;
+    watchComputedAttributes?: TAttribute[];
+    cacheKey?: string;
     includeSoftDeleted?: boolean;
-}
-
-export interface UseModelsResult<T extends Model> {
-    models: ComputedRef<ModelWithUrl<T>[]>;
-    loading: ComputedRef<boolean>;
-    refreshing: Readonly<Ref<boolean>>;
-}
-
-export interface UseSingletonModelResult<T extends Model> {
-    model: Readonly<Ref<ModelWithUrl<T> | null>>;
-    loading: ComputedRef<boolean>;
-    refreshing: Readonly<Ref<boolean>>;
-}
-
-export function computedModel<T>(compute: () => T): Readonly<Ref<T>> {
-    return customRef((track, trigger) => {
-        let value: T;
-        let rawValue: T;
-        let proxy: T | null = null;
-        const listeners: Array<() => void> = [];
-        const onModelUpdated = throttle(trigger);
-        const stopListeners = () => {
-            listeners.forEach((stop) => stop());
-            listeners.splice(0, listeners.length);
-        };
-
-        getCurrentScope() && onScopeDispose(stopListeners);
-        watchEffect(() => {
-            const newValue = toRaw(compute());
-
-            if (
-                rawValue instanceof Model &&
-                (!isInstanceOf(newValue, Model) || newValue.static() !== rawValue.static())
-            ) {
-                stopListeners();
-            }
-
-            if (newValue instanceof Model) {
-                if (newValue !== rawValue) {
-                    proxy = createModelProxy(newValue, track, trigger) as T;
-                }
-
-                value = proxy as T;
-            } else {
-                value = newValue;
-                proxy = null;
-            }
-
-            rawValue = newValue;
-
-            trigger();
-
-            if (!isInstanceOf(rawValue, Model) || listeners.length) {
-                return;
-            }
-
-            for (const modelClass of getRelatedClasses(rawValue.static())) {
-                listeners.push(...listenToModelChanges(modelClass, onModelUpdated));
-            }
-        });
-
-        return {
-            get: () => tap(value, () => track()),
-
-            // oxlint-disable-next-line no-console
-            set: () => console.warn('Computed model ref was not set (it is immutable).'),
-        };
-    });
 }
 
 export function computedModels<T, TModelClass extends ModelConstructor = ModelConstructor>(
@@ -422,126 +319,4 @@ export function computedModels<T, TModelClass extends ModelConstructor = ModelCo
     // TODO This implementation is probably very inefficient and needs to be improved for better performance with large
     // collections. There are also more details in the unit tests for this function.
     return reactiveComputedModels(isArray(modelClasses) ? modelClasses : [modelClasses], compute, options);
-}
-
-export function computedModelAttribute<TModel extends Model, TAttribute extends string & keyof TModel>(
-    model: MaybeRefOrGetter<TModel | null | undefined>,
-    attribute: TAttribute,
-): TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never {
-    return customRef((track, trigger) => {
-        let computedAttribute: Nullable<ComputedAttribute>;
-        let unsubscribe: Nullable<() => void>;
-
-        watchEffect(() => {
-            const currentModel = toValue(model);
-            const currentComputedAttribute = currentModel && toRaw(currentModel).getComputedAttribute(attribute);
-
-            if (currentComputedAttribute === computedAttribute) {
-                return;
-            }
-
-            unsubscribe?.();
-
-            computedAttribute = currentComputedAttribute;
-            unsubscribe = computedAttribute?.subscribe(() => trigger());
-        });
-
-        onScopeDispose(() => unsubscribe?.());
-
-        return {
-            get: () => {
-                track();
-
-                return computedAttribute?.value;
-            },
-            set: () => fail('Computed model attribute ref is read-only'),
-        };
-    }) as TModel[TAttribute] extends ComputedAttribute<infer T> ? Readonly<Ref<T | undefined>> : never;
-}
-
-export function useModels<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    options: { includeSoftDeleted?: boolean; depth?: number; urls?: MaybeRef<string[]> } = {},
-): UseModelsResult<T> {
-    let lastLoadId = 0;
-    const hasUrls = options.urls !== undefined;
-    const urlsLoading = ref(false);
-    const models = shallowRef([]) as Ref<ModelWithUrl<T>[]>;
-    const modelData = _getTrackedModelsData<T>(modelClass, { load: !hasUrls, depth: options.depth });
-
-    watch(
-        () => toValue(options.urls),
-        (urls) => {
-            if (!urls) {
-                return;
-            }
-
-            const loadId = ++lastLoadId;
-
-            if (urls.length === 0) {
-                urlsLoading.value = false;
-
-                return;
-            }
-
-            urlsLoading.value = true;
-
-            modelData
-                .load(urls)
-                .catch((error) => Errors.report(error))
-                .finally(() => {
-                    if (loadId !== lastLoadId) {
-                        return;
-                    }
-
-                    urlsLoading.value = false;
-                });
-        },
-        { immediate: true, deep: true, flush: 'sync' },
-    );
-
-    watchEffect(() => {
-        if (!hasUrls) {
-            models.value = modelData.modelsArray.value;
-
-            return;
-        }
-
-        const urlsSet = new Set(toValue(options.urls));
-
-        models.value = modelData.modelsArray.value.filter((model) => urlsSet.has(model.url));
-    });
-
-    return {
-        models: computedModels(modelClass, () => models.value, { includeSoftDeleted: options.includeSoftDeleted }),
-        loading: hasUrls
-            ? computed(() => urlsLoading.value)
-            : computed(() => modelData.loading.value && !modelData.loaded.value),
-        refreshing: hasUrls
-            ? computed(() => urlsLoading.value || modelData.loading.value)
-            : readonly(modelData.loading),
-    };
-}
-
-export function useSingletonModel<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    options: { includeSoftDeleted?: boolean } = {},
-): UseSingletonModelResult<T> {
-    const { models, loading, refreshing } = useModels(modelClass, options);
-
-    return {
-        model: computedModel(() => models.value[0] ?? null),
-        loading,
-        refreshing,
-    };
-}
-
-export function useModelEvent<TModel extends Model, TEvent extends ModelInstanceEvent>(
-    modelClass: ModelConstructor<TModel>,
-    event: TEvent,
-    listener: ModelListener<TModel, TEvent>,
-): void {
-    const cleanUp = modelClass.on(event, listener);
-
-    getCurrentScope() && onScopeDispose(cleanUp);
 }

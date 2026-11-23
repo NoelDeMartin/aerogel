@@ -19,6 +19,7 @@ export default defineConfig({
             ),
             '@aerogel/plugin-routing': fileURLToPath(new URL('../packages/plugin-routing/src/', import.meta.url)),
             '@aerogel/plugin-solid': fileURLToPath(new URL('../packages/plugin-solid/src/', import.meta.url)),
+            '@aerogel/reactivity': fileURLToPath(new URL('../packages/reactivity/src/', import.meta.url)),
             '@aerogel/storybook': fileURLToPath(new URL('../packages/storybook/src/', import.meta.url)),
         },
     },

@@ -49,6 +49,7 @@
     "devDependencies": {
         "@aerogel/core": "workspace:*",
         "@aerogel/plugin-local-first": "workspace:*",
+        "@aerogel/reactivity": "workspace:*",
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
@@ -57,6 +58,7 @@
     },
     "peerDependencies": {
         "@aerogel/core": "*",
+        "@aerogel/reactivity": "*",
         "@aerogel/vite": "*",
         "soukai-bis": "*",
         "vite-plus": "catalog:",

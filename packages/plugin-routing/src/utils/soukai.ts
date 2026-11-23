@@ -1,5 +1,5 @@
 import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
-import { findTrackedModel, getTrackedModels, loadTrackedModels } from '@aerogel/plugin-solid';
+import { findTrackedModel, getTrackedModels, loadTrackedModels } from '@aerogel/reactivity';
 import { silenced } from '@noeldemartin/utils';
 import { arrayFrom, isInstanceOf } from '@noeldemartin/utils';
 import { BelongsToManyRelation, Model, isLocalUrl, remote } from 'soukai-bis';

@@ -18,7 +18,7 @@ export class FakeCloudService extends CloudService {
                 continue;
             }
 
-            await this.initializeTrackedModels(modelClass, modelClass.cloud);
+            this.initializeTrackedModels(modelClass, modelClass.cloud);
         }
     }
 }

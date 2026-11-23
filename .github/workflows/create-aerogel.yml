@@ -22,7 +22,7 @@ jobs:
             - name: Build packages
               run: |
                   vp run build
-                  for package in cli vite core plugin-i18n plugin-routing plugin-solid plugin-local-first playwright storybook; do
+                  for package in cli vite core plugin-i18n plugin-routing plugin-solid plugin-local-first reactivity playwright storybook; do
                       (cd packages/$package && vp pm pack)
                   done
             - name: Create app

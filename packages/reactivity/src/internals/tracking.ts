@@ -1,15 +1,16 @@
-import { Errors, Events, appNamespace, reactiveSet } from '@aerogel/core';
-import type { ReactiveSet } from '@aerogel/core';
-import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
+import { config } from '@aerogel/reactivity/internals/config';
+import type { ModelsWorker } from '@aerogel/reactivity/lib/config';
 import { arrayUnique, isDevelopment, isInstanceOf, isTruthy, throttle, urlRoute } from '@noeldemartin/utils';
+import { reactiveMap } from '@noeldemartin/utils/vue';
+import type { ReactiveMap } from '@noeldemartin/utils/vue';
 import { DocumentNotFound, IndexedDBEngine, getEngine } from 'soukai-bis';
-import type { LoadAllOptions, Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
+import type { LoadAllOptions, Model, ModelConstructor, ModelInstanceEvent, ModelWithUrl } from 'soukai-bis';
 import { computed, ref, toRaw } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 
 interface TrackedModelData<T extends Model = Model> {
     depth?: number;
-    modelsSet: ReactiveSet<ModelWithUrl<T>>;
+    modelsMap: ReactiveMap<ModelWithUrl<T>, string>;
     modelsArray: ComputedRef<ModelWithUrl<T>[]>;
     loading: Ref<boolean>;
     loaded: Ref<boolean>;
@@ -25,8 +26,10 @@ type TrackedModelOptions = {
 let trackedModels: WeakMap<ModelConstructor, TrackedModelData> = new WeakMap();
 let trackedUrls: WeakMap<ModelConstructor, string[]> = new WeakMap();
 let modelsWorker: ModelsWorker | null = null;
+const clearListeners = new Set<() => void>();
 
 const WORKER_THRESHOLD = 100;
+const MODEL_CHANGE_EVENTS: ModelInstanceEvent[] = ['created', 'updated', 'deleted', 'modified', 'relation-loaded'];
 
 async function countDocuments(engine: IndexedDBEngine, containerUrl: string, depth?: number): Promise<number> {
     try {
@@ -95,7 +98,7 @@ function createLoadOptions<T extends Model>(modelClass: ModelConstructor<T>, dep
         depth,
         includeSoftDeleted: true,
         async onDocumentError(error, documentUrl) {
-            await Errors.report(
+            await config.reportError(
                 new Error(`Failed loading ${modelClass.modelName} from ${documentUrl}`, { cause: error }),
             );
         },
@@ -107,11 +110,12 @@ async function fetchModels<T extends Model>(
     options: { depth?: number; onChunk(models: ModelWithUrl<T>[]): unknown },
 ): Promise<ModelWithUrl<T>[]> {
     const loadOptions = createLoadOptions(modelClass, options.depth);
-    const urls = _getTrackedUrls(modelClass);
+    const urls = getTrackedUrls(modelClass);
     const containerUrls = urls.filter((url) => url.endsWith('/'));
     const modelUrls = urls.filter((url) => !url.endsWith('/'));
+    const createWorker = config.createModelsWorker;
 
-    if (!(await shouldLoadModelsInWorker(containerUrls, options))) {
+    if (!createWorker || !(await shouldLoadModelsInWorker(containerUrls, options))) {
         const [urlModels, containerModels] = await Promise.all([
             loadModelsByUrl(modelClass, modelUrls, loadOptions),
             loadModelsByContainer(modelClass, containerUrls, loadOptions),
@@ -120,7 +124,7 @@ async function fetchModels<T extends Model>(
         return uniqueModels([...urlModels, ...containerModels]);
     }
 
-    const worker = (modelsWorker ??= new ModelsWorker(appNamespace()));
+    const worker = (modelsWorker ??= createWorker());
     const urlModels = await loadModelsByUrl(modelClass, modelUrls, loadOptions);
 
     try {
@@ -140,7 +144,7 @@ async function fetchModels<T extends Model>(
         }
 
         if (isDevelopment()) {
-            await Errors.report(
+            await config.reportError(
                 new Error(`Failed loading ${modelClass.modelName} models, retrying without the models worker`, {
                     cause: error,
                 }),
@@ -157,13 +161,13 @@ function initializedTrackedModelsData<T extends Model>(
 ): TrackedModelData<T> {
     let pendingRefresh: Promise<void> | null = null;
     const pendingUrls = new Map<string, Promise<void>>();
-    const modelsSet = reactiveSet<ModelWithUrl<T>>(undefined, { key: (model) => model.url });
-    const modelsArray = computed(() => modelsSet.values());
+    const modelsMap = reactiveMap<ModelWithUrl<T>, string>(undefined, { key: (model) => model.url });
+    const modelsArray = computed(() => modelsMap.values());
     const loading = ref(false);
     const loaded = ref(false);
     const data: TrackedModelData<T> = {
         depth: options.depth,
-        modelsSet,
+        modelsMap,
         modelsArray,
         loading,
         loaded,
@@ -188,12 +192,11 @@ function initializedTrackedModelsData<T extends Model>(
     };
 
     async function performLoadUrls(urls: string[]): Promise<void> {
-        const loadedUrls = new Set(modelsSet.values().map((model) => model.url));
         const pendingUrlPromises: Promise<void>[] = [];
         const missingUrls: string[] = [];
 
         for (const url of arrayUnique(urls)) {
-            if (loadedUrls.has(url)) {
+            if (modelsMap.get(url)) {
                 continue;
             }
 
@@ -240,11 +243,11 @@ function initializedTrackedModelsData<T extends Model>(
                 onChunk: throttle(
                     (chunkModels) =>
                         loaded.value ||
-                        modelsSet.reset(withUnloadedTrackedInstances(withTrackedInstances(chunkModels))),
+                        modelsMap.reset(withUnloadedTrackedInstances(withTrackedInstances(chunkModels))),
                 ),
             });
 
-            modelsSet.reset(loaded.value ? models : withTrackedInstances(models));
+            modelsMap.reset(loaded.value ? models : withTrackedInstances(models));
             loaded.value = true;
         } finally {
             loading.value = false;
@@ -252,24 +255,20 @@ function initializedTrackedModelsData<T extends Model>(
     }
 
     function mergeTrackedInstances(models: ModelWithUrl<T>[]): void {
-        const trackedInstances = new Map(modelsSet.values().map((model) => [model.url, model]));
-
         for (const model of models) {
-            const trackedInstance = trackedInstances.get(model.url);
+            const trackedInstance = modelsMap.get(model.url);
 
             if (trackedInstance && !isNewerModel(model, trackedInstance)) {
                 continue;
             }
 
-            modelsSet.add(model);
+            modelsMap.replace(model);
         }
     }
 
     function withTrackedInstances(models: ModelWithUrl<T>[]): ModelWithUrl<T>[] {
-        const trackedInstances = new Map(modelsSet.values().map((model) => [model.url, model]));
-
         return models.map((model) => {
-            const trackedInstance = trackedInstances.get(model.url);
+            const trackedInstance = modelsMap.get(model.url);
 
             return trackedInstance && !isNewerModel(model, trackedInstance) ? trackedInstance : model;
         });
@@ -278,20 +277,17 @@ function initializedTrackedModelsData<T extends Model>(
     function withUnloadedTrackedInstances(loadedModels: ModelWithUrl<T>[]): ModelWithUrl<T>[] {
         const loadedUrls = new Set(loadedModels.map((model) => model.url));
 
-        return loadedModels.concat(modelsSet.values().filter((model) => !loadedUrls.has(model.url)));
+        return loadedModels.concat(modelsMap.values().filter((model) => !loadedUrls.has(model.url)));
     }
 
     trackedModels.set(modelClass, data);
-    modelClass.on('created', ({ model }) => model.hasUrl() && modelsSet.add(toRaw(model)));
-    modelClass.on('deleted', ({ model }) => model.hasUrl() && modelsSet.delete(toRaw(model)));
-    modelClass.on('updated', ({ model }) => model.hasUrl() && modelsSet.add(toRaw(model)));
-    Events.on('cloud:backup-completed', () => (loaded.value || loading.value) && data.refresh());
-    Events.on('purge-storage', () => {
+    modelClass.on('created', ({ model }) => model.hasUrl() && modelsMap.add(toRaw(model)));
+    modelClass.on('deleted', ({ model }) => model.hasUrl() && modelsMap.delete(toRaw(model)));
+    modelClass.on('updated', ({ model }) => model.hasUrl() && modelsMap.add(toRaw(model)));
+    onTrackedModelsCleared(() => {
         loaded.value = false;
-        modelsSet.clear();
+        modelsMap.clear();
     });
-
-    void Events.emit('solid:track-models', modelClass);
 
     return data;
 }
@@ -300,15 +296,19 @@ function isNewerModel(model: Model, otherModel: Model): boolean {
     return (model.updatedAt?.getTime() ?? 0) > (otherModel.updatedAt?.getTime() ?? 0);
 }
 
-export function _getTrackedModels(): WeakMap<ModelConstructor, TrackedModelData> {
+export function listenToModelChanges(modelClass: ModelConstructor, listener: () => void): Array<() => void> {
+    return MODEL_CHANGE_EVENTS.map((event) => modelClass.on(event, listener));
+}
+
+export function getTrackedModelsMap(): WeakMap<ModelConstructor, TrackedModelData> {
     return trackedModels;
 }
 
-export function _getTrackedUrls(modelClass: ModelConstructor): string[] {
+export function getTrackedUrls(modelClass: ModelConstructor): string[] {
     return trackedUrls.get(modelClass) ?? [modelClass.defaultContainerUrl];
 }
 
-export function _setTrackedUrls(modelClass: ModelConstructor, urls: string[] | null): void {
+export function setTrackedUrls(modelClass: ModelConstructor, urls: string[] | null): void {
     if (!urls || urls.length === 0) {
         trackedUrls.delete(modelClass);
 
@@ -318,15 +318,27 @@ export function _setTrackedUrls(modelClass: ModelConstructor, urls: string[] | n
     trackedUrls.set(modelClass, arrayUnique(urls));
 }
 
-export function _resetModelsState(): void {
+export function onTrackedModelsCleared(listener: () => void): () => void {
+    clearListeners.add(listener);
+
+    return () => clearListeners.delete(listener);
+}
+
+export function clearTrackedModels(): void {
+    clearListeners.forEach((listener) => listener());
+}
+
+export function resetModelsState(): void {
     trackedModels = new WeakMap();
     trackedUrls = new WeakMap();
+
+    clearListeners.clear();
 
     modelsWorker?.terminate();
     modelsWorker = null;
 }
 
-export function _getTrackedModelsData<T extends Model>(
+export function getTrackedModelsData<T extends Model>(
     modelClass: ModelConstructor<T>,
     options: TrackedModelOptions = {},
 ): TrackedModelData<T> {
@@ -338,14 +350,8 @@ export function _getTrackedModelsData<T extends Model>(
     }
 
     if (options.load) {
-        data.load().catch((error) => Errors.report(error));
+        data.load().catch((error) => config.reportError(error));
     }
 
     return data;
-}
-
-declare module '@aerogel/core' {
-    export interface EventsPayload {
-        'solid:track-models': ModelConstructor;
-    }
 }

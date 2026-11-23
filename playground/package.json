@@ -26,6 +26,7 @@
         "@aerogel/plugin-local-first": "workspace:*",
         "@aerogel/plugin-routing": "workspace:*",
         "@aerogel/plugin-solid": "workspace:*",
+        "@aerogel/reactivity": "workspace:*",
         "@noeldemartin/solid-utils": "catalog:",
         "@noeldemartin/utils": "catalog:",
         "@tailwindcss/forms": "catalog:",

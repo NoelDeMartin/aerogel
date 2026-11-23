@@ -1,13 +1,7 @@
 import 'fake-indexeddb/auto';
 import { Cache, Events, NetworkCache } from '@aerogel/core';
 import FakeCacheStorage from '@aerogel/plugin-solid/testing/stubs/FakeCacheStorage';
-import Book from '@aerogel/plugin-solid/testing/stubs/models/Book';
-import Chapter from '@aerogel/plugin-solid/testing/stubs/models/Chapter';
 import Gallery from '@aerogel/plugin-solid/testing/stubs/models/Gallery';
-import Item from '@aerogel/plugin-solid/testing/stubs/models/Item';
-import Post from '@aerogel/plugin-solid/testing/stubs/models/Post';
-import Shelf from '@aerogel/plugin-solid/testing/stubs/models/Shelf';
-import Task from '@aerogel/plugin-solid/testing/stubs/models/Task';
 import User from '@aerogel/plugin-solid/testing/stubs/models/User';
 import {
     InMemoryEngine,
@@ -36,7 +30,7 @@ beforeEach(async () => {
     Events.reset();
     resetModelListeners();
     bootCoreModels({ reset: true });
-    bootModels({ Book, Chapter, Gallery, Item, Post, Shelf, Task, User }, { reset: true });
+    bootModels({ Gallery, User }, { reset: true });
     setEngine(new InMemoryEngine());
     setRemoteEngine(null);
 

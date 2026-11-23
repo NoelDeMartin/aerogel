@@ -66,6 +66,7 @@ export function configureTests(config: UserConfig, options: Options): void {
             '@aerogel/plugin-local-first',
             '@aerogel/plugin-routing',
             '@aerogel/plugin-solid',
+            '@aerogel/reactivity',
             ...(testInlineDeps ?? []),
         ];
     }

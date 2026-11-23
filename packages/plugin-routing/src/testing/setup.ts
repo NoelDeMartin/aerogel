@@ -2,7 +2,7 @@ import { Events } from '@aerogel/core';
 import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
 import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
-import { resetModelsState } from '@aerogel/plugin-solid';
+import { resetModelsState } from '@aerogel/reactivity';
 import {
     InMemoryEngine,
     bootCoreModels,

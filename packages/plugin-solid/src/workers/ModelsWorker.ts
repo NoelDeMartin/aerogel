@@ -1,4 +1,5 @@
 import type { SerializedDocumentError, ModelsWorkerMethods } from '@aerogel/plugin-solid/models-worker';
+import type { ModelsWorker as ReactivityModelsWorker } from '@aerogel/reactivity';
 import { PromisedValue, toError } from '@noeldemartin/utils';
 import type { Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 
@@ -30,7 +31,7 @@ function hydrateDocumentError({ name, message, stack }: SerializedDocumentError)
     return Object.assign(new Error(message), { name, stack });
 }
 
-export default class ModelsWorker {
+export default class ModelsWorker implements ReactivityModelsWorker {
     private worker: Promise<Worker> | null = null;
     private lastRequestId = 0;
     private pendingRequests = new Map<number, PendingRequest>();

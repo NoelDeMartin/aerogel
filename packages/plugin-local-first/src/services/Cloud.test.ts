@@ -11,7 +11,7 @@ import {
 import type { InvadedCloud } from '@aerogel/plugin-local-first/services/testing/helpers';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
-import { useModels } from '@aerogel/plugin-solid';
+import { useModels } from '@aerogel/reactivity';
 import { SolidDocument } from '@noeldemartin/solid-utils';
 import { Sync, requireEngine } from 'soukai-bis';
 import type { DeletionConflict, ExternalSource, ModelContainerUrls } from 'soukai-bis';

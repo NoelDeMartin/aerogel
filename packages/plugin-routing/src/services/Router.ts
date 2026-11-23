@@ -3,7 +3,7 @@ import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
 import { computedRouteParams } from '@aerogel/plugin-routing/utils/internal';
 import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
 import { resolveModelBinding } from '@aerogel/plugin-routing/utils/soukai';
-import { computedModel } from '@aerogel/plugin-solid';
+import { computedModel } from '@aerogel/reactivity';
 import { PromisedValue, Storage, facade, objectOnly, once, toError } from '@noeldemartin/utils';
 import { isModelClass } from 'soukai-bis';
 import type { ModelConstructor } from 'soukai-bis';

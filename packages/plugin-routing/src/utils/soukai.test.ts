@@ -2,7 +2,7 @@ import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
 import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
 import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
-import { getTrackedModels, loadTrackedModels, trackModels } from '@aerogel/plugin-solid';
+import { getTrackedModels, loadTrackedModels, trackModels } from '@aerogel/reactivity';
 import { InMemoryEngine, remote, setRemoteEngine } from 'soukai-bis';
 import type { SolidEngine } from 'soukai-bis';
 import { describe, expect, it } from 'vite-plus/test';
@@ -20,7 +20,7 @@ describe('Model bindings', () => {
         const post = await Post.create({});
 
         await Post.create({});
-        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+        trackModels(Post);
 
         // Act
         const binding = await resolveModelBinding(Post, 'post', routeWithUrl(post.requireUrl()));
@@ -35,7 +35,7 @@ describe('Model bindings', () => {
         const post = await Post.create({});
 
         await Post.create({});
-        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+        trackModels(Post);
 
         // Act
         const binding = await resolveModelBinding(Post, post.requireSlug(), null);
@@ -50,7 +50,7 @@ describe('Model bindings', () => {
         const post = await Post.create({});
 
         await Post.create({});
-        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+        trackModels(Post);
 
         const binding = await resolveModelBinding(Post, post.requireSlug(), null);
 
@@ -69,7 +69,7 @@ describe('Model bindings', () => {
         const post = await Post.create({ url: 'local://posts/hello#it' });
         const remotePost = await remote(Post).create({ url: 'https://bob.example/posts/hello#it' });
 
-        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+        trackModels(Post);
         await loadTrackedModels(Post);
 
         // Act
@@ -85,7 +85,7 @@ describe('Model bindings', () => {
         setRemoteEngine(new InMemoryEngine() as unknown as SolidEngine);
 
         await Post.create({ url: 'local://posts/hello#it' });
-        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+        trackModels(Post);
 
         // Act
         const binding = await resolveModelBinding(Post, 'hello', routeWithUrl('https://bob.example/posts/hello#it'));
@@ -96,7 +96,7 @@ describe('Model bindings', () => {
 
     it('resolves missing models as not found', async () => {
         // Arrange
-        await trackModels(Post, { bypassServicesCheck: true, lazy: true });
+        trackModels(Post);
 
         // Act
         const binding = await resolveModelBinding(Post, 'missing', routeWithUrl('local://posts/missing#it'));
@@ -111,7 +111,7 @@ describe('Model bindings', () => {
         const chapter = await book.relatedChapters.create({});
 
         await book.relatedChapters.create({});
-        await trackModels(Chapter, { bypassServicesCheck: true, lazy: true });
+        trackModels(Chapter);
 
         // Act
         const resolved = await resolveModelBinding(Chapter, chapter.requireSlug(), null, { book });
@@ -129,7 +129,7 @@ describe('Model bindings', () => {
         const chapter = await book.relatedChapters.create({});
         const otherChapter = await book.relatedChapters.create({});
 
-        await trackModels(Chapter, { bypassServicesCheck: true, lazy: true });
+        trackModels(Chapter);
 
         // Act
         const byUrl = await resolveModelBinding(Chapter, 'chapter', routeWithUrl(chapter.requireUrl()), { book });

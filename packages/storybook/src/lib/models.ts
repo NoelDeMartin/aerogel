@@ -1,4 +1,4 @@
-import { getTrackedModels, loadTrackedModels } from '@aerogel/plugin-solid';
+import { getTrackedModels, loadTrackedModels } from '@aerogel/reactivity';
 import type { JsonLDGraph } from '@noeldemartin/solid-utils';
 import { arrayGroupBy, urlRoute } from '@noeldemartin/utils';
 import { requireEngine } from 'soukai-bis';

@@ -3,7 +3,7 @@ import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
 import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
 import BindingNotFound from '@aerogel/plugin-routing/utils/BindingNotFound';
-import { trackModels } from '@aerogel/plugin-solid';
+import { trackModels } from '@aerogel/reactivity';
 import { noop } from '@noeldemartin/utils';
 import { InMemoryEngine, remote, setRemoteEngine } from 'soukai-bis';
 import type { SolidEngine } from 'soukai-bis';
@@ -91,7 +91,7 @@ describe('Router', () => {
 
     it('resolves nested model bindings automatically via parent relations', async () => {
         // Arrange
-        await trackModels(Book, { bypassServicesCheck: true, lazy: true });
+        trackModels(Book);
 
         const book = await Book.create({});
         const chapter = await book.relatedChapters.create({});

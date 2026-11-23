@@ -10,13 +10,8 @@ import {
 import type { ButtonVariant } from '@aerogel/core';
 import DeletionConflictModal from '@aerogel/plugin-local-first/components/DeletionConflictModal.vue';
 import FileConflictModal from '@aerogel/plugin-local-first/components/FileConflictModal.vue';
-import {
-    Solid,
-    fileResponse,
-    refreshTrackedModels,
-    setTrackedModelsDiscoveryUrls,
-    trackModels,
-} from '@aerogel/plugin-solid';
+import { Solid, fileResponse } from '@aerogel/plugin-solid';
+import { refreshTrackedModels, setTrackedModelsDiscoveryUrls, trackModels } from '@aerogel/reactivity';
 import {
     after,
     arrayUnique,
@@ -135,6 +130,7 @@ export class CloudService extends Service {
             await Events.emit('cloud:backup-started');
             await this.requireSyncSession().setup();
             await this.sync();
+            await this.refreshTrackedModels();
             await Events.emit('cloud:backup-completed');
         } finally {
             this.setupOngoing = false;
@@ -286,7 +282,7 @@ export class CloudService extends Service {
             this.registeredModels.add(modelClass);
             this.applySavedContainerUrls(modelClass);
 
-            await this.initializeTrackedModels(modelClass, options.register);
+            this.initializeTrackedModels(modelClass, options.register);
         }
     }
 
@@ -385,15 +381,8 @@ export class CloudService extends Service {
         }
     }
 
-    protected async initializeTrackedModels(
-        modelClass: ModelConstructor,
-        register: true | RegisterOptions,
-    ): Promise<void> {
-        await trackModels(modelClass, {
-            bypassServicesCheck: true,
-            lazy: true,
-            depth: typeof register === 'object' ? register.depth : undefined,
-        });
+    protected initializeTrackedModels(modelClass: ModelConstructor, register: true | RegisterOptions): void {
+        trackModels(modelClass, { depth: typeof register === 'object' ? register.depth : undefined });
     }
 
     private async onSyncUpdated(changes: Partial<SyncProperties>): Promise<void> {
