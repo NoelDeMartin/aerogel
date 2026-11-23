@@ -302,7 +302,7 @@ export class CloudService extends Service {
     protected async login(): Promise<void> {
         await Sync.session?.disconnect();
         await Sync.connect({
-            online: navigator.onLine,
+            online: isTesting('e2e') || navigator.onLine,
             autoPush: this.autoPush,
             profileManager: {
                 getProfile: () => Solid.requireUser(),
