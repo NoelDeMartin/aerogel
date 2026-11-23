@@ -8,7 +8,10 @@ import { SolidService } from './Solid';
 export class FakeSolidService extends SolidService {
     private fakeAuthenticator = new FakeAuthenticator();
 
-    public fakeProfile(name: string): CompleteSolidUserProfile {
+    public fakeProfile(
+        name = 'Alice Cooper',
+        overrides: Partial<CompleteSolidUserProfile> = {},
+    ): CompleteSolidUserProfile {
         const domain = `${stringToSlug(name) || 'anonymous'}.example`;
 
         return {
@@ -20,6 +23,7 @@ export class FakeSolidService extends SolidService {
             publicTypeIndexUrls: [],
             privateTypeIndexUrls: [],
             writableProfileUrl: null,
+            ...overrides,
         };
     }
 

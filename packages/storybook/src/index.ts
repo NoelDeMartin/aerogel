@@ -1,7 +1,8 @@
 import { AppLayout, Events, bootstrapApplication, resetPiniaStore } from '@aerogel/core';
 import type { AerogelApp } from '@aerogel/core';
+import { FakeSolidEngine } from '@aerogel/plugin-solid';
 import { setup as setupStorybook } from '@storybook/vue3-vite';
-import { bootCoreModels } from 'soukai-bis';
+import { bootCoreModels, setRemoteEngine } from 'soukai-bis';
 
 export * from './components';
 export * from './lib';
@@ -20,6 +21,7 @@ export function setup(aerogelInstance: AerogelApp): void {
     setupStorybook(async (vueInstance) => {
         resetPiniaStore();
         bootCoreModels({ reset: true });
+        setRemoteEngine(new FakeSolidEngine());
 
         await bootstrapApplication(vueInstance, aerogelInstance.options);
         await Events.emit('application-mounted');
