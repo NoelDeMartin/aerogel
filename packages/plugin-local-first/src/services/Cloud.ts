@@ -169,7 +169,7 @@ export class CloudService extends Service {
     protected override async boot(): Promise<void> {
         await Solid.booted;
         await this.trackModels();
-        await this.restoreSyncState();
+        await this.bootSync();
 
         this.watchLocalChanges();
 
@@ -191,6 +191,7 @@ export class CloudService extends Service {
         );
 
         Events.on('auth:login', () => this.login());
+        Events.on('auth:before-logout', () => this.beforeLogout());
         Events.on('auth:logout', () => this.logout());
         Events.on('auth:after-logout', () => this.refreshTrackedModels());
         Events.on('purge-storage', () => this.refreshTrackedModels());
@@ -309,6 +310,7 @@ export class CloudService extends Service {
                 findTypeIndexes: () => Solid.findTypeIndexes(),
                 createPublicTypeIndex: () => Solid.findOrCreatePublicTypeIndex(),
                 createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
+                onProfileUpdated: (profile) => Solid.rememberProfile(profile),
             },
             resolveDeletionConflict: this.resolveDeletionConflict.bind(this),
             resolveFileConflict: this.resolveFileConflict.bind(this),
@@ -324,7 +326,7 @@ export class CloudService extends Service {
         });
     }
 
-    protected async restoreSyncState(): Promise<void> {
+    protected async bootSync(): Promise<void> {
         await bootSync({
             models: this.syncModels,
             storageProvider: {
@@ -338,12 +340,12 @@ export class CloudService extends Service {
         });
     }
 
-    protected async logout(): Promise<void> {
-        await Sync.session?.disconnect();
+    protected async beforeLogout(): Promise<void> {
+        await Sync.session?.disconnect({ reset: true });
+    }
 
+    protected logout(): void {
         this.setState({ ...this.getInitialState(), manualSetup: this.manualSetup });
-
-        await this.restoreSyncState();
     }
 
     protected watchLocalChanges(): void {

@@ -1,3 +1,4 @@
+import { App, Events, UI } from '@aerogel/core';
 import type Authenticator from '@aerogel/plugin-solid/auth/Authenticator';
 import { SolidDocumentPermissions, fetchLoginUserProfile } from '@noeldemartin/solid-utils';
 import type { SolidUserProfile, ShallowSolidUserProfile, CompleteSolidUserProfile } from '@noeldemartin/solid-utils';
@@ -100,6 +101,45 @@ describe('Solid', () => {
 
         // Assert
         expect(solid.staleProfiles).toEqual([webId]);
+    });
+
+    it('emits before-logout while logged in', async () => {
+        // Arrange
+        const logout = vi.fn();
+        const loggedInDuringEvent = vi.fn();
+
+        vi.spyOn(App.requireInstance(), 'plugin').mockReturnValue(null);
+        vi.spyOn(App.requireInstance(), 'reload').mockResolvedValue(undefined);
+        vi.spyOn(UI.requireInstance(), 'loading').mockImplementation(((_: unknown, operation: () => unknown) =>
+            operation()) as typeof UI.loading);
+
+        solid.setState({
+            previousSession: { profile: fullProfile, loginUrl: webId, authenticator: 'inrupt', error: null },
+            session: { user: fullProfile, loginUrl: webId, authenticator: { logout } as unknown as Authenticator },
+        });
+
+        Events.once('auth:before-logout', () => loggedInDuringEvent(solid.isLoggedIn()));
+
+        // Act
+        await solid.logout(true);
+
+        // Assert
+        expect(loggedInDuringEvent).toHaveBeenCalledWith(true);
+        expect(logout).toHaveBeenCalledOnce();
+    });
+
+    it('remembers profiles', () => {
+        // Arrange
+        const profile = { ...fullProfile, publicTypeIndexUrls: ['https://alice.example/settings/publicTypeIndex'] };
+
+        solid.setState({ profiles: { [webId]: fullProfile }, staleProfiles: [webId] });
+
+        // Act
+        solid.rememberProfile(profile);
+
+        // Assert
+        expect(solid.profiles[webId]).toEqual(profile);
+        expect(solid.staleProfiles).toEqual([]);
     });
 
     it('does not return shallow profiles as the required user', () => {

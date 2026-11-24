@@ -46,7 +46,7 @@ describe('Cloud', () => {
 
         // Act
         await cloud.track(Post, { register: true });
-        await cloud.restoreSyncState();
+        await cloud.bootSync();
 
         // Assert
         const { models: posts } = useModels(Post);
@@ -67,7 +67,7 @@ describe('Cloud', () => {
 
         // Act
         await cloud.track(Post, { register: true });
-        await cloud.restoreSyncState();
+        await cloud.bootSync();
 
         // Assert
         const { models: posts } = useModels(Post);
@@ -135,7 +135,7 @@ describe('Cloud', () => {
 
         // Act
         await cloud.track(Post, { register: true });
-        await cloud.restoreSyncState();
+        await cloud.bootSync();
 
         // Assert
         expect(tracksLocalChanges(Post)).toBe(true);
@@ -301,17 +301,16 @@ describe('Cloud', () => {
             containerUrls: { Post: modelContainerUrls('https://alice.example/posts/') },
         });
 
-        const discoveryUrls = Sync.getDiscoveryUrls(Post);
-
         // Act
-        await cloud.logout();
+        await cloud.beforeLogout();
+        cloud.logout();
 
         // Assert
         expect(cloud.ready).toBe(false);
         expect(cloud.containerUrls).toEqual({});
         expect(cloud.externalSources).toEqual([]);
         expect(cloud.status).toEqual(CloudStatus.Disconnected);
-        expect(discoveryUrls).toEqual(['https://alice.example/posts/']);
+        expect(Sync.session).toBeNull();
         expect(Sync.setupCompleted).toBe(false);
         expect(Sync.containerUrls).toEqual({});
         expect(Sync.getDiscoveryUrls(Post)).toEqual([Post.defaultContainerUrl]);
@@ -322,7 +321,7 @@ describe('Cloud', () => {
         const source: ExternalSource = { containerUrl: 'https://bob.example/posts/', models: [Post] };
         const post = await new Post({ title: 'Shared' }).save({ containerUrl: source.containerUrl });
 
-        await cloud.restoreSyncState();
+        await cloud.bootSync();
         await cloud.addExternalSource(source);
 
         const addedSources = cloud.externalSources;

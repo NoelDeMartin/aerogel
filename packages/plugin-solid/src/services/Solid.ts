@@ -191,6 +191,16 @@ export class SolidService extends Service {
         return userProfile;
     }
 
+    public rememberProfile(profile: SolidUserProfile): void {
+        this.setState({
+            profiles: {
+                ...this.profiles,
+                [profile.webId]: profile,
+            },
+            staleProfiles: arrayWithout(this.staleProfiles, profile.webId),
+        });
+    }
+
     public async refreshUserProfile(): Promise<void> {
         if (!this.isLoggedIn()) {
             return;
@@ -265,6 +275,8 @@ export class SolidService extends Service {
         }
 
         await UI.loading(translateWithDefault('solid.logoutOngoing', 'Logging out...'), async () => {
+            await Events.emit('auth:before-logout');
+
             this.setState({
                 dismissed: false,
                 ignorePreviousSessionError: false,
@@ -783,16 +795,6 @@ export class SolidService extends Service {
 
         return authenticator;
     }
-
-    private rememberProfile(profile: SolidUserProfile): void {
-        this.setState({
-            profiles: {
-                ...this.profiles,
-                [profile.webId]: profile,
-            },
-            staleProfiles: arrayWithout(this.staleProfiles, profile.webId),
-        });
-    }
 }
 
 export default facade(SolidService);
@@ -802,6 +804,7 @@ declare module '@aerogel/core' {
         'auth:fetch-ready': Fetch;
         'auth:before-login': void;
         'auth:login': AuthSession;
+        'auth:before-logout': void;
         'auth:logout': void;
         'auth:after-logout': void;
         'solid:user-profile-loaded': [SolidUserProfile, SolidStore];

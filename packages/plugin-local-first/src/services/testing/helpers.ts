@@ -17,13 +17,14 @@ import type {
 import { vi } from 'vite-plus/test';
 
 const invadedMethods = [
+    'beforeLogout',
     'deserializePersistedState',
     'getSyncModel',
     'login',
     'logout',
     'resolveDeletionConflict',
     'resolveFileConflict',
-    'restoreSyncState',
+    'bootSync',
     'serializePersistedState',
     'track',
     'watchLocalChanges',
@@ -62,7 +63,7 @@ export async function connect(
         ...state,
     });
 
-    await cloud.restoreSyncState();
+    await cloud.bootSync();
     await cloud.login();
 }
 
