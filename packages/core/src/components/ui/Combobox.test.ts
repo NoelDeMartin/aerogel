@@ -102,6 +102,18 @@ describe('Combobox', () => {
         expect(input.element.value).toBe('Spanish');
     });
 
+    it('updates input when modelValue changes externally', async () => {
+        // Arrange
+        const { wrapper, input } = mountCombobox({ modelValue: 'es' });
+
+        // Act
+        await wrapper.setProps({ modelValue: 'en' });
+        await nextTick();
+
+        // Assert
+        expect(input.element.value).toBe('English');
+    });
+
     function mountCombobox(props: Record<string, unknown> = {}) {
         const wrapper = mount(Combobox as unknown as Component, {
             attachTo: document.body,

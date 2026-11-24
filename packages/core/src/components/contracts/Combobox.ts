@@ -50,11 +50,13 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
 
     let updatingFromInput = false;
     const filtering = ref(false);
+    const input = ref(!isMultiple.value && acceptableValue.value ? renderOption(acceptableValue.value as T) : '');
+    const preventChange = ref(false);
     const expose = {
         ...selectExpose,
         filtering,
-        input: ref(!isMultiple.value && acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
-        preventChange: ref(false),
+        input,
+        preventChange,
         $group: ref(null),
     } satisfies AcceptRefs<ComboboxExpose<T, TControlElement>>;
 
@@ -62,14 +64,14 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
         filtering.value = false;
 
         if (isMultiple.value) {
-            expose.input.value = '';
+            input.value = '';
             baseUpdate(value);
 
             return;
         }
 
         if (props.value.options || props.value.newInputValue) {
-            expose.input.value = value === null || value === undefined ? '' : renderOption(value as T);
+            input.value = value === null || value === undefined ? '' : renderOption(value as T);
         }
 
         baseUpdate(value);
@@ -97,15 +99,15 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
 
         const newOptionLabel = value === null || value === undefined ? '' : renderOption(value as T);
 
-        if (expose.input.value === newOptionLabel) {
+        if (input.value === newOptionLabel) {
             return;
         }
 
-        expose.preventChange.value = true;
-        expose.input.value = newOptionLabel;
+        preventChange.value = true;
+        input.value = newOptionLabel;
     });
 
-    watch(expose.input, (value) => {
+    watch(input, (value) => {
         if (isMultiple.value || (!props.value.options && !props.value.newInputValue)) {
             return;
         }
