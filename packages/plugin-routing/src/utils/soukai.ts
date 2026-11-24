@@ -1,7 +1,6 @@
 import { bindingNotFound } from '@aerogel/plugin-routing/utils/routes';
 import { findTrackedModel, getTrackedModels, loadTrackedModels } from '@aerogel/reactivity';
-import { silenced } from '@noeldemartin/utils';
-import { arrayFrom, isInstanceOf } from '@noeldemartin/utils';
+import { arrayFrom, isInstanceOf, silenced, stringToCamelCase } from '@noeldemartin/utils';
 import { BelongsToManyRelation, Model, isLocalUrl, remote } from 'soukai-bis';
 import type { ModelConstructor } from 'soukai-bis';
 import type { RouteLocationNormalized } from 'vue-router';
@@ -59,13 +58,23 @@ async function resolveRelatedModelBinding<T extends Model>(
     return model ?? (bindingNotFound(slug) as unknown as T);
 }
 
-export async function resolveModelBinding<T extends Model>(
-    modelClass: ModelConstructor<T>,
-    slug: string,
-    route: RouteLocationNormalized | null,
-    parentParams: Record<string, unknown> = {},
-): Promise<T> {
-    const url = typeof route?.query?.url === 'string' ? route.query.url : null;
+export async function resolveModelBinding<T extends Model>({
+    modelClass,
+    bindingName,
+    slug,
+    route = null,
+    parentParams = {},
+}: {
+    modelClass: ModelConstructor<T>;
+    bindingName: string;
+    slug: string;
+    route?: RouteLocationNormalized | null;
+    parentParams?: Record<string, unknown>;
+}): Promise<T> {
+    const paramUrlKey = `${stringToCamelCase(bindingName)}Url`;
+    const url =
+        (typeof route?.query?.[paramUrlKey] === 'string' ? route.query[paramUrlKey] : null) ??
+        (typeof route?.query?.url === 'string' ? route.query.url : null);
     const parentRelation = findRelatedRelation(modelClass, parentParams);
 
     if (parentRelation) {
@@ -85,10 +94,21 @@ export async function resolveModelBinding<T extends Model>(
     }
 
     if (url && !isLocalUrl(url)) {
-        return (await silenced(remote(modelClass).find(url))) ?? (bindingNotFound(slug) as unknown as T);
+        const remoteModel = await silenced(remote(modelClass).find(url));
+
+        if (remoteModel) {
+            return remoteModel;
+        }
+
+        if (modelClass.slugFromUrl(url) === slug) {
+            return bindingNotFound(slug) as unknown as T;
+        }
     }
 
     await loadTrackedModels(modelClass);
 
-    return (findModel(modelClass, slug, url) as T) ?? bindingNotFound(slug);
+    return (
+        (findModel(modelClass, slug, url && modelClass.slugFromUrl(url) === slug ? url : null) as T) ??
+        bindingNotFound(slug)
+    );
 }

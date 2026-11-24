@@ -114,6 +114,55 @@ describe('Router', () => {
         ).toEqual(chapter.url);
     });
 
+    it('resolves nested model bindings with a url query for the leaf model', async () => {
+        // Arrange
+        trackModels(Book);
+
+        const book = await Book.create({});
+        const chapter = await book.relatedChapters.create({});
+        const bookSlug = book.requireSlug();
+        const chapterSlug = chapter.requireSlug();
+        const chapterUrl = chapter.requireUrl();
+        const router = createTestRouter('/books/:book/:chapter', {
+            book: Book,
+            chapter: Chapter,
+        });
+
+        // Act
+        await router.push({ path: `/books/${bookSlug}/${chapterSlug}`, query: { url: chapterUrl } });
+
+        // Assert
+        expect((router.currentRoute.value?.params?.book as Book | undefined)?.url).toEqual(book.url);
+        expect((router.currentRoute.value?.params?.chapter as Chapter | undefined)?.url).toEqual(chapter.url);
+    });
+
+    it('resolves binding-specific url query params before falling back to plain url', async () => {
+        // Arrange
+        setRemoteEngine(new InMemoryEngine() as unknown as SolidEngine);
+
+        const remoteBook = await remote(Book).create({ url: 'https://bob.example/books/custom-book#it' });
+        const remoteChapter = await remoteBook.relatedChapters.create({
+            url: 'https://bob.example/books/custom-book/001#it',
+        });
+        const router = createTestRouter('/books/:my_book/:chapter', {
+            my_book: Book,
+            chapter: Chapter,
+        });
+
+        // Act
+        await router.push({
+            path: '/books/my-book/001',
+            query: {
+                myBookUrl: remoteBook.requireUrl(),
+                url: remoteChapter.requireUrl(),
+            },
+        });
+
+        // Assert
+        expect((router.currentRoute.value?.params?.my_book as Book | undefined)?.url).toEqual(remoteBook.url);
+        expect((router.currentRoute.value?.params?.chapter as Chapter | undefined)?.url).toEqual(remoteChapter.url);
+    });
+
     function createTestRouter(path: string, bindings: RouteBindings): RouterService {
         const router = new RouterService();
 

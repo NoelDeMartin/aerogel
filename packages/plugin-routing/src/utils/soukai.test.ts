@@ -23,7 +23,12 @@ describe('Model bindings', () => {
         trackModels(Post);
 
         // Act
-        const binding = await resolveModelBinding(Post, 'post', routeWithUrl(post.requireUrl()));
+        const binding = await resolveModelBinding({
+            modelClass: Post,
+            bindingName: 'post',
+            slug: 'post',
+            route: routeWithUrl(post.requireUrl()),
+        });
 
         // Assert
         expect(binding.url).toEqual(post.url);
@@ -38,7 +43,11 @@ describe('Model bindings', () => {
         trackModels(Post);
 
         // Act
-        const binding = await resolveModelBinding(Post, post.requireSlug(), null);
+        const binding = await resolveModelBinding({
+            modelClass: Post,
+            bindingName: 'post',
+            slug: post.requireSlug(),
+        });
 
         // Assert
         expect(binding.url).toEqual(post.url);
@@ -52,7 +61,11 @@ describe('Model bindings', () => {
         await Post.create({});
         trackModels(Post);
 
-        const binding = await resolveModelBinding(Post, post.requireSlug(), null);
+        const binding = await resolveModelBinding({
+            modelClass: Post,
+            bindingName: 'post',
+            slug: post.requireSlug(),
+        });
 
         // Act
         await loadTrackedModels(Post);
@@ -73,7 +86,12 @@ describe('Model bindings', () => {
         await loadTrackedModels(Post);
 
         // Act
-        const binding = await resolveModelBinding(Post, 'hello', routeWithUrl(remotePost.requireUrl()));
+        const binding = await resolveModelBinding({
+            modelClass: Post,
+            bindingName: 'post',
+            slug: 'hello',
+            route: routeWithUrl(remotePost.requireUrl()),
+        });
 
         // Assert
         expect(binding.url).toEqual(remotePost.url);
@@ -88,10 +106,33 @@ describe('Model bindings', () => {
         trackModels(Post);
 
         // Act
-        const binding = await resolveModelBinding(Post, 'hello', routeWithUrl('https://bob.example/posts/hello#it'));
+        const binding = await resolveModelBinding({
+            modelClass: Post,
+            bindingName: 'post',
+            slug: 'hello',
+            route: routeWithUrl('https://bob.example/posts/hello#it'),
+        });
 
         // Assert
         expect(binding).toBeInstanceOf(BindingNotFound);
+    });
+
+    it('falls back to slug when url query does not match the model slug', async () => {
+        // Arrange
+        const post = await Post.create({ url: 'local://posts/hello#it' });
+
+        trackModels(Post);
+
+        // Act
+        const binding = await resolveModelBinding({
+            modelClass: Post,
+            bindingName: 'post',
+            slug: 'hello',
+            route: routeWithUrl('https://bob.example/posts/hello/chapters/001#it'),
+        });
+
+        // Assert
+        expect(binding.url).toEqual(post.url);
     });
 
     it('resolves missing models as not found', async () => {
@@ -99,7 +140,12 @@ describe('Model bindings', () => {
         trackModels(Post);
 
         // Act
-        const binding = await resolveModelBinding(Post, 'missing', routeWithUrl('local://posts/missing#it'));
+        const binding = await resolveModelBinding({
+            modelClass: Post,
+            bindingName: 'post',
+            slug: 'missing',
+            route: routeWithUrl('local://posts/missing#it'),
+        });
 
         // Assert
         expect(binding).toBeInstanceOf(BindingNotFound);
@@ -114,8 +160,18 @@ describe('Model bindings', () => {
         trackModels(Chapter);
 
         // Act
-        const resolved = await resolveModelBinding(Chapter, chapter.requireSlug(), null, { book });
-        const missing = await resolveModelBinding(Chapter, '999', null, { book });
+        const resolved = await resolveModelBinding({
+            modelClass: Chapter,
+            bindingName: 'chapter',
+            slug: chapter.requireSlug(),
+            parentParams: { book },
+        });
+        const missing = await resolveModelBinding({
+            modelClass: Chapter,
+            bindingName: 'chapter',
+            slug: '999',
+            parentParams: { book },
+        });
 
         // Assert
         expect(resolved.url).toEqual(chapter.url);
@@ -132,13 +188,20 @@ describe('Model bindings', () => {
         trackModels(Chapter);
 
         // Act
-        const byUrl = await resolveModelBinding(Chapter, 'chapter', routeWithUrl(chapter.requireUrl()), { book });
-        const bySlug = await resolveModelBinding(
-            Chapter,
-            otherChapter.requireSlug(),
-            routeWithUrl('local://chapters/missing#it'),
-            { book },
-        );
+        const byUrl = await resolveModelBinding({
+            modelClass: Chapter,
+            bindingName: 'chapter',
+            slug: 'chapter',
+            route: routeWithUrl(chapter.requireUrl()),
+            parentParams: { book },
+        });
+        const bySlug = await resolveModelBinding({
+            modelClass: Chapter,
+            bindingName: 'chapter',
+            slug: otherChapter.requireSlug(),
+            route: routeWithUrl('local://chapters/missing#it'),
+            parentParams: { book },
+        });
 
         // Assert
         expect(byUrl.url).toEqual(chapter.url);

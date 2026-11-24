@@ -181,7 +181,13 @@ export class RouterService extends Service {
                 const result = Object.values(otherParams.value).some((param) => param instanceof BindingNotFound)
                     ? bindingNotFound(value)
                     : isModelClass(binding)
-                      ? await resolveModelBinding(binding, value, route, otherParams.value)
+                      ? await resolveModelBinding({
+                            modelClass: binding,
+                            bindingName: name,
+                            slug: value,
+                            route,
+                            parentParams: otherParams.value,
+                        })
                       : await binding(value, otherParams.value);
 
                 initialValue.isSettled() || initialValue.resolve(result);
