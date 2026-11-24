@@ -53,6 +53,7 @@
         "@aerogel/vite": "workspace:*",
         "@arethetypeswrong/cli": "catalog:",
         "@noeldemartin/scripts": "catalog:",
+        "@vue/test-utils": "^2.6.0",
         "happy-dom": "^20.10.1",
         "publint": "catalog:",
         "zod": "catalog:"

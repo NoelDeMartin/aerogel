@@ -59,11 +59,16 @@ const combobox = injectReactiveOrFail<ComboboxExpose>('combobox', '<ComboboxOpti
 
 const optionHeight = ref<number | null>(null);
 const inputOption = computed(() => (newInputValue?.(combobox.input) ?? combobox.input) as AcceptableValue);
-const filteredOptions = computed(
-    () => combobox.options?.filter((option) => contains(option.label, combobox.input)) ?? [],
+const filteredOptions = computed(() =>
+    combobox.filtering
+        ? (combobox.options?.filter((option) => contains(option.label, combobox.input)) ?? [])
+        : (combobox.options ?? []),
 );
 const showInputOption = computed(
-    () => combobox.input.trim() !== '' && !filteredOptions.value.some((option) => option.label === combobox.input),
+    () =>
+        combobox.filtering &&
+        combobox.input.trim() !== '' &&
+        !filteredOptions.value.some((option) => option.label === combobox.input),
 );
 
 const renderedItems = computed(() => {

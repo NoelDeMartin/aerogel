@@ -8,9 +8,9 @@
             :model-value="modelValue ?? combobox.input"
             :placeholder="renderedPlaceholder"
             :name="name ?? combobox.name"
-            :display-value="combobox.multiple ? undefined : (displayValue ?? combobox.renderOption)"
+            :display-value="combobox.multiple ? undefined : displayValue"
             @update:model-value="onInput"
-            @focus="$emit('focus')"
+            @focus="onFocus"
             @blur="onBlur"
             @keydown.backspace="onBackspace"
             @keydown.esc="$emit('blur')"
@@ -61,6 +61,7 @@ const renderedPlaceholder = computed(() => {
 });
 
 const onInput = (value: string) => {
+    combobox.filtering = true;
     combobox.input = value;
 
     emit('update:modelValue', value);
@@ -70,10 +71,18 @@ function focus() {
     $control.value?.$el?.focus();
 }
 
+function onFocus() {
+    combobox.filtering = false;
+
+    emit('focus');
+}
+
 function onBlur() {
     if (isHovered(combobox.$group, combobox.multiple ? $anchor.value?.$el : null)) {
         return;
     }
+
+    combobox.filtering = false;
 
     emit('blur');
 }

@@ -41,6 +41,7 @@ function onSelect(event: SelectItemSelectEvent<unknown>) {
     }
 
     event.preventDefault();
+    combobox.filtering = false;
     combobox.preventChange = true;
     rootContext.modelValue.value = props.value;
 }

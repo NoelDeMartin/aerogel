@@ -11,6 +11,7 @@ export interface ComboboxExpose<T = unknown, TControlElement extends HTMLElement
     TControlElement
 > {
     input: Ref<string>;
+    filtering: Ref<boolean>;
     preventChange: Ref<boolean>;
     $group: Ref<HTMLDivElement | null>;
 }
@@ -47,14 +48,19 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
         Object.fromEntries(expose.options.value?.map((option) => [option.label, option.value]) ?? []),
     );
 
+    let updatingFromInput = false;
+    const filtering = ref(false);
     const expose = {
         ...selectExpose,
+        filtering,
         input: ref(!isMultiple.value && acceptableValue.value ? renderOption(acceptableValue.value as T) : ''),
         preventChange: ref(false),
         $group: ref(null),
     } satisfies AcceptRefs<ComboboxExpose<T, TControlElement>>;
 
     function update(value: AcceptableValue) {
+        filtering.value = false;
+
         if (isMultiple.value) {
             expose.input.value = '';
             baseUpdate(value);
@@ -63,18 +69,33 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
         }
 
         if (props.value.options || props.value.newInputValue) {
-            expose.input.value = renderOption(value as T);
+            expose.input.value = value === null || value === undefined ? '' : renderOption(value as T);
         }
 
         baseUpdate(value);
     }
 
+    function updateFromInput(nextValue: AcceptableValue) {
+        if (expose.value.value === nextValue) {
+            return;
+        }
+
+        updatingFromInput = true;
+        baseUpdate(nextValue);
+    }
+
     watch(expose.value, (value) => {
+        if (updatingFromInput) {
+            updatingFromInput = false;
+
+            return;
+        }
+
         if (isMultiple.value || (!props.value.options && !props.value.newInputValue)) {
             return;
         }
 
-        const newOptionLabel = renderOption(value as T);
+        const newOptionLabel = value === null || value === undefined ? '' : renderOption(value as T);
 
         if (expose.input.value === newOptionLabel) {
             return;
@@ -89,18 +110,23 @@ export function useCombobox<T, TControlElement extends HTMLElement = HTMLElement
             return;
         }
 
-        const newInputOption = props.value.newInputValue
-            ? (props.value.newInputValue(value) as AcceptableValue)
-            : value;
-        const newInputOptionLabel = renderOption(newInputOption as T);
-
-        if (newInputOptionLabel in optionsByLabel.value) {
-            update(optionsByLabel.value[newInputOptionLabel] as AcceptableValue);
+        if (value.trim() === '') {
+            updateFromInput(null as AcceptableValue);
 
             return;
         }
 
-        update(newInputOption);
+        if (Object.hasOwn(optionsByLabel.value, value)) {
+            updateFromInput(optionsByLabel.value[value] as AcceptableValue);
+
+            return;
+        }
+
+        const newInputOption = props.value.newInputValue
+            ? (props.value.newInputValue(value) as AcceptableValue)
+            : value;
+
+        updateFromInput(newInputOption);
     });
 
     provide('combobox', expose);
