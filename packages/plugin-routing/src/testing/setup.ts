@@ -2,7 +2,7 @@ import { Events } from '@aerogel/core';
 import Book from '@aerogel/plugin-routing/testing/stubs/models/Book';
 import Chapter from '@aerogel/plugin-routing/testing/stubs/models/Chapter';
 import Post from '@aerogel/plugin-routing/testing/stubs/models/Post';
-import { resetModelsState } from '@aerogel/reactivity';
+import { resetReactiveState } from '@aerogel/reactivity';
 import {
     InMemoryEngine,
     bootCoreModels,
@@ -26,7 +26,7 @@ vi.mock('@aerogel/core', async () => {
 beforeEach(() => {
     Events.reset();
     resetModelListeners();
-    resetModelsState();
+    resetReactiveState();
     bootCoreModels({ reset: true });
     bootModels({ Book, Chapter, Post }, { reset: true });
     setEngine(new InMemoryEngine());

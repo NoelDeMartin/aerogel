@@ -1,6 +1,6 @@
 import { computedModels } from '@aerogel/reactivity/composables/computedModels';
 import { useModels } from '@aerogel/reactivity/composables/useModels';
-import { getTrackedModels, loadTrackedModels, resetModelsState, trackModels } from '@aerogel/reactivity/lib/tracking';
+import { getTrackedModels, loadTrackedModels, resetReactiveState, trackModels } from '@aerogel/reactivity/lib/tracking';
 import Post from '@aerogel/reactivity/testing/stubs/models/Post';
 import User from '@aerogel/reactivity/testing/stubs/models/User';
 import TestingComputedModelsCache from '@aerogel/reactivity/testing/TestingComputedModelsCache';
@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 describe('computedModels', () => {
-    beforeEach(() => resetModelsState());
+    beforeEach(() => resetReactiveState());
 
     it('Computes model collections', async () => {
         // Arrange

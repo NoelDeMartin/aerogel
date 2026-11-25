@@ -1,12 +1,12 @@
 import { useSingletonModel } from '@aerogel/reactivity/composables/useSingletonModel';
-import { resetModelsState } from '@aerogel/reactivity/lib/tracking';
+import { resetReactiveState } from '@aerogel/reactivity/lib/tracking';
 import Book from '@aerogel/reactivity/testing/stubs/models/Book';
 import Chapter from '@aerogel/reactivity/testing/stubs/models/Chapter';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { toRaw, watchEffect } from 'vue';
 
 describe('useSingletonModel', () => {
-    beforeEach(() => resetModelsState());
+    beforeEach(() => resetReactiveState());
 
     it('Reacts to relation changes in singleton models', async () => {
         // Arrange

@@ -1,11 +1,11 @@
 import { computedModel } from '@aerogel/reactivity/composables/computedModel';
-import { resetModelsState } from '@aerogel/reactivity/lib/tracking';
+import { resetReactiveState } from '@aerogel/reactivity/lib/tracking';
 import User from '@aerogel/reactivity/testing/stubs/models/User';
 import { beforeEach, describe, expect, it } from 'vite-plus/test';
 import { nextTick, toRaw, watchEffect } from 'vue';
 
 describe('computedModel', () => {
-    beforeEach(() => resetModelsState());
+    beforeEach(() => resetReactiveState());
 
     it('Computes model instances', async () => {
         // Arrange

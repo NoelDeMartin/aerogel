@@ -6,7 +6,7 @@ import {
     loadTrackedModels,
     loadTrackedSingletonModel,
     refreshTrackedModels,
-    resetModelsState,
+    resetReactiveState,
     trackModels,
 } from '@aerogel/reactivity/lib/tracking';
 import User from '@aerogel/reactivity/testing/stubs/models/User';
@@ -15,7 +15,7 @@ import TestingComputedModelsCache from '@aerogel/reactivity/testing/TestingCompu
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 describe('Tracking helpers', () => {
-    beforeEach(resetModelsState);
+    beforeEach(resetReactiveState);
 
     it('Loads tracked models on demand', async () => {
         // Arrange

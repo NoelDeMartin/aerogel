@@ -1,7 +1,7 @@
 import { getTrackedModelsData, getTrackedModelsMap } from '@aerogel/reactivity/internals/tracking';
 import type { Model, ModelConstructor, ModelWithUrl } from 'soukai-bis';
 
-export { clearTrackedModels, resetModelsState } from '@aerogel/reactivity/internals/tracking';
+export { clearTrackedModels, resetReactiveState } from '@aerogel/reactivity/internals/tracking';
 
 export interface TrackOptions {
     depth?: number;

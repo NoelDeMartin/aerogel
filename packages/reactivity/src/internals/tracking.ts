@@ -340,7 +340,7 @@ export function clearTrackedModels(): void {
     clearListeners.forEach((listener) => listener());
 }
 
-export function resetModelsState(): void {
+export function resetReactiveState(): void {
     trackedModels = new WeakMap();
 
     modelsWorker?.terminate();

@@ -1,5 +1,5 @@
 import { getTrackedModelsData, getTrackedUrls } from '@aerogel/reactivity/internals/tracking';
-import { loadTrackedModels, resetModelsState } from '@aerogel/reactivity/lib/tracking';
+import { loadTrackedModels, resetReactiveState } from '@aerogel/reactivity/lib/tracking';
 import Post from '@aerogel/reactivity/testing/stubs/models/Post';
 import User from '@aerogel/reactivity/testing/stubs/models/User';
 import { connectTestingSync } from '@aerogel/reactivity/testing/sync';
@@ -7,7 +7,7 @@ import { invade } from '@noeldemartin/utils';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 describe('Sync', () => {
-    beforeEach(() => resetModelsState());
+    beforeEach(() => resetReactiveState());
 
     it('Discovers models in synced containers', async () => {
         // Act

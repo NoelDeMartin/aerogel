@@ -25,7 +25,7 @@ import { setupSoukai } from '@aerogel/plugin-solid/utils/soukai';
 import ModelsWorker from '@aerogel/plugin-solid/workers/ModelsWorker';
 import {
     clearTrackedModels,
-    resetModelsState,
+    resetReactiveState,
     setComputedModelsCache,
     setErrorReporter,
     setModelsWorkerLoader,
@@ -72,7 +72,7 @@ export default function solid(options: Options = {}): Plugin {
             setComputedModelsCache(Cache);
             setModelsWorkerLoader(() => new ModelsWorker(appNamespace()));
 
-            globalThis.__aerogelStorybook__ && resetModelsState();
+            globalThis.__aerogelStorybook__ && resetReactiveState();
 
             setupTestingRuntime();
             registerAuthenticators({ ...baseAuthenticators, ...options.authenticators });

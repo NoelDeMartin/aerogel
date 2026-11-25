@@ -1,6 +1,6 @@
 import { Events, NetworkCache } from '@aerogel/core';
 import Gallery from '@aerogel/plugin-solid/testing/stubs/models/Gallery';
-import { computedModelAttribute, getTrackedModels, resetModelsState, trackModels } from '@aerogel/reactivity';
+import { computedModelAttribute, getTrackedModels, resetReactiveState, trackModels } from '@aerogel/reactivity';
 import { invade } from '@noeldemartin/utils';
 import {
     Container,
@@ -26,7 +26,7 @@ describe('Solid files', () => {
 
         solid.setState({ profiles: {}, staleProfiles: [], previousSession: null, session: null });
         setEngine(engine);
-        resetModelsState();
+        resetReactiveState();
         invade(solid, ['watchContainerFiles']).watchContainerFiles();
     });
 

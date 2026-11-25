@@ -1,6 +1,6 @@
 import { useModels } from '@aerogel/reactivity/composables/useModels';
 import { getTrackedModelsData } from '@aerogel/reactivity/internals/tracking';
-import { getTrackedModels, refreshTrackedModels, resetModelsState } from '@aerogel/reactivity/lib/tracking';
+import { getTrackedModels, refreshTrackedModels, resetReactiveState } from '@aerogel/reactivity/lib/tracking';
 import Item from '@aerogel/reactivity/testing/stubs/models/Item';
 import Shelf from '@aerogel/reactivity/testing/stubs/models/Shelf';
 import Task from '@aerogel/reactivity/testing/stubs/models/Task';
@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { nextTick, ref, toRaw, watchEffect } from 'vue';
 
 describe('useModels', () => {
-    beforeEach(() => resetModelsState());
+    beforeEach(() => resetReactiveState());
 
     it('Loads model collections on demand', async () => {
         // Arrange

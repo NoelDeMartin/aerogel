@@ -1,12 +1,12 @@
 import { useSyncSession } from '@aerogel/reactivity/composables/useSyncSession';
-import { resetModelsState } from '@aerogel/reactivity/lib/tracking';
+import { resetReactiveState } from '@aerogel/reactivity/lib/tracking';
 import Post from '@aerogel/reactivity/testing/stubs/models/Post';
 import { bootTestingSync, connectTestingSync } from '@aerogel/reactivity/testing/sync';
 import { Sync } from 'soukai-bis';
 import { beforeEach, describe, expect, it } from 'vite-plus/test';
 
 describe('useSyncSession', () => {
-    beforeEach(() => resetModelsState());
+    beforeEach(() => resetReactiveState());
 
     it('Follows sync sessions', async () => {
         // Arrange

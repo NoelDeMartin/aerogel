@@ -3,7 +3,7 @@ import { Events, NetworkCache, resetPiniaStore } from '@aerogel/core';
 import FakeCacheStorage from '@aerogel/plugin-local-first/testing/stubs/FakeCacheStorage';
 import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
-import { resetModelsState } from '@aerogel/reactivity';
+import { resetReactiveState } from '@aerogel/reactivity';
 import { FakeLocalStorage, FakeServer } from '@noeldemartin/testing';
 import {
     InMemoryEngine,
@@ -36,7 +36,7 @@ beforeEach(async () => {
     FakeLocalStorage.reset();
     resetPiniaStore();
     resetModelListeners();
-    resetModelsState();
+    resetReactiveState();
     bootCoreModels({ reset: true });
     bootModels({ Post, PostsCollection }, { reset: true });
     setEngine(new InMemoryEngine());
