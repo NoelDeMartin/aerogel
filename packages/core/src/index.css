@@ -5,6 +5,8 @@
 
 @source './';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
     --color-primary: oklch(0.205 0 0);
     --color-primary-50: color-mix(in oklab, var(--color-primary-600) 5%, transparent);
@@ -30,6 +32,14 @@
 }
 
 @layer base {
+    .dark {
+        --color-background: var(--color-gray-900);
+        --color-primary-text: var(--color-gray-100);
+        --color-hover: var(--color-gray-800);
+
+        color-scheme: dark;
+    }
+
     :focus-visible {
         outline: 2px solid var(--color-focus);
         outline-offset: 2px;

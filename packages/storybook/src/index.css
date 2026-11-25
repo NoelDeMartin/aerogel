@@ -1,1 +1,9 @@
 @source './';
+
+@layer base {
+    body,
+    .docs-story {
+        @apply bg-background text-primary-text text-base leading-tight font-normal antialiased;
+        font-family: var(--default-font-family);
+    }
+}
