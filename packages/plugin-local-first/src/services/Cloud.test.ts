@@ -1,5 +1,5 @@
 import { Errors, Events, UI } from '@aerogel/core';
-import type { ConflictHandler, DocumentConflict } from '@aerogel/plugin-local-first/services/Cloud';
+import type { ConflictHandler } from '@aerogel/plugin-local-first/services/Cloud';
 import { CloudStatus } from '@aerogel/plugin-local-first/services/Cloud.state';
 import {
     connect,
@@ -13,8 +13,8 @@ import Post from '@aerogel/plugin-local-first/testing/stubs/models/Post';
 import PostsCollection from '@aerogel/plugin-local-first/testing/stubs/models/PostsCollection';
 import { useModels } from '@aerogel/reactivity';
 import { SolidDocument } from '@noeldemartin/solid-utils';
-import { Sync, requireEngine, tracksLocalChanges } from 'soukai-bis';
-import type { DeletionConflict, ExternalSource, ModelContainerUrls } from 'soukai-bis';
+import { Sync, isResourceConflict, requireEngine, tracksLocalChanges } from 'soukai-bis';
+import type { ExternalSource, ModelContainerUrls, ResourceConflict } from 'soukai-bis';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 describe('Cloud', () => {
@@ -211,24 +211,24 @@ describe('Cloud', () => {
 
         await cloud.track(Post, { register: true });
 
-        const deletionConflict = await createDeletionConflict();
+        const resourceConflict = await createResourceConflict();
         const modal = vi
             .spyOn(UI.requireInstance(), 'modal')
             .mockResolvedValue({ dismissed: false, response: 'restore' } as { dismissed: boolean });
 
         // Act
-        const resolution = await cloud.resolveDeletionConflict(deletionConflict);
+        const resolution = await cloud.resolveConflict(resourceConflict);
 
         // Assert
         const [component, props] = modal.mock.calls[0] ?? [];
-        const { conflict } = props as { conflict?: DeletionConflict };
+        const { conflict } = props as { conflict?: ResourceConflict };
 
         expect(resolution).toEqual('restore');
-        expect(component).toMatchObject({ __name: 'DeletionConflictModal' });
+        expect(component).toMatchObject({ __name: 'ResourceConflictModal' });
         expect(props).toMatchObject({
-            conflict: { type: 'deleted-remotely', resourceUrl: deletionConflict.resourceUrl },
+            conflict: { type: 'resource-deleted-remotely', resourceUrl: resourceConflict.resourceUrl },
         });
-        expect(conflict?.model?.url).toEqual(deletionConflict.resourceUrl);
+        expect(conflict?.model?.url).toEqual(resourceConflict.resourceUrl);
     });
 
     it('prompts deletion conflicts with conflict handlers', async () => {
@@ -237,13 +237,13 @@ describe('Cloud', () => {
 
         await cloud.track(Post, { register: true });
 
-        const deletionConflict = await createDeletionConflict();
+        const resourceConflict = await createResourceConflict();
         const modal = vi
             .spyOn(UI.requireInstance(), 'modal')
             .mockResolvedValue({ dismissed: false, response: 'delete' } as { dismissed: boolean });
 
         cloud.conflictHandler = (conflict) =>
-            conflict.resourceType === 'document'
+            isResourceConflict(conflict)
                 ? {
                       title: 'Post deleted',
                       message: `*${(conflict.model as Post).title}* was deleted on another device.`,
@@ -252,7 +252,7 @@ describe('Cloud', () => {
                 : undefined;
 
         // Act
-        const resolution = await cloud.resolveDeletionConflict(deletionConflict);
+        const resolution = await cloud.resolveConflict(resourceConflict);
 
         // Assert
         const [, props] = modal.mock.calls[0] ?? [];
@@ -273,14 +273,14 @@ describe('Cloud', () => {
 
         await cloud.track(Post, { register: true });
 
-        const deletionConflict = await createDeletionConflict();
+        const resourceConflict = await createResourceConflict();
         const modal = vi.spyOn(UI.requireInstance(), 'modal');
         const handler = vi.fn<ConflictHandler>(async () => 'restore' as const);
 
         cloud.conflictHandler = handler;
 
         // Act
-        const resolution = await cloud.resolveDeletionConflict(deletionConflict);
+        const resolution = await cloud.resolveConflict(resourceConflict);
 
         // Assert
         const [conflict] = handler.mock.calls[0] ?? [];
@@ -288,11 +288,10 @@ describe('Cloud', () => {
         expect(resolution).toEqual('restore');
         expect(modal).not.toHaveBeenCalled();
         expect(conflict).toMatchObject({
-            resourceType: 'document',
-            type: 'deleted-remotely',
-            resourceUrl: deletionConflict.resourceUrl,
+            type: 'resource-deleted-remotely',
+            resourceUrl: resourceConflict.resourceUrl,
         });
-        expect((conflict as DocumentConflict | undefined)?.model?.url).toEqual(deletionConflict.resourceUrl);
+        expect((conflict as ResourceConflict | undefined)?.model?.url).toEqual(resourceConflict.resourceUrl);
     });
 
     it('clears sync state when logging out', async () => {
@@ -489,12 +488,12 @@ describe('Cloud', () => {
         return { default: defaultContainerUrl, registered: [], unlisted: [], instances: [] };
     }
 
-    async function createDeletionConflict(): Promise<DeletionConflict> {
+    async function createResourceConflict(): Promise<ResourceConflict> {
         const post = await Post.create({ title: 'Hello World' });
         const localDocument = await requireEngine().readDocument(post.requireDocumentUrl());
 
         return {
-            type: 'deleted-remotely',
+            type: 'resource-deleted-remotely',
             resourceUrl: post.requireUrl(),
             localDocument,
             remoteDocument: new SolidDocument(localDocument.url, []),

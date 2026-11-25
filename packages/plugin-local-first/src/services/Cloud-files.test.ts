@@ -16,7 +16,7 @@ describe('Cloud files', () => {
         // Arrange
         const url = 'https://alice.example/posts/image.png';
         const conflict: FileConflict = {
-            type: 'modified-remotely',
+            type: 'file-modified',
             url,
             localFile: { url, containerUrl: 'https://alice.example/posts/' },
             remoteUpdatedAt: new Date(),
@@ -28,14 +28,14 @@ describe('Cloud files', () => {
         logIn();
 
         // Act
-        const resolution = await cloud.resolveFileConflict(conflict);
+        const resolution = await cloud.resolveConflict(conflict);
 
         // Assert
         const [component, props] = modal.mock.calls[0] ?? [];
 
         expect(resolution).toEqual('keep-remote');
         expect(component).toMatchObject({ __name: 'FileConflictModal' });
-        expect(props).toMatchObject({ conflict: { type: 'modified-remotely', url } });
+        expect(props).toMatchObject({ conflict: { type: 'file-modified', url } });
     });
 
     it('resolves file conflicts with conflict handlers', async () => {
@@ -49,8 +49,8 @@ describe('Cloud files', () => {
         cloud.conflictHandler = handler;
 
         // Act
-        const resolution = await cloud.resolveFileConflict({
-            type: 'deleted-remotely',
+        const resolution = await cloud.resolveConflict({
+            type: 'file-deleted-remotely',
             url,
             localFile: { url, containerUrl: 'https://alice.example/posts/' },
             remoteUpdatedAt: null,
@@ -59,9 +59,7 @@ describe('Cloud files', () => {
         // Assert
         expect(resolution).toEqual('keep-local');
         expect(modal).not.toHaveBeenCalled();
-        expect(handler).toHaveBeenCalledWith(
-            expect.objectContaining({ resourceType: 'file', type: 'deleted-remotely', url }),
-        );
+        expect(handler).toHaveBeenCalledWith(expect.objectContaining({ type: 'file-deleted-remotely', url }));
     });
 
     it.each<[CloudFiles, SyncFilesConfig[]]>([

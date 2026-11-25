@@ -1,5 +1,5 @@
 <template>
-    <!-- @vue-generic {import('soukai-bis').DeletionConflictResolution} -->
+    <!-- @vue-generic {import('soukai-bis').ResourceConflictResolution} -->
     <Modal v-slot="{ close }" :title="title" persistent>
         <Markdown :text="message" />
 
@@ -16,17 +16,17 @@
 
 <script setup lang="ts">
 import { Button, Markdown, Modal, translateWithDefault } from '@aerogel/core';
-import type { DeletionConflictPrompt } from '@aerogel/plugin-local-first/services/Cloud';
+import type { ResourceConflictPrompt } from '@aerogel/plugin-local-first/services/Cloud';
 import { stringSplitWords } from '@noeldemartin/utils';
-import type { DeletionConflict, DeletionConflictResolution } from 'soukai-bis';
+import type { ResourceConflict, ResourceConflictResolution } from 'soukai-bis';
 import { computed } from 'vue';
 
-const { conflict, prompt = null } = defineProps<{
-    conflict: DeletionConflict;
-    prompt?: DeletionConflictPrompt | null;
+const { conflict, prompt } = defineProps<{
+    conflict: ResourceConflict;
+    prompt?: ResourceConflictPrompt;
 }>();
 
-defineEmits<{ close: [result: DeletionConflictResolution] }>();
+defineEmits<{ close: [result: ResourceConflictResolution] }>();
 
 const modelName = computed(() => {
     const name = conflict.model?.static().modelName;
@@ -41,7 +41,7 @@ const title = computed(() => {
         return prompt.title;
     }
 
-    return conflict.type === 'deleted-remotely'
+    return conflict.type === 'resource-deleted-remotely'
         ? translateWithDefault('cloud.deletionConflict.deletedRemotelyTitle', 'Deleted on another device')
         : translateWithDefault('cloud.deletionConflict.deletedLocallyTitle', 'Changed on another device');
 });
@@ -50,7 +50,7 @@ const message = computed(() => {
         return prompt.message;
     }
 
-    return conflict.type === 'deleted-remotely'
+    return conflict.type === 'resource-deleted-remotely'
         ? translateWithDefault(
               'cloud.deletionConflict.deletedRemotely',
               'The {item} was deleted on another device, but it has changes on this device that have not been ' +

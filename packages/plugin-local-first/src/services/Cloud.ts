@@ -8,8 +8,8 @@ import {
     translateWithDefault,
 } from '@aerogel/core';
 import type { ButtonVariant } from '@aerogel/core';
-import DeletionConflictModal from '@aerogel/plugin-local-first/components/DeletionConflictModal.vue';
 import FileConflictModal from '@aerogel/plugin-local-first/components/FileConflictModal.vue';
+import ResourceConflictModal from '@aerogel/plugin-local-first/components/ResourceConflictModal.vue';
 import { Solid, fileResponse } from '@aerogel/plugin-solid';
 import { bootSync, refreshTrackedModels, trackModels, useLocalChanges } from '@aerogel/reactivity';
 import {
@@ -18,23 +18,24 @@ import {
     getLocationQueryParameter,
     hasLocationQueryParameter,
     isArray,
-    isObject,
     isTesting,
     parseBoolean,
     required,
 } from '@noeldemartin/utils';
-import { FilesSyncStrategies, Sync, getBootedModels, isCoreModel } from 'soukai-bis';
+import { FilesSyncStrategies, Sync, getBootedModels, isCoreModel, isFileConflict } from 'soukai-bis';
 import type {
-    DeletionConflict,
-    DeletionConflictResolution,
     ExternalSource,
     FileConflict,
     FileConflictResolution,
     FilePushedEvent,
     ModelConstructor,
     ModelsRegistrationFailedEvent,
+    ResourceConflict,
+    ResourceConflictResolution,
     SyncApplicationModel,
     SyncCompletedEvent,
+    SyncConflict,
+    SyncConflictResolution,
     SyncFilesConfig,
     SyncProperties,
     SyncSession,
@@ -60,7 +61,7 @@ export interface SyncOptions {
 
 export type CloudRegistration = boolean | RegisterOptions | undefined;
 
-export interface DeletionConflictPrompt {
+export interface ResourceConflictPrompt {
     title?: string;
     message?: string;
     deleteText?: string;
@@ -80,24 +81,9 @@ export interface FileConflictPrompt {
     downloadRemoteText?: string;
 }
 
-export interface DocumentConflict extends DeletionConflict {
-    resourceType: 'document';
-}
-
-export interface CloudFileConflict extends FileConflict {
-    resourceType: 'file';
-}
-
-export type CloudConflict = DocumentConflict | CloudFileConflict;
-
-export type ConflictHandlerResult =
-    | DeletionConflictResolution
-    | DeletionConflictPrompt
-    | FileConflictResolution
-    | FileConflictPrompt
-    | undefined;
-
-export type ConflictHandler = (conflict: CloudConflict) => ConflictHandlerResult | Promise<ConflictHandlerResult>;
+export type ConflictPrompt = ResourceConflictPrompt | FileConflictPrompt;
+export type ConflictHandlerResult = SyncConflictResolution | ConflictPrompt | undefined;
+export type ConflictHandler = (conflict: SyncConflict) => ConflictHandlerResult | Promise<ConflictHandlerResult>;
 
 export interface ExternalSourceFailedPayload {
     source: ExternalSource;
@@ -244,40 +230,32 @@ export class CloudService extends Service {
         }
     }
 
-    protected async resolveDeletionConflict(conflict: DeletionConflict): Promise<DeletionConflictResolution> {
-        const result = await this.conflictHandler?.({ resourceType: 'document', ...conflict });
+    protected async resolveConflict(conflict: SyncConflict): Promise<SyncConflictResolution> {
+        const result = await this.conflictHandler?.(conflict);
 
-        if (result === 'delete' || result === 'restore') {
+        if (typeof result === 'string') {
             return result;
         }
 
-        return this.promptDeletionConflict(conflict, isObject(result) ? result : null);
+        return isFileConflict(conflict)
+            ? this.promptFileConflict(conflict, result)
+            : this.promptResourceConflict(conflict, result);
     }
 
-    protected async promptDeletionConflict(
-        conflict: DeletionConflict,
-        prompt: DeletionConflictPrompt | null,
-    ): Promise<DeletionConflictResolution> {
-        const { response } = (await UI.modal(DeletionConflictModal, { conflict, prompt })) as unknown as {
-            response: DeletionConflictResolution | null;
+    protected async promptResourceConflict(
+        conflict: ResourceConflict,
+        prompt?: ResourceConflictPrompt,
+    ): Promise<ResourceConflictResolution> {
+        const { response } = (await UI.modal(ResourceConflictModal, { conflict, prompt })) as unknown as {
+            response: ResourceConflictResolution | null;
         };
 
         return response ?? 'delete';
     }
 
-    protected async resolveFileConflict(conflict: FileConflict): Promise<FileConflictResolution> {
-        const result = await this.conflictHandler?.({ resourceType: 'file', ...conflict });
-
-        if (result === 'keep-local' || result === 'keep-remote') {
-            return result;
-        }
-
-        return this.promptFileConflict(conflict, isObject(result) ? result : null);
-    }
-
     protected async promptFileConflict(
         conflict: FileConflict,
-        prompt: FileConflictPrompt | null,
+        prompt?: FileConflictPrompt,
     ): Promise<FileConflictResolution> {
         const { response } = (await UI.modal(FileConflictModal, { conflict, prompt })) as unknown as {
             response: FileConflictResolution | null;
@@ -312,8 +290,7 @@ export class CloudService extends Service {
                 createPrivateTypeIndex: () => Solid.findOrCreatePrivateTypeIndex(),
                 onProfileUpdated: (profile) => Solid.rememberProfile(profile),
             },
-            resolveDeletionConflict: this.resolveDeletionConflict.bind(this),
-            resolveFileConflict: this.resolveFileConflict.bind(this),
+            resolveConflict: this.resolveConflict.bind(this),
             onModelsRegistered: () => Solid.clearTypeIndexesCache(),
             onUpdated: this.onSyncUpdated.bind(this),
             onSyncStarted: this.onSyncStarted.bind(this),

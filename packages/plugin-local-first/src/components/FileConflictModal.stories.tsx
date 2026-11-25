@@ -23,12 +23,12 @@ const meta: Meta<StoryArgs> = {
     parameters: modalStoryParameters,
     argTypes: {
         type: {
-            options: ['modified-remotely', 'deleted-remotely', 'deleted-locally'],
+            options: ['file-modified', 'file-deleted-remotely', 'file-deleted-locally'],
             control: { type: 'select' },
         },
     },
     args: {
-        type: 'modified-remotely',
+        type: 'file-modified',
         title: '',
         message: '',
         keepLocalText: '',
@@ -68,11 +68,11 @@ const meta: Meta<StoryArgs> = {
 export const ModifiedRemotely: Story = {};
 
 export const DeletedRemotely: Story = {
-    args: { type: 'deleted-remotely' },
+    args: { type: 'file-deleted-remotely' },
 };
 
 export const DeletedLocally: Story = {
-    args: { type: 'deleted-locally' },
+    args: { type: 'file-deleted-locally' },
 };
 
 export const CustomDescription: Story = {

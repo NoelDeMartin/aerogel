@@ -2,13 +2,13 @@ import { ModalStory, modalStoryParameters } from '@aerogel/storybook';
 import { SolidDocument } from '@noeldemartin/solid-utils';
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { bootModels, defineSchema } from 'soukai-bis';
-import type { DeletionConflictType } from 'soukai-bis';
+import type { ResourceConflictType } from 'soukai-bis';
 import { z } from 'zod';
 
-import DeletionConflictModal from './DeletionConflictModal.vue';
+import ResourceConflictModal from './ResourceConflictModal.vue';
 
 interface StoryArgs {
-    type: DeletionConflictType;
+    type: ResourceConflictType;
     withModel?: boolean;
     title?: string;
     message?: string;
@@ -25,18 +25,18 @@ class Movie extends defineSchema({
 type Story = StoryObj<typeof meta>;
 
 const meta: Meta<StoryArgs> = {
-    title: 'Local First/DeletionConflictModal',
-    component: DeletionConflictModal,
+    title: 'Local First/ResourceConflictModal',
+    component: ResourceConflictModal,
     tags: ['!autodocs'],
     parameters: modalStoryParameters,
     argTypes: {
         type: {
-            options: ['deleted-remotely', 'deleted-locally'],
+            options: ['resource-deleted-remotely', 'resource-deleted-locally'],
             control: { type: 'select' },
         },
     },
     args: {
-        type: 'deleted-remotely',
+        type: 'resource-deleted-remotely',
         withModel: false,
         title: '',
         message: '',
@@ -52,7 +52,7 @@ const meta: Meta<StoryArgs> = {
 
             return () => (
                 <ModalStory
-                    component={DeletionConflictModal}
+                    component={ResourceConflictModal}
                     props={{
                         conflict: {
                             type: args.type,
@@ -77,7 +77,7 @@ const meta: Meta<StoryArgs> = {
 export const DeletedRemotely: Story = {};
 
 export const DeletedLocally: Story = {
-    args: { type: 'deleted-locally' },
+    args: { type: 'resource-deleted-locally' },
 };
 
 export const WithModel: Story = {

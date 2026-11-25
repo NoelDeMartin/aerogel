@@ -4,11 +4,15 @@
         <Markdown :text="message" />
 
         <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <FileConflictDownloadButton v-if="conflict.type !== 'deleted-locally'" :url="conflict.url" version="local">
+            <FileConflictDownloadButton
+                v-if="conflict.type !== 'file-deleted-locally'"
+                :url="conflict.url"
+                version="local"
+            >
                 {{ prompt?.downloadLocalText ?? downloadLocalText }}
             </FileConflictDownloadButton>
             <FileConflictDownloadButton
-                v-if="conflict.type !== 'deleted-remotely'"
+                v-if="conflict.type !== 'file-deleted-remotely'"
                 :url="conflict.url"
                 version="remote"
             >
@@ -35,9 +39,9 @@ import type { FileConflictPrompt } from '@aerogel/plugin-local-first/services/Cl
 import type { FileConflict, FileConflictResolution } from 'soukai-bis';
 import { computed } from 'vue';
 
-const { conflict, prompt = null } = defineProps<{
+const { conflict, prompt } = defineProps<{
     conflict: FileConflict;
-    prompt?: FileConflictPrompt | null;
+    prompt?: FileConflictPrompt;
 }>();
 
 defineEmits<{ close: [result: FileConflictResolution] }>();
@@ -52,37 +56,37 @@ const restoreButton = computed(() => ({
 }));
 const keepLocalButton = computed(() => {
     switch (conflict.type) {
-        case 'modified-remotely':
+        case 'file-modified':
             return {
                 text: translateWithDefault('cloud.fileConflict.keepLocal', 'Keep this version'),
                 variant: 'default' as ButtonVariant,
             };
-        case 'deleted-remotely':
+        case 'file-deleted-remotely':
             return restoreButton.value;
-        case 'deleted-locally':
+        case 'file-deleted-locally':
             return deleteButton.value;
     }
 });
 const keepRemoteButton = computed(() => {
     switch (conflict.type) {
-        case 'modified-remotely':
+        case 'file-modified':
             return {
                 text: translateWithDefault('cloud.fileConflict.keepRemote', 'Keep the other version'),
                 variant: 'secondary' as ButtonVariant,
             };
-        case 'deleted-remotely':
+        case 'file-deleted-remotely':
             return deleteButton.value;
-        case 'deleted-locally':
+        case 'file-deleted-locally':
             return restoreButton.value;
     }
 });
 const downloadLocalText = computed(() =>
-    conflict.type === 'modified-remotely'
+    conflict.type === 'file-modified'
         ? translateWithDefault('cloud.fileConflict.downloadLocal', 'Download this version')
         : translateWithDefault('cloud.fileConflict.download', 'Download file'),
 );
 const downloadRemoteText = computed(() =>
-    conflict.type === 'modified-remotely'
+    conflict.type === 'file-modified'
         ? translateWithDefault('cloud.fileConflict.downloadRemote', 'Download the other version')
         : translateWithDefault('cloud.fileConflict.download', 'Download file'),
 );
@@ -91,7 +95,7 @@ const title = computed(() => {
         return prompt.title;
     }
 
-    return conflict.type === 'deleted-remotely'
+    return conflict.type === 'file-deleted-remotely'
         ? translateWithDefault('cloud.fileConflict.deletedRemotelyTitle', 'Deleted on another device')
         : translateWithDefault('cloud.fileConflict.modifiedRemotelyTitle', 'Changed on another device');
 });
@@ -103,21 +107,21 @@ const message = computed(() => {
     const file = `\`${conflict.url}\``;
 
     switch (conflict.type) {
-        case 'modified-remotely':
+        case 'file-modified':
             return translateWithDefault(
                 'cloud.fileConflict.modifiedRemotely',
                 'The file at {file} was changed on another device, but it also has changes on this device that ' +
                     'have not been synchronized yet. Which version do you want to keep?',
                 { file },
             );
-        case 'deleted-remotely':
+        case 'file-deleted-remotely':
             return translateWithDefault(
                 'cloud.fileConflict.deletedRemotely',
                 'The file at {file} was deleted on another device, but it has changes on this device that have ' +
                     'not been synchronized yet. Do you want to delete it, or restore it with your changes?',
                 { file },
             );
-        case 'deleted-locally':
+        case 'file-deleted-locally':
             return translateWithDefault(
                 'cloud.fileConflict.deletedLocally',
                 'You deleted the file at {file} on this device, but it was changed on another device in the ' +
