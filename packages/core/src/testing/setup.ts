@@ -12,5 +12,8 @@ beforeEach(() => {
     FakeLocalStorage.reset();
     FakeLocalStorage.patchGlobal();
 
+    vi.restoreAllMocks();
     vi.stubGlobal('caches', new FakeCacheStorage());
+
+    document.body.innerHTML = '';
 });

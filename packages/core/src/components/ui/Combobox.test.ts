@@ -14,8 +14,6 @@ describe('Combobox', () => {
     };
 
     beforeEach(() => {
-        document.body.innerHTML = '';
-        vi.restoreAllMocks();
         vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(200);
         vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(200);
         vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({

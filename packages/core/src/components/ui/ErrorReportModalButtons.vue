@@ -28,6 +28,7 @@ import { translateWithDefault } from '@aerogel/core/lang/utils';
 import App from '@aerogel/core/services/App';
 import UI from '@aerogel/core/ui/UI';
 import { classes } from '@aerogel/core/utils/classes';
+import { copyToClipboard } from '@aerogel/core/utils/dom';
 import { isObject, stringExcerpt, tap } from '@noeldemartin/utils';
 import { computed } from 'vue';
 import type { Component } from 'vue';
@@ -81,9 +82,11 @@ const buttons = computed(() =>
                 iconComponent: IconCopy,
                 iconClass: 'w-6! h-5!',
                 async click() {
-                    await navigator.clipboard.writeText(getErrorReportDebugInformation(report));
-
-                    UI.toast(translateWithDefault('errors.copiedToClipboard', 'Debug information copied to clipboard'));
+                    if (await copyToClipboard(getErrorReportDebugInformation(report))) {
+                        UI.toast(
+                            translateWithDefault('errors.copiedToClipboard', 'Debug information copied to clipboard'),
+                        );
+                    }
                 },
             },
             {
