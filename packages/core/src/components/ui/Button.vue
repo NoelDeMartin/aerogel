@@ -34,11 +34,11 @@ const renderedClasses = computed(() => variantClasses<Variants<Pick<ButtonProps,
         variants: {
             variant: {
                 default: 'bg-primary-600 text-white focus-visible:outline-focus',
-                secondary: 'bg-background text-gray-900 ring-gray-300',
+                secondary: 'bg-background text-primary-text ring-gray-300 dark:ring-white/20',
                 danger: 'bg-red-600 text-white focus-visible:outline-red-600',
                 warning: 'bg-yellow-600 text-white focus-visible:outline-yellow-600',
                 ghost: 'bg-transparent',
-                outline: 'bg-transparent text-primary-600 ring-primary-600',
+                outline: 'bg-transparent text-primary-accent ring-primary-accent',
                 link: 'text-links',
             },
             size: {

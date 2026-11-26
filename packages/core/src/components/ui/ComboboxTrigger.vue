@@ -10,14 +10,14 @@
             <span
                 v-for="(item, index) in items"
                 :key="index"
-                class="inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800"
+                class="inline-flex items-center gap-1 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-white/10 dark:text-gray-200"
             >
                 <span>{{ combobox.renderOption(item) }}</span>
                 <button
                     type="button"
                     tabindex="-1"
                     :title="$td('ui.remove', 'Remove')"
-                    class="cursor-pointer text-gray-400 hover:text-gray-600 focus:outline-hidden"
+                    class="cursor-pointer text-gray-400 hover:text-gray-600 focus:outline-hidden dark:hover:text-gray-200"
                     @click.stop="remove(item)"
                 >
                     <IconClose class="size-2.5" />
@@ -49,28 +49,31 @@ const combobox = injectReactiveOrFail<ComboboxExpose>('combobox', '<ComboboxTrig
 
 const renderedSingleClasses = computed(() =>
     classes(
-        'block w-full rounded-md border-0 bg-white py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
+        'block w-full rounded-md border-0 bg-surface py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
         {
             'mt-1': combobox.label,
             'focus:ring-focus': !combobox.errors,
-            'text-gray-900 shadow-2xs ring-gray-900/10 placeholder:text-gray-400': !combobox.errors,
-            'pr-10 text-red-900 ring-red-900/10 placeholder:text-red-300 focus:ring-red-500': combobox.errors,
+            'text-primary-text shadow-2xs ring-gray-900/10 dark:ring-white/15 placeholder:text-gray-400 dark:placeholder:text-gray-500':
+                !combobox.errors,
+            'pr-10 text-red-900 dark:text-red-300 ring-red-900/10 dark:ring-red-400/30 placeholder:text-red-300 dark:placeholder:text-red-400/50 focus:ring-red-500':
+                combobox.errors,
         },
     ),
 );
 
 const renderedMultiClasses = computed(() =>
     classes(
-        'relative flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-md border-0 bg-white px-2.5 py-1 ring-1 ring-inset focus-within:ring-2 focus-within:ring-inset sm:text-sm sm:leading-6 cursor-text',
+        'relative flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-md border-0 bg-surface px-2.5 py-1 ring-1 ring-inset focus-within:ring-2 focus-within:ring-inset sm:text-sm sm:leading-6 cursor-text',
         {
             'mt-1': combobox.label,
             'focus-within:ring-focus': !combobox.errors,
-            'text-gray-900 shadow-2xs ring-gray-900/10': !combobox.errors,
-            'pr-10 text-red-900 ring-red-900/10 focus-within:ring-red-500': combobox.errors,
+            'text-primary-text shadow-2xs ring-gray-900/10 dark:ring-white/15': !combobox.errors,
+            'pr-10 text-red-900 dark:text-red-300 ring-red-900/10 dark:ring-red-400/30 focus-within:ring-red-500':
+                combobox.errors,
         },
     ),
 );
 
 const renderedMultiInputClasses =
-    'min-w-16 flex-1 border-0 bg-transparent p-0 text-gray-900 placeholder:text-gray-400 focus:outline-hidden focus:ring-0 sm:text-sm sm:leading-6';
+    'min-w-16 flex-1 border-0 bg-transparent p-0 text-primary-text placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-hidden focus:ring-0 sm:text-sm sm:leading-6';
 </script>

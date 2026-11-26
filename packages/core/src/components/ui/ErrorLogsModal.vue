@@ -10,11 +10,11 @@
                     <h3 class="font-medium">
                         {{ log.report.title }}
                     </h3>
-                    <time :datetime="log.date.toISOString()" class="text-xs text-gray-700">
+                    <time :datetime="log.date.toISOString()" class="text-xs text-gray-700 dark:text-gray-300">
                         {{ log.date.toLocaleTimeString() }}
                     </time>
                     <Markdown
-                        class="text-sm text-gray-500"
+                        class="text-sm text-gray-500 dark:text-gray-400"
                         :text="log.report.description ?? getErrorMessage(log.report)"
                     />
                 </div>

@@ -54,16 +54,22 @@ const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedWrapperClasses = computed(() =>
     classes('relative rounded-md shadow-2xs', { 'mt-1': label }, wrapperClass),
 );
-const renderedLabelClasses = computed(() => classes('block text-sm font-medium leading-6 text-gray-900', labelClass));
-const renderedDescriptionClasses = computed(() => classes('mt-2 text-sm text-gray-600', descriptionClass));
-const renderedErrorClasses = computed(() => classes('mt-2 text-sm text-red-600', errorClass));
+const renderedLabelClasses = computed(() =>
+    classes('block text-sm font-medium leading-6 text-primary-text', labelClass),
+);
+const renderedDescriptionClasses = computed(() =>
+    classes('mt-2 text-sm text-gray-600 dark:text-gray-400', descriptionClass),
+);
+const renderedErrorClasses = computed(() => classes('mt-2 text-sm text-red-600 dark:text-red-400', errorClass));
 const renderedInputClasses = computed(() =>
     classes(
-        'block w-full rounded-md border-0 py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
+        'block w-full rounded-md border-0 bg-surface py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
         {
             'focus:ring-focus': !$control.value?.errors,
-            'text-gray-900 shadow-2xs ring-gray-900/10 placeholder:text-gray-400': !$control.value?.errors,
-            'pr-10 text-red-900 ring-red-900/10 placeholder:text-red-300 focus:ring-red-500': $control.value?.errors,
+            'text-primary-text shadow-2xs ring-gray-900/10 dark:ring-white/15 placeholder:text-gray-400 dark:placeholder:text-gray-500':
+                !$control.value?.errors,
+            'pr-10 text-red-900 dark:text-red-300 ring-red-900/10 dark:ring-red-400/30 placeholder:text-red-300 dark:placeholder:text-red-400/50 focus:ring-red-500':
+                $control.value?.errors,
         },
         inputClass,
     ),

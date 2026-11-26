@@ -53,7 +53,7 @@ const root = () =>
         innerHTML: html.value,
         onClick,
         ...attrs,
-        class: `${attrs.class ?? ''} ${inline ? '' : 'prose'}`,
+        class: `${attrs.class ?? ''} ${inline ? '' : 'prose dark:prose-invert'}`,
     });
 
 async function onClick(event: Event) {

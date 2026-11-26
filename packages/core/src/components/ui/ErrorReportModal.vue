@@ -11,7 +11,7 @@
                 <div class="flex items-center gap-2">
                     <IconExclamationSolid class="size-5 text-red-600" />
                     <ErrorReportModalTitle
-                        class="text-lg leading-6 font-semibold text-gray-900"
+                        class="text-primary-text text-lg leading-6 font-semibold"
                         :report="activeReport"
                         :current-report="activeReportIndex + 1"
                         :total-reports="reports.length"
@@ -41,10 +41,14 @@
                 </div>
                 <ErrorReportModalButtons :report="activeReport" class="gap-0.5" />
             </h2>
-            <Markdown v-if="activeReport.description" :text="activeReport.description" class="text-gray-600" />
+            <Markdown
+                v-if="activeReport.description"
+                :text="activeReport.description"
+                class="text-gray-600 dark:text-gray-400"
+            />
         </div>
         <div class="-mt-2 max-h-[75vh] overflow-auto bg-red-800/10">
-            <pre class="p-4 text-xs text-red-800" v-text="details" />
+            <pre class="p-4 text-xs text-red-800 dark:text-red-300" v-text="details" />
         </div>
     </Modal>
 </template>

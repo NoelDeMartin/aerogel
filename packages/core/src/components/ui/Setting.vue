@@ -4,7 +4,7 @@
             <component :is="titleTag" :id="titleId" :class="titleClasses">
                 {{ title }}
             </component>
-            <Markdown v-if="description" :text="description" class="mt-1 text-sm text-gray-500" />
+            <Markdown v-if="description" :text="description" class="mt-1 text-sm text-gray-500 dark:text-gray-400" />
         </div>
 
         <div :class="renderedRootClass">
@@ -34,6 +34,8 @@ const {
 const renderedRootClass = computed(() => classes('flex flex-col justify-center gap-1', rootClass));
 const titleTag = computed(() => `h${titleHeadingLevel}`);
 const titleClasses = computed(() => {
-    return titleHeadingLevel === 4 ? 'text-sm font-semibold text-gray-700' : 'text-base font-semibold';
+    return titleHeadingLevel === 4
+        ? 'text-sm font-semibold text-gray-700 dark:text-gray-300'
+        : 'text-base font-semibold';
 });
 </script>

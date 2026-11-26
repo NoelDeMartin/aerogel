@@ -19,6 +19,6 @@ const { class: rootClasses, ...props } = defineProps<Omit<LabelProps, 'for'> & {
 
 const combobox = injectReactiveOrFail<ComboboxExpose>('combobox', '<ComboboxLabel> must be a child of a <Combobox>');
 const renderedClasses = computed(() =>
-    classes('block text-sm leading-6 font-medium text-gray-900', combobox.labelClass, rootClasses),
+    classes('block text-sm leading-6 font-medium text-primary-text', combobox.labelClass, rootClasses),
 );
 </script>

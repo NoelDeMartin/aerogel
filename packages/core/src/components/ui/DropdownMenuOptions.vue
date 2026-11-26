@@ -1,6 +1,6 @@
 <template>
     <DropdownMenuContent
-        class="gap-y-0.5 rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-black/5"
+        class="bg-surface gap-y-0.5 rounded-lg p-1.5 shadow-lg ring-1 ring-black/5 dark:ring-white/10"
         :align="dropdownMenu.align"
         :side="dropdownMenu.side"
     >

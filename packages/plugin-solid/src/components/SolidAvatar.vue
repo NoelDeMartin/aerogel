@@ -1,15 +1,19 @@
 <template>
-    <div class="relative flex items-center justify-center rounded-full bg-gray-200">
+    <div class="relative flex items-center justify-center rounded-full bg-gray-200 dark:bg-white/10">
         <SolidImage
             v-if="profile?.avatarUrl"
             :src="profile?.avatarUrl"
             alt=""
             class="absolute inset-0 size-full rounded-full"
         />
-        <span v-else-if="userInitials" class="text-sm font-semibold tracking-wider text-gray-500" aria-hidden="true">
+        <span
+            v-else-if="userInitials"
+            class="text-sm font-semibold tracking-wider text-gray-500 dark:text-gray-400"
+            aria-hidden="true"
+        >
             {{ userInitials }}
         </span>
-        <IconAnonymous v-else class="size-6 text-gray-500" />
+        <IconAnonymous v-else class="size-6 text-gray-500 dark:text-gray-400" />
     </div>
 </template>
 

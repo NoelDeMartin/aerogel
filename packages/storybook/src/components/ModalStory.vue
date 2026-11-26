@@ -1,5 +1,5 @@
 <template>
-    <div class="flex min-h-screen items-center justify-center bg-black/30 p-4">
+    <div class="flex min-h-screen items-center justify-center bg-black/30 p-4 dark:bg-black/60">
         <ModalComponent :is="modal" />
     </div>
 </template>

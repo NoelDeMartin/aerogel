@@ -61,6 +61,7 @@ export function useAccountState(args: Partial<AccountStoryArgs>): void {
         () => {
             const session = arg('session');
             const profile = SolidFake.fakeProfile(arg('userName'));
+            const syncErrorMessage = arg('syncError');
 
             AppFake.setState({ environment: arg('environment') });
 
@@ -85,7 +86,7 @@ export function useAccountState(args: Partial<AccountStoryArgs>): void {
                 status: arg('cloudStatus'),
                 ready: arg('cloudReady'),
                 localChangesCount: arg('localChangesCount'),
-                syncError: arg('syncError') || null,
+                syncError: syncErrorMessage ? new Error(syncErrorMessage) : null,
             });
         },
         { immediate: true },

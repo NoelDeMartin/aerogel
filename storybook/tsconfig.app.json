@@ -8,5 +8,5 @@
             "@/*": ["./src/*"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.tsx"]
+    "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.tsx", ".storybook/preview.ts"]
 }

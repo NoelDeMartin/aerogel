@@ -14,7 +14,7 @@
             <span class="sr-only">{{ $td('account.open', 'Open account') }}</span>
         </button>
         <div
-            class="pointer-events-none absolute right-0 bottom-0 size-3 rounded-full border-2 border-white"
+            class="border-background pointer-events-none absolute right-0 bottom-0 size-3 rounded-full border-2"
             :class="accountStatus.classes"
         >
             <span class="sr-only">{{ accountStatus.message }}</span>

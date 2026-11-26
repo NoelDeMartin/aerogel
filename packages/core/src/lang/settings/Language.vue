@@ -13,7 +13,7 @@
             <Markdown
                 lang-key="settings.localeDescription"
                 lang-default="Choose the application's language."
-                class="mt-1 text-sm text-gray-500"
+                class="mt-1 text-sm text-gray-500 dark:text-gray-400"
             />
         </div>
         <Button variant="ghost" :as="SelectTrigger" class="grid w-auto outline-none" />

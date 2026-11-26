@@ -16,6 +16,6 @@ const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class'] }>(
 
 const select = injectReactiveOrFail<SelectExpose>('select', '<SelectLabel> must be a child of a <Select>');
 const renderedClasses = computed(() =>
-    classes('block text-sm leading-6 font-medium text-gray-900', select.labelClass, rootClasses),
+    classes('block text-sm leading-6 font-medium text-primary-text', select.labelClass, rootClasses),
 );
 </script>

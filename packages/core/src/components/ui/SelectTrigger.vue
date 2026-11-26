@@ -1,7 +1,9 @@
 <template>
     <HeadlessSelectTrigger :class="renderedClasses">
         <HeadlessSelectValue class="col-start-1 row-start-1 truncate pr-6" />
-        <IconCheveronDown class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
+        <IconCheveronDown
+            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
+        />
         <div v-if="select?.errors" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
             <IconExclamationSolid class="size-5 text-red-500" />
         </div>
@@ -23,13 +25,16 @@ const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class'] }>(
 const select = injectReactiveOrFail<SelectExpose>('select', '<SelectTrigger> must be a child of a <Select>');
 const renderedClasses = computed(() =>
     classes(
-        'relative grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1',
+        'relative grid w-full cursor-default grid-cols-1 rounded-md bg-surface py-1.5 pr-2 pl-3 text-left outline-1 -outline-offset-1',
         'focus:outline-2 focus:-outline-offset-2 sm:text-sm/6',
         {
             'mt-1': select.label,
-            'outline-gray-300 focus:outline-focus data-[state=open]:outline-focus': !select.errors,
-            'text-gray-900 shadow-2xs ring-gray-900/10 placeholder:text-gray-400': !select.errors,
-            'outline-red-900/10 pr-10 text-red-900 placeholder:text-red-300': select.errors,
+            'outline-gray-300 dark:outline-white/15 focus:outline-focus data-[state=open]:outline-focus':
+                !select.errors,
+            'text-primary-text shadow-2xs ring-gray-900/10 dark:ring-white/15 placeholder:text-gray-400 dark:placeholder:text-gray-500':
+                !select.errors,
+            'outline-red-900/10 dark:outline-red-400/30 pr-10 text-red-900 dark:text-red-300 placeholder:text-red-300 dark:placeholder:text-red-400/50':
+                select.errors,
             'focus:outline-red-500 data-[state=open]:outline-red-500': select.errors,
         },
         rootClasses,

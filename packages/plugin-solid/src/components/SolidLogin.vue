@@ -62,7 +62,7 @@
         </div>
         <Link
             v-if="showInput && !form.authenticator"
-            class="text-sm font-normal text-gray-700"
+            class="text-sm font-normal text-gray-700 dark:text-gray-300"
             @click="form.authenticator = 'inrupt'"
         >
             {{ $td('solid.logIn.switchAuthenticator', "Can't log in? Try using a different authentication method") }}

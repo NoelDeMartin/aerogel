@@ -21,7 +21,7 @@ const { class: wrapperClass, innerClass } = defineProps<{
 const renderedWrapperClasses = computed(() => classes('group p-1 outline-none', wrapperClass));
 const renderedInnerClasses = computed(() =>
     classes(
-        'relative flex max-w-[calc(100vw-2rem)] cursor-pointer items-center truncate rounded-md gap-2 px-2 py-1 text-sm select-none *:truncate group-data-[highlighted]:bg-gray-100 group-data-[state=checked]:font-semibold group-data-[state=unchecked]:opacity-50',
+        'relative flex max-w-[calc(100vw-2rem)] cursor-pointer items-center truncate rounded-md gap-2 px-2 py-1 text-sm select-none *:truncate group-data-[highlighted]:bg-gray-100 dark:group-data-[highlighted]:bg-white/10 group-data-[state=checked]:font-semibold group-data-[state=unchecked]:opacity-50',
         innerClass,
     ),
 );

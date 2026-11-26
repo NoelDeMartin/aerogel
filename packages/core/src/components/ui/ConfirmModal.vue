@@ -4,14 +4,14 @@
         <Form :form @submit="close([true, form.data()])">
             <Markdown :text="message" :actions />
 
-            <ul v-if="checkboxes" class="mt-4 flex flex-col text-sm text-gray-600">
+            <ul v-if="checkboxes" class="mt-4 flex flex-col text-sm text-gray-600 dark:text-gray-400">
                 <li v-for="(checkbox, name) of checkboxes" :key="name">
                     <label class="flex items-center">
                         <input
                             v-model="form[name]"
                             type="checkbox"
                             :required="checkbox.required"
-                            class="border-primary-600 text-primary-600 hover:bg-primary-50 hover:checked:bg-primary-500 focus:ring-focus focus-visible:ring-focus rounded border-2"
+                            class="border-primary-600 text-primary-600 hover:bg-primary-50 hover:checked:bg-primary-500 focus:ring-focus focus-visible:ring-focus rounded border-2 dark:not-checked:bg-white/5 dark:not-checked:hover:bg-white/15"
                         />
                         <span class="ml-1.5">{{ checkbox.label }}</span>
                     </label>

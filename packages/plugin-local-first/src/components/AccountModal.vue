@@ -1,17 +1,20 @@
 <template>
     <Modal title-hidden close-hidden :title="$td('account.title', 'Account')">
-        <div class="relative flex items-center rounded-md bg-gray-100 p-4 pr-12">
+        <div class="relative flex items-center rounded-md bg-gray-100 p-4 pr-12 dark:bg-white/10">
             <SolidAvatar class="mr-2 size-16 shrink-0" />
             <div class="-m-1 flex flex-col overflow-hidden p-1">
                 <span class="font-semibold">{{ $solid.user?.name ?? $td('user.anonymous', 'Anonymous') }}</span>
-                <Link :href="$solid.user?.webId" class="mt-0.5 min-h-0 truncate text-sm font-light text-gray-500">
+                <Link
+                    :href="$solid.user?.webId"
+                    class="mt-0.5 min-h-0 truncate text-sm font-light text-gray-500 dark:text-gray-400"
+                >
                     {{ $solid.user?.webId }}
                 </Link>
             </div>
             <Button
                 size="icon"
                 variant="ghost"
-                class="absolute top-1 right-1 hover:bg-gray-200"
+                class="absolute top-1 right-1 hover:bg-gray-200 dark:hover:bg-white/10"
                 :title="$td('user.settings', 'Settings')"
                 @click="$ui.modal(SettingsModal)"
             >
@@ -38,7 +41,7 @@
                     <Markdown :text="errorDescription" />
                     <Link
                         v-if="showErrorDetails"
-                        class="text-sm text-red-700 opacity-50 hover:opacity-75 focus-visible:opacity-75"
+                        class="text-sm text-red-700 opacity-50 hover:opacity-75 focus-visible:opacity-75 dark:text-red-400"
                         @click="$errors.inspect(error)"
                     >
                         {{ $td('errors.viewDetails', 'View details') }}
@@ -60,7 +63,7 @@
             <div v-else-if="$cloud.online || $cloud.offline" class="mt-4 flex items-center gap-2">
                 <IconCheckmarkOutline
                     class="mt-0.5 size-6 shrink-0 self-start"
-                    :class="{ 'text-green-500': $cloud.online, 'text-gray-700': $cloud.offline }"
+                    :class="{ 'text-green-500': $cloud.online, 'text-gray-700 dark:text-gray-300': $cloud.offline }"
                 />
                 <Markdown
                     v-if="$cloud.online"

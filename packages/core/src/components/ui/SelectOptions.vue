@@ -27,7 +27,7 @@ const { class: rootClasses } = defineProps<{ class?: HTMLAttributes['class'] }>(
 const select = injectReactiveOrFail<SelectExpose>('select', '<SelectOptions> must be a child of a <Select>');
 const renderedClasses = computed(() =>
     classes(
-        'z-50 overflow-auto rounded-lg bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden',
+        'z-50 overflow-auto rounded-lg bg-surface text-base shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-hidden',
         select.optionsClass,
         rootClasses,
     ),

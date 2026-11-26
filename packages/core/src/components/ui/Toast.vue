@@ -25,9 +25,11 @@ const renderedClasses = computed(() =>
             baseClasses: 'flex items-center gap-2 rounded-md p-2 ring-1 shadow-lg border-gray-200',
             variants: {
                 variant: {
-                    secondary: 'bg-gray-900 text-white ring-black',
-                    danger: 'bg-red-50 text-red-900 ring-red-100',
-                    warning: 'bg-yellow-50 text-yellow-900 ring-yellow-100',
+                    secondary:
+                        'bg-gray-900 text-white ring-black dark:bg-surface dark:text-primary-text dark:ring-white/10',
+                    danger: 'bg-red-50 text-red-900 ring-red-100 dark:bg-red-950 dark:text-red-200 dark:ring-red-900',
+                    warning:
+                        'bg-yellow-50 text-yellow-900 ring-yellow-100 dark:bg-yellow-950 dark:text-yellow-200 dark:ring-yellow-900',
                 },
             },
             defaultVariants: {

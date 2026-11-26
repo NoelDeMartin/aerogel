@@ -9,14 +9,14 @@
             <HeadlessFormControlInput v-bind="inputAttrs" type="checkbox" :class="renderedInputClasses" />
         </div>
         <div v-if="$slots.default" :class="renderedLabelClasses">
-            <HeadlessFormControlLabel class="text-gray-900">
+            <HeadlessFormControlLabel class="text-primary-text">
                 <slot />
             </HeadlessFormControlLabel>
-            <HeadlessFormControlError class="text-red-600" />
+            <HeadlessFormControlError class="text-red-600 dark:text-red-400" />
         </div>
         <div v-else-if="label" :class="renderedLabelClasses">
-            <HeadlessFormControlLabel class="text-gray-900" />
-            <HeadlessFormControlError class="text-red-600" />
+            <HeadlessFormControlLabel class="text-primary-text" />
+            <HeadlessFormControlError class="text-red-600 dark:text-red-400" />
         </div>
     </HeadlessFormControl>
 </template>
@@ -50,9 +50,9 @@ const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedClasses = computed(() => classes('relative flex items-start', rootClasses.value));
 const renderedInputClasses = computed(() =>
     classes(
-        'size-4 rounded text-primary-600 not-checked:hover:bg-gray-200 checked:hover:text-primary-500 checked:border-0',
+        'size-4 rounded text-primary-600 not-checked:hover:bg-gray-200 dark:not-checked:bg-white/5 dark:not-checked:hover:bg-white/15 checked:hover:text-primary-500 checked:border-0',
         {
-            'border-gray-300 focus:ring-focus': !$control.value?.errors,
+            'border-gray-300 dark:border-white/30 focus:ring-focus': !$control.value?.errors,
             'border-red-400 border-2 focus:ring-red-600': $control.value?.errors,
         },
         inputClass,

@@ -6,7 +6,8 @@
             class="fixed inset-0 z-40 transition-opacity duration-300 will-change-[opacity]"
             :class="{
                 'animate-[fade-in_var(--tw-duration)_ease-in-out]': !hasRenderedModals,
-                'bg-black/30': firstVisibleModal?.id === id || (!firstVisibleModal && modals[0]?.id === id),
+                'bg-black/30 dark:bg-black/60':
+                    firstVisibleModal?.id === id || (!firstVisibleModal && modals[0]?.id === id),
                 'opacity-0': !firstVisibleModal,
                 hidden: renderFullscreen,
             }"
@@ -19,7 +20,7 @@
             >
                 <button
                     type="button"
-                    class="clickable z-10 rounded-full p-2.5 text-gray-400 hover:text-gray-500"
+                    class="clickable z-10 rounded-full p-2.5 text-gray-400 hover:text-gray-500 dark:hover:text-gray-200"
                     @click="close()"
                 >
                     <span class="sr-only">{{ $td('ui.close', 'Close') }}</span>
@@ -29,7 +30,7 @@
 
             <HeadlessModalTitle
                 v-if="title"
-                class="px-4 pt-5 text-base font-semibold text-gray-900"
+                class="text-primary-text px-4 pt-5 text-base font-semibold"
                 :class="{
                     'sr-only': titleHidden,
                     'pb-0': description && !descriptionHidden,
@@ -44,7 +45,7 @@
                 class="px-4 pt-1 pb-2"
                 :class="{ 'sr-only': descriptionHidden }"
             >
-                <Markdown :text="description" class="text-sm leading-6 text-gray-500" />
+                <Markdown :text="description" class="text-sm leading-6 text-gray-500 dark:text-gray-400" />
             </HeadlessModalDescription>
 
             <div :class="renderedContentClass">
@@ -128,7 +129,7 @@ const renderedContentClass = computed(() =>
 const renderFullscreen = computed(() => fullscreen || (fullscreenOnMobile && UI.mobile));
 const renderedWrapperClass = computed(() =>
     classes(
-        'isolate flex flex-col overflow-hidden bg-white text-left',
+        'isolate flex flex-col overflow-hidden bg-surface text-left',
         metadata.value.inline
             ? ['relative', renderFullscreen.value ? 'w-full' : 'w-lg max-w-full rounded-lg shadow-xl']
             : [

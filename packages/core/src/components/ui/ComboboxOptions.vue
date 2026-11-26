@@ -81,7 +81,7 @@ const renderedOptions = computed(() => renderedItems.value.map((item) => item.va
 
 const renderedClasses = computed(() =>
     classes(
-        'z-50 overflow-hidden rounded-lg bg-white text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden',
+        'z-50 overflow-hidden rounded-lg bg-surface text-base shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-hidden',
         combobox.optionsClass,
         rootClasses,
     ),

@@ -12,7 +12,7 @@
             <HeadlessFormControlLabel :class="renderedLabelClasses">
                 <slot name="label" />
             </HeadlessFormControlLabel>
-            <span class="font-medium text-gray-600">{{ readout }}</span>
+            <span class="font-medium text-gray-600 dark:text-gray-400">{{ readout }}</span>
         </div>
         <div class="py-1.5">
             <HeadlessRangeSliderInput
@@ -81,11 +81,18 @@ const [inputAttrs, rootClasses] = useInputAttrs();
 const renderedClasses = computed(() =>
     classes('space-y-1', { 'pointer-events-none opacity-50': disabled }, rootClasses.value),
 );
-const renderedLabelClasses = computed(() => classes('block text-sm font-medium leading-6 text-gray-900', labelClass));
-const renderedDescriptionClasses = computed(() => classes('mt-2 text-sm text-gray-600', descriptionClass));
-const renderedErrorClasses = computed(() => classes('mt-2 text-sm text-red-600', errorClass));
+const renderedLabelClasses = computed(() =>
+    classes('block text-sm font-medium leading-6 text-primary-text', labelClass),
+);
+const renderedDescriptionClasses = computed(() =>
+    classes('mt-2 text-sm text-gray-600 dark:text-gray-400', descriptionClass),
+);
+const renderedErrorClasses = computed(() => classes('mt-2 text-sm text-red-600 dark:text-red-400', errorClass));
 const renderedTrackClasses = computed(() =>
-    classes('relative h-2 w-full grow overflow-hidden rounded-full bg-gray-100 shadow-inner', trackClass),
+    classes(
+        'relative h-2 w-full grow overflow-hidden rounded-full bg-gray-100 dark:bg-white/10 shadow-inner',
+        trackClass,
+    ),
 );
 const renderedRangeClasses = computed(() =>
     classes(
@@ -100,7 +107,7 @@ const renderedRangeClasses = computed(() =>
 const renderedThumbClasses = computed(() =>
     classes(
         'block size-5 cursor-pointer rounded-full border-2 border-primary-600 bg-white shadow-md transition-colors',
-        'focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:outline-hidden',
+        'focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden',
         thumbClass,
     ),
 );

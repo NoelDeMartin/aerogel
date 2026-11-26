@@ -1,5 +1,5 @@
 <template>
-    <div class="relative mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-200">
+    <div class="relative mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
         <div :class="filledClasses" :style="`transform:translateX(-${(1 - renderedProgress) * 100}%)`" />
         <div
             v-if="overflowWidthPercentage"
