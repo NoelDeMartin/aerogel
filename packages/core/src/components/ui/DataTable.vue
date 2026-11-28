@@ -1,76 +1,78 @@
 <template>
     <div class="flex flex-col gap-2">
         <template v-if="items.length > 0">
-            <table
-                :id
-                class="w-full border-collapse border border-(--border-color) [--border-color:var(--color-slate-300)]"
-            >
-                <thead>
-                    <tr>
-                        <th
-                            v-for="(column, columnIndex) of columns"
-                            :key="columnIndex"
-                            class="border border-(--border-color)"
-                            :class="{ 'px-4 py-2.5': !column.sortable }"
-                            :aria-sort="
-                                column.sortable && column.field
-                                    ? sortingColumns[column.field]
-                                        ? ARIA_SORT[sortingColumns[column.field] as ArraySortDirection]
-                                        : 'none'
-                                    : undefined
-                            "
-                        >
-                            <Button
-                                v-if="column.sortable"
-                                variant="ghost"
-                                class="w-full justify-start rounded-none px-4 py-2.5"
-                                :title="
-                                    !(column.field && column.field in sortingColumns)
-                                        ? translateWithDefault('pagination.sortAscending', 'Sort ascending')
-                                        : sortingColumns[column.field] === 'asc'
-                                          ? translateWithDefault('pagination.sortDescending', 'Sort descending')
-                                          : translateWithDefault('pagination.unsort', 'Reset sort')
+            <div class="overflow-x-auto">
+                <table
+                    :id
+                    class="w-full border-collapse border border-(--border-color) [--border-color:var(--color-slate-300)]"
+                >
+                    <thead>
+                        <tr>
+                            <th
+                                v-for="(column, columnIndex) of columns"
+                                :key="columnIndex"
+                                class="border border-(--border-color)"
+                                :class="{ 'px-4 py-2.5': !column.sortable }"
+                                :aria-sort="
+                                    column.sortable && column.field
+                                        ? sortingColumns[column.field]
+                                            ? ARIA_SORT[sortingColumns[column.field] as ArraySortDirection]
+                                            : 'none'
+                                        : undefined
                                 "
-                                @click="toggleSort(column.field, $event)"
                             >
-                                <template v-if="!(column.field && column.field in sortingColumns)">
-                                    <IconListBold class="size-4" />
-                                    <span class="sr-only">
-                                        {{ translateWithDefault('pagination.sortAscending', 'Sort ascending') }}
-                                    </span>
-                                </template>
-                                <template v-else-if="column.field && sortingColumns[column.field] === 'asc'">
-                                    <IconSortSmallestFirst class="size-4" />
-                                    <span class="sr-only">
-                                        {{ translateWithDefault('pagination.sortDescending', 'Sort descending') }}
-                                    </span>
-                                </template>
-                                <template v-else>
-                                    <IconSortLargestFirst class="size-4" />
-                                    <span class="sr-only">
-                                        {{ translateWithDefault('pagination.unsort', 'Reset sort') }}
-                                    </span>
-                                </template>
-                                <span class="text-base font-semibold">{{ column.header }}</span>
-                            </Button>
-                            <span v-else class="text-base font-semibold">
-                                {{ column.header }}
-                            </span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(item, rowIndex) of filteredItems" :key="getItemKey(item, rowIndex)">
-                        <td
-                            v-for="(column, columnIndex) of columns"
-                            :key="columnIndex"
-                            class="border border-(--border-color) px-4 py-2.5"
-                        >
-                            <CellContent :content="column.content" :item />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                <Button
+                                    v-if="column.sortable"
+                                    variant="ghost"
+                                    class="w-full justify-start rounded-none px-4 py-2.5"
+                                    :title="
+                                        !(column.field && column.field in sortingColumns)
+                                            ? translateWithDefault('pagination.sortAscending', 'Sort ascending')
+                                            : sortingColumns[column.field] === 'asc'
+                                              ? translateWithDefault('pagination.sortDescending', 'Sort descending')
+                                              : translateWithDefault('pagination.unsort', 'Reset sort')
+                                    "
+                                    @click="toggleSort(column.field, $event)"
+                                >
+                                    <template v-if="!(column.field && column.field in sortingColumns)">
+                                        <IconListBold class="size-4" />
+                                        <span class="sr-only">
+                                            {{ translateWithDefault('pagination.sortAscending', 'Sort ascending') }}
+                                        </span>
+                                    </template>
+                                    <template v-else-if="column.field && sortingColumns[column.field] === 'asc'">
+                                        <IconSortSmallestFirst class="size-4" />
+                                        <span class="sr-only">
+                                            {{ translateWithDefault('pagination.sortDescending', 'Sort descending') }}
+                                        </span>
+                                    </template>
+                                    <template v-else>
+                                        <IconSortLargestFirst class="size-4" />
+                                        <span class="sr-only">
+                                            {{ translateWithDefault('pagination.unsort', 'Reset sort') }}
+                                        </span>
+                                    </template>
+                                    <span class="text-base font-semibold">{{ column.header }}</span>
+                                </Button>
+                                <span v-else class="text-base font-semibold">
+                                    {{ column.header }}
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, rowIndex) of filteredItems" :key="getItemKey(item, rowIndex)">
+                            <td
+                                v-for="(column, columnIndex) of columns"
+                                :key="columnIndex"
+                                class="border border-(--border-color) px-4 py-2.5"
+                            >
+                                <CellContent :content="column.content" :item />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <div v-if="pagination" class="flex items-center justify-between">
                 <span>
                     {{
