@@ -1,22 +1,27 @@
 import 'fake-indexeddb/auto';
 import Cache from '@aerogel/core/services/Cache';
-import { after } from '@noeldemartin/utils';
-import { beforeEach, describe, expect, it } from 'vite-plus/test';
+import { HOUR_MILLISECONDS, after } from '@noeldemartin/utils';
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vite-plus/test';
 import { effectScope } from 'vue';
+import type { Ref } from 'vue';
 
 import { useCache } from './cache';
 
 describe('useCache', () => {
-    beforeEach(() => Cache.clear());
+    beforeEach(async () => {
+        vi.useRealTimers();
+
+        await Cache.clear();
+    });
 
     it('reads cached values', async () => {
         // Arrange
         await Cache.set('foo', 'bar');
 
         // Act
-        const value = useCache<string>('foo');
+        const { value, ready } = useCache<string>('foo');
 
-        await value.ready;
+        await untilReady(ready);
 
         // Assert
         expect(value.value).toEqual('bar');
@@ -24,17 +29,18 @@ describe('useCache', () => {
 
     it('uses default values', async () => {
         // Act
-        const value = useCache('foo', 'default');
+        const { value, ready } = useCache('foo', { defaultValue: 'default' });
 
-        await value.ready;
+        await untilReady(ready);
 
         // Assert
         expect(value.value).toEqual('default');
+        expectTypeOf(value.value).toEqualTypeOf<string>();
     });
 
     it('stores assigned values', async () => {
         // Arrange
-        const value = useCache<{ foo: string }>('foo');
+        const { value } = useCache<{ foo: string }>('foo');
 
         // Act
         value.value = { foo: 'bar' };
@@ -50,9 +56,9 @@ describe('useCache', () => {
         // Arrange
         await Cache.set('foo', 'bar');
 
-        const value = useCache<string>('foo');
+        const { value, ready } = useCache<string>('foo');
 
-        await after();
+        await untilReady(ready);
 
         // Act
         value.value = undefined;
@@ -64,12 +70,48 @@ describe('useCache', () => {
         expect(await Cache.get('foo')).toBeUndefined();
     });
 
+    it('detects stale values', async () => {
+        // Arrange
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+
+        const { stale, ready } = useCache<string>('foo', { maxAge: HOUR_MILLISECONDS });
+
+        // Act & Assert - Loading
+        expect(stale.value).toBe(false);
+
+        await untilReady(ready);
+
+        // Act & Assert - Missing
+        expect(stale.value).toBe(true);
+
+        // Act & Assert - Fresh
+        await Cache.set('foo', 'bar');
+        expect(stale.value).toBe(false);
+
+        // Act & Assert - Expired
+        vi.advanceTimersByTime(HOUR_MILLISECONDS + 1);
+        expect(stale.value).toBe(true);
+    });
+
+    it('never expires values without max age', async () => {
+        // Arrange
+        await Cache.set('foo', 'bar');
+
+        // Act
+        const { stale, ready } = useCache<string>('foo');
+
+        await untilReady(ready);
+
+        // Assert
+        expect(stale.value).toBe(false);
+    });
+
     it('reacts to cache changes', async () => {
         // Arrange
-        const value = useCache('foo', 'default');
-        const other = useCache<string>('other');
+        const { value, ready } = useCache('foo', { defaultValue: 'default' });
+        const { value: other } = useCache<string>('other');
 
-        await after();
+        await untilReady(ready);
 
         // Act & Assert
         await Cache.set('foo', 'bar');
@@ -87,9 +129,9 @@ describe('useCache', () => {
     it('stops listening when the scope is disposed', async () => {
         // Arrange
         const scope = effectScope();
-        const value = scope.run(() => useCache<string>('foo'));
+        const cache = scope.run(() => useCache<string>('foo'));
 
-        await after();
+        await untilReady(cache?.ready);
 
         // Act
         scope.stop();
@@ -97,6 +139,10 @@ describe('useCache', () => {
         await Cache.set('foo', 'bar');
 
         // Assert
-        expect(value?.value).toBeUndefined();
+        expect(cache?.value.value).toBeUndefined();
     });
+
+    async function untilReady(ready?: Readonly<Ref<boolean>>): Promise<void> {
+        await vi.waitFor(() => expect(ready?.value).toBe(true));
+    }
 });

@@ -4,14 +4,19 @@ import { appNamespace } from '@aerogel/core/utils/app';
 import { IndexedDBMap, ListenersManager, facade } from '@noeldemartin/utils';
 import type { Listeners } from '@noeldemartin/utils';
 
+export interface CacheEntry<T = unknown> {
+    value: T;
+    updatedAt: Date;
+}
+
 export interface CacheListener {
-    onUpdated?(key: string, value: unknown): unknown;
+    onUpdated?(key: string, entry: CacheEntry): unknown;
     onDeleted?(key: string): unknown;
     onCleared?(): unknown;
 }
 
 export class CacheService extends Service {
-    private storage: IndexedDBMap<unknown> | null = null;
+    private storage: IndexedDBMap<CacheEntry> | null = null;
     private cacheListeners = new ListenersManager<CacheListener>();
 
     public get listeners(): Listeners<CacheListener> {
@@ -19,12 +24,18 @@ export class CacheService extends Service {
     }
 
     public async get<T>(key: string): Promise<T | undefined> {
-        return (await this.getStorage().get(key)) as T | undefined;
+        return (await this.getEntry<T>(key))?.value;
+    }
+
+    public async getEntry<T>(key: string): Promise<CacheEntry<T> | undefined> {
+        return (await this.getStorage().get(key)) as CacheEntry<T> | undefined;
     }
 
     public async set(key: string, value: unknown): Promise<void> {
-        await this.getStorage().set(key, value);
-        await this.cacheListeners.emit('onUpdated', key, value);
+        const entry: CacheEntry = { value, updatedAt: new Date() };
+
+        await this.getStorage().set(key, entry);
+        await this.cacheListeners.emit('onUpdated', key, entry);
     }
 
     public async delete(key: string): Promise<void> {
@@ -45,7 +56,7 @@ export class CacheService extends Service {
         await this.cacheListeners.emit('onCleared');
     }
 
-    private getStorage(): IndexedDBMap<unknown> {
+    private getStorage(): IndexedDBMap<CacheEntry> {
         return (this.storage ??= new IndexedDBMap(`${appNamespace()}-cache`));
     }
 }

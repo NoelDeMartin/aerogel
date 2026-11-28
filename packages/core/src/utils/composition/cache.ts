@@ -1,52 +1,40 @@
 import Errors from '@aerogel/core/errors/Errors';
 import Cache from '@aerogel/core/services/Cache';
-import { customRef, getCurrentScope, onScopeDispose, toRaw } from 'vue';
+import type { CacheEntry } from '@aerogel/core/services/Cache';
+import { noop } from '@noeldemartin/utils';
+import { customRef, getCurrentScope, onScopeDispose, readonly, ref, toRaw } from 'vue';
 import type { Ref } from 'vue';
 
-export type CacheRef<T> = Ref<T> & { ready: Promise<void> };
+const MAX_TIMEOUT_DELAY = 2 ** 31 - 1;
 
-export function useCache<T>(key: string): CacheRef<T | undefined>;
-export function useCache<T>(key: string, defaultValue: T): CacheRef<T>;
-export function useCache<T>(key: string, defaultValue?: T): CacheRef<T | undefined> {
-    let ready = Promise.resolve();
-    const cacheRef = customRef<T | undefined>((track, trigger) => {
-        let initialized = false;
-        let value = defaultValue;
-        const update = (newValue: T | undefined) => {
-            initialized = true;
-            value = newValue ?? defaultValue;
+export interface UseCacheOptions<T> {
+    defaultValue?: T;
+    maxAge?: number;
+}
 
-            trigger();
-        };
-        const stopListening = Cache.listeners.add({
-            onUpdated: (updatedKey, updatedValue) => updatedKey === key && update(updatedValue as T),
-            onDeleted: (deletedKey) => deletedKey === key && update(undefined),
-            onCleared: () => update(undefined),
-        });
+export interface CacheState<T> {
+    value: Ref<T>;
+    stale: Readonly<Ref<boolean>>;
+    ready: Readonly<Ref<boolean>>;
+}
 
-        ready = Cache.get<T>(key)
-            .then((cachedValue) => {
-                if (initialized) {
-                    return;
-                }
-
-                update(cachedValue);
-            })
-            .catch((error) => {
-                initialized = true;
-
-                Errors.reportDevelopmentError(error, `Could not read '${key}' from cache`);
-            });
-
-        if (getCurrentScope()) {
-            onScopeDispose(stopListening);
-        }
+export function useCache<T>(key: string, options: UseCacheOptions<T> & { defaultValue: T }): CacheState<T>;
+export function useCache<T>(key: string, options?: UseCacheOptions<T>): CacheState<T | undefined>;
+export function useCache<T>(key: string, options: UseCacheOptions<T> = {}): CacheState<T | undefined> {
+    const { defaultValue, maxAge } = options;
+    const ready = ref(false);
+    const stale = ref(false);
+    let entry: CacheEntry<T> | undefined;
+    let staleTimeout: ReturnType<typeof setTimeout> | undefined;
+    let triggerValue: () => void = noop;
+    const value = customRef<T | undefined>((track, trigger) => {
+        triggerValue = trigger;
 
         return {
             get() {
                 track();
 
-                return value;
+                return entry?.value ?? defaultValue;
             },
             set(newValue) {
                 if (newValue === undefined) {
@@ -60,7 +48,7 @@ export function useCache<T>(key: string, defaultValue?: T): CacheRef<T | undefin
 
                 const rawValue = toRaw(newValue);
 
-                update(rawValue);
+                update({ value: rawValue, updatedAt: new Date() });
                 Cache.set(key, rawValue).catch((error) =>
                     Errors.reportDevelopmentError(error, `Could not write '${key}' to cache`),
                 );
@@ -68,5 +56,62 @@ export function useCache<T>(key: string, defaultValue?: T): CacheRef<T | undefin
         };
     });
 
-    return Object.assign(cacheRef, { ready });
+    function update(newEntry: CacheEntry<T> | undefined): void {
+        entry = newEntry;
+        ready.value = true;
+
+        triggerValue();
+        updateStale();
+    }
+
+    function updateStale(): void {
+        clearTimeout(staleTimeout);
+
+        if (!entry || maxAge === undefined) {
+            stale.value = !entry;
+
+            return;
+        }
+
+        const remainingFreshTime = entry.updatedAt.getTime() + maxAge - Date.now();
+
+        stale.value = remainingFreshTime <= 0;
+
+        if (!stale.value) {
+            staleTimeout = setTimeout(updateStale, Math.min(remainingFreshTime, MAX_TIMEOUT_DELAY));
+        }
+    }
+
+    const stopListening = Cache.listeners.add({
+        onUpdated: (updatedKey, updatedEntry) => updatedKey === key && update(updatedEntry as CacheEntry<T>),
+        onDeleted: (deletedKey) => deletedKey === key && update(undefined),
+        onCleared: () => update(undefined),
+    });
+
+    Cache.getEntry<T>(key)
+        .then((cachedEntry) => {
+            if (ready.value) {
+                return;
+            }
+
+            update(cachedEntry);
+        })
+        .catch((error) => {
+            Errors.reportDevelopmentError(error, `Could not read '${key}' from cache`);
+
+            if (ready.value) {
+                return;
+            }
+
+            update(undefined);
+        });
+
+    if (getCurrentScope()) {
+        onScopeDispose(() => {
+            stopListening();
+            clearTimeout(staleTimeout);
+        });
+    }
+
+    return { value, stale: readonly(stale), ready: readonly(ready) };
 }
