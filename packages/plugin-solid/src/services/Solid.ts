@@ -452,9 +452,7 @@ export class SolidService extends Service {
             await remoteContainer.register(typeIndex, options.register);
         }
 
-        const container = await Container.createFromJsonLD(await remoteContainer.toJsonLD(), {
-            url: remoteContainer.url,
-        });
+        const container = await Container.fromJsonLD(await remoteContainer.toJsonLD()).find(remoteContainer.url);
 
         return required(container);
     }

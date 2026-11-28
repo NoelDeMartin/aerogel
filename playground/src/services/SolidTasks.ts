@@ -26,9 +26,7 @@ export class SolidTasksService extends Service {
         const [remoteContainer] = await RemoteContainer.createFromTypeIndex(typeIndex, SolidTask);
 
         if (remoteContainer) {
-            const container = await Container.createFromJsonLD(await remoteContainer.toJsonLD(), {
-                url: remoteContainer.url,
-            });
+            const container = await Container.fromJsonLD(await remoteContainer.toJsonLD()).find(remoteContainer.url);
 
             return required(container);
         }

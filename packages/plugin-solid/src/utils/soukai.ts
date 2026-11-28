@@ -1,6 +1,6 @@
 import { arrayRemove, isPromiseLike } from '@noeldemartin/utils';
 import { bootCoreModels, bootModelsFromViteGlob, setAsyncContextManager, setEngine, setNamespace } from 'soukai-bis';
-import type { AsyncContextManager, Engine } from 'soukai-bis';
+import type { AsyncContextManager, Engine, SoukaiAsyncContext } from 'soukai-bis';
 
 export type ModelsGlob = Record<string, Record<string, unknown>>;
 
@@ -9,7 +9,7 @@ export type ModelsGlob = Record<string, Record<string, unknown>>;
 // means that while an async operation is pending, its value leaks to any other code running at the same time,
 // including code that was never wrapped with runWithValue() (e.g. a long-running runWithEngine() would make
 // unrelated getEngine() calls return its engine instead of the default one).
-export function createGlobalAsyncContextManager<T>(): AsyncContextManager<T> {
+export function createGlobalAsyncContextManager<T = SoukaiAsyncContext>(): AsyncContextManager<T> {
     const contexts: { value: T }[] = [];
 
     return {
@@ -48,7 +48,7 @@ export function bootModels(models: ModelsGlob = {}): void {
 }
 
 export function setupAsyncContext(): void {
-    setAsyncContextManager(createGlobalAsyncContextManager<Engine>());
+    setAsyncContextManager(createGlobalAsyncContextManager());
 }
 
 export function setupSoukai(options: { engine: Engine; namespace: string; models?: ModelsGlob }): void {

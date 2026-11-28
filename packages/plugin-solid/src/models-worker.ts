@@ -40,7 +40,7 @@ const methods = {
                 const models = await Promise.all(
                     Object.values(documents).map(async (document) => {
                         try {
-                            return await modelClass.createManyFromDocument(document, { includeSoftDeleted: true });
+                            return await modelClass.fromDocument(document).all({ includeSoftDeleted: true });
                         } catch (error) {
                             documentErrors.push(serializeDocumentError(error, document.url));
 
