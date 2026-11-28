@@ -443,6 +443,9 @@ importers:
       '@vue/test-utils':
         specifier: ^2.6.0
         version: 2.6.0(@vue/compiler-dom@3.5.46)(@vue/server-renderer@3.5.46)(vue@3.5.46(typescript@5.9.3))
+      fake-indexeddb:
+        specifier: 'catalog:'
+        version: 6.2.8
       happy-dom:
         specifier: ^20.10.1
         version: 20.14.6
