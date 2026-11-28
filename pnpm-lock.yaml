@@ -320,7 +320,7 @@ importers:
         version: 1.7.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.11)(@vitest/ui@5.1.0)(@volar/typescript@2.4.28(typescript@5.9.3))(@vue/language-core@3.3.14)(esbuild@0.28.2)(happy-dom@20.14.6)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.4)(typescript@5.9.3)(vue-tsc@3.3.11(typescript@5.9.3))(yaml@2.9.1)
       vitepress:
         specifier: ^1.6.3
-        version: 1.6.4(@algolia/client-search@5.65.0)(@types/node@26.6.11)(axios@1.21.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.33)(react@19.3.1)(search-insights@2.17.3)(terser@5.51.4)(typescript@5.9.3)
+        version: 1.6.4(@algolia/client-search@5.65.0)(@types/node@26.6.11)(axios@1.21.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.34)(react@19.3.1)(search-insights@2.17.3)(terser@5.51.4)(typescript@5.9.3)
       vue:
         specifier: ^3.5.0
         version: 3.5.46(typescript@5.9.3)
@@ -476,7 +476,7 @@ importers:
         version: 0.8.0-next.d2aa97aabd73e5c9222907a3cfc01b0c65c683d2(vue@3.5.46(typescript@5.9.3))
       playwright-solid:
         specifier: next
-        version: 0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)
+        version: 0.0.0-next.e37435bb4a1544fc63951156c60a05d41d6dd89b(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)
       soukai-bis:
         specifier: next
         version: 0.0.0-next.c09bd963e77f5d3e2864311581e179433279466d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
@@ -887,7 +887,7 @@ importers:
         version: 26.6.11
       autoprefixer:
         specifier: ^10.4.14
-        version: 10.7.0(postcss@8.5.33)
+        version: 10.7.0(postcss@8.5.34)
       concurrently:
         specifier: ^8.0.1
         version: 8.2.2
@@ -2481,8 +2481,8 @@ packages:
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
 
-  '@eslint-community/regexpp@4.12.3':
-    resolution: {integrity: sha512-R76UKbvsqI68DJJVTVyqFKqU98CN4+B+acxNfEA2IFarSzP0SjtKf/3+fFiXzTyv5Fj3PxLkGHe2wnVWWMxobQ==}
+  '@eslint-community/regexpp@4.12.4':
+    resolution: {integrity: sha512-1qH3WeISXHFS8P3QI0lntHlMrlfTh1OarxlRbPNDEkSCqoyXC3apBE7MDyRKOL8HpuW48aQtff30wvEFww/4ww==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
   '@eslint/config-array@0.21.2':
@@ -7119,8 +7119,8 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
-  playwright-solid@0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516:
-    resolution: {integrity: sha512-umKA8uUboirs/hvI5S60zLDf+QYtn+WDn46B/b0hN1RY2x/bgJJdZBAdoUnC0S2edWxAZEEkw+ugTEoGWDga2Q==}
+  playwright-solid@0.0.0-next.e37435bb4a1544fc63951156c60a05d41d6dd89b:
+    resolution: {integrity: sha512-4EWzoopW/6x9+3Q17m5Dbftompu7lWsJPb5sAOXug7wSGx9E0S34Q725HZYojDT1cJGnNhzW05ZOowl5+0NQSA==}
 
   playwright@1.65.1:
     resolution: {integrity: sha512-vJ1FuoOrNwOKHUIVEvSt3jT1L+wjjDpwhwIstKtfvTh8XIG4FG4bIFuvNdMxi81LGfAhUgUZleVFaOLY4RIUUw==}
@@ -7142,8 +7142,8 @@ packages:
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  postcss@8.5.33:
-    resolution: {integrity: sha512-RVHEU9/Pp1Fnjr/MpAJsZoADukCKhfIi15OunEYiGktIkYLkPVvC1sioWolGDS7XByMTx9m/IGbro0Js13zhnQ==}
+  postcss@8.5.34:
+    resolution: {integrity: sha512-P1Qzj0XXZjMda74C7qiVnBG90UKNbyNUAOeQRBW8X63RsIMV57gevRqjnkELdwtZ/S2/uQFksJhmwuN8xShLPw==}
     engines: {node: ^10 || ^12 || >=14}
 
   preact@10.29.8:
@@ -11359,7 +11359,7 @@ snapshots:
       eslint: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
       eslint-visitor-keys: 3.4.3
 
-  '@eslint-community/regexpp@4.12.3': {}
+  '@eslint-community/regexpp@4.12.4': {}
 
   '@eslint/config-array@0.21.2(supports-color@8.1.1)':
     dependencies:
@@ -13287,7 +13287,7 @@ snapshots:
       '@oxc-project/runtime': 0.159.0
       '@oxc-project/types': 0.159.0
       lightningcss: 1.33.0
-      postcss: 8.5.33
+      postcss: 8.5.34
       yuku-parser: 0.19.0
     optionalDependencies:
       '@arethetypeswrong/core': 0.18.5
@@ -13316,7 +13316,7 @@ snapshots:
       '@oxc-project/runtime': 0.159.0
       '@oxc-project/types': 0.159.0
       lightningcss: 1.33.0
-      postcss: 8.5.33
+      postcss: 8.5.34
       yuku-parser: 0.19.0
     optionalDependencies:
       '@arethetypeswrong/core': 0.18.5
@@ -13477,7 +13477,7 @@ snapshots:
       '@vue/shared': 3.5.46
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.33
+      postcss: 8.5.34
       source-map-js: 1.2.4
 
   '@vue/compiler-ssr@3.5.46':
@@ -13832,13 +13832,13 @@ snapshots:
 
   auth-header@1.0.0: {}
 
-  autoprefixer@10.7.0(postcss@8.5.33):
+  autoprefixer@10.7.0(postcss@8.5.34):
     dependencies:
       browserslist: 4.29.6
       caniuse-lite: 1.0.30001828
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.33
+      postcss: 8.5.34
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -14591,7 +14591,7 @@ snapshots:
   eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1):
     dependencies:
       '@eslint-community/eslint-utils': 4.10.1(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))
-      '@eslint-community/regexpp': 4.12.3
+      '@eslint-community/regexpp': 4.12.4
       '@eslint/config-array': 0.21.2(supports-color@8.1.1)
       '@eslint/config-helpers': 0.4.2
       '@eslint/core': 0.17.0
@@ -16130,14 +16130,13 @@ snapshots:
 
   playwright-core@1.65.1: {}
 
-  playwright-solid@0.0.0-next.8c922494299dd7aaefea93dd5deacc827865c516(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3):
+  playwright-solid@0.0.0-next.e37435bb4a1544fc63951156c60a05d41d6dd89b(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3):
     dependencies:
       '@inrupt/solid-client-authn-core': 3.1.1
       '@noeldemartin/solid-utils': 0.6.1-next.67b31c2f0853a868b2eb2d8247ca9f9538009637(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)
       '@noeldemartin/utils': 0.8.0-next.d2aa97aabd73e5c9222907a3cfc01b0c65c683d2(vue@3.5.46(typescript@5.9.3))
       '@playwright/test': 1.65.1
       node-fetch: 3.3.2
-      soukai-bis: 0.0.0-next.c09bd963e77f5d3e2864311581e179433279466d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
       zod: 4.6.7
     transitivePeerDependencies:
       - vitest
@@ -16159,7 +16158,7 @@ snapshots:
 
   postcss-value-parser@4.2.0: {}
 
-  postcss@8.5.33:
+  postcss@8.5.34:
     dependencies:
       nanoid: 3.3.20
       picocolors: 1.1.1
@@ -17585,7 +17584,7 @@ snapshots:
   vite@5.4.21(@types/node@26.6.11)(lightningcss@1.33.0)(terser@5.51.4):
     dependencies:
       esbuild: 0.21.5
-      postcss: 8.5.33
+      postcss: 8.5.34
       rollup: 4.68.8
     optionalDependencies:
       '@types/node': 26.6.11
@@ -17593,7 +17592,7 @@ snapshots:
       lightningcss: 1.33.0
       terser: 5.51.4
 
-  vitepress@1.6.4(@algolia/client-search@5.65.0)(@types/node@26.6.11)(axios@1.21.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.33)(react@19.3.1)(search-insights@2.17.3)(terser@5.51.4)(typescript@5.9.3):
+  vitepress@1.6.4(@algolia/client-search@5.65.0)(@types/node@26.6.11)(axios@1.21.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(lightningcss@1.33.0)(postcss@8.5.34)(react@19.3.1)(search-insights@2.17.3)(terser@5.51.4)(typescript@5.9.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.65.0)(react@19.3.1)(search-insights@2.17.3)
@@ -17614,7 +17613,7 @@ snapshots:
       vite: 5.4.21(@types/node@26.6.11)(lightningcss@1.33.0)(terser@5.51.4)
       vue: 3.5.46(typescript@5.9.3)
     optionalDependencies:
-      postcss: 8.5.33
+      postcss: 8.5.34
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/node'

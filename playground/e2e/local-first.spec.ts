@@ -11,7 +11,7 @@ import {
     press,
     see,
     setupPage,
-    solidReset,
+    solidUseNewAccount,
     test,
     waitSync,
 } from '@aerogel/playwright';
@@ -28,10 +28,8 @@ async function openAnotherDevice(browser: Browser): Promise<Page> {
     return page;
 }
 
-test.describe.configure({ mode: 'serial' });
-
 test.beforeEach(async ({ page }) => {
-    await solidReset();
+    await solidUseNewAccount();
     await page.goto('/local-first');
 });
 
