@@ -10,6 +10,7 @@ import {
 import type { ButtonVariant } from '@aerogel/core';
 import FileConflictModal from '@aerogel/plugin-local-first/components/FileConflictModal.vue';
 import ResourceConflictModal from '@aerogel/plugin-local-first/components/ResourceConflictModal.vue';
+import { getCloudRegistration } from '@aerogel/plugin-local-first/utils/cloud';
 import { Solid, fileResponse } from '@aerogel/plugin-solid';
 import { bootSync, refreshTrackedModels, trackModels, useLocalChanges } from '@aerogel/reactivity';
 import {
@@ -201,9 +202,7 @@ export class CloudService extends Service {
 
     protected getSyncModel(modelClass: ModelConstructor, register: CloudRegistration): SyncApplicationModel {
         const options = typeof register === 'object' ? register : {};
-        const files = this.normalizeCloudFiles(
-            options.files ?? (typeof modelClass.cloud === 'object' ? modelClass.cloud.files : undefined),
-        );
+        const files = this.normalizeCloudFiles(options.files ?? this.getRegisteredFiles(modelClass));
 
         return {
             model: modelClass,
@@ -433,6 +432,12 @@ export class CloudService extends Service {
         return session.online ? CloudStatus.Online : CloudStatus.Offline;
     }
 
+    private getRegisteredFiles(modelClass: ModelConstructor): CloudFiles | undefined {
+        const registration = getCloudRegistration(modelClass);
+
+        return typeof registration === 'object' ? registration.files : undefined;
+    }
+
     private requireSyncSession(): SyncSession {
         return required(Sync.session, "Cloud isn't connected, log in first");
     }
@@ -470,13 +475,13 @@ export class CloudService extends Service {
                 continue;
             }
 
-            await this.track(modelClass, { register: modelClass.cloud });
+            await this.track(modelClass, { register: getCloudRegistration(modelClass) });
         }
     }
 
     private async refreshTrackedModels(): Promise<void> {
         for (const modelClass of getBootedModels().values()) {
-            if (isCoreModel(modelClass) || modelClass.cloud === false) {
+            if (isCoreModel(modelClass) || getCloudRegistration(modelClass) === false) {
                 continue;
             }
 

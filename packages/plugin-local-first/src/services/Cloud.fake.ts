@@ -1,3 +1,4 @@
+import { getCloudRegistration } from '@aerogel/plugin-local-first/utils/cloud';
 import { facade } from '@noeldemartin/utils';
 import { getBootedModels, isCoreModel } from 'soukai-bis';
 
@@ -14,11 +15,13 @@ export class FakeCloudService extends CloudService {
 
     protected override async boot(): Promise<void> {
         for (const modelClass of getBootedModels().values()) {
-            if (isCoreModel(modelClass) || !modelClass.cloud) {
+            const registration = getCloudRegistration(modelClass);
+
+            if (isCoreModel(modelClass) || !registration) {
                 continue;
             }
 
-            this.initializeTrackedModels(modelClass, modelClass.cloud);
+            this.initializeTrackedModels(modelClass, registration);
         }
     }
 }
