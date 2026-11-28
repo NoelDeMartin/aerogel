@@ -8,7 +8,7 @@
                 'animate-[fade-in_var(--tw-duration)_ease-in-out]': !hasRenderedModals,
                 'bg-black/30 dark:bg-black/60':
                     firstVisibleModal?.id === id || (!firstVisibleModal && modals[0]?.id === id),
-                'opacity-0': !firstVisibleModal,
+                'pointer-events-none! opacity-0': !firstVisibleModal,
                 hidden: renderFullscreen,
             }"
         />
@@ -121,7 +121,7 @@ const hasRenderedModals = computed(() => modals.value.some((modal) => renderedMo
 const contentProps = computed(() => (description ? {} : { 'aria-describedby': undefined }));
 const renderedContentClass = computed(() =>
     classes(
-        'overflow-auto px-4 pb-4 flex flex-col flex-1',
+        'overflow-auto px-4 pb-4 flex flex-col flex-1 isolate',
         { 'pt-4': !title || titleHidden, 'max-h-[90vh]': !renderFullscreen.value },
         contentClass,
     ),
@@ -138,7 +138,7 @@ const renderedWrapperClass = computed(() =>
                       ? [
                             'inset-0 transition-[transform,translate] will-change-[transform,translate]',
                             renderedModals.has(modal.value) || 'animate-[slide-in_var(--tw-duration)_ease-in-out]',
-                            inForeground.value ? 'translate-y-0' : 'translate-y-full',
+                            inForeground.value ? 'translate-y-0' : 'pointer-events-none translate-y-full',
                         ]
                       : [
                             'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full',
@@ -146,7 +146,7 @@ const renderedWrapperClass = computed(() =>
                             'transition-[scale,opacity] will-change-[scale,opacity]',
                             renderedModals.has(modal.value) ||
                                 'animate-[fade-in_var(--tw-duration)_ease-in-out,grow_var(--tw-duration)_ease-in-out]',
-                            inForeground.value ? 'scale-100 opacity-100' : 'scale-50 opacity-0',
+                            inForeground.value ? 'scale-100 opacity-100' : 'pointer-events-none scale-50 opacity-0',
                         ],
               ],
         wrapperClass,

@@ -410,8 +410,8 @@ importers:
         specifier: ^2.1.6
         version: 2.3.1(typescript@5.9.3)(vue@3.5.46(typescript@5.9.3))
       reka-ui:
-        specifier: ^2.2.0
-        version: 2.11.0(vue@3.5.46(typescript@5.9.3))
+        specifier: ^2.12.0
+        version: 2.12.0(vue@3.5.46(typescript@5.9.3))
       soukai-bis:
         specifier: next
         version: 0.0.0-next.c09bd963e77f5d3e2864311581e179433279466d(vitest@5.1.0)(vue@3.5.46(typescript@5.9.3))(web-streams-polyfill@3.3.3)(zod@4.6.7)
@@ -7417,8 +7417,8 @@ packages:
     resolution: {integrity: sha512-IeYboCLG1KBNRksrZQIZ1SV5KVWZiR0ikFokOcA0n63vLvlaFvCsfxN+fd4aXwL0KW3YD+ByRzIgo9ZAHdbldw==}
     hasBin: true
 
-  reka-ui@2.11.0:
-    resolution: {integrity: sha512-ilkpm4bIAol4jwzm4tpm3WVcffyGOpqksNZL1k1qO9QmIwAA+q8jroxjkUGLEn/GddfdExFfvofWfQiKZszUeQ==}
+  reka-ui@2.12.0:
+    resolution: {integrity: sha512-MRH1Pn913Ddh/3z9AklI5AykWAkeCCkNcBBDRomCF6jW4liVlXUWwXLFYi8IgXWt7OAPO1wmOBMEvuO2Rgp9cw==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -16613,7 +16613,7 @@ snapshots:
     dependencies:
       jsesc: 3.1.0
 
-  reka-ui@2.11.0(vue@3.5.46(typescript@5.9.3)):
+  reka-ui@2.12.0(vue@3.5.46(typescript@5.9.3)):
     dependencies:
       '@floating-ui/vue': 2.0.1(vue@3.5.46(typescript@5.9.3))
       '@internationalized/date': 3.12.4

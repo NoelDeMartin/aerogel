@@ -1,5 +1,5 @@
 <template>
-    <DialogOverlay v-bind="$props">
+    <DialogOverlay v-bind="$props" force-mount>
         <slot />
     </DialogOverlay>
 </template>

@@ -64,3 +64,4 @@ minimumReleaseAgeExclude:
     - '@noeldemartin/*'
     - soukai-bis
     - playwright-solid
+    - reka-ui@2.12.0 # temporary exclusion for nested modals fix

@@ -44,7 +44,7 @@
         "eruda-indexeddb": "^0.1.1",
         "marked": "^15.0.7",
         "pinia": "^2.1.6",
-        "reka-ui": "^2.2.0",
+        "reka-ui": "^2.12.0",
         "soukai-bis": "catalog:",
         "tailwind-merge": "^3.1.0",
         "vue-component-type-helpers": "^2.2.8"
